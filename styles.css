@@ -741,9 +741,11 @@ td {
 }
 
 .people-modal {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
   width: min(920px, 100%);
   max-height: min(86vh, 760px);
-  overflow: auto;
+  overflow: hidden;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
@@ -767,7 +769,29 @@ td {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
+  min-height: 0;
+  max-height: 58vh;
+  overflow-y: auto;
   margin-top: 14px;
+  padding-right: 6px;
+  overscroll-behavior: contain;
+  scrollbar-color: var(--blue) color-mix(in srgb, var(--surface-soft) 65%, transparent);
+  scrollbar-width: thin;
+}
+
+.people-grid::-webkit-scrollbar {
+  width: 9px;
+}
+
+.people-grid::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-soft) 65%, transparent);
+}
+
+.people-grid::-webkit-scrollbar-thumb {
+  border: 2px solid var(--surface);
+  border-radius: 999px;
+  background: var(--blue);
 }
 
 .person-card {
@@ -919,6 +943,7 @@ body.night .person-card button {
 
   .people-grid {
     grid-template-columns: 1fr;
+    max-height: 62vh;
   }
 
   .people-modal {
