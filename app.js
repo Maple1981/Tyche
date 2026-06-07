@@ -87,7 +87,7 @@
       dataDate: "Fecha",
       dataPlace: "Lugar",
       dataSex: "Sexo",
-      footerWarning: "Motor astronómico pensado para uso educativo. La información proporcionada puede no ser fiable.",
+      footerWarning: "Motor astronómico pensado para uso educativo. La información proporcionada es solo orientativa.",
       footerPrivacy: "La aplicación no guarda datos en ningún repositorio ni utiliza cookies. Su uso es completamente anónimo.",
       footerAuthors: "Autores: Maple81 y Proserpina, 2026.",
       githubLink: "Ver repositorio GitHub",
