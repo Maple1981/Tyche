@@ -309,9 +309,50 @@ select::-ms-expand {
 
 input:focus,
 select:focus,
-button:focus-visible {
+button:focus-visible,
+.glossary-trigger:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--blue) 30%, transparent);
   outline-offset: 2px;
+}
+
+.glossary-trigger {
+  appearance: none;
+  border: 0;
+  border-bottom: 1px dotted currentColor;
+  border-radius: 0;
+  background: transparent;
+  color: var(--blue-deep);
+  padding: 0 0 1px;
+  margin: 0;
+  font: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  text-align: inherit;
+  cursor: help;
+  vertical-align: baseline;
+}
+
+.glossary-trigger:hover {
+  color: var(--blue);
+}
+
+.field .glossary-trigger,
+.field-label.glossary-trigger,
+.lot-fieldset .glossary-trigger,
+.check-field .glossary-trigger {
+  color: var(--muted);
+}
+
+.metric b .glossary-trigger,
+th .glossary-trigger,
+.badge .glossary-trigger {
+  color: inherit;
+}
+
+.badge .glossary-trigger {
+  border-bottom-color: color-mix(in srgb, currentColor 70%, transparent);
 }
 
 .field:has(select) {
@@ -537,6 +578,7 @@ body.night .primary-button {
 
 .results {
   margin-top: 34px;
+  scroll-margin-top: 118px;
 }
 
 .section-heading {
@@ -550,7 +592,8 @@ body.night .primary-button {
 }
 
 .chart-meta {
-  max-width: 78ch;
+  width: 100%;
+  max-width: none;
   margin: -8px 0 0;
   color: var(--muted);
   font-size: 0.86rem;
@@ -621,6 +664,14 @@ body.night .primary-button {
 .metric span {
   overflow-wrap: anywhere;
   font-weight: 700;
+}
+
+.capitalize-first {
+  display: inline-block;
+}
+
+.capitalize-first::first-letter {
+  text-transform: uppercase;
 }
 
 .badge-row {
@@ -767,6 +818,76 @@ td {
   background: var(--surface);
   box-shadow: var(--shadow);
   padding: 18px;
+}
+
+.glossary-popover {
+  position: fixed;
+  left: 16px;
+  top: 16px;
+  z-index: 80;
+  width: min(380px, calc(100vw - 32px));
+  max-height: min(62vh, 430px);
+  overflow-y: auto;
+  border: 1px solid color-mix(in srgb, var(--blue) 45%, var(--line));
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 20px 60px rgba(13, 33, 62, 0.24);
+  padding: 14px;
+}
+
+.glossary-popover[hidden] {
+  display: none;
+}
+
+.glossary-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 9px;
+  margin-bottom: 10px;
+}
+
+.glossary-heading h2 {
+  margin: 0;
+  color: var(--blue-deep);
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+
+.glossary-close {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface-soft);
+  color: var(--blue-deep);
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.glossary-body {
+  color: var(--ink);
+  font-size: 0.9rem;
+  line-height: 1.58;
+}
+
+.glossary-body p {
+  margin: 0 0 0.72rem;
+}
+
+.glossary-body p:last-child {
+  margin-bottom: 0;
+}
+
+.glossary-body strong {
+  color: var(--blue-deep);
+  font-weight: 700;
 }
 
 .modal-heading {
@@ -950,7 +1071,8 @@ body.night .person-card button {
   }
 
   h1 {
-    max-width: 10ch;
+    max-width: 100%;
+    font-size: clamp(2.2rem, 9vw, 4rem);
   }
 
   .chart-form {
@@ -997,6 +1119,14 @@ body.night .person-card button {
   .people-modal {
     max-height: 90vh;
     padding: 14px;
+  }
+
+  .glossary-popover {
+    inset: auto 10px 10px;
+    width: auto;
+    max-height: 48vh;
+    border-radius: 8px;
+    padding: 13px;
   }
 
   .person-card {

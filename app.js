@@ -21,6 +21,7 @@
     placeSearchController: null,
     activePlaceIndex: -1,
     modalReturnFocus: null,
+    glossaryReturnFocus: null,
   };
 
   const I18N = {
@@ -28,6 +29,7 @@
       brandSub: "Carta natal helenística generada matemáticamente",
       title: "Crea una carta natal helenística",
       subtitle: "Calcula el Ascendente, las casas de signos enteros (Whole Sign Houses), la secta, la condición esencial, los lotes y otros elementos de la tradición astrológica helenística. Todo con absoluta privacidad: la carta al completo se procesa localmente en tu navegador. Solo la búsqueda de lugares consulta coordenadas externas.",
+      subtitleHtml: 'Calcula el <button type="button" data-glossary="ascendant">Ascendente</button>, las <button type="button" data-glossary="wholeSign">casas de signos enteros (Whole Sign Houses)</button>, la <button type="button" data-glossary="sect">secta</button>, las <button type="button" data-glossary="essentialCondition">dignidades</button>, los <button type="button" data-glossary="lots">lotes</button> y otros elementos de la tradición astrológica helenística. Todo con absoluta privacidad: la carta al completo se procesa localmente en tu navegador. Solo la búsqueda de lugares consulta coordenadas externas.',
       birthDate: "Fecha de nacimiento",
       birthTime: "Hora de nacimiento",
       birthPlace: "Lugar de nacimiento",
@@ -79,6 +81,7 @@
       placeSearchEmpty: "Sin resultados. Puedes introducir coordenadas manualmente.",
       placeSearchError: "No se pudo consultar la búsqueda. Usando ciudades guardadas si coinciden.",
       clearPlace: "Borrar lugar",
+      glossaryOpen: "Abrir explicación: {term}",
       peopleEyebrow: "Archivo",
       peopleTitle: "Personajes históricos",
       peopleIntro: "Elige una carta de ejemplo con fecha, hora, lugar y sexo ya preparados.",
@@ -90,10 +93,10 @@
       dataPlace: "Lugar",
       dataSex: "Sexo",
       footerWarning: "Motor astronómico pensado para uso educativo. La información proporcionada es solo orientativa.",
-      footerPrivacy: "La carta se calcula localmente en tu navegador. No guardamos tus datos ni usamos cookies. La búsqueda de lugares consulta un servicio externo solo para obtener coordenadas.",
+    footerPrivacy: "La carta se calcula localmente en tu navegador. No guardamos tus datos ni usamos cookies. La búsqueda de lugares consulta un servicio externo solo para obtener coordenadas. El posicionamiento de planetas utiliza una librería local.",
       footerAuthors: "Autores: Maple81 y Proserpina, 2026.",
       githubLink: "Ver repositorio GitHub",
-      footerAttributions: 'Atribuciones generales: imágenes de <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; datos de personajes históricos de <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a> y <a href="https://www.astro.com/astro-databank/" target="_blank" rel="noreferrer">Astro-Databank</a>; búsqueda de localización mediante <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>; efemérides locales mediante <a href="https://github.com/cosinekitty/astronomy" target="_blank" rel="noreferrer">Astronomy Engine</a> MIT, precisión aprox. ±1′, sin enviar datos de nacimiento a terceros.',
+    footerAttributions: 'Atribuciones generales: imágenes de <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; datos de personajes históricos de <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a> y <a href="https://www.astro.com/astro-databank/" target="_blank" rel="noreferrer">Astro-Databank</a>; búsqueda de localización mediante <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>; efemérides locales mediante <a href="https://github.com/cosinekitty/astronomy" target="_blank" rel="noreferrer">Astronomy Engine</a> MIT, precisión aprox. ±1′, en ejecución local, sin enviar datos a terceros.',
       invalidTimeZone: "Zona horaria no reconocida; usando la diferencia UTC manual.",
       invalidOffset: "La diferencia UTC manual debe tener formato +01:00 o -05:00.",
       chartFor: "Carta para {place}",
@@ -203,6 +206,7 @@
       brandSub: "Mathematically generated Hellenistic natal chart",
       title: "Create a Hellenistic natal chart",
       subtitle: "Calculate the Hour-Marker, Whole Sign Houses, sect, essential condition, lots, and other elements of the Hellenistic astrological tradition. The full chart is processed locally in your browser; only place search requests external coordinates.",
+      subtitleHtml: 'Calculate the <button type="button" data-glossary="ascendant">Hour-Marker</button>, <button type="button" data-glossary="wholeSign">Whole Sign Houses</button>, <button type="button" data-glossary="sect">sect</button>, <button type="button" data-glossary="essentialCondition">essential condition</button>, <button type="button" data-glossary="lots">lots</button>, and other elements of the Hellenistic astrological tradition. The full chart is processed locally in your browser; only place search requests external coordinates.',
       birthDate: "Date",
       birthTime: "Exact time",
       birthPlace: "Birthplace",
@@ -254,6 +258,7 @@
       placeSearchEmpty: "No results. You can enter coordinates manually.",
       placeSearchError: "Could not query search. Using saved cities when they match.",
       clearPlace: "Clear place",
+      glossaryOpen: "Open explanation: {term}",
       peopleEyebrow: "Archive",
       peopleTitle: "Historical figures",
       peopleIntro: "Choose an example chart with date, time, place, and sex already prepared.",
@@ -265,10 +270,10 @@
       dataPlace: "Place",
       dataSex: "Sex",
       footerWarning: "Astronomical engine intended for educational use. The information provided may not be reliable.",
-      footerPrivacy: "The chart is calculated locally in your browser. We do not store your data or use cookies. Place search consults an external service only to obtain coordinates.",
+    footerPrivacy: "The chart is calculated locally in your browser. We do not store your data or use cookies. Place search consults an external service only to obtain coordinates. Planet positions use a local library.",
       footerAuthors: "Authors: Maple81 and Proserpina, 2026.",
       githubLink: "View GitHub repository",
-      footerAttributions: 'General attributions: images from <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; historical figure data from <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a> and <a href="https://www.astro.com/astro-databank/" target="_blank" rel="noreferrer">Astro-Databank</a>; place search by <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>; local ephemerides by <a href="https://github.com/cosinekitty/astronomy" target="_blank" rel="noreferrer">Astronomy Engine</a> MIT, approx. ±1′ accuracy, without sending birth data to third parties.',
+    footerAttributions: 'General attributions: images from <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; historical figure data from <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a> and <a href="https://www.astro.com/astro-databank/" target="_blank" rel="noreferrer">Astro-Databank</a>; place search by <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>; local ephemerides by <a href="https://github.com/cosinekitty/astronomy" target="_blank" rel="noreferrer">Astronomy Engine</a> MIT, approx. ±1′ accuracy, running locally, without sending data to third parties.',
       invalidTimeZone: "Time zone not recognized; using the manual offset.",
       invalidOffset: "Manual offset must look like +01:00 or -05:00.",
       chartFor: "Chart for {place}",
@@ -373,6 +378,1065 @@
       topics10: "action, craft, reputation, rank, and visibility",
       topics11: "friends, alliances, hopes, honors, and acquisition",
       topics12: "enemies, loss, confinement, suffering, and forced conditions",
+    },
+  };
+
+  const GLOSSARY = {
+    es: {
+      birthDate: {
+        title: "Fecha de nacimiento",
+        body: [
+          "<p>Fecha civil usada para convertir el nacimiento a tiempo astronómico. En cartas modernas se usa el calendario gregoriano por defecto.</p>",
+          "<p>Para fechas antiguas conviene distinguir explícitamente entre calendario <strong>juliano</strong> y <strong>gregoriano</strong>, porque una conversión silenciosa cambia la carta.</p>",
+        ],
+      },
+      birthTime: {
+        title: "Hora de nacimiento",
+        body: [
+          "<p>Hora civil local del nacimiento. Es imprescindible para calcular Ascendente, casas, MC/IC y secta con precisión.</p>",
+          "<p>Un error de pocos minutos puede desplazar el Ascendente y cambiar el regente central de la carta.</p>",
+        ],
+      },
+      birthPlace: {
+        title: "Lugar de nacimiento",
+        body: [
+          "<p>Ciudad o coordenadas usadas para obtener latitud, longitud y zona horaria. El lugar determina el horizonte local.</p>",
+          "<p>Sin horizonte local no se puede calcular correctamente el Ascendente ni juzgar si el Sol está sobre o bajo el horizonte.</p>",
+        ],
+      },
+      sex: {
+        title: "Sexo",
+        body: [
+          "<p>Dato opcional reservado para técnicas tradicionales que puedan distinguir sexo biológico. La carta base de Tyche no lo usa para calcular posiciones, casas o secta.</p>",
+        ],
+      },
+      latitude: {
+        title: "Latitud",
+        body: [
+          "<p>Coordenada norte-sur del nacimiento. Interviene en el cálculo del horizonte, el Ascendente y la altura solar.</p>",
+          "<p>Latitudes extremas pueden producir ángulos más inestables en motores simplificados.</p>",
+        ],
+      },
+      longitude: {
+        title: "Longitud",
+        body: [
+          "<p>Coordenada este-oeste del nacimiento. Ajusta el tiempo sidéreo local y, con ello, la orientación exacta de los ángulos.</p>",
+        ],
+      },
+      timezone: {
+        title: "Zona horaria IANA",
+        body: [
+          "<p>Nombre técnico de zona horaria con reglas históricas, por ejemplo <strong>Europe/Madrid</strong>. Permite convertir la hora local a UTC.</p>",
+          "<p>La precisión histórica depende de los datos disponibles en el navegador.</p>",
+        ],
+      },
+      utcOffset: {
+        title: "Diferencia UTC",
+        body: [
+          "<p>Desfase manual respecto a UTC usado como respaldo cuando no hay zona IANA fiable.</p>",
+          "<p>Debe interpretarse como dato técnico de conversión, no como garantía histórica universal.</p>",
+        ],
+      },
+      calendar: {
+        title: "Calendario",
+        body: [
+          "<p>Sistema usado para leer la fecha introducida. Tyche usa gregoriano por defecto.</p>",
+          "<p>En nacimientos antiguos o en países que adoptaron tarde el calendario gregoriano, el calendario debe indicarse de forma explícita.</p>",
+        ],
+      },
+      zodiac: {
+        title: "Zodíaco",
+        body: [
+          "<p>Marco de 12 signos de 30° donde se colocan planetas y puntos. La práctica helenística de esta app usa el zodíaco tropical por defecto.</p>",
+        ],
+      },
+      tropical: {
+        title: "Zodíaco tropical",
+        body: [
+          "<p>Divide la eclíptica desde el equinoccio vernal. Aries comienza en 0° tropical.</p>",
+          "<p>Es el marco predeterminado de Tyche para la lectura helenística estricta.</p>",
+        ],
+      },
+      sidereal: {
+        title: "Zodíaco sideral",
+        body: [
+          "<p>Marco zodiacal referido a estrellas fijas mediante un ayanamsha. En Tyche aparece solo como opción aproximada y no como base estricta.</p>",
+        ],
+      },
+      wholeSign: {
+        title: "Casas por signos enteros",
+        body: [
+          "<p>El signo que asciende completo se convierte en casa 1; el signo siguiente completo en casa 2, y así sucesivamente.</p>",
+          "<p>En este sistema el MC y el IC son puntos astronómicos que pueden caer fuera de las casas 10 y 4.</p>",
+        ],
+      },
+      house: {
+        title: "Casa / lugar",
+        body: [
+          "<p>Los lugares asignan temas de vida y fuerza de acción. No equivalen a los signos: Aries no es por sí mismo la casa 1, Tauro no es por sí mismo la casa 2.</p>",
+        ],
+      },
+      place: {
+        title: "Lugar",
+        body: [
+          "<p>Nombre tradicional de las casas en astrología helenística. Cada lugar combina temas concretos con una condición de fuerza: angular, sucedente o cadente.</p>",
+        ],
+      },
+      aspects: {
+        title: "Aspectos / configuraciones",
+        body: [
+          "<p>Relaciones geométricas entre signos o grados. En modo helenístico estricto se privilegia la configuración por signo.</p>",
+          "<p>Copresencia, sextil, cuadrado, trígono y oposición son las relaciones principales; los signos sin estas relaciones están en aversión.</p>",
+        ],
+      },
+      aspectMode: {
+        title: "Modo de aspecto",
+        body: [
+          "<p>Define si Tyche muestra relaciones por signo, por grado con orbe, o ambas. Una configuración por signo puede existir aunque el aspecto no perfeccione por grado.</p>",
+        ],
+      },
+      orb: {
+        title: "Orbe",
+        body: [
+          "<p>Margen de tolerancia en grados para considerar un aspecto por grado. No afecta a las configuraciones estrictamente por signo.</p>",
+        ],
+      },
+      bounds: {
+        title: "Términos / límites",
+        body: [
+          "<p>Subdivisiones desiguales de cada signo gobernadas por planetas. Tyche usa términos egipcios.</p>",
+          "<p>El planeta que gobierna el término matiza la condición esencial del planeta o punto que cae allí.</p>",
+        ],
+      },
+      technique: {
+        title: "Técnica",
+        body: [
+          "<p>El modo estricto usa siete planetas visibles, regencias tradicionales, casas por signos enteros y zodíaco tropical por defecto.</p>",
+          "<p>El modo mixto permite añadir elementos modernos sin convertirlos en la base de la lectura helenística.</p>",
+        ],
+      },
+      modernPlanets: {
+        title: "Planetas modernos",
+        body: [
+          "<p>Urano, Neptuno y Plutón no forman parte del conjunto clásico visible. Tyche puede mostrarlos como capa opcional, no como fundamento de la carta estricta.</p>",
+        ],
+      },
+      lots: {
+        title: "Lotes",
+        body: [
+          "<p>Puntos calculados proyectando distancias zodiacales desde el Ascendente. Funcionan como significadores matemáticos de temas concretos.</p>",
+          "<p>Fortuna y Espíritu son los lotes principales; sus fórmulas se invierten según la secta.</p>",
+        ],
+      },
+      lotFortune: {
+        title: "Lote de Fortuna",
+        body: [
+          "<p>Relaciona Ascendente, Sol y Luna para significar cuerpo, circunstancias, fortuna material y lo que acontece con menor intervención deliberada.</p>",
+        ],
+      },
+      lotSpirit: {
+        title: "Lote del Espíritu",
+        body: [
+          "<p>Contraparte de Fortuna. Se asocia con intención, acción elegida, mente práctica, reputación y dirección voluntaria.</p>",
+        ],
+      },
+      lotEros: {
+        title: "Lote de Eros",
+        body: [
+          "<p>Lote derivado de Fortuna y Espíritu. Se usa para deseos, vínculos, atracción y aquello hacia lo que el alma se inclina.</p>",
+        ],
+      },
+      lotNecessity: {
+        title: "Lote de Necesidad",
+        body: [
+          "<p>Lote derivado de Fortuna y Espíritu. Describe compulsión, restricciones, obligaciones y condiciones que se imponen al nativo.</p>",
+        ],
+      },
+      lotCourage: {
+        title: "Lote de Coraje",
+        body: [
+          "<p>Lote hermético vinculado a Marte. Señala iniciativa, riesgo, conflicto, herramientas, resistencia y capacidad de enfrentar tensión.</p>",
+        ],
+      },
+      lotVictory: {
+        title: "Lote de Victoria",
+        body: [
+          "<p>Lote hermético vinculado a Júpiter. Se asocia con éxito, ayuda, honores, liberación y resultados favorables.</p>",
+        ],
+      },
+      lotNemesis: {
+        title: "Lote de Némesis",
+        body: [
+          "<p>Lote hermético vinculado a Saturno. Señala freno, juicio, pérdida, consecuencia y condiciones difíciles de eludir.</p>",
+        ],
+      },
+      planets: {
+        title: "Planetas",
+        body: [
+          "<p>La base clásica usa siete cuerpos visibles: Sol, Luna, Mercurio, Venus, Marte, Júpiter y Saturno.</p>",
+          "<p>Los planetas significan actores, potencias y cualidades; los signos describen cómo actúan y los lugares dónde se manifiestan.</p>",
+        ],
+      },
+      planet: {
+        title: "Planeta",
+        body: [
+          "<p>Cuerpo errante o luminaria usada como significador. Sol y Luna son luminarias; Venus y Júpiter son benéficos; Marte y Saturno son maléficos; Mercurio es común o variable.</p>",
+        ],
+      },
+      longitude: {
+        title: "Longitud zodiacal",
+        body: [
+          "<p>Posición medida sobre la eclíptica dentro del zodíaco. Tyche la muestra como grado, minuto y signo.</p>",
+        ],
+      },
+      sign: {
+        title: "Signo",
+        body: [
+          "<p>División zodiacal de 30°. El signo aporta modalidad de actuación y determina domicilio, exaltación, triplicidad, términos y decanato.</p>",
+        ],
+      },
+      ruler: {
+        title: "Regente",
+        body: [
+          "<p>Planeta que gobierna un signo por domicilio. Tyche usa solo regentes tradicionales: Marte, Venus, Mercurio, Luna, Sol, Júpiter y Saturno.</p>",
+        ],
+      },
+      topics: {
+        title: "Temas",
+        body: [
+          "<p>Áreas de vida asociadas a cada lugar. Sirven para orientar la interpretación sin mezclar automáticamente signos y casas.</p>",
+        ],
+      },
+      sect: {
+        title: "Secta",
+        body: [
+          "<p>Condición diurna o nocturna de la carta. Se calcula por la posición del Sol respecto al horizonte local.</p>",
+          "<p>Si el Sol está sobre el horizonte, la carta es diurna; si está bajo el horizonte, nocturna. Esto reorganiza la fuerza relativa de luminarias, benéficos y maléficos.</p>",
+        ],
+      },
+      sectLight: {
+        title: "Luminaria de la secta",
+        body: [
+          "<p>Luminaria que lidera la carta según la secta: Sol en cartas diurnas, Luna en cartas nocturnas.</p>",
+          "<p>Sus regentes de triplicidad se usan tradicionalmente para juzgar soporte general y estabilidad.</p>",
+        ],
+      },
+      beneficSect: {
+        title: "Benéfico de la secta",
+        body: [
+          "<p>El benéfico más acorde con la condición diurna/nocturna: Júpiter de día, Venus de noche.</p>",
+          "<p>Tiende a expresar ayuda y crecimiento de forma más congruente con la carta.</p>",
+        ],
+      },
+      maleficSect: {
+        title: "Maléfico de la secta",
+        body: [
+          "<p>El maléfico más acorde con la secta: Saturno de día, Marte de noche.</p>",
+          "<p>Su condición suele considerarse más moderada que la del maléfico contrario a la secta.</p>",
+        ],
+      },
+      ascendant: {
+        title: "Ascendente",
+        body: [
+          "<p>Grado del zodíaco que asciende por el horizonte oriental en el momento y lugar del nacimiento.</p>",
+          "<p>En casas por signos enteros, su signo completo se convierte en casa 1. Su regente es una pieza central para juzgar vida, cuerpo, dirección y temas dominantes.</p>",
+        ],
+      },
+      descendant: {
+        title: "Descendente",
+        body: [
+          "<p>Punto opuesto al Ascendente, situado en el horizonte occidental. Enmarca temas de otros, pareja, pactos y confrontación.</p>",
+        ],
+      },
+      mc: {
+        title: "MC",
+        body: [
+          "<p>Medio Cielo: punto superior donde la eclíptica cruza el meridiano local. Señala acción, reputación, oficio, rango y visibilidad.</p>",
+          "<p>En casas por signos enteros puede caer en una casa distinta de la 10, llevando allí temas de acción pública.</p>",
+        ],
+      },
+      ic: {
+        title: "IC",
+        body: [
+          "<p>Fondo del Cielo: punto opuesto al MC. Señala raíces, hogar, fundamento, padres, asuntos ocultos y finales.</p>",
+          "<p>En casas por signos enteros puede caer en una casa distinta de la 4.</p>",
+        ],
+      },
+      timezoneUsed: {
+        title: "Zona usada",
+        body: [
+          "<p>Regla de conversión aplicada para pasar de hora local a UTC: zona IANA, diferencia manual, datos históricos del ejemplo o LMT por longitud.</p>",
+          "<p>Es un dato crítico porque los ángulos dependen directamente del tiempo universal obtenido.</p>",
+        ],
+      },
+      ascLord: {
+        title: "Regente del Ascendente",
+        body: [
+          "<p>Planeta que rige el signo ascendente por domicilio. Es el señor del Ascendente y uno de los indicadores principales de vida, cuerpo, carácter y dirección.</p>",
+          "<p>La casa donde cae muestra qué temas toman el timón de la carta; su condición esencial y angularidad describen con qué recursos actúa.</p>",
+        ],
+      },
+      essentialCondition: {
+        title: "Condición esencial",
+        body: [
+          "<p>Estado zodiacal de un planeta según dignidades y debilidades: domicilio, exaltación, triplicidad, término, decanato, detrimento y caída.</p>",
+          "<p>Describe si el planeta actúa con recursos propios, apoyo parcial, matices subordinados o dificultad esencial.</p>",
+        ],
+      },
+      noMajorDignity: {
+        title: "Sin dignidad mayor",
+        body: [
+          "<p>Indica que el planeta no está en domicilio, exaltación ni triplicidad propia. Puede seguir teniendo término o decanato, que son dignidades menores.</p>",
+        ],
+      },
+      domicile: {
+        title: "Domicilio",
+        body: [
+          "<p>Signo propio de un planeta. En domicilio, el planeta actúa con autoridad y recursos acordes a su naturaleza.</p>",
+        ],
+      },
+      exaltation: {
+        title: "Exaltación",
+        body: [
+          "<p>Dignidad mayor en la que un planeta recibe honor o elevación. No es lo mismo que domicilio: puede actuar con prominencia, pero en casa ajena.</p>",
+        ],
+      },
+      triplicity: {
+        title: "Triplicidad",
+        body: [
+          "<p>Regencia por elemento, con un regente diurno, uno nocturno y uno cooperante. Depende de la secta de la carta.</p>",
+          "<p>Se usa para evaluar soporte, estabilidad y colaboración elemental.</p>",
+        ],
+      },
+      bound: {
+        title: "Término",
+        body: [
+          "<p>También llamado límite. Es una subdivisión irregular del signo gobernada por un planeta.</p>",
+          "<p>Cuando un cuerpo cae en el término de un planeta, ese planeta aporta una administración fina de la posición.</p>",
+        ],
+      },
+      decan: {
+        title: "Decanato",
+        body: [
+          "<p>División de cada signo en tres segmentos de 10°. Tyche usa el orden caldeo repetido.</p>",
+          "<p>Es una dignidad menor, también llamada faz, que colorea la expresión local del planeta.</p>",
+        ],
+      },
+      detriment: {
+        title: "Detrimento",
+        body: [
+          "<p>Signo opuesto al domicilio de un planeta. Es una debilidad esencial: el planeta actúa lejos de sus condiciones propias.</p>",
+        ],
+      },
+      fall: {
+        title: "Caída",
+        body: [
+          "<p>Signo opuesto a la exaltación. Es una debilidad esencial asociada con menor honor, apoyo o elevación.</p>",
+        ],
+      },
+      angularity: {
+        title: "Angularidad",
+        body: [
+          "<p>Fuerza por lugar. Las casas 1, 4, 7 y 10 son angulares; 2, 5, 8 y 11 sucedentes; 3, 6, 9 y 12 cadentes.</p>",
+          "<p>Los lugares angulares actúan con más presencia; los cadentes tienden a ser menos capaces de manifestarse directamente.</p>",
+        ],
+      },
+      angular: {
+        title: "Angular",
+        body: [
+          "<p>Casa 1, 4, 7 o 10. Indica presencia, capacidad de acción y visibilidad fuerte en la carta.</p>",
+        ],
+      },
+      succedent: {
+        title: "Sucedente",
+        body: [
+          "<p>Casa 2, 5, 8 u 11. Indica condición intermedia: sostiene, acumula o desarrolla lo iniciado por los ángulos.</p>",
+        ],
+      },
+      cadent: {
+        title: "Cadente",
+        body: [
+          "<p>Casa 3, 6, 9 o 12. Indica menor capacidad de acción directa o una posición más retirada del eje principal.</p>",
+        ],
+      },
+      solarPhase: {
+        title: "Fase solar",
+        body: [
+          "<p>Relación de un planeta no luminario con el Sol. Puede ser matutino/oriental, vespertino/occidental, bajo los rayos, combusto o en el corazón.</p>",
+          "<p>La cercanía al Sol puede ocultar, debilitar o excepcionalmente concentrar la expresión del planeta.</p>",
+        ],
+      },
+      morning: {
+        title: "Matutino / oriental",
+        body: [
+          "<p>Planeta que aparece antes del Sol en orden zodiacal y se asocia con manifestación matutina. En Mercurio lo inclina hacia cualidad diurna.</p>",
+        ],
+      },
+      evening: {
+        title: "Vespertino / occidental",
+        body: [
+          "<p>Planeta que aparece después del Sol en orden zodiacal y se asocia con manifestación vespertina. En Mercurio lo inclina hacia cualidad nocturna.</p>",
+        ],
+      },
+      underBeams: {
+        title: "Bajo los rayos",
+        body: [
+          "<p>Planeta situado dentro de unos 15° del Sol. Su visibilidad queda disminuida por la luz solar.</p>",
+        ],
+      },
+      combust: {
+        title: "Combusto",
+        body: [
+          "<p>Planeta dentro de unos 8° del Sol. Es una condición más severa de ocultamiento y debilitamiento solar.</p>",
+        ],
+      },
+      cazimi: {
+        title: "En el corazón (cazimi)",
+        body: [
+          "<p>Planeta dentro de aproximadamente 1° del Sol. En lugar de simple ocultamiento, se interpreta como una unión muy concentrada con la autoridad solar.</p>",
+        ],
+      },
+      lunarCondition: {
+        title: "Condición lunar",
+        body: [
+          "<p>Resume fase de la Luna, distancia angular respecto al Sol, aplicaciones/separaciones y posible vacío de curso.</p>",
+          "<p>La Luna describe cuerpo, cambio, ritmo vital, acontecimientos cercanos y transmisión de luz entre planetas.</p>",
+        ],
+      },
+      moonPhase: {
+        title: "Fase lunar",
+        body: [
+          "<p>Nombre de la fase según la elongación zodiacal entre Sol y Luna. Tyche muestra también el ángulo en grados.</p>",
+          "<p>El ciclo va de Luna nueva a llena y vuelve por las fases menguantes hasta la balsámica.</p>",
+        ],
+      },
+      moonVoc: {
+        title: "Vacía de curso",
+        body: [
+          "<p>Condición aproximada en la que la Luna no perfecciona una configuración mayor antes de salir de su signo actual.</p>",
+          "<p>Tyche la trata como indicación técnica, no como juicio absoluto.</p>",
+        ],
+      },
+      applications: {
+        title: "Aplicaciones",
+        body: [
+          "<p>Relaciones hacia las que la Luna se está acercando. Una separación indica que el contacto ya pasó.</p>",
+          "<p>Aplicación y separación ayudan a juzgar transmisión de actividad entre planetas.</p>",
+        ],
+      },
+      configurations: {
+        title: "Configuraciones",
+        body: [
+          "<p>Relaciones de visión entre signos o planetas: copresencia, sextil, cuadrado, trígono y oposición.</p>",
+          "<p>La configuración por signo es central en la lectura helenística; la perfección por grado añade precisión.</p>",
+        ],
+      },
+      copresence: {
+        title: "Copresencia",
+        body: [
+          "<p>Dos planetas en el mismo signo. Comparten lugar y se afectan por convivencia zodiacal, aunque no estén unidos por grado exacto.</p>",
+        ],
+      },
+      sextile: {
+        title: "Sextil",
+        body: [
+          "<p>Relación entre signos separados por dos signos, equivalente a 60° por grado. Es una configuración de cooperación moderada.</p>",
+        ],
+      },
+      square: {
+        title: "Cuadrado",
+        body: [
+          "<p>Relación entre signos separados por tres signos, equivalente a 90° por grado. Suele indicar tensión, acción y conflicto de cualidades.</p>",
+        ],
+      },
+      trine: {
+        title: "Trígono",
+        body: [
+          "<p>Relación entre signos separados por cuatro signos, equivalente a 120° por grado. Indica afinidad elemental y flujo más estable.</p>",
+        ],
+      },
+      opposition: {
+        title: "Oposición",
+        body: [
+          "<p>Relación entre signos opuestos, equivalente a 180° por grado. Enfrenta dos polos de una misma línea zodiacal.</p>",
+        ],
+      },
+      applying: {
+        title: "Aplicando",
+        body: [
+          "<p>Un planeta se acerca a perfeccionar una relación con otro. Suele describir una actividad en desarrollo.</p>",
+        ],
+      },
+      separating: {
+        title: "Separando",
+        body: [
+          "<p>Un planeta se aleja de una relación ya perfeccionada. Señala contacto pasado o efecto que empieza a retirarse.</p>",
+        ],
+      },
+      overcoming: {
+        title: "Dominio / superación",
+        body: [
+          "<p>En configuraciones diestras, especialmente el cuadrado superior, un planeta puede dominar a otro desde una posición zodiacal más fuerte.</p>",
+        ],
+      },
+      aspectPair: {
+        title: "Par",
+        body: [
+          "<p>Los dos planetas o puntos implicados en una configuración.</p>",
+        ],
+      },
+      mode: {
+        title: "Modo",
+        body: [
+          "<p>Indica si la configuración se está mostrando por signo, por grado, o por ambos criterios.</p>",
+        ],
+      },
+      lotLord: {
+        title: "Regente del lote",
+        body: [
+          "<p>Planeta que rige por domicilio el signo donde cae el lote. Ayuda a valorar cómo se administran los temas del lote.</p>",
+        ],
+      },
+      lotLordHouse: {
+        title: "Casa del regente",
+        body: [
+          "<p>Lugar donde cae el regente del lote. Señala hacia qué temas se canaliza la materia simbolizada por el lote.</p>",
+        ],
+      },
+      ephemeris: {
+        title: "Efemérides",
+        body: [
+          "<p>Tablas o motor matemático para calcular posiciones celestes. Tyche usa Astronomy Engine localmente y conserva un motor aproximado solo como respaldo.</p>",
+        ],
+      },
+    },
+    en: {
+      birthDate: {
+        title: "Birth date",
+        body: [
+          "<p>Civil date used to convert the birth record into astronomical time. Modern charts use the Gregorian calendar by default.</p>",
+          "<p>For older births, Julian and Gregorian dates must be distinguished explicitly because silent conversion changes the chart.</p>",
+        ],
+      },
+      birthTime: {
+        title: "Birth time",
+        body: [
+          "<p>Local civil clock time of birth. It is required for the Ascendant, houses, MC/IC, and sect.</p>",
+          "<p>A shift of only a few minutes can move the Ascendant enough to change the chart's central ruler.</p>",
+        ],
+      },
+      birthPlace: {
+        title: "Birthplace",
+        body: [
+          "<p>City or coordinates used to obtain latitude, longitude, and time zone. The place defines the local horizon.</p>",
+          "<p>Without the local horizon, the Ascendant and the Sun's above/below-horizon sect condition cannot be calculated correctly.</p>",
+        ],
+      },
+      sex: {
+        title: "Sex",
+        body: [
+          "<p>Optional datum reserved for traditional techniques that may distinguish biological sex. Tyche's base chart does not use it for positions, houses, or sect.</p>",
+        ],
+      },
+      latitude: {
+        title: "Latitude",
+        body: [
+          "<p>North-south birth coordinate. It affects the horizon, Ascendant, and solar altitude.</p>",
+          "<p>Extreme latitudes can make angles less stable in simplified engines.</p>",
+        ],
+      },
+      longitude: {
+        title: "Longitude",
+        body: [
+          "<p>East-west birth coordinate. It adjusts local sidereal time and the exact orientation of the angles.</p>",
+        ],
+      },
+      timezone: {
+        title: "IANA time zone",
+        body: [
+          "<p>Technical time-zone name with historical rules, such as <strong>Europe/Madrid</strong>. It converts local time to UTC.</p>",
+          "<p>Historical accuracy depends on the data available in the browser.</p>",
+        ],
+      },
+      utcOffset: {
+        title: "UTC offset",
+        body: [
+          "<p>Manual offset from UTC used as fallback when no reliable IANA zone is available.</p>",
+          "<p>It is a technical conversion datum, not a universal guarantee of historical civil time.</p>",
+        ],
+      },
+      calendar: {
+        title: "Calendar",
+        body: [
+          "<p>System used to read the entered date. Tyche defaults to Gregorian.</p>",
+          "<p>Ancient or early-modern births may require an explicit Julian/Gregorian choice.</p>",
+        ],
+      },
+      zodiac: {
+        title: "Zodiac",
+        body: [
+          "<p>Framework of twelve 30° signs where planets and points are placed. Tyche defaults to the tropical zodiac for strict Hellenistic work.</p>",
+        ],
+      },
+      tropical: {
+        title: "Tropical zodiac",
+        body: [
+          "<p>Divides the ecliptic from the vernal equinox. Aries begins at 0° tropical.</p>",
+          "<p>It is Tyche's default frame for strict Hellenistic reading.</p>",
+        ],
+      },
+      sidereal: {
+        title: "Sidereal zodiac",
+        body: [
+          "<p>Zodiacal frame referenced to fixed stars through an ayanamsha. In Tyche it is only an approximate advanced option.</p>",
+        ],
+      },
+      wholeSign: {
+        title: "Whole Sign Houses",
+        body: [
+          "<p>The whole rising sign becomes house 1; the next whole sign becomes house 2, and so on.</p>",
+          "<p>In this system the MC and IC are astronomical points and may fall outside houses 10 and 4.</p>",
+        ],
+      },
+      house: {
+        title: "House / place",
+        body: [
+          "<p>Places assign life topics and strength of action. They are not equivalent to signs: Aries is not automatically house 1, Taurus is not automatically house 2.</p>",
+        ],
+      },
+      place: {
+        title: "Place",
+        body: [
+          "<p>Traditional name for houses in Hellenistic astrology. Each place combines topics with a condition of strength: angular, succedent, or cadent.</p>",
+        ],
+      },
+      aspects: {
+        title: "Aspects / configurations",
+        body: [
+          "<p>Geometrical relationships by sign or by degree. Strict Hellenistic mode privileges sign-based configuration.</p>",
+          "<p>Copresence, sextile, square, trine, and opposition are the main relationships; signs without them are in aversion.</p>",
+        ],
+      },
+      aspectMode: {
+        title: "Aspect mode",
+        body: [
+          "<p>Defines whether Tyche shows sign-based relationships, degree-based relationships with orb, or both.</p>",
+        ],
+      },
+      orb: {
+        title: "Orb",
+        body: [
+          "<p>Degree tolerance for a degree-based aspect. It does not affect strictly sign-based configurations.</p>",
+        ],
+      },
+      bounds: {
+        title: "Terms / bounds",
+        body: [
+          "<p>Unequal subdivisions of each sign governed by planets. Tyche uses Egyptian bounds.</p>",
+          "<p>The bound lord gives a fine-grained administration of the planet or point placed there.</p>",
+        ],
+      },
+      technique: {
+        title: "Technique",
+        body: [
+          "<p>Strict mode uses the seven visible planets, traditional rulerships, Whole Sign Houses, and the tropical zodiac by default.</p>",
+          "<p>Mixed mode can add modern elements without making them the foundation of the Hellenistic reading.</p>",
+        ],
+      },
+      modernPlanets: {
+        title: "Modern planets",
+        body: [
+          "<p>Uranus, Neptune, and Pluto are not part of the visible classical set. Tyche can show them only as an optional layer.</p>",
+        ],
+      },
+      lots: {
+        title: "Lots",
+        body: [
+          "<p>Calculated points projected from zodiacal distances starting at the Ascendant. They are mathematical significators for specific topics.</p>",
+          "<p>Fortune and Spirit are the principal lots, and their formulas reverse by sect.</p>",
+        ],
+      },
+      lotFortune: {
+        title: "Lot of Fortune",
+        body: [
+          "<p>Relates Ascendant, Sun, and Moon to signify body, circumstances, material fortune, and what happens with less deliberate control.</p>",
+        ],
+      },
+      lotSpirit: {
+        title: "Lot of Spirit",
+        body: [
+          "<p>Counterpart to Fortune. It is associated with intention, chosen action, practical mind, reputation, and voluntary direction.</p>",
+        ],
+      },
+      lotEros: {
+        title: "Lot of Eros",
+        body: [
+          "<p>Lot derived from Fortune and Spirit. It concerns desire, bonds, attraction, and what the soul inclines toward.</p>",
+        ],
+      },
+      lotNecessity: {
+        title: "Lot of Necessity",
+        body: [
+          "<p>Lot derived from Fortune and Spirit. It describes compulsion, restrictions, obligations, and imposed conditions.</p>",
+        ],
+      },
+      lotCourage: {
+        title: "Lot of Courage",
+        body: [
+          "<p>Hermetic lot linked with Mars. It points to initiative, risk, conflict, tools, resistance, and capacity under strain.</p>",
+        ],
+      },
+      lotVictory: {
+        title: "Lot of Victory",
+        body: [
+          "<p>Hermetic lot linked with Jupiter. It is associated with success, help, honors, release, and favorable outcomes.</p>",
+        ],
+      },
+      lotNemesis: {
+        title: "Lot of Nemesis",
+        body: [
+          "<p>Hermetic lot linked with Saturn. It points to restraint, judgment, loss, consequence, and difficult conditions.</p>",
+        ],
+      },
+      planets: {
+        title: "Planets",
+        body: [
+          "<p>The classical base uses seven visible bodies: Sun, Moon, Mercury, Venus, Mars, Jupiter, and Saturn.</p>",
+          "<p>Planets signify actors, powers, and qualities; signs show how they act; places show where they manifest.</p>",
+        ],
+      },
+      planet: {
+        title: "Planet",
+        body: [
+          "<p>Wandering body or luminary used as a significator. Sun and Moon are luminaries; Venus and Jupiter are benefics; Mars and Saturn are malefics; Mercury is common or variable.</p>",
+        ],
+      },
+      longitude: {
+        title: "Zodiacal longitude",
+        body: [
+          "<p>Position measured along the ecliptic within the zodiac. Tyche displays it as degree, minute, and sign.</p>",
+        ],
+      },
+      sign: {
+        title: "Sign",
+        body: [
+          "<p>A 30° zodiacal division. The sign describes mode of action and determines domicile, exaltation, triplicity, bounds, and decan.</p>",
+        ],
+      },
+      ruler: {
+        title: "Ruler",
+        body: [
+          "<p>The planet that governs a sign by domicile. Tyche uses traditional rulers only: Mars, Venus, Mercury, Moon, Sun, Jupiter, and Saturn.</p>",
+        ],
+      },
+      topics: {
+        title: "Topics",
+        body: [
+          "<p>Life areas associated with each place. They orient interpretation without automatically merging signs and houses.</p>",
+        ],
+      },
+      sect: {
+        title: "Sect",
+        body: [
+          "<p>The day/night condition of the chart, calculated from the Sun's position relative to the local horizon.</p>",
+          "<p>Sun above the horizon gives a day chart; Sun below gives a night chart. This reorganizes the relative condition of luminaries, benefics, and malefics.</p>",
+        ],
+      },
+      sectLight: {
+        title: "Sect light",
+        body: [
+          "<p>The luminary leading the chart by sect: Sun by day, Moon by night.</p>",
+          "<p>Its triplicity rulers are traditionally used to judge broad support and stability.</p>",
+        ],
+      },
+      beneficSect: {
+        title: "Benefic of sect",
+        body: [
+          "<p>The benefic most aligned with the chart's day/night condition: Jupiter by day, Venus by night.</p>",
+          "<p>It tends to express help and growth more congruently with the chart.</p>",
+        ],
+      },
+      maleficSect: {
+        title: "Malefic of sect",
+        body: [
+          "<p>The malefic most aligned with the sect: Saturn by day, Mars by night.</p>",
+          "<p>Its condition is usually considered more moderated than that of the contrary-to-sect malefic.</p>",
+        ],
+      },
+      ascendant: {
+        title: "Hour-Marker / Ascendant",
+        body: [
+          "<p>The zodiacal degree rising over the eastern horizon at the birth moment and place.</p>",
+          "<p>In Whole Sign Houses, its entire sign becomes house 1. Its ruler is central for judging life, body, direction, and dominant topics.</p>",
+        ],
+      },
+      descendant: {
+        title: "Descendant",
+        body: [
+          "<p>The point opposite the Ascendant on the western horizon. It frames others, partners, agreements, and confrontation.</p>",
+        ],
+      },
+      mc: {
+        title: "MC",
+        body: [
+          "<p>Midheaven: the upper point where the ecliptic crosses the local meridian. It signifies action, reputation, craft, rank, and visibility.</p>",
+          "<p>In Whole Sign Houses it can fall outside house 10, importing public-action topics into another place.</p>",
+        ],
+      },
+      ic: {
+        title: "IC",
+        body: [
+          "<p>Imum Coeli: the point opposite the MC. It signifies roots, home, foundations, parents, hidden matters, and endings.</p>",
+          "<p>In Whole Sign Houses it can fall outside house 4.</p>",
+        ],
+      },
+      timezoneUsed: {
+        title: "Zone used",
+        body: [
+          "<p>The conversion rule used to turn local time into UTC: IANA zone, manual offset, historical example data, or LMT by longitude.</p>",
+          "<p>This is critical because the angles depend directly on the resulting universal time.</p>",
+        ],
+      },
+      ascLord: {
+        title: "Lord of the Hour-Marker",
+        body: [
+          "<p>The domicile ruler of the rising sign. It is one of the main indicators of life, body, character, and direction.</p>",
+          "<p>The house it occupies shows which topics steer the chart; its essential condition and angularity describe the resources it has.</p>",
+        ],
+      },
+      essentialCondition: {
+        title: "Essential condition",
+        body: [
+          "<p>A planet's zodiacal state by dignities and weaknesses: domicile, exaltation, triplicity, bound, decan, detriment, and fall.</p>",
+          "<p>It describes whether the planet acts with its own resources, partial support, subordinate nuance, or essential difficulty.</p>",
+        ],
+      },
+      noMajorDignity: {
+        title: "No major dignity",
+        body: [
+          "<p>The planet is not in its own domicile, exaltation, or triplicity. It may still have a bound or decan, which are minor dignities.</p>",
+        ],
+      },
+      domicile: {
+        title: "Domicile",
+        body: [
+          "<p>A planet's own sign. In domicile, a planet acts with authority and resources suited to its nature.</p>",
+        ],
+      },
+      exaltation: {
+        title: "Exaltation",
+        body: [
+          "<p>Major dignity where a planet receives honor or elevation. It is not the same as domicile: it can act prominently while in another planet's house.</p>",
+        ],
+      },
+      triplicity: {
+        title: "Triplicity",
+        body: [
+          "<p>Elemental rulership with a day ruler, night ruler, and cooperating ruler. It depends on the chart's sect.</p>",
+          "<p>It is used to judge support, stability, and elemental collaboration.</p>",
+        ],
+      },
+      bound: {
+        title: "Bound",
+        body: [
+          "<p>Also called term. It is an unequal subdivision of a sign governed by a planet.</p>",
+          "<p>When a body falls in a planet's bound, that planet provides fine-grained administration of the position.</p>",
+        ],
+      },
+      decan: {
+        title: "Decan",
+        body: [
+          "<p>One of three 10° divisions of a sign. Tyche uses the repeating Chaldean order.</p>",
+          "<p>It is a minor dignity, also called face, that colors the local expression of a planet.</p>",
+        ],
+      },
+      detriment: {
+        title: "Detriment",
+        body: [
+          "<p>The sign opposite a planet's domicile. It is an essential weakness: the planet acts away from its own conditions.</p>",
+        ],
+      },
+      fall: {
+        title: "Fall",
+        body: [
+          "<p>The sign opposite exaltation. It is an essential weakness associated with reduced honor, support, or elevation.</p>",
+        ],
+      },
+      angularity: {
+        title: "Angularity",
+        body: [
+          "<p>Strength by place. Houses 1, 4, 7, and 10 are angular; 2, 5, 8, and 11 succedent; 3, 6, 9, and 12 cadent.</p>",
+          "<p>Angular places act with stronger presence; cadent places tend to manifest less directly.</p>",
+        ],
+      },
+      angular: {
+        title: "Angular",
+        body: [
+          "<p>House 1, 4, 7, or 10. Indicates presence, action, and strong visibility in the chart.</p>",
+        ],
+      },
+      succedent: {
+        title: "Succedent",
+        body: [
+          "<p>House 2, 5, 8, or 11. Indicates intermediate strength: sustaining, accumulating, or developing what the angles initiate.</p>",
+        ],
+      },
+      cadent: {
+        title: "Cadent",
+        body: [
+          "<p>House 3, 6, 9, or 12. Indicates less direct capacity for action or a more withdrawn position.</p>",
+        ],
+      },
+      solarPhase: {
+        title: "Solar phase",
+        body: [
+          "<p>A non-luminary planet's relationship to the Sun. It may be morning/oriental, evening/occidental, under the beams, combust, or in the heart.</p>",
+          "<p>Closeness to the Sun can hide, weaken, or exceptionally concentrate a planet's expression.</p>",
+        ],
+      },
+      morning: {
+        title: "Morning / oriental",
+        body: [
+          "<p>A planet appearing before the Sun in zodiacal order and associated with morning manifestation. For Mercury it inclines toward day quality.</p>",
+        ],
+      },
+      evening: {
+        title: "Evening / occidental",
+        body: [
+          "<p>A planet appearing after the Sun in zodiacal order and associated with evening manifestation. For Mercury it inclines toward night quality.</p>",
+        ],
+      },
+      underBeams: {
+        title: "Under the beams",
+        body: [
+          "<p>A planet within about 15° of the Sun. Its visibility is diminished by solar light.</p>",
+        ],
+      },
+      combust: {
+        title: "Combust",
+        body: [
+          "<p>A planet within about 8° of the Sun. It is a stronger condition of solar concealment and weakening.</p>",
+        ],
+      },
+      cazimi: {
+        title: "In the heart (cazimi)",
+        body: [
+          "<p>A planet within about 1° of the Sun. Instead of simple concealment, it is interpreted as concentrated union with solar authority.</p>",
+        ],
+      },
+      lunarCondition: {
+        title: "Lunar condition",
+        body: [
+          "<p>Summary of lunar phase, angular distance from the Sun, applications/separations, and possible void-of-course condition.</p>",
+          "<p>The Moon describes body, change, vital rhythm, near events, and transmission of light among planets.</p>",
+        ],
+      },
+      moonPhase: {
+        title: "Lunar phase",
+        body: [
+          "<p>The phase name based on zodiacal elongation from Sun to Moon. Tyche also shows the angle in degrees.</p>",
+          "<p>The cycle runs from New Moon to Full Moon and back through waning phases to Balsamic.</p>",
+        ],
+      },
+      moonVoc: {
+        title: "Void of course",
+        body: [
+          "<p>An approximate condition where the Moon does not perfect a major configuration before leaving its current sign.</p>",
+          "<p>Tyche treats it as a technical indication, not as an absolute judgment.</p>",
+        ],
+      },
+      applications: {
+        title: "Applications",
+        body: [
+          "<p>Relationships the Moon is moving toward. A separation means the contact has already passed.</p>",
+          "<p>Application and separation help judge the transmission of activity between planets.</p>",
+        ],
+      },
+      configurations: {
+        title: "Configurations",
+        body: [
+          "<p>Relations of visibility between signs or planets: copresence, sextile, square, trine, and opposition.</p>",
+          "<p>Sign-based configuration is central in Hellenistic reading; degree perfection adds precision.</p>",
+        ],
+      },
+      copresence: {
+        title: "Copresence",
+        body: [
+          "<p>Two planets in the same sign. They share a place and affect each other by zodiacal cohabitation, even without exact degree union.</p>",
+        ],
+      },
+      sextile: {
+        title: "Sextile",
+        body: [
+          "<p>Relationship between signs two signs apart, equivalent to 60° by degree. It is a moderate cooperative configuration.</p>",
+        ],
+      },
+      square: {
+        title: "Square",
+        body: [
+          "<p>Relationship between signs three signs apart, equivalent to 90° by degree. It often indicates tension, action, and conflict of qualities.</p>",
+        ],
+      },
+      trine: {
+        title: "Trine",
+        body: [
+          "<p>Relationship between signs four signs apart, equivalent to 120° by degree. It indicates elemental affinity and steadier flow.</p>",
+        ],
+      },
+      opposition: {
+        title: "Opposition",
+        body: [
+          "<p>Relationship between opposite signs, equivalent to 180° by degree. It faces two poles of the same zodiacal line.</p>",
+        ],
+      },
+      applying: {
+        title: "Applying",
+        body: [
+          "<p>A planet is moving toward perfecting a relationship with another. It usually describes activity in development.</p>",
+        ],
+      },
+      separating: {
+        title: "Separating",
+        body: [
+          "<p>A planet is moving away from a perfected relationship. It points to past contact or an effect beginning to withdraw.</p>",
+        ],
+      },
+      overcoming: {
+        title: "Overcoming",
+        body: [
+          "<p>In right-sided configurations, especially the superior square, one planet may overcome another from a stronger zodiacal position.</p>",
+        ],
+      },
+      aspectPair: {
+        title: "Pair",
+        body: [
+          "<p>The two planets or points involved in a configuration.</p>",
+        ],
+      },
+      mode: {
+        title: "Mode",
+        body: [
+          "<p>Shows whether the configuration is being displayed by sign, by degree, or by both criteria.</p>",
+        ],
+      },
+      lotLord: {
+        title: "Lot lord",
+        body: [
+          "<p>The domicile ruler of the sign containing the lot. It helps judge how the lot's topic is administered.</p>",
+        ],
+      },
+      lotLordHouse: {
+        title: "Lord house",
+        body: [
+          "<p>The place occupied by the lot lord. It shows where the lot's matter is channeled.</p>",
+        ],
+      },
+      ephemeris: {
+        title: "Ephemerides",
+        body: [
+          "<p>Tables or mathematical engine for celestial positions. Tyche uses Astronomy Engine locally and keeps the older approximate engine only as fallback.</p>",
+        ],
+      },
     },
   };
 
@@ -1189,6 +2253,142 @@
       .trim();
   }
 
+  function glossaryEntry(key) {
+    return GLOSSARY[state.lang]?.[key] || GLOSSARY.es[key] || null;
+  }
+
+  function glossaryTerm(label, key, extraClass = "") {
+    const entry = glossaryEntry(key);
+    if (!entry) return escapeHtml(label);
+    const classes = ["glossary-trigger", extraClass].filter(Boolean).join(" ");
+    return `<button type="button" class="${classes}" data-glossary="${escapeHtml(key)}" aria-haspopup="dialog" aria-label="${escapeHtml(t("glossaryOpen", { term: label }))}">${escapeHtml(label)}</button>`;
+  }
+
+  function glossaryMaybe(label, key = "", extraClass = "") {
+    const resolvedKey = key || glossaryKeyForText(label);
+    return resolvedKey ? glossaryTerm(label, resolvedKey, extraClass) : escapeHtml(label);
+  }
+
+  function glossaryKeyForText(value) {
+    const normalized = normalizeText(value);
+    if (!normalized || normalized === "—" || normalized === "-") return "";
+    const matchers = [
+      ["noMajorDignity", ["sin dignidad mayor", "no major dignity"]],
+      ["domicile", ["domicilio", "domicile"]],
+      ["detriment", ["detrimento", "detriment"]],
+      ["exaltation", ["exaltacion", "exaltation"]],
+      ["fall", ["caida", "fall"]],
+      ["triplicity", ["triplicidad", "triplicity"]],
+      ["bound", ["termino", "bound"]],
+      ["decan", ["decanato", "decan"]],
+      ["underBeams", ["bajo los rayos", "under the beams", "under beams", "bajo rayos"]],
+      ["combust", ["combusto", "combust"]],
+      ["cazimi", ["cazimi", "en el corazon", "in the heart"]],
+      ["morning", ["matutino", "oriental", "morning"]],
+      ["evening", ["vespertino", "occidental", "evening"]],
+      ["moonPhase", ["luna nueva", "creciente", "gibosa", "luna llena", "diseminante", "menguante", "balsamica", "new moon", "crescent", "quarter", "gibbous", "full moon", "disseminating", "balsamic"]],
+      ["angular", ["angular"]],
+      ["succedent", ["sucedente", "succedent"]],
+      ["cadent", ["cadente", "cadent"]],
+      ["copresence", ["copresencia", "copresence"]],
+      ["sextile", ["sextil", "sextile"]],
+      ["square", ["cuadrado", "square"]],
+      ["trine", ["trigono", "trine"]],
+      ["opposition", ["oposicion", "opposition"]],
+      ["applying", ["aplicando", "applying"]],
+      ["separating", ["separando", "separating"]],
+      ["aspects", ["por signo", "by sign", "por grado", "by degree", "signo + grado", "sign + degree"]],
+      ["overcoming", ["domina", "overcomes"]],
+    ];
+    return matchers.find(([, needles]) => needles.some((needle) => normalized.includes(needle)))?.[0] || "";
+  }
+
+  function glossaryList(items) {
+    return items.map((item) => glossaryMaybe(capitalizeText(item), glossaryKeyForText(item), "capitalize-first")).join(", ");
+  }
+
+  function glossaryParts(value) {
+    const text = String(value || "");
+    if (!text || text === "—") return escapeHtml(text || "—");
+    return text.split(/(,\s*)/).map((part) => {
+      if (/^,\s*$/.test(part)) return escapeHtml(part);
+      return glossaryMaybe(capitalizeText(part), glossaryKeyForText(part), "capitalize-first");
+    }).join("");
+  }
+
+  function tableHead(label, key) {
+    return glossaryTerm(label, key, "glossary-head");
+  }
+
+  function lotGlossaryKey(key) {
+    return {
+      fortune: "lotFortune",
+      spirit: "lotSpirit",
+      eros: "lotEros",
+      necessity: "lotNecessity",
+      courage: "lotCourage",
+      victory: "lotVictory",
+      nemesis: "lotNemesis",
+    }[key] || "lots";
+  }
+
+  function decorateGlossaryTriggers(root = document) {
+    $$("[data-glossary]", root).forEach((node) => {
+      const key = node.dataset.glossary;
+      if (!glossaryEntry(key)) return;
+      node.classList.add("glossary-trigger");
+      node.setAttribute("aria-haspopup", "dialog");
+      node.setAttribute("aria-label", t("glossaryOpen", { term: node.textContent.trim() || key }));
+      if (node.tagName !== "BUTTON" && node.tagName !== "A") {
+        node.setAttribute("role", "button");
+        node.tabIndex = 0;
+      }
+    });
+    $("#glossaryClose")?.setAttribute("aria-label", t("close"));
+    if ($("#glossaryClose")) $("#glossaryClose").title = t("close");
+  }
+
+  function openGlossary(key, trigger) {
+    const entry = glossaryEntry(key);
+    if (!entry) return;
+    const popover = $("#glossaryPopover");
+    $("#glossaryTitle").textContent = entry.title;
+    $("#glossaryBody").innerHTML = entry.body.join("");
+    popover.hidden = false;
+    state.glossaryReturnFocus = trigger || null;
+    window.requestAnimationFrame(() => positionGlossary(trigger));
+  }
+
+  function closeGlossary({ restoreFocus = false } = {}) {
+    const popover = $("#glossaryPopover");
+    if (!popover || popover.hidden) return;
+    popover.hidden = true;
+    popover.removeAttribute("style");
+    if (restoreFocus && state.glossaryReturnFocus) state.glossaryReturnFocus.focus();
+    state.glossaryReturnFocus = null;
+  }
+
+  function positionGlossary(trigger) {
+    const popover = $("#glossaryPopover");
+    if (!popover || popover.hidden || !trigger) return;
+    popover.removeAttribute("style");
+    if (window.matchMedia("(max-width: 680px)").matches) return;
+    const margin = 14;
+    const triggerBox = trigger.getBoundingClientRect();
+    const popoverBox = popover.getBoundingClientRect();
+    const left = Math.min(
+      Math.max(margin, triggerBox.left),
+      Math.max(margin, window.innerWidth - popoverBox.width - margin)
+    );
+    const below = triggerBox.bottom + 8;
+    const above = triggerBox.top - popoverBox.height - 8;
+    const top = below + popoverBox.height + margin <= window.innerHeight
+      ? below
+      : Math.max(margin, above);
+    popover.style.left = `${left}px`;
+    popover.style.top = `${top}px`;
+  }
+
   function countryName(country, lang = state.lang) {
     return lang === "es" ? COUNTRY_ES[country] || country : country;
   }
@@ -1301,20 +2501,23 @@
     return Number(value).toFixed(digits);
   }
 
-  function metric(label, value) {
-    return `<div class="metric"><b>${escapeHtml(label)}</b><span>${escapeHtml(value)}</span></div>`;
+  function metric(label, value, valueClass = "", labelGlossary = "", valueGlossary = "") {
+    const classAttr = valueClass ? ` class="${valueClass}"` : "";
+    const labelHtml = labelGlossary ? glossaryTerm(label, labelGlossary) : escapeHtml(label);
+    const valueHtml = valueGlossary ? glossaryTerm(value, valueGlossary, valueClass) : escapeHtml(value);
+    return `<div class="metric"><b>${labelHtml}</b><span${classAttr}>${valueHtml}</span></div>`;
   }
 
   function badges(items) {
     if (!items.length) return "";
-    return `<div class="badge-row">${items.map((item) => `<span class="badge">${escapeHtml(item)}</span>`).join("")}</div>`;
+    return `<div class="badge-row">${items.map((item) => `<span class="badge">${glossaryMaybe(capitalizeText(item), glossaryKeyForText(item), "capitalize-first")}</span>`).join("")}</div>`;
   }
 
   function makeTable(headers, rows) {
     return `
       <div class="table-wrap">
         <table>
-          <thead><tr>${headers.map((head) => `<th>${escapeHtml(head)}</th>`).join("")}</tr></thead>
+          <thead><tr>${headers.map((head) => `<th>${head}</th>`).join("")}</tr></thead>
           <tbody>${rows
             .map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`)
             .join("")}</tbody>
@@ -2241,20 +3444,26 @@
   }
 
   function renderCoreSummary(chart) {
+    const mcNote = state.lang === "es"
+      ? `En ${glossaryTerm("casas de signos enteros", "wholeSign")}, el ${glossaryTerm(t("mc"), "mc")} y el ${glossaryTerm(t("ic"), "ic")} son puntos astronómicos: no siempre caen en las casas 10 y 4. Tyche muestra la casa por signo entero donde caen.`
+      : `In ${glossaryTerm("Whole Sign Houses", "wholeSign")}, the ${glossaryTerm(t("mc"), "mc")} and ${glossaryTerm(t("ic"), "ic")} are astronomical points: they do not always fall in houses 10 and 4. Tyche shows the whole-sign house where each point falls.`;
+    const precisionNote = state.lang === "es"
+      ? `${glossaryTerm("Efemérides", "ephemeris")} locales con Astronomy Engine, precisión aproximada ±1′ para uso educativo; revisa cartas críticas con efemérides profesionales.`
+      : `Local ${glossaryTerm("ephemerides", "ephemeris")} with Astronomy Engine, approximately ±1′ accuracy for educational use; verify critical charts with professional ephemerides.`;
     const html = `
-      <h3>${escapeHtml(t("sect"))}</h3>
+      <h3>${glossaryTerm(t("sect"), "sect")}</h3>
       <div class="metric-grid">
-        ${metric(t("sect"), chart.isDay ? t("dayChart") : t("nightChart"))}
-        ${metric(t("sectLight"), `${PLANETS[chart.sectLight].symbol} ${planetName(chart.sectLight)}`)}
-        ${metric(t("beneficSect"), `${PLANETS[chart.beneficOfSect].symbol} ${planetName(chart.beneficOfSect)}`)}
-        ${metric(t("maleficSect"), `${PLANETS[chart.maleficOfSect].symbol} ${planetName(chart.maleficOfSect)}`)}
-        ${metric(t("ascendant"), formatDegree(chart.angles.asc))}
-        ${metric(t("mc"), `${formatDegree(chart.angles.mc)} · ${t("tableHouse")} ${chart.mcHouse}`)}
-        ${metric(t("ic"), `${formatDegree(chart.angles.ic)} · ${t("tableHouse")} ${chart.icHouse}`)}
-        ${metric(t("timezoneUsed"), chart.zoneLabel)}
+        ${metric(t("sect"), chart.isDay ? t("dayChart") : t("nightChart"), "", "sect")}
+        ${metric(t("sectLight"), `${PLANETS[chart.sectLight].symbol} ${planetName(chart.sectLight)}`, "", "sectLight")}
+        ${metric(t("beneficSect"), `${PLANETS[chart.beneficOfSect].symbol} ${planetName(chart.beneficOfSect)}`, "", "beneficSect")}
+        ${metric(t("maleficSect"), `${PLANETS[chart.maleficOfSect].symbol} ${planetName(chart.maleficOfSect)}`, "", "maleficSect")}
+        ${metric(t("ascendant"), formatDegree(chart.angles.asc), "", "ascendant")}
+        ${metric(t("mc"), `${formatDegree(chart.angles.mc)} · ${t("tableHouse")} ${chart.mcHouse}`, "", "mc")}
+        ${metric(t("ic"), `${formatDegree(chart.angles.ic)} · ${t("tableHouse")} ${chart.icHouse}`, "", "ic")}
+        ${metric(t("timezoneUsed"), chart.zoneLabel, "", "timezoneUsed")}
       </div>
-      <p class="text-note">${escapeHtml(t("mcWholeSignNote"))}</p>
-      <p class="text-note">${escapeHtml(t("precisionNote"))}</p>
+      <p class="text-note">${mcNote}</p>
+      <p class="text-note">${precisionNote}</p>
     `;
     $("#coreSummary").innerHTML = html;
   }
@@ -2263,9 +3472,11 @@
     const ascSign = SIGNS[chart.ascSign];
     const lord = ascSign.ruler;
     const p = chart.positions[lord];
-    const condition = p.majorDignities.length ? p.majorDignities.join(", ") : t("noMajorDignity");
+    const condition = p.majorDignities.length
+      ? glossaryList(p.majorDignities)
+      : glossaryMaybe(capitalizeText(t("noMajorDignity")), "noMajorDignity", "capitalize-first");
     $("#ascLordPanel").innerHTML = `
-      <h3>${escapeHtml(t("ascLordTitle"))}</h3>
+      <h3>${glossaryTerm(t("ascLordTitle"), "ascLord")}</h3>
       <p class="text-note">${escapeHtml(t("ascLordText", {
         lord: `${PLANETS[lord].symbol} ${planetName(lord)}`,
         ascSign: `${ascSign.symbol} ${ascSign[state.lang]}`,
@@ -2274,7 +3485,7 @@
         topics: houseTopics(p.house),
         angularity: t(p.angularity),
       }))}</p>
-      <p class="text-note">${escapeHtml(t("dignifiedText", { condition }))}</p>
+      <p class="text-note"><strong>${glossaryTerm(t("tableCondition"), "essentialCondition")}:</strong> ${condition}.</p>
       ${badges(p.dignities)}
     `;
   }
@@ -2282,34 +3493,47 @@
   function renderMoon(chart) {
     const apps = chart.moon.applications.length ? chart.moon.applications.join(" · ") : (state.lang === "es" ? "Sin aplicaciones mayores cercanas" : "No close major applications");
     $("#moonPanel").innerHTML = `
-      <h3>${escapeHtml(t("moonTitle"))}</h3>
+      <h3>${glossaryTerm(t("moonTitle"), "lunarCondition")}</h3>
       <div class="metric-grid">
-        ${metric(t("moonPhase"), `${chart.moon.phase} · ${round(chart.moon.elongation, 1)}°`)}
-        ${metric(t("moonVoc"), chart.moon.voidOfCourse ? t("yesVoc") : t("notVoc"))}
+        ${metric(t("moonPhase"), `${chart.moon.phase} · ${round(chart.moon.elongation, 1)}°`, "capitalize-first", "moonPhase", "moonPhase")}
+        ${metric(t("moonVoc"), chart.moon.voidOfCourse ? t("yesVoc") : t("notVoc"), "", "moonVoc")}
       </div>
-      <p class="text-note"><strong>${escapeHtml(t("moonAspects"))}:</strong> ${escapeHtml(apps)}</p>
+      <p class="text-note"><strong>${glossaryTerm(t("moonAspects"), "applications")}:</strong> ${escapeHtml(apps)}</p>
     `;
   }
 
   function renderPlanetTable(chart) {
-    const headers = [t("tablePlanet"), t("tableLongitude"), t("tableHouse"), t("tableCondition"), t("tableAngularity"), t("tablePhase")];
+    const headers = [
+      tableHead(t("tablePlanet"), "planet"),
+      tableHead(t("tableLongitude"), "longitude"),
+      tableHead(t("tableHouse"), "house"),
+      tableHead(t("tableCondition"), "essentialCondition"),
+      tableHead(t("tableAngularity"), "angularity"),
+      tableHead(t("tablePhase"), "solarPhase"),
+    ];
     const rows = chart.planetKeys.map((key) => {
       const p = chart.positions[key];
-      const condition = p.dignities?.length ? capitalizeList(p.dignities) : "—";
+      const condition = p.dignities?.length ? glossaryList(p.dignities) : "—";
       return [
         `<span class="glyph">${PLANETS[key].symbol}</span> ${escapeHtml(planetName(key))}`,
         escapeHtml(formatDegree(p.lon)),
         escapeHtml(String(p.house)),
-        escapeHtml(condition),
-        escapeHtml(capitalizeText(t(p.angularity))),
-        escapeHtml(capitalizeText(p.phase || "—")),
+        condition,
+        glossaryMaybe(capitalizeText(t(p.angularity)), p.angularity, "capitalize-first"),
+        glossaryParts(p.phase || "—"),
       ];
     });
     $("#tab-planets").innerHTML = makeTable(headers, rows);
   }
 
   function renderHouseTable(chart) {
-    const headers = [t("tablePlace"), t("tableSign"), t("tableRuler"), t("tablePlanets"), t("tableTopics")];
+    const headers = [
+      tableHead(t("tablePlace"), "place"),
+      tableHead(t("tableSign"), "sign"),
+      tableHead(t("tableRuler"), "ruler"),
+      tableHead(t("tablePlanets"), "planets"),
+      tableHead(t("tableTopics"), "topics"),
+    ];
     const rows = Array.from({ length: 12 }, (_, i) => {
       const house = i + 1;
       const sIndex = (chart.ascSign + i) % 12;
@@ -2334,15 +3558,24 @@
       $("#tab-lots").innerHTML = `<p class="text-note">${escapeHtml(t("noLots"))}</p>`;
       return;
     }
-    const headers = [t("tableLot"), t("tableLongitude"), t("tableHouse"), t("tableLord"), t("tableLordHouse")];
+    const headers = [
+      tableHead(t("tableLot"), "lots"),
+      tableHead(t("tableLongitude"), "longitude"),
+      tableHead(t("tableHouse"), "house"),
+      tableHead(t("tableLord"), "lotLord"),
+      tableHead(t("tableLordHouse"), "lotLordHouse"),
+    ];
     const rows = chart.lots.map((lot) => [
-      escapeHtml(capitalizeText(lotName(lot.key))),
+      glossaryTerm(capitalizeText(lotName(lot.key)), lotGlossaryKey(lot.key), "capitalize-first"),
       escapeHtml(formatDegree(lot.lon)),
       escapeHtml(String(lot.house)),
       escapeHtml(`${PLANETS[lot.lord].symbol} ${planetName(lot.lord)}`),
       escapeHtml(String(lot.lordHouse || "—")),
     ]);
-    $("#tab-lots").innerHTML = `${makeTable(headers, rows)}<p class="text-note">${escapeHtml(t("lotFormulaNote"))}</p>`;
+    const lotNote = state.lang === "es"
+      ? `Sistema de fórmulas: ${glossaryTerm(t("fortune"), "lotFortune")} y ${glossaryTerm(t("spirit"), "lotSpirit")} se invierten por ${glossaryTerm(t("sect"), "sect")}; ${glossaryTerm("Eros", "lotEros")} y ${glossaryTerm(t("necessity"), "lotNecessity")} usan la tradición basada en ${glossaryTerm(t("fortune"), "lotFortune")} y ${glossaryTerm(t("spirit"), "lotSpirit")}; ${glossaryTerm(t("courage"), "lotCourage")}, ${glossaryTerm(t("victory"), "lotVictory")} y ${glossaryTerm("Némesis", "lotNemesis")} usan fórmulas planetarias herméticas.`
+      : `Formula system: ${glossaryTerm(t("fortune"), "lotFortune")} and ${glossaryTerm(t("spirit"), "lotSpirit")} reverse by ${glossaryTerm(t("sect"), "sect")}; ${glossaryTerm("Eros", "lotEros")} and ${glossaryTerm(t("necessity"), "lotNecessity")} use the ${glossaryTerm(t("fortune"), "lotFortune")}/${glossaryTerm(t("spirit"), "lotSpirit")}-based tradition; ${glossaryTerm(t("courage"), "lotCourage")}, ${glossaryTerm(t("victory"), "lotVictory")}, and ${glossaryTerm("Nemesis", "lotNemesis")} use hermetic planetary formulas.`;
+    $("#tab-lots").innerHTML = `${makeTable(headers, rows)}<p class="text-note">${lotNote}</p>`;
   }
 
   function renderAspectTable(chart) {
@@ -2357,18 +3590,19 @@
         const showSign = chart.input.aspectMode === "sign" || chart.input.aspectMode === "both";
         const showDegree = chart.input.aspectMode === "degree" || chart.input.aspectMode === "both";
         if (showSign && signType) {
+          const dominance = overcomingLabel(a, b, chart.positions[a].lon, chart.positions[b].lon) || "—";
           rows.push([
             escapeHtml(`${PLANETS[a].symbol} ${planetName(a)} / ${PLANETS[b].symbol} ${planetName(b)}`),
-            escapeHtml(capitalizeText(t(signType))),
-            escapeHtml(capitalizeText(t("signBased"))),
-            escapeHtml(capitalizeText(overcomingLabel(a, b, chart.positions[a].lon, chart.positions[b].lon) || "—")),
+            glossaryMaybe(capitalizeText(t(signType)), signType, "capitalize-first"),
+            glossaryMaybe(capitalizeText(t("signBased")), "aspects", "capitalize-first"),
+            glossaryMaybe(capitalizeText(dominance), glossaryKeyForText(dominance), "capitalize-first"),
           ]);
         }
         if (showDegree && degree) {
           rows.push([
             escapeHtml(`${PLANETS[a].symbol} ${planetName(a)} / ${PLANETS[b].symbol} ${planetName(b)}`),
-            escapeHtml(capitalizeText(t(degree.type))),
-            escapeHtml(capitalizeText(t("degreeBased"))),
+            glossaryMaybe(capitalizeText(t(degree.type)), degree.type, "capitalize-first"),
+            glossaryMaybe(capitalizeText(t("degreeBased")), "aspects", "capitalize-first"),
             escapeHtml(`${round(degree.delta, 2)}°`),
           ]);
         }
@@ -2378,7 +3612,12 @@
       $("#tab-aspects").innerHTML = `<p class="text-note">${escapeHtml(t("noAspects"))}</p>`;
       return;
     }
-    $("#tab-aspects").innerHTML = makeTable([t("tablePair"), t("tableAspect"), t("tableMode"), t("tableOrb")], rows);
+    $("#tab-aspects").innerHTML = makeTable([
+      tableHead(t("tablePair"), "aspectPair"),
+      tableHead(t("tableAspect"), "configurations"),
+      tableHead(t("tableMode"), "mode"),
+      tableHead(t("tableOrb"), "orb"),
+    ], rows);
   }
 
   function polar(cx, cy, r, lon, asc) {
@@ -2497,6 +3736,7 @@
     renderHistoricalPeople();
     if (state.lastChart?.input?.city) state.lastChart.input.place = formatCity(state.lastChart.input.city);
     if (state.lastChart) renderChart(state.lastChart);
+    decorateGlossaryTriggers();
   }
 
   function applyTheme() {
@@ -2550,9 +3790,34 @@
       const button = event.target.closest("[data-person-id]");
       if (button) loadHistoricalPerson(button.dataset.personId);
     });
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && !$("#peopleModal").hidden) closePeopleModal();
+    document.addEventListener("click", (event) => {
+      const trigger = event.target.closest("[data-glossary]");
+      if (trigger) {
+        event.preventDefault();
+        event.stopPropagation();
+        openGlossary(trigger.dataset.glossary, trigger);
+        return;
+      }
+      if (!event.target.closest("#glossaryPopover")) closeGlossary();
     });
+    document.addEventListener("keydown", (event) => {
+      const trigger = event.target.closest("[data-glossary]");
+      if (trigger && (event.key === "Enter" || event.key === " ")) {
+        event.preventDefault();
+        openGlossary(trigger.dataset.glossary, trigger);
+        return;
+      }
+      if (event.key === "Escape") {
+        if (!$("#glossaryPopover").hidden) {
+          closeGlossary({ restoreFocus: true });
+          return;
+        }
+        if (!$("#peopleModal").hidden) closePeopleModal();
+      }
+    });
+    $("#glossaryClose").addEventListener("click", () => closeGlossary({ restoreFocus: true }));
+    window.addEventListener("resize", () => positionGlossary(state.glossaryReturnFocus));
+    window.addEventListener("scroll", () => positionGlossary(state.glossaryReturnFocus), true);
     $("#themeToggle").addEventListener("click", () => {
       state.theme = state.theme === "night" ? "day" : "night";
       localStorage.setItem("tyche-theme", state.theme);
