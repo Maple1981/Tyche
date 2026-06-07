@@ -668,6 +668,18 @@
       .replaceAll('"', "&quot;");
   }
 
+  function capitalizeText(value) {
+    const chars = Array.from(String(value ?? ""));
+    const index = chars.findIndex((char) => char.toLowerCase() !== char.toUpperCase());
+    if (index === -1) return chars.join("");
+    chars[index] = chars[index].toLocaleUpperCase(state.lang === "es" ? "es-ES" : "en");
+    return chars.join("");
+  }
+
+  function capitalizeList(items) {
+    return items.map(capitalizeText).join(", ");
+  }
+
   function normalizeText(value) {
     return String(value || "")
       .normalize("NFD")
@@ -1010,7 +1022,8 @@
   }
 
   function renderHistoricalPeople() {
-    $("#peopleGrid").innerHTML = HISTORICAL_PEOPLE.map((person) => `
+    const people = [...HISTORICAL_PEOPLE].sort((a, b) => a.name.localeCompare(b.name, state.lang === "es" ? "es" : "en"));
+    $("#peopleGrid").innerHTML = people.map((person) => `
       <article class="person-card">
         <img src="${escapeHtml(person.image)}" alt="${escapeHtml(person.imageAlt[state.lang] || person.imageAlt.es)}" loading="lazy">
         <div>
@@ -1705,14 +1718,14 @@
     const headers = [t("tablePlanet"), t("tableLongitude"), t("tableHouse"), t("tableCondition"), t("tableAngularity"), t("tablePhase")];
     const rows = chart.planetKeys.map((key) => {
       const p = chart.positions[key];
-      const condition = p.dignities?.length ? p.dignities.join(", ") : "—";
+      const condition = p.dignities?.length ? capitalizeList(p.dignities) : "—";
       return [
         `<span class="glyph">${PLANETS[key].symbol}</span> ${escapeHtml(planetName(key))}`,
         escapeHtml(formatDegree(p.lon)),
         escapeHtml(String(p.house)),
         escapeHtml(condition),
-        escapeHtml(t(p.angularity)),
-        escapeHtml(p.phase || "—"),
+        escapeHtml(capitalizeText(t(p.angularity))),
+        escapeHtml(capitalizeText(p.phase || "—")),
       ];
     });
     $("#tab-planets").innerHTML = makeTable(headers, rows);
@@ -1729,11 +1742,11 @@
         .map((key) => `${PLANETS[key].symbol} ${planetName(key)}`)
         .join(", ") || "—";
       return [
-        escapeHtml(`${house} · ${t(placeQuality(house))}`),
+        escapeHtml(`${house} · ${capitalizeText(t(placeQuality(house)))}`),
         escapeHtml(`${sign.symbol} ${sign[state.lang]}`),
         escapeHtml(`${PLANETS[sign.ruler].symbol} ${planetName(sign.ruler)}`),
         escapeHtml(planets),
-        escapeHtml(houseTopics(house)),
+        escapeHtml(capitalizeText(houseTopics(house))),
       ];
     });
     $("#tab-houses").innerHTML = makeTable(headers, rows);
@@ -1746,7 +1759,7 @@
     }
     const headers = [t("tableLot"), t("tableLongitude"), t("tableHouse"), t("tableLord"), t("tableLordHouse")];
     const rows = chart.lots.map((lot) => [
-      escapeHtml(lotName(lot.key)),
+      escapeHtml(capitalizeText(lotName(lot.key))),
       escapeHtml(formatDegree(lot.lon)),
       escapeHtml(String(lot.house)),
       escapeHtml(`${PLANETS[lot.lord].symbol} ${planetName(lot.lord)}`),
@@ -1769,16 +1782,16 @@
         if (showSign && signType) {
           rows.push([
             escapeHtml(`${PLANETS[a].symbol} ${planetName(a)} / ${PLANETS[b].symbol} ${planetName(b)}`),
-            escapeHtml(t(signType)),
-            escapeHtml(t("signBased")),
-            escapeHtml(overcomingLabel(a, b, chart.positions[a].lon, chart.positions[b].lon) || "—"),
+            escapeHtml(capitalizeText(t(signType))),
+            escapeHtml(capitalizeText(t("signBased"))),
+            escapeHtml(capitalizeText(overcomingLabel(a, b, chart.positions[a].lon, chart.positions[b].lon) || "—")),
           ]);
         }
         if (showDegree && degree) {
           rows.push([
             escapeHtml(`${PLANETS[a].symbol} ${planetName(a)} / ${PLANETS[b].symbol} ${planetName(b)}`),
-            escapeHtml(t(degree.type)),
-            escapeHtml(t("degreeBased")),
+            escapeHtml(capitalizeText(t(degree.type))),
+            escapeHtml(capitalizeText(t("degreeBased"))),
             escapeHtml(`${round(degree.delta, 2)}°`),
           ]);
         }

@@ -67,3 +67,4 @@ The interface should feel mobile-first, calm, scholarly, and usable:
 - Do not add source PDFs, spreadsheets, extracts, OCR dumps, or attachment-derived scratch files to the repository.
 - Do not include personal chart examples or personal data in docs.
 - Do not mention external source names in the project documentation.
+- Hard rule: do not run `git push`, publish, deploy, or update GitHub Pages unless the user explicitly asks for that exact action in the current turn.
