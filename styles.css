@@ -277,11 +277,43 @@ select {
   padding: 10px 12px;
 }
 
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding-right: 42px;
+}
+
+select::-ms-expand {
+  display: none;
+}
+
 input:focus,
 select:focus,
 button:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--blue) 30%, transparent);
   outline-offset: 2px;
+}
+
+.field:has(select) {
+  position: relative;
+}
+
+.field:has(select)::after,
+.summary-chevron {
+  width: 9px;
+  height: 9px;
+  border-right: 2px solid var(--blue-deep);
+  border-bottom: 2px solid var(--blue-deep);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+.field:has(select)::after {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  content: "";
 }
 
 .advanced-panel {
@@ -298,6 +330,23 @@ button:focus-visible {
   color: var(--blue-deep);
   font-weight: 700;
   list-style: none;
+  cursor: pointer;
+  gap: 12px;
+}
+
+.advanced-panel summary:hover {
+  color: var(--blue);
+}
+
+.summary-chevron {
+  display: block;
+  flex: 0 0 auto;
+  margin-right: 18px;
+  transition: transform 160ms ease;
+}
+
+.advanced-panel[open] .summary-chevron {
+  transform: rotate(225deg);
 }
 
 .advanced-panel summary::-webkit-details-marker {

@@ -9,6 +9,7 @@
     lang: localStorage.getItem("tyche-lang") || "es",
     theme: localStorage.getItem("tyche-theme") || "day",
     lastChart: null,
+    activeCityKey: "",
   };
 
   const I18N = {
@@ -19,11 +20,10 @@
       birthDate: "Fecha",
       birthTime: "Hora exacta",
       birthPlace: "Lugar de nacimiento",
-      gender: "Sexo/género opcional",
+      gender: "Sexo",
       notUsed: "No usado",
       female: "Femenino",
       male: "Masculino",
-      other: "Otro / no binario",
       advancedOptions: "Opciones avanzadas",
       latitude: "Latitud",
       longitude: "Longitud",
@@ -167,11 +167,10 @@
       birthDate: "Date",
       birthTime: "Exact time",
       birthPlace: "Birthplace",
-      gender: "Optional sex/gender",
+      gender: "Sex",
       notUsed: "Not used",
       female: "Female",
       male: "Male",
-      other: "Other / non-binary",
       advancedOptions: "Advanced options",
       latitude: "Latitude",
       longitude: "Longitude",
@@ -547,6 +546,10 @@
 
   function formatCity(city, lang = state.lang) {
     return `${cityName(city, lang)}, ${countryName(city.country, lang)}`;
+  }
+
+  function cityKey(city) {
+    return city ? `${city.city}|${city.country}|${city.tz}` : "";
   }
 
   function planetName(key) {
@@ -1469,6 +1472,7 @@
     populateLists();
     const city = findCity($("#birthPlace").value);
     if (city) $("#birthPlace").value = formatCity(city);
+    if (city) state.activeCityKey = cityKey(city);
     if (state.lastChart?.input?.city) state.lastChart.input.place = formatCity(state.lastChart.input.city);
     if (state.lastChart) renderChart(state.lastChart);
   }
@@ -1486,11 +1490,17 @@
 
   function updatePlaceFields() {
     const city = findCity($("#birthPlace").value);
-    if (!city) return;
+    if (!city) {
+      state.activeCityKey = "";
+      return;
+    }
+    const nextCityKey = cityKey(city);
+    const cityChanged = state.activeCityKey !== nextCityKey;
     $("#birthPlace").value = formatCity(city);
-    if (!$("#latitude").value) $("#latitude").value = city.lat;
-    if (!$("#longitude").value) $("#longitude").value = city.lon;
-    if (!$("#timeZone").value) $("#timeZone").value = city.tz;
+    if (cityChanged || !$("#latitude").value) $("#latitude").value = city.lat;
+    if (cityChanged || !$("#longitude").value) $("#longitude").value = city.lon;
+    if (cityChanged || !$("#timeZone").value) $("#timeZone").value = city.tz;
+    state.activeCityKey = nextCityKey;
     try {
       const date = parseDate($("#birthDate").value);
       const time = parseTime($("#birthTime").value);
@@ -1530,6 +1540,9 @@
     });
     $("#birthPlace").addEventListener("change", updatePlaceFields);
     $("#birthPlace").addEventListener("blur", updatePlaceFields);
+    $("#birthPlace").addEventListener("input", () => {
+      if (!findCity($("#birthPlace").value)) state.activeCityKey = "";
+    });
     $("#birthDate").addEventListener("change", updatePlaceFields);
     $("#birthTime").addEventListener("change", updatePlaceFields);
     $("#chart-form").addEventListener("submit", (event) => {
