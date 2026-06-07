@@ -4,19 +4,27 @@
   const DEG = Math.PI / 180;
   const RAD = 180 / Math.PI;
   const DAY_MS = 86400000;
+  const GEOCODING_ENDPOINT = "https://geocoding-api.open-meteo.com/v1/search";
+  const PLACE_SEARCH_DELAY = 260;
+  const PLACE_RESULT_LIMIT = 8;
 
   const state = {
     lang: localStorage.getItem("tyche-lang") || "es",
     theme: localStorage.getItem("tyche-theme") || "day",
     lastChart: null,
     activeCityKey: "",
+    selectedCity: null,
+    placeSuggestions: [],
+    placeSearchTimer: 0,
+    placeSearchController: null,
+    activePlaceIndex: -1,
   };
 
   const I18N = {
     es: {
       brandSub: "Carta natal helenística generada matemáticamente",
       title: "Crea una carta natal helenística",
-      subtitle: "Calcula el Ascendente, casas por signos enteros, secta, dignidades, lotes y configuraciones tradicionales de la astrología helenística más pura. Todo con absoluta privacidad, sin enviar ningún dato fuera de tu navegador.",
+      subtitle: "Calcula el Ascendente, casas por signos enteros, secta, dignidades, lotes y configuraciones tradicionales de la astrología helenística más pura. Tus datos natales se procesan en tu navegador; sólo la búsqueda de lugar consulta coordenadas externas.",
       birthDate: "Fecha",
       birthTime: "Hora exacta",
       birthPlace: "Lugar de nacimiento",
@@ -63,6 +71,11 @@
       missingDate: "Añade fecha y hora de nacimiento.",
       missingPlace: "Elige una ciudad sugerida o introduce latitud, longitud y zona horaria.",
       missingCoords: "Faltan coordenadas válidas.",
+      placeSearchShort: "Escribe al menos 2 letras.",
+      placeSearchLoading: "Buscando lugares...",
+      placeSearchEmpty: "Sin resultados. Puedes introducir coordenadas manualmente.",
+      placeSearchError: "No se pudo consultar la búsqueda. Usando ciudades guardadas si coinciden.",
+      clearPlace: "Borrar lugar",
       invalidTimeZone: "Zona horaria no reconocida; usando la diferencia UTC manual.",
       invalidOffset: "La diferencia UTC manual debe tener formato +01:00 o -05:00.",
       chartFor: "Carta para {place}",
@@ -163,7 +176,7 @@
     en: {
       brandSub: "Mathematically generated Hellenistic natal chart",
       title: "Create a Hellenistic natal chart",
-      subtitle: "Calculate the Hour-Marker, whole sign houses, sect, dignities, lots, and traditional configurations without sending data outside the browser.",
+      subtitle: "Calculate the Hour-Marker, whole sign houses, sect, dignities, lots, and traditional configurations. Natal data is processed in your browser; only place search requests external coordinates.",
       birthDate: "Date",
       birthTime: "Exact time",
       birthPlace: "Birthplace",
@@ -210,6 +223,11 @@
       missingDate: "Add birth date and time.",
       missingPlace: "Choose a suggested city or enter latitude, longitude, and time zone.",
       missingCoords: "Valid coordinates are missing.",
+      placeSearchShort: "Type at least 2 letters.",
+      placeSearchLoading: "Searching places...",
+      placeSearchEmpty: "No results. You can enter coordinates manually.",
+      placeSearchError: "Could not query search. Using saved cities when they match.",
+      clearPlace: "Clear place",
       invalidTimeZone: "Time zone not recognized; using the manual offset.",
       invalidOffset: "Manual offset must look like +01:00 or -05:00.",
       chartFor: "Chart for {place}",
@@ -541,15 +559,40 @@
   }
 
   function cityName(city, lang = state.lang) {
+    if (city.names?.[lang]) return city.names[lang];
     return lang === "es" ? CITY_ES[city.city] || city.city : city.city;
   }
 
   function formatCity(city, lang = state.lang) {
-    return `${cityName(city, lang)}, ${countryName(city.country, lang)}`;
+    const name = cityName(city, lang);
+    const country = city.countryNames?.[lang] || countryName(city.country, lang);
+    const admin = city.admin1Names?.[lang] || city.admin1 || "";
+    const parts = [name];
+    if (admin && normalizeText(admin) !== normalizeText(name) && normalizeText(admin) !== normalizeText(country)) {
+      parts.push(admin);
+    }
+    if (country) parts.push(country);
+    return parts.join(", ");
   }
 
   function cityKey(city) {
-    return city ? `${city.city}|${city.country}|${city.tz}` : "";
+    if (!city) return "";
+    return city.id ? `${city.source || "place"}:${city.id}` : `${city.city}|${city.country}|${city.tz}`;
+  }
+
+  function citySearchValues(city) {
+    return [
+      cityName(city, "en"),
+      cityName(city, "es"),
+      formatCity(city, "en"),
+      formatCity(city, "es"),
+      city.admin1,
+      city.country,
+      city.countryCode,
+      ...(city.names ? Object.values(city.names) : []),
+      ...(city.countryNames ? Object.values(city.countryNames) : []),
+      ...(city.admin1Names ? Object.values(city.admin1Names) : []),
+    ].filter(Boolean);
   }
 
   function planetName(key) {
@@ -661,15 +704,182 @@
 
   function findCity(value) {
     const normalized = normalizeText(value);
-    return CITY_DB.find((item) => {
-      const matches = [
-        cityName(item, "en"),
-        cityName(item, "es"),
-        formatCity(item, "en"),
-        formatCity(item, "es"),
-      ].map(normalizeText);
+    const pool = [state.selectedCity, ...state.placeSuggestions, ...CITY_DB].filter(Boolean);
+    return pool.find((item) => {
+      const matches = citySearchValues(item).map(normalizeText);
       return matches.includes(normalized);
     });
+  }
+
+  function localCitySuggestions(query, limit = PLACE_RESULT_LIMIT) {
+    const normalized = normalizeText(query);
+    if (normalized.length < 2) return [];
+    return CITY_DB.filter((item) => citySearchValues(item).some((value) => normalizeText(value).includes(normalized))).slice(0, limit);
+  }
+
+  function normalizeRemoteCity(item) {
+    return {
+      id: item.id ? String(item.id) : `${item.name}|${item.latitude}|${item.longitude}`,
+      source: "open-meteo",
+      city: item.name || "",
+      country: item.country || item.country_code || "",
+      countryCode: item.country_code || "",
+      admin1: item.admin1 || "",
+      lat: Number(item.latitude),
+      lon: Number(item.longitude),
+      tz: item.timezone || "",
+      population: item.population || 0,
+      names: { [state.lang]: item.name || "" },
+      countryNames: { [state.lang]: item.country || "" },
+      admin1Names: { [state.lang]: item.admin1 || "" },
+    };
+  }
+
+  function setPlaceExpanded(expanded) {
+    $("#birthPlace").setAttribute("aria-expanded", String(expanded));
+    $("#placeSuggestions").hidden = !expanded;
+    if (!expanded) {
+      $("#birthPlace").removeAttribute("aria-activedescendant");
+      state.activePlaceIndex = -1;
+    }
+  }
+
+  function updateClearPlaceButton() {
+    $("#clearPlace").hidden = !$("#birthPlace").value.trim();
+  }
+
+  function hidePlaceSuggestions() {
+    $("#placeSuggestions").innerHTML = "";
+    state.placeSuggestions = [];
+    setPlaceExpanded(false);
+  }
+
+  function renderPlaceSuggestions(items, message = "") {
+    const panel = $("#placeSuggestions");
+    state.placeSuggestions = items;
+    state.activePlaceIndex = -1;
+    $("#birthPlace").removeAttribute("aria-activedescendant");
+
+    if (!items.length && !message) {
+      hidePlaceSuggestions();
+      return;
+    }
+
+    const rows = items.map((item, index) => {
+      const admin = item.admin1Names?.[state.lang] || item.admin1 || "";
+      const country = item.countryNames?.[state.lang] || countryName(item.country);
+      const meta = [admin, country, item.tz].filter(Boolean).join(" · ");
+      return `
+        <button class="place-suggestion" id="place-option-${index}" type="button" role="option" aria-selected="false" data-place-index="${index}">
+          <strong>${escapeHtml(formatCity(item))}</strong>
+          <span>${escapeHtml(meta || `${round(item.lat, 4)}, ${round(item.lon, 4)}`)}</span>
+        </button>
+      `;
+    });
+    panel.innerHTML = `${message ? `<p class="place-message">${escapeHtml(message)}</p>` : ""}${rows.join("")}`;
+    setPlaceExpanded(true);
+  }
+
+  async function fetchPlaceSuggestions(query) {
+    state.placeSearchController?.abort();
+    const controller = new AbortController();
+    state.placeSearchController = controller;
+    renderPlaceSuggestions([], t("placeSearchLoading"));
+
+    const url = new URL(GEOCODING_ENDPOINT);
+    url.searchParams.set("name", query);
+    url.searchParams.set("count", String(PLACE_RESULT_LIMIT));
+    url.searchParams.set("language", state.lang);
+    url.searchParams.set("format", "json");
+
+    try {
+      const response = await fetch(url, { signal: controller.signal });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      const remote = (data.results || [])
+        .map(normalizeRemoteCity)
+        .filter((item) => item.city && Number.isFinite(item.lat) && Number.isFinite(item.lon));
+      const local = localCitySuggestions(query, 3);
+      const seen = new Set();
+      const combined = [...remote, ...local].filter((item) => {
+        const key = cityKey(item);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      }).slice(0, PLACE_RESULT_LIMIT);
+      renderPlaceSuggestions(combined, combined.length ? "" : t("placeSearchEmpty"));
+    } catch (error) {
+      if (error.name === "AbortError") return;
+      const local = localCitySuggestions(query);
+      renderPlaceSuggestions(local, local.length ? t("placeSearchError") : t("placeSearchEmpty"));
+    } finally {
+      if (state.placeSearchController === controller) state.placeSearchController = null;
+    }
+  }
+
+  function queuePlaceSearch() {
+    const query = $("#birthPlace").value.trim();
+    updateClearPlaceButton();
+    window.clearTimeout(state.placeSearchTimer);
+    state.placeSearchController?.abort();
+
+    if (query.length < 2) {
+      renderPlaceSuggestions([], query ? t("placeSearchShort") : "");
+      return;
+    }
+
+    state.placeSearchTimer = window.setTimeout(() => fetchPlaceSuggestions(query), PLACE_SEARCH_DELAY);
+  }
+
+  function updateActivePlace() {
+    $$(".place-suggestion").forEach((button, index) => {
+      const active = index === state.activePlaceIndex;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-selected", String(active));
+      if (active) {
+        $("#birthPlace").setAttribute("aria-activedescendant", button.id);
+        button.scrollIntoView({ block: "nearest" });
+      }
+    });
+  }
+
+  function moveActivePlace(delta) {
+    if (!state.placeSuggestions.length) return;
+    state.activePlaceIndex = (state.activePlaceIndex + delta + state.placeSuggestions.length) % state.placeSuggestions.length;
+    updateActivePlace();
+  }
+
+  function updateOffsetForCity(city) {
+    if (!city?.tz) return;
+    try {
+      const date = parseDate($("#birthDate").value);
+      const time = parseTime($("#birthTime").value);
+      if (date && time) {
+        const zoned = zonedTimeToUtc(date.y, date.m, date.d, time.h, time.min, city.tz);
+        $("#manualOffset").value = formatOffset(zoned.offset);
+      }
+    } catch {
+      $("#manualOffset").value = "+00:00";
+    }
+  }
+
+  function applyCityToFields(city, force = true) {
+    state.selectedCity = city;
+    state.activeCityKey = cityKey(city);
+    $("#birthPlace").value = formatCity(city);
+    if (force || !$("#latitude").value) $("#latitude").value = round(city.lat, 4);
+    if (force || !$("#longitude").value) $("#longitude").value = round(city.lon, 4);
+    if (city.tz && (force || !$("#timeZone").value)) $("#timeZone").value = city.tz;
+    updateClearPlaceButton();
+    updateOffsetForCity(city);
+  }
+
+  function selectPlaceSuggestion(index) {
+    const city = state.placeSuggestions[index];
+    if (!city) return;
+    applyCityToFields(city, true);
+    hidePlaceSuggestions();
+    $("#birthPlace").blur();
   }
 
   function parseDate(value) {
@@ -1469,10 +1679,17 @@
     $("#themeToggle").setAttribute("aria-label", state.lang === "es" ? "Cambiar tema" : "Change theme");
     $("#themeToggle").title = state.lang === "es" ? "Cambiar tema" : "Change theme";
     $("#birthPlace").placeholder = state.lang === "es" ? "Madrid, España" : "Madrid, Spain";
+    $("#clearPlace").setAttribute("aria-label", t("clearPlace"));
+    $("#clearPlace").title = t("clearPlace");
     populateLists();
     const city = findCity($("#birthPlace").value);
-    if (city) $("#birthPlace").value = formatCity(city);
-    if (city) state.activeCityKey = cityKey(city);
+    if (city) {
+      state.selectedCity = city;
+      state.activeCityKey = cityKey(city);
+      $("#birthPlace").value = formatCity(city);
+    }
+    updateClearPlaceButton();
+    hidePlaceSuggestions();
     if (state.lastChart?.input?.city) state.lastChart.input.place = formatCity(state.lastChart.input.city);
     if (state.lastChart) renderChart(state.lastChart);
   }
@@ -1483,34 +1700,19 @@
   }
 
   function populateLists() {
-    const cities = [...new Set(CITY_DB.map((item) => formatCity(item)))];
-    $("#cityList").innerHTML = cities.map((city) => `<option value="${escapeHtml(city)}"></option>`).join("");
     $("#timezoneList").innerHTML = TIME_ZONES.map((zone) => `<option value="${escapeHtml(zone)}"></option>`).join("");
   }
 
   function updatePlaceFields() {
     const city = findCity($("#birthPlace").value);
     if (!city) {
+      state.selectedCity = null;
       state.activeCityKey = "";
       return;
     }
     const nextCityKey = cityKey(city);
     const cityChanged = state.activeCityKey !== nextCityKey;
-    $("#birthPlace").value = formatCity(city);
-    if (cityChanged || !$("#latitude").value) $("#latitude").value = city.lat;
-    if (cityChanged || !$("#longitude").value) $("#longitude").value = city.lon;
-    if (cityChanged || !$("#timeZone").value) $("#timeZone").value = city.tz;
-    state.activeCityKey = nextCityKey;
-    try {
-      const date = parseDate($("#birthDate").value);
-      const time = parseTime($("#birthTime").value);
-      if (date && time) {
-        const zoned = zonedTimeToUtc(date.y, date.m, date.d, time.h, time.min, city.tz);
-        $("#manualOffset").value = formatOffset(zoned.offset);
-      }
-    } catch {
-      $("#manualOffset").value = "+00:00";
-    }
+    applyCityToFields(city, cityChanged);
   }
 
   function bindTabs() {
@@ -1528,6 +1730,7 @@
   }
 
   function bindEvents() {
+    const birthPlace = $("#birthPlace");
     $("#languageToggle").addEventListener("click", () => {
       state.lang = state.lang === "es" ? "en" : "es";
       localStorage.setItem("tyche-lang", state.lang);
@@ -1538,10 +1741,58 @@
       localStorage.setItem("tyche-theme", state.theme);
       applyTheme();
     });
-    $("#birthPlace").addEventListener("change", updatePlaceFields);
-    $("#birthPlace").addEventListener("blur", updatePlaceFields);
-    $("#birthPlace").addEventListener("input", () => {
-      if (!findCity($("#birthPlace").value)) state.activeCityKey = "";
+    birthPlace.addEventListener("focus", () => {
+      if (state.selectedCity && normalizeText(birthPlace.value) === normalizeText(formatCity(state.selectedCity))) {
+        birthPlace.select();
+      }
+      queuePlaceSearch();
+    });
+    birthPlace.addEventListener("input", () => {
+      state.selectedCity = null;
+      state.activeCityKey = "";
+      queuePlaceSearch();
+    });
+    birthPlace.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        if ($("#placeSuggestions").hidden) queuePlaceSearch();
+        moveActivePlace(1);
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        moveActivePlace(-1);
+      } else if (event.key === "Enter" && state.placeSuggestions.length) {
+        event.preventDefault();
+        selectPlaceSuggestion(state.activePlaceIndex >= 0 ? state.activePlaceIndex : 0);
+      } else if (event.key === "Escape") {
+        hidePlaceSuggestions();
+      }
+    });
+    birthPlace.addEventListener("blur", () => {
+      window.setTimeout(() => {
+        updatePlaceFields();
+        hidePlaceSuggestions();
+      }, 120);
+    });
+    $("#clearPlace").addEventListener("click", () => {
+      state.selectedCity = null;
+      state.activeCityKey = "";
+      birthPlace.value = "";
+      $("#latitude").value = "";
+      $("#longitude").value = "";
+      $("#timeZone").value = "";
+      updateClearPlaceButton();
+      hidePlaceSuggestions();
+      birthPlace.focus();
+    });
+    $("#placeSuggestions").addEventListener("mousedown", (event) => {
+      event.preventDefault();
+    });
+    $("#placeSuggestions").addEventListener("click", (event) => {
+      const button = event.target.closest("[data-place-index]");
+      if (button) selectPlaceSuggestion(Number(button.dataset.placeIndex));
+    });
+    document.addEventListener("pointerdown", (event) => {
+      if (!event.target.closest(".place-field")) hidePlaceSuggestions();
     });
     $("#birthDate").addEventListener("change", updatePlaceFields);
     $("#birthTime").addEventListener("change", updatePlaceFields);
@@ -1550,6 +1801,7 @@
       $("#formStatus").textContent = "";
       try {
         updatePlaceFields();
+        hidePlaceSuggestions();
         const chart = computeChart(readInput());
         renderChart(chart);
       } catch (error) {

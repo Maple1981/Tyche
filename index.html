@@ -53,7 +53,7 @@
           <div class="intro-copy">
             <p class="eyebrow">☿ ♀ ♂ ♃ ♄</p>
             <h1 id="main-title" data-i18n="title">Crea una carta natal helenística</h1>
-            <p data-i18n="subtitle">Calcula el Ascendente, casas por signos enteros, secta, dignidades, lotes y configuraciones tradicionales de la astrología helenística más pura. Todo con absoluta privacidad, sin enviar ningún dato fuera de tu navegador.</p>
+            <p data-i18n="subtitle">Calcula el Ascendente, casas por signos enteros, secta, dignidades, lotes y configuraciones tradicionales de la astrología helenística más pura. Tus datos natales se procesan en tu navegador; sólo la búsqueda de lugar consulta coordenadas externas.</p>
           </div>
 
           <form id="chart-form" class="chart-form" autocomplete="off">
@@ -66,11 +66,14 @@
                 <span data-i18n="birthTime">Hora exacta</span>
                 <input id="birthTime" type="time" step="60" required>
               </label>
-              <label class="field field-wide">
-                <span data-i18n="birthPlace">Lugar de nacimiento</span>
-                <input id="birthPlace" type="text" list="cityList" placeholder="Madrid, España" required>
-                <datalist id="cityList"></datalist>
-              </label>
+              <div class="field field-wide place-field">
+                <label class="field-label" for="birthPlace" data-i18n="birthPlace">Lugar de nacimiento</label>
+                <div class="autocomplete-control">
+                  <input id="birthPlace" type="text" placeholder="Madrid, España" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="placeSuggestions" required>
+                  <button class="clear-place" id="clearPlace" type="button" aria-label="Borrar lugar" title="Borrar lugar" hidden>×</button>
+                </div>
+                <div id="placeSuggestions" class="place-suggestions" role="listbox" hidden></div>
+              </div>
               <label class="field">
                 <span data-i18n="gender">Sexo</span>
                 <select id="gender">

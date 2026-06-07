@@ -260,10 +260,15 @@ h1 {
 }
 
 .field span,
+.field-label,
 .lot-fieldset legend {
   color: var(--muted);
   font-size: 0.82rem;
   font-weight: 700;
+}
+
+.field-label {
+  display: block;
 }
 
 input,
@@ -314,6 +319,92 @@ button:focus-visible {
   right: 18px;
   bottom: 18px;
   content: "";
+}
+
+.place-field {
+  position: relative;
+}
+
+.autocomplete-control {
+  position: relative;
+}
+
+.autocomplete-control input {
+  padding-right: 44px;
+}
+
+.clear-place {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--blue-deep);
+  font-size: 1.35rem;
+  line-height: 1;
+  transform: translateY(-50%);
+}
+
+.clear-place:hover {
+  background: color-mix(in srgb, var(--blue) 12%, transparent);
+}
+
+.clear-place[hidden] {
+  display: none;
+}
+
+.place-suggestions {
+  position: absolute;
+  z-index: 35;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: min(52vh, 340px);
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  padding: 6px;
+}
+
+.place-message {
+  margin: 0;
+  padding: 10px 11px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.place-suggestion {
+  display: grid;
+  width: 100%;
+  min-height: 52px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--ink);
+  padding: 9px 11px;
+  text-align: left;
+}
+
+.place-suggestion:hover,
+.place-suggestion.is-active {
+  background: var(--blue-soft);
+}
+
+.place-suggestion strong {
+  font-size: 0.94rem;
+}
+
+.place-suggestion span {
+  color: var(--muted);
+  font-size: 0.78rem;
 }
 
 .advanced-panel {
