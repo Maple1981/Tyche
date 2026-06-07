@@ -22,6 +22,7 @@ Risk areas:
 - Ancient dates and calendar conversions are not fully supported.
 - Time zone accuracy depends on browser IANA data or manual offset.
 - Place lookup is limited to the embedded gazetteer unless coordinates are entered manually.
+- Manual offsets for historical examples must be treated as source-specific historical data, not as guaranteed civil time-zone records.
 
 ## Supported Defaults
 
@@ -36,7 +37,9 @@ Defaults should remain:
 
 ## Privacy
 
-The app does not send birth data anywhere. All calculations are in the browser.
+The app does not send birth date, time, or chart data anywhere. Chart calculations are performed in the browser.
+
+Place search may contact an external geocoding service with the typed place query in order to obtain coordinates. Do not describe the whole app as completely anonymous.
 
 No personal examples, private data, source attachments, OCR dumps, or spreadsheets should be committed.
 

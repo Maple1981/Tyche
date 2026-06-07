@@ -15,6 +15,7 @@
     activeCityKey: "",
     selectedCity: null,
     selectedPersonName: "",
+    selectedZoneSource: "",
     placeSuggestions: [],
     placeSearchTimer: 0,
     placeSearchController: null,
@@ -26,7 +27,7 @@
     es: {
       brandSub: "Carta natal helenística generada matemáticamente",
       title: "Crea una carta natal helenística",
-      subtitle: "Calcula el Ascendente, las casas de signos enteros (Whole Sign Houses), la secta, las dignidades, los lotes y otros elementos de la tradición astrológica helenística. Todo con absoluta privacidad: la carta al completo se procesa localmente en tu navegador. Solo la búsqueda de lugares consulta coordenadas externas.",
+      subtitle: "Calcula el Ascendente, las casas de signos enteros (Whole Sign Houses), la secta, la condición esencial, los lotes y otros elementos de la tradición astrológica helenística. Todo con absoluta privacidad: la carta al completo se procesa localmente en tu navegador. Solo la búsqueda de lugares consulta coordenadas externas.",
       birthDate: "Fecha de nacimiento",
       birthTime: "Hora de nacimiento",
       birthPlace: "Lugar de nacimiento",
@@ -89,7 +90,7 @@
       dataPlace: "Lugar",
       dataSex: "Sexo",
       footerWarning: "Motor astronómico pensado para uso educativo. La información proporcionada es solo orientativa.",
-      footerPrivacy: "La aplicación no guarda datos en ningún repositorio ni utiliza cookies. Su uso es completamente anónimo.",
+      footerPrivacy: "La carta se calcula localmente en tu navegador. No guardamos tus datos ni usamos cookies. La búsqueda de lugares consulta un servicio externo solo para obtener coordenadas.",
       footerAuthors: "Autores: Maple81 y Proserpina, 2026.",
       githubLink: "Ver repositorio GitHub",
       footerAttributions: 'Atribuciones generales: imágenes de <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; datos de personajes históricos de <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a> y <a href="https://www.astro.com/astro-databank/" target="_blank" rel="noreferrer">Astro-Databank</a>; búsqueda de localización mediante <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>.',
@@ -113,7 +114,8 @@
       julianDay: "Día juliano",
       ascLordTitle: "Regente del Ascendente",
       ascLordText: "{lord} rige {ascSign} y cae en {lordPosition}, casa {house}. Esta casa pone el timón de la carta sobre {topics}. Su angularidad es {angularity}.",
-      dignifiedText: "Condición: {condition}.",
+      dignifiedText: "Condición esencial: {condition}.",
+      mcWholeSignNote: "En casas de signos enteros, el MC y el IC son puntos astronómicos: no siempre caen en las casas 10 y 4. Tyche muestra la casa por signo entero donde caen.",
       noMajorDignity: "sin dignidad mayor",
       moonTitle: "Condición lunar",
       moonPhase: "Fase",
@@ -124,7 +126,7 @@
       tablePlanet: "Planeta",
       tableLongitude: "Longitud",
       tableHouse: "Casa",
-      tableCondition: "Condición",
+      tableCondition: "Condición esencial",
       tableAngularity: "Angularidad",
       tablePhase: "Fase solar",
       tablePlace: "Lugar",
@@ -180,6 +182,10 @@
       overcoming: "{planet} domina",
       noAspects: "No hay configuraciones que mostrar con los ajustes actuales.",
       noLots: "No hay lotes seleccionados.",
+      lotFormulaNote: "Sistema de fórmulas: Fortuna y Espíritu se invierten por secta; Eros y Necesidad usan la tradición basada en Fortuna y Espíritu; Coraje, Victoria y Némesis usan fórmulas planetarias herméticas.",
+      manualOffsetSource: "diferencia UTC manual",
+      historicalOffsetSource: "datos históricos del personaje",
+      lmtOffsetSource: "LMT por longitud del lugar",
       topics1: "cuerpo, carácter, vitalidad y dirección de vida",
       topics2: "recursos, dinero, posesiones y medios de vida",
       topics3: "hermanos, parientes, mensajes, viajes y ritos",
@@ -196,7 +202,7 @@
     en: {
       brandSub: "Mathematically generated Hellenistic natal chart",
       title: "Create a Hellenistic natal chart",
-      subtitle: "Calculate the Hour-Marker, Whole Sign Houses, sect, dignities, lots, and other elements of the Hellenistic astrological tradition. The full chart is processed locally in your browser; only place search requests external coordinates.",
+      subtitle: "Calculate the Hour-Marker, Whole Sign Houses, sect, essential condition, lots, and other elements of the Hellenistic astrological tradition. The full chart is processed locally in your browser; only place search requests external coordinates.",
       birthDate: "Date",
       birthTime: "Exact time",
       birthPlace: "Birthplace",
@@ -259,7 +265,7 @@
       dataPlace: "Place",
       dataSex: "Sex",
       footerWarning: "Astronomical engine intended for educational use. The information provided may not be reliable.",
-      footerPrivacy: "The application does not store data in any repository or use cookies. Use is completely anonymous.",
+      footerPrivacy: "The chart is calculated locally in your browser. We do not store your data or use cookies. Place search consults an external service only to obtain coordinates.",
       footerAuthors: "Authors: Maple81 and Proserpina, 2026.",
       githubLink: "View GitHub repository",
       footerAttributions: 'General attributions: images from <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; historical figure data from <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a> and <a href="https://www.astro.com/astro-databank/" target="_blank" rel="noreferrer">Astro-Databank</a>; place search by <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>.',
@@ -283,7 +289,8 @@
       julianDay: "Julian day",
       ascLordTitle: "Lord of the Hour-Marker",
       ascLordText: "{lord} rules {ascSign} and falls in {lordPosition}, house {house}. This house steers the chart toward {topics}. Its angularity is {angularity}.",
-      dignifiedText: "Condition: {condition}.",
+      dignifiedText: "Essential condition: {condition}.",
+      mcWholeSignNote: "In Whole Sign Houses, the MC and IC are astronomical points: they do not always fall in houses 10 and 4. Tyche shows the whole-sign house where each point falls.",
       noMajorDignity: "no major dignity",
       moonTitle: "Lunar condition",
       moonPhase: "Phase",
@@ -294,7 +301,7 @@
       tablePlanet: "Planet",
       tableLongitude: "Longitude",
       tableHouse: "House",
-      tableCondition: "Condition",
+      tableCondition: "Essential condition",
       tableAngularity: "Angularity",
       tablePhase: "Solar phase",
       tablePlace: "Place",
@@ -350,6 +357,10 @@
       overcoming: "{planet} overcomes",
       noAspects: "No configurations to show with the current settings.",
       noLots: "No lots selected.",
+      lotFormulaNote: "Formula system: Fortune and Spirit reverse by sect; Eros and Necessity use the Fortune/Spirit-based tradition; Courage, Victory, and Nemesis use hermetic planetary formulas.",
+      manualOffsetSource: "manual UTC offset",
+      historicalOffsetSource: "historical figure data",
+      lmtOffsetSource: "LMT by birthplace longitude",
       topics1: "body, character, vitality, and life direction",
       topics2: "resources, money, possessions, and livelihood",
       topics3: "siblings, relatives, messages, travel, and ritual",
@@ -546,7 +557,7 @@
       date: "1881-10-25",
       time: "23:15",
       calendar: "gregorian",
-      manualOffset: "-00:18",
+      manualOffset: "-00:14",
       place: {
         city: "Málaga",
         country: "Spain",
@@ -1509,6 +1520,7 @@
 
   function clearHistoricalSelection() {
     state.selectedPersonName = "";
+    state.selectedZoneSource = "";
   }
 
   function renderHistoricalPeople() {
@@ -1560,6 +1572,7 @@
     if (!person) return;
     state.selectedCity = person.place;
     state.selectedPersonName = person.name;
+    state.selectedZoneSource = t("historicalOffsetSource");
     state.activeCityKey = cityKey(person.place);
     $("#birthDate").value = person.date;
     $("#birthTime").value = person.time;
@@ -1683,13 +1696,14 @@
 
     const manualOffset = parseOffset(input.manualOffset);
     if (manualOffset === null) throw new Error(t("invalidOffset"));
+    const manualZoneLabel = `UTC${formatOffset(manualOffset)} · ${input.zoneSource || t("manualOffsetSource")}`;
 
     if (input.calendar === "julian") {
       const day = date.d + (time.h + time.min / 60 - manualOffset / 60) / 24;
       return {
         jd: calendarToJd(date.y, date.m, day, "julian"),
         offset: manualOffset,
-        zoneLabel: `UTC${formatOffset(manualOffset)}`,
+        zoneLabel: manualZoneLabel,
       };
     }
 
@@ -1710,7 +1724,7 @@
     return {
       jd: utcMs / DAY_MS + 2440587.5,
       offset: manualOffset,
-      zoneLabel: `UTC${formatOffset(manualOffset)}`,
+      zoneLabel: manualZoneLabel,
     };
   }
 
@@ -1827,7 +1841,7 @@
 
   function tropicalPositions(jd, includeModern) {
     const d = jd - 2451543.5;
-    const earth = heliocentricCoords("earth", d);
+    const sunVector = heliocentricCoords("earth", d);
     const result = {
       sun: { lon: sunLongitude(jd), lat: 0 },
       moon: moonPosition(jd),
@@ -1837,9 +1851,9 @@
     if (includeModern) keys.push(...MODERN_KEYS);
     keys.forEach((key) => {
       const planet = heliocentricCoords(key, d);
-      const x = planet.x - earth.x;
-      const y = planet.y - earth.y;
-      const z = planet.z - earth.z;
+      const x = planet.x + sunVector.x;
+      const y = planet.y + sunVector.y;
+      const z = planet.z + sunVector.z;
       result[key] = {
         lon: norm360(atan2D(y, x)),
         lat: atan2D(z, Math.sqrt(x * x + y * y)),
@@ -1865,7 +1879,8 @@
     const lst = norm360(gmst + lon);
     const eps = meanObliquity(jd);
     const mcTropical = norm360(atan2D(sinD(lst) / cosD(eps), cosD(lst)));
-    const ascTropical = norm360(atan2D(-cosD(lst), sinD(lst) * cosD(eps) + tanD(lat) * sinD(eps)));
+    const descTropical = norm360(atan2D(-cosD(lst), sinD(lst) * cosD(eps) + tanD(lat) * sinD(eps)));
+    const ascTropical = norm360(descTropical + 180);
     return {
       lst,
       eps,
@@ -1873,7 +1888,7 @@
       mcRaw: mcTropical,
       asc: applyZodiac(ascTropical, jd, zodiac),
       mc: applyZodiac(mcTropical, jd, zodiac),
-      desc: applyZodiac(ascTropical + 180, jd, zodiac),
+      desc: applyZodiac(descTropical, jd, zodiac),
       ic: applyZodiac(mcTropical + 180, jd, zodiac),
     };
   }
@@ -2066,6 +2081,7 @@
       longitude,
       timeZone,
       manualOffset: $("#manualOffset").value.trim(),
+      zoneSource: state.selectedZoneSource,
       calendar: $("#calendar").value,
       zodiac: $("#zodiac").value,
       aspectMode: $("#aspectMode").value,
@@ -2186,6 +2202,7 @@
         ${metric(t("ic"), `${formatDegree(chart.angles.ic)} · ${t("tableHouse")} ${chart.icHouse}`)}
         ${metric(t("timezoneUsed"), chart.zoneLabel)}
       </div>
+      <p class="text-note">${escapeHtml(t("mcWholeSignNote"))}</p>
     `;
     $("#coreSummary").innerHTML = html;
   }
@@ -2273,7 +2290,7 @@
       escapeHtml(`${PLANETS[lot.lord].symbol} ${planetName(lot.lord)}`),
       escapeHtml(String(lot.lordHouse || "—")),
     ]);
-    $("#tab-lots").innerHTML = makeTable(headers, rows);
+    $("#tab-lots").innerHTML = `${makeTable(headers, rows)}<p class="text-note">${escapeHtml(t("lotFormulaNote"))}</p>`;
   }
 
   function renderAspectTable(chart) {
@@ -2392,8 +2409,8 @@
     $("meta[name='description']")?.setAttribute(
       "content",
       state.lang === "es"
-        ? "Tyche calcula cartas natales helenísticas con Ascendente, casas de signos enteros, secta, dignidades y lotes, procesadas localmente en el navegador."
-        : "Tyche calculates Hellenistic natal charts with the Hour-Marker, Whole Sign Houses, sect, dignities, and lots, processed locally in the browser."
+        ? "Tyche calcula cartas natales helenísticas con Ascendente, casas de signos enteros, secta, condición esencial y lotes, procesadas localmente en el navegador."
+        : "Tyche calculates Hellenistic natal charts with the Hour-Marker, Whole Sign Houses, sect, essential condition, and lots, processed locally in the browser."
     );
     $$("[data-i18n]").forEach((node) => {
       node.textContent = t(node.dataset.i18n);

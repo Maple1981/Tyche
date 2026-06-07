@@ -6,10 +6,10 @@ The first screen should be the working chart creator, not a landing page.
 
 Primary fields:
 
-- Date.
-- Exact time.
+- Birth date.
+- Birth time.
 - Birthplace.
-- Optional sex/gender when a technique requires it.
+- Optional sex when a technique requires it.
 - Submit button.
 - Advanced options disclosure.
 
@@ -44,8 +44,10 @@ The Hour-Marker lord panel should answer:
 - Which planet rules the Ascendant sign?
 - Where is it by sign, degree, and house?
 - Is it angular, succedent, or cadent?
-- What dignities or debilities does it have?
+- What essential dignities or weaknesses does it have?
 - What life topics are emphasized by its house?
+
+Whole Sign Houses should explain that the MC and IC are astronomical points and do not always fall in houses 10 and 4.
 
 ## Tone
 

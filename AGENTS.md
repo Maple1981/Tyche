@@ -22,7 +22,7 @@ Core derived data:
 - MC/IC sign and their whole sign house.
 - Sect by solar altitude: diurnal if the Sun is above the horizon, nocturnal if below.
 - Benefic/malefic of the sect: Jupiter/Saturn for day, Venus/Mars for night.
-- Dignities: domicile, detriment, exaltation, fall, triplicity, Egyptian bounds, decans.
+- Essential condition: domicile, exaltation, triplicity, Egyptian bounds, decans, detriment, fall.
 - Angularity by whole sign: angular 1/4/7/10, succedent 2/5/8/11, cadent 3/6/9/12.
 - Lots: Fortune, Spirit, Eros, Necessity, Courage, Victory, Nemesis.
 - Solar phase states: morning/evening, under beams, combustion, cazimi.
@@ -58,7 +58,7 @@ The interface should feel mobile-first, calm, scholarly, and usable:
 - Standard zodiac and planetary glyphs.
 - Day/night theme toggle.
 - English/Spanish language toggle.
-- First-screen form fields: date, exact time, birthplace, optional sex/gender, advanced options button.
+- First-screen form fields: birth date, birth time, birthplace, optional sex, advanced options button.
 - Advanced options: zodiac, house system, orb, lots, terms system, modern planets, strict vs mixed mode.
 
 ## Repository Hygiene

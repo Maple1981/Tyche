@@ -18,6 +18,8 @@ Use UTC for astronomical calculations. Convert local civil time to UTC through:
 1. Recognized IANA time zone, with historical offset from browser `Intl` data.
 2. Manual offset fallback when the place or time zone is not recognized.
 
+When a manual offset is used, label it as manual or as historical example data. Do not imply that an old local mean time or historical offset came from IANA data.
+
 Default zodiac is tropical. A sidereal option may be present only as an advanced setting and should be labeled as outside the strict default.
 
 ## Angles
@@ -28,7 +30,7 @@ Calculate:
 - Mean obliquity.
 - Local sidereal time.
 - MC from local sidereal time.
-- Ascendant from local sidereal time and latitude.
+- Ascendant from local sidereal time and latitude; verify that the formula returns the eastern horizon, not the western horizon/Descendant.
 - IC and Descendant by opposition.
 
 Whole sign houses begin from the Ascendant sign.
@@ -50,17 +52,19 @@ Derived sect roles:
 
 Mercury is assigned toward day if it is a morning star and toward night if it is an evening star.
 
-## Dignities
+## Essential Condition
 
-Evaluate each traditional planet by:
+Evaluate each traditional planet by essential dignities and weaknesses:
 
 - Domicile.
-- Detriment.
 - Exaltation.
-- Fall.
 - Triplicity ruler of the sign.
 - Egyptian bound.
 - Decan/face.
+- Detriment.
+- Fall.
+
+Domicile, exaltation, triplicity, bound, and decan are dignities. Detriment and fall are essential weaknesses and should not be described as dignities.
 
 Triplicity rulers:
 
@@ -114,7 +118,7 @@ Principal lots:
 - Fortune: day Asc + Moon - Sun; night Asc + Sun - Moon.
 - Spirit: day Asc + Sun - Moon; night Asc + Moon - Sun.
 
-Earlier Eros and Necessity set:
+Eros and Necessity use the older Fortune/Spirit-based tradition:
 
 - Eros: day Asc + Spirit - Fortune; night Asc + Fortune - Spirit.
 - Necessity: day Asc + Fortune - Spirit; night Asc + Spirit - Fortune.
