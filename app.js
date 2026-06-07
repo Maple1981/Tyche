@@ -18,6 +18,7 @@
     placeSearchTimer: 0,
     placeSearchController: null,
     activePlaceIndex: -1,
+    modalReturnFocus: null,
   };
 
   const I18N = {
@@ -76,6 +77,20 @@
       placeSearchEmpty: "Sin resultados. Puedes introducir coordenadas manualmente.",
       placeSearchError: "No se pudo consultar la búsqueda. Usando ciudades guardadas si coinciden.",
       clearPlace: "Borrar lugar",
+      peopleEyebrow: "Archivo",
+      peopleTitle: "Personajes históricos",
+      peopleIntro: "Elige una carta de ejemplo con fecha, hora, lugar y sexo ya preparados.",
+      peopleButton: "Personajes históricos",
+      close: "Cerrar",
+      useExample: "Usar esta carta",
+      dataDate: "Fecha",
+      dataPlace: "Lugar",
+      dataSex: "Sexo",
+      footerWarning: "Motor astronómico pensado para uso educativo. La información proporcionada puede no ser fiable.",
+      footerPrivacy: "La aplicación no guarda datos en ningún repositorio ni utiliza cookies. Su uso es completamente anónimo.",
+      footerAuthors: "Autores: Maple81 y Proserpina, 2026.",
+      githubLink: "Ver repositorio GitHub",
+      footerAttributions: 'Atribuciones generales: imágenes de <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; datos de personajes históricos de <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a>; búsqueda de localización mediante <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>.',
       invalidTimeZone: "Zona horaria no reconocida; usando la diferencia UTC manual.",
       invalidOffset: "La diferencia UTC manual debe tener formato +01:00 o -05:00.",
       chartFor: "Carta para {place}",
@@ -228,6 +243,20 @@
       placeSearchEmpty: "No results. You can enter coordinates manually.",
       placeSearchError: "Could not query search. Using saved cities when they match.",
       clearPlace: "Clear place",
+      peopleEyebrow: "Archive",
+      peopleTitle: "Historical figures",
+      peopleIntro: "Choose an example chart with date, time, place, and sex already prepared.",
+      peopleButton: "Historical figures",
+      close: "Close",
+      useExample: "Use this chart",
+      dataDate: "Date",
+      dataPlace: "Place",
+      dataSex: "Sex",
+      footerWarning: "Astronomical engine intended for educational use. The information provided may not be reliable.",
+      footerPrivacy: "The application does not store data in any repository or use cookies. Use is completely anonymous.",
+      footerAuthors: "Authors: Maple81 and Proserpina, 2026.",
+      githubLink: "View GitHub repository",
+      footerAttributions: 'General attributions: images from <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; historical figure data from <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a>; place search by <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>.',
       invalidTimeZone: "Time zone not recognized; using the manual offset.",
       invalidOffset: "Manual offset must look like +01:00 or -05:00.",
       chartFor: "Chart for {place}",
@@ -326,6 +355,92 @@
       topics12: "enemies, loss, confinement, suffering, and forced conditions",
     },
   };
+
+  const HISTORICAL_PEOPLE = [
+    {
+      id: "ada-lovelace",
+      name: "Ada Lovelace",
+      sex: "female",
+      date: "1815-12-10",
+      time: "13:00",
+      manualOffset: "-00:01",
+      place: {
+        city: "London",
+        country: "United Kingdom",
+        admin1: "England",
+        lat: 51.5,
+        lon: -0.1667,
+        tz: "",
+        names: { es: "Londres", en: "London" },
+        countryNames: { es: "Reino Unido", en: "United Kingdom" },
+        admin1Names: { es: "Inglaterra", en: "England" },
+      },
+      birthLabel: { es: "10 diciembre 1815, 13:00", en: "10 December 1815, 13:00" },
+      image: "https://commons.wikimedia.org/wiki/Special:FilePath/Ada_Lovelace_Chalon_portrait.jpg?width=360",
+      imageAlt: { es: "Retrato de Ada Lovelace", en: "Portrait of Ada Lovelace" },
+    },
+    {
+      id: "pablo-picasso",
+      name: "Pablo Picasso",
+      sex: "male",
+      date: "1881-10-25",
+      time: "23:15",
+      manualOffset: "-00:18",
+      place: {
+        city: "Málaga",
+        country: "Spain",
+        admin1: "Andalucía",
+        lat: 36.7167,
+        lon: -4.4167,
+        tz: "",
+        countryNames: { es: "España", en: "Spain" },
+      },
+      birthLabel: { es: "25 octubre 1881, 23:15", en: "25 October 1881, 23:15" },
+      image: "https://commons.wikimedia.org/wiki/Special:FilePath/Portrait_de_Picasso,_1908.jpg?width=360",
+      imageAlt: { es: "Retrato joven de Pablo Picasso", en: "Young portrait of Pablo Picasso" },
+    },
+    {
+      id: "frida-kahlo",
+      name: "Frida Kahlo",
+      sex: "female",
+      date: "1907-07-06",
+      time: "08:30",
+      manualOffset: "-06:37",
+      place: {
+        city: "Coyoacán",
+        country: "Mexico",
+        admin1: "Ciudad de México",
+        lat: 19.3333,
+        lon: -99.15,
+        tz: "",
+        countryNames: { es: "México", en: "Mexico" },
+      },
+      birthLabel: { es: "6 julio 1907, 08:30", en: "6 July 1907, 08:30" },
+      image: "https://commons.wikimedia.org/wiki/Special:FilePath/Frida_Kahlo,_by_Guillermo_Kahlo.jpg?width=360",
+      imageAlt: { es: "Fotografía de Frida Kahlo", en: "Photograph of Frida Kahlo" },
+    },
+    {
+      id: "simone-de-beauvoir",
+      name: "Simone de Beauvoir",
+      sex: "female",
+      date: "1908-01-09",
+      time: "04:30",
+      manualOffset: "+00:09",
+      place: {
+        city: "Paris",
+        country: "France",
+        admin1: "Île-de-France",
+        lat: 48.8506,
+        lon: 2.3333,
+        tz: "",
+        names: { es: "París", en: "Paris" },
+        countryNames: { es: "Francia", en: "France" },
+      },
+      birthLabel: { es: "9 enero 1908, 04:30", en: "9 January 1908, 04:30" },
+      image: "https://commons.wikimedia.org/wiki/Special:FilePath/Simone_de_Beauvoir.jpg?width=360",
+      imageAlt: { es: "Fotografía de Simone de Beauvoir", en: "Photograph of Simone de Beauvoir" },
+    },
+  ];
 
   const SIGN_KEYS = [
     "aries",
@@ -880,6 +995,59 @@
     applyCityToFields(city, true);
     hidePlaceSuggestions();
     $("#birthPlace").blur();
+  }
+
+  function renderHistoricalPeople() {
+    $("#peopleGrid").innerHTML = HISTORICAL_PEOPLE.map((person) => `
+      <article class="person-card">
+        <img src="${escapeHtml(person.image)}" alt="${escapeHtml(person.imageAlt[state.lang] || person.imageAlt.es)}" loading="lazy">
+        <div>
+          <h3>${escapeHtml(person.name)}</h3>
+          <dl>
+            <dt>${escapeHtml(t("dataDate"))}</dt>
+            <dd>${escapeHtml(person.birthLabel[state.lang] || person.birthLabel.es)}</dd>
+            <dt>${escapeHtml(t("dataPlace"))}</dt>
+            <dd>${escapeHtml(formatCity(person.place))}</dd>
+            <dt>${escapeHtml(t("dataSex"))}</dt>
+            <dd>${escapeHtml(t(person.sex))}</dd>
+          </dl>
+          <button type="button" data-person-id="${escapeHtml(person.id)}">${escapeHtml(t("useExample"))}</button>
+        </div>
+      </article>
+    `).join("");
+  }
+
+  function openPeopleModal() {
+    state.modalReturnFocus = document.activeElement;
+    renderHistoricalPeople();
+    $("#peopleModal").hidden = false;
+    document.body.classList.add("modal-open");
+    $("#peopleClose").focus();
+  }
+
+  function closePeopleModal() {
+    $("#peopleModal").hidden = true;
+    document.body.classList.remove("modal-open");
+    state.modalReturnFocus?.focus?.();
+  }
+
+  function loadHistoricalPerson(id) {
+    const person = HISTORICAL_PEOPLE.find((item) => item.id === id);
+    if (!person) return;
+    state.selectedCity = person.place;
+    state.activeCityKey = cityKey(person.place);
+    $("#birthDate").value = person.date;
+    $("#birthTime").value = person.time;
+    $("#gender").value = person.sex;
+    $("#birthPlace").value = formatCity(person.place);
+    $("#latitude").value = round(person.place.lat, 4);
+    $("#longitude").value = round(person.place.lon, 4);
+    $("#timeZone").value = person.place.tz || "";
+    $("#manualOffset").value = person.manualOffset;
+    updateClearPlaceButton();
+    hidePlaceSuggestions();
+    closePeopleModal();
+    $("#chart-form").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function parseDate(value) {
@@ -1670,12 +1838,19 @@
     $$("[data-i18n]").forEach((node) => {
       node.textContent = t(node.dataset.i18n);
     });
+    $$("[data-i18n-html]").forEach((node) => {
+      node.innerHTML = t(node.dataset.i18nHtml);
+    });
     $(".toolbar").setAttribute("aria-label", state.lang === "es" ? "Preferencias" : "Preferences");
     $("#chartWheel").setAttribute("aria-label", state.lang === "es" ? "Rueda de carta natal" : "Natal chart wheel");
     $(".tabs").setAttribute("aria-label", state.lang === "es" ? "Detalles de la carta" : "Chart details");
     $("#languageToggle span").textContent = state.lang.toUpperCase();
     $("#languageToggle").setAttribute("aria-label", state.lang === "es" ? "Cambiar idioma" : "Change language");
     $("#languageToggle").title = state.lang === "es" ? "Cambiar idioma" : "Change language";
+    $("#peopleToggle").setAttribute("aria-label", t("peopleButton"));
+    $("#peopleToggle").title = t("peopleButton");
+    $("#peopleClose").setAttribute("aria-label", t("close"));
+    $("#peopleClose").title = t("close");
     $("#themeToggle").setAttribute("aria-label", state.lang === "es" ? "Cambiar tema" : "Change theme");
     $("#themeToggle").title = state.lang === "es" ? "Cambiar tema" : "Change theme";
     $("#birthPlace").placeholder = state.lang === "es" ? "Madrid, España" : "Madrid, Spain";
@@ -1690,6 +1865,7 @@
     }
     updateClearPlaceButton();
     hidePlaceSuggestions();
+    renderHistoricalPeople();
     if (state.lastChart?.input?.city) state.lastChart.input.place = formatCity(state.lastChart.input.city);
     if (state.lastChart) renderChart(state.lastChart);
   }
@@ -1735,6 +1911,18 @@
       state.lang = state.lang === "es" ? "en" : "es";
       localStorage.setItem("tyche-lang", state.lang);
       applyI18n();
+    });
+    $("#peopleToggle").addEventListener("click", openPeopleModal);
+    $("#peopleClose").addEventListener("click", closePeopleModal);
+    $("#peopleModal").addEventListener("click", (event) => {
+      if (event.target === $("#peopleModal")) closePeopleModal();
+    });
+    $("#peopleGrid").addEventListener("click", (event) => {
+      const button = event.target.closest("[data-person-id]");
+      if (button) loadHistoricalPerson(button.dataset.personId);
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !$("#peopleModal").hidden) closePeopleModal();
     });
     $("#themeToggle").addEventListener("click", () => {
       state.theme = state.theme === "night" ? "day" : "night";

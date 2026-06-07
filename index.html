@@ -38,6 +38,9 @@
             </span>
           </a>
           <div class="toolbar" aria-label="Preferencias">
+            <button class="icon-button" id="peopleToggle" type="button" aria-label="Personajes históricos" title="Personajes históricos">
+              <span aria-hidden="true">♜</span>
+            </button>
             <button class="icon-button" id="languageToggle" type="button" aria-label="Cambiar idioma" title="Cambiar idioma">
               <span aria-hidden="true">ES</span>
             </button>
@@ -51,7 +54,6 @@
       <main>
         <section class="workbench" aria-labelledby="main-title">
           <div class="intro-copy">
-            <p class="eyebrow">☿ ♀ ♂ ♃ ♄</p>
             <h1 id="main-title" data-i18n="title">Crea una carta natal helenística</h1>
             <p data-i18n="subtitle">Calcula el Ascendente, casas por signos enteros, secta, dignidades, lotes y configuraciones tradicionales de la astrología helenística más pura. Todo con absoluta privacidad, sin enviar ningún dato fuera de tu navegador. Sólo la búsqueda de lugar consulta coordenadas externas.</p>
           </div>
@@ -210,9 +212,31 @@
             <article id="tab-aspects" class="tab-panel panel" hidden></article>
           </div>
 
-          <p class="precision-note" data-i18n="precisionNote">Motor astronómico aproximado para uso educativo; revisa cartas críticas con efemérides profesionales.</p>
         </section>
       </main>
+
+      <footer class="site-footer">
+        <p data-i18n="footerWarning">Motor astronómico pensado para uso educativo. La información proporcionada puede no ser fiable.</p>
+        <p data-i18n="footerPrivacy">La aplicación no guarda datos en ningún repositorio ni utiliza cookies. Su uso es completamente anónimo.</p>
+        <p><span data-i18n="footerAuthors">Autores: Maple81 y Proserpina, 2026.</span> <a href="https://github.com/Maple1981/Tyche" data-i18n="githubLink">Ver repositorio GitHub</a></p>
+        <p class="attribution-line" data-i18n-html="footerAttributions">Atribuciones generales: imágenes de <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; datos de personajes históricos de <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a>; búsqueda de localización mediante <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>.</p>
+      </footer>
+    </div>
+
+    <div class="modal-backdrop" id="peopleModal" hidden>
+      <section class="people-modal" role="dialog" aria-modal="true" aria-labelledby="peopleModalTitle">
+        <div class="modal-heading">
+          <div>
+            <p class="eyebrow" data-i18n="peopleEyebrow">Archivo</p>
+            <h2 id="peopleModalTitle" data-i18n="peopleTitle">Personajes históricos</h2>
+          </div>
+          <button class="icon-button" id="peopleClose" type="button" aria-label="Cerrar" title="Cerrar">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <p class="text-note" data-i18n="peopleIntro">Elige una carta de ejemplo con fecha, hora, lugar y sexo ya preparados.</p>
+        <div class="people-grid" id="peopleGrid"></div>
+      </section>
     </div>
 
     <script src="app.js"></script>

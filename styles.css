@@ -75,6 +75,10 @@ body {
   letter-spacing: 0;
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
 button,
 input,
 select {
@@ -196,7 +200,7 @@ main {
 }
 
 .intro-copy {
-  padding: clamp(16px, 4vw, 36px) 4px;
+  padding: 0 4px clamp(16px, 4vw, 36px);
 }
 
 .eyebrow {
@@ -699,6 +703,130 @@ td {
   text-align: center;
 }
 
+.site-footer {
+  max-width: 1180px;
+  margin: 0 auto;
+  border-top: 1px solid var(--line);
+  padding: 18px 14px 28px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.site-footer p {
+  margin: 0 0 7px;
+}
+
+.site-footer a {
+  color: var(--blue-deep);
+  font-weight: 700;
+}
+
+.attribution-line {
+  font-size: 0.76rem;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  background: rgba(7, 13, 24, 0.48);
+  padding: 18px;
+}
+
+.modal-backdrop[hidden] {
+  display: none;
+}
+
+.people-modal {
+  width: min(920px, 100%);
+  max-height: min(86vh, 760px);
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  padding: 18px;
+}
+
+.modal-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.modal-heading h2 {
+  font-size: clamp(1.7rem, 4vw, 2.6rem);
+}
+
+.people-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.person-card {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 12px;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--surface-soft) 55%, var(--surface));
+  padding: 10px;
+}
+
+.person-card img {
+  width: 96px;
+  height: 116px;
+  border-radius: 5px;
+  object-fit: cover;
+  background: var(--surface-soft);
+}
+
+.person-card h3 {
+  font-size: 1rem;
+}
+
+.person-card dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 3px 8px;
+  margin: 8px 0 10px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.person-card dt {
+  font-weight: 700;
+}
+
+.person-card dd {
+  margin: 0;
+}
+
+.person-card button {
+  min-height: 36px;
+  border: 1px solid var(--blue);
+  border-radius: 6px;
+  background: var(--blue-deep);
+  color: #fff;
+  padding: 7px 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+body.night .person-card button {
+  color: #102033;
+  background: var(--blue);
+}
+
 .wheel-sign {
   fill: var(--blue-deep);
   font-family: "Segoe UI Symbol", "Noto Sans Symbols 2", "Noto Sans Symbols", serif;
@@ -746,7 +874,7 @@ td {
   }
 
   .intro-copy {
-    padding-top: 10px;
+    padding-top: 0;
   }
 
   h1 {
@@ -787,6 +915,24 @@ td {
 
   .primary-button {
     width: 100%;
+  }
+
+  .people-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .people-modal {
+    max-height: 90vh;
+    padding: 14px;
+  }
+
+  .person-card {
+    grid-template-columns: 78px minmax(0, 1fr);
+  }
+
+  .person-card img {
+    width: 78px;
+    height: 98px;
   }
 
   .chart-wheel {
