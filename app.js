@@ -15,7 +15,7 @@
     es: {
       brandSub: "Carta natal helenística generada matemáticamente",
       title: "Crea una carta natal helenística",
-      subtitle: "Calcula el Hour-Marker, casas por signos enteros, secta, dignidades, lotes y configuraciones tradicionales sin enviar datos fuera del navegador.",
+      subtitle: "Calcula el Ascendente, casas por signos enteros, secta, dignidades, lotes y configuraciones tradicionales sin enviar datos fuera del navegador.",
       birthDate: "Fecha",
       birthTime: "Hora exacta",
       birthPlace: "Lugar de nacimiento",
@@ -28,7 +28,7 @@
       latitude: "Latitud",
       longitude: "Longitud",
       timeZone: "Zona horaria IANA",
-      manualOffset: "Offset UTC fallback",
+      manualOffset: "Diferencia UTC de respaldo",
       calendar: "Calendario",
       gregorian: "Gregoriano",
       julian: "Juliano",
@@ -36,13 +36,13 @@
       tropical: "Tropical",
       sidereal: "Sideral aproximado",
       houses: "Casas",
-      wholeSign: "Whole Sign Houses",
+      wholeSign: "Casas por signos enteros",
       aspectMode: "Aspectos",
       bySign: "Por signo",
       signAndDegree: "Signo + grado",
       byDegree: "Por grado",
       orb: "Orbe",
-      terms: "Términos / bounds",
+      terms: "Términos / límites",
       egyptian: "Egipcios",
       techniqueMode: "Técnica",
       strict: "Helenística estricta",
@@ -63,8 +63,8 @@
       missingDate: "Añade fecha y hora de nacimiento.",
       missingPlace: "Elige una ciudad sugerida o introduce latitud, longitud y zona horaria.",
       missingCoords: "Faltan coordenadas válidas.",
-      invalidTimeZone: "Zona horaria no reconocida; usando el offset manual.",
-      invalidOffset: "El offset manual debe tener formato +01:00 o -05:00.",
+      invalidTimeZone: "Zona horaria no reconocida; usando la diferencia UTC manual.",
+      invalidOffset: "La diferencia UTC manual debe tener formato +01:00 o -05:00.",
       chartFor: "Carta para {place}",
       dayChart: "Carta diurna",
       nightChart: "Carta nocturna",
@@ -78,7 +78,7 @@
       ic: "IC",
       timezoneUsed: "Zona usada",
       julianDay: "Día juliano",
-      ascLordTitle: "Regente del Hour-Marker",
+      ascLordTitle: "Regente del Ascendente",
       ascLordText: "{lord} rige {ascSign} y cae en {lordPosition}, casa {house}. Esta casa pone el timón de la carta sobre {topics}. Su angularidad es {angularity}.",
       dignifiedText: "Condición: {condition}.",
       noMajorDignity: "sin dignidad mayor",
@@ -116,7 +116,7 @@
       triplicityDay: "triplicidad diurna",
       triplicityNight: "triplicidad nocturna",
       triplicityCoop: "triplicidad cooperante",
-      bound: "bound de {planet}",
+      bound: "término de {planet}",
       decan: "decanato de {planet}",
       underBeams: "bajo los rayos",
       combust: "combusto",
@@ -453,6 +453,65 @@
 
   const TIME_ZONES = [...new Set(CITY_DB.map((city) => city.tz))].sort();
 
+  const COUNTRY_ES = {
+    Argentina: "Argentina",
+    Australia: "Australia",
+    Austria: "Austria",
+    Belgium: "Bélgica",
+    Brazil: "Brasil",
+    Chile: "Chile",
+    China: "China",
+    Colombia: "Colombia",
+    Egypt: "Egipto",
+    France: "Francia",
+    Germany: "Alemania",
+    Greece: "Grecia",
+    India: "India",
+    Ireland: "Irlanda",
+    Italy: "Italia",
+    Japan: "Japón",
+    Mexico: "México",
+    Morocco: "Marruecos",
+    Netherlands: "Países Bajos",
+    "New Zealand": "Nueva Zelanda",
+    Peru: "Perú",
+    Portugal: "Portugal",
+    Spain: "España",
+    "South Korea": "Corea del Sur",
+    Turkey: "Turquía",
+    "United Kingdom": "Reino Unido",
+    "United States": "Estados Unidos",
+    Uruguay: "Uruguay",
+  };
+
+  const CITY_ES = {
+    Lisbon: "Lisboa",
+    Paris: "París",
+    London: "Londres",
+    Dublin: "Dublín",
+    Seville: "Sevilla",
+    Rome: "Roma",
+    Milan: "Milán",
+    Berlin: "Berlín",
+    Amsterdam: "Ámsterdam",
+    Brussels: "Bruselas",
+    Vienna: "Viena",
+    Athens: "Atenas",
+    Istanbul: "Estambul",
+    Cairo: "El Cairo",
+    Alexandria: "Alejandría",
+    "New York": "Nueva York",
+    "Los Angeles": "Los Ángeles",
+    "Mexico City": "Ciudad de México",
+    Tokyo: "Tokio",
+    Beijing: "Pekín",
+    Shanghai: "Shanghái",
+    Seoul: "Seúl",
+    "New Delhi": "Nueva Delhi",
+    Mumbai: "Bombay",
+    Sydney: "Sídney",
+  };
+
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
@@ -476,6 +535,18 @@
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase()
       .trim();
+  }
+
+  function countryName(country, lang = state.lang) {
+    return lang === "es" ? COUNTRY_ES[country] || country : country;
+  }
+
+  function cityName(city, lang = state.lang) {
+    return lang === "es" ? CITY_ES[city.city] || city.city : city.city;
+  }
+
+  function formatCity(city, lang = state.lang) {
+    return `${cityName(city, lang)}, ${countryName(city.country, lang)}`;
   }
 
   function planetName(key) {
@@ -588,8 +659,13 @@
   function findCity(value) {
     const normalized = normalizeText(value);
     return CITY_DB.find((item) => {
-      const full = normalizeText(`${item.city}, ${item.country}`);
-      return normalized === normalizeText(item.city) || normalized === full;
+      const matches = [
+        cityName(item, "en"),
+        cityName(item, "es"),
+        formatCity(item, "en"),
+        formatCity(item, "es"),
+      ].map(normalizeText);
+      return matches.includes(normalized);
     });
   }
 
@@ -1054,7 +1130,7 @@
     return {
       date: $("#birthDate").value,
       time: $("#birthTime").value,
-      place: placeValue || (city ? `${city.city}, ${city.country}` : ""),
+      place: city ? formatCity(city) : placeValue,
       city,
       latitude,
       longitude,
@@ -1364,21 +1440,36 @@
         ${aspects.join("")}
         ${labels.join("")}
         <text x="${cx}" y="${cy - 5}" text-anchor="middle" class="wheel-sign">Tyche</text>
-        <text x="${cx}" y="${cy + 12}" text-anchor="middle" class="wheel-label">${chart.isDay ? "DAY" : "NIGHT"}</text>
+        <text x="${cx}" y="${cy + 12}" text-anchor="middle" class="wheel-label">${state.lang === "es" ? (chart.isDay ? "DÍA" : "NOCHE") : (chart.isDay ? "DAY" : "NIGHT")}</text>
       </svg>
     `;
   }
 
   function applyI18n() {
     document.documentElement.lang = state.lang;
+    document.title = state.lang === "es" ? "Tyche · Carta helenística" : "Tyche · Hellenistic Chart";
+    $("meta[name='description']")?.setAttribute(
+      "content",
+      state.lang === "es"
+        ? "Tyche crea cartas natales helenísticas tradicionales en el navegador."
+        : "Tyche creates traditional Hellenistic natal charts in the browser."
+    );
     $$("[data-i18n]").forEach((node) => {
       node.textContent = t(node.dataset.i18n);
     });
+    $(".toolbar").setAttribute("aria-label", state.lang === "es" ? "Preferencias" : "Preferences");
+    $("#chartWheel").setAttribute("aria-label", state.lang === "es" ? "Rueda de carta natal" : "Natal chart wheel");
+    $(".tabs").setAttribute("aria-label", state.lang === "es" ? "Detalles de la carta" : "Chart details");
     $("#languageToggle span").textContent = state.lang.toUpperCase();
     $("#languageToggle").setAttribute("aria-label", state.lang === "es" ? "Cambiar idioma" : "Change language");
     $("#languageToggle").title = state.lang === "es" ? "Cambiar idioma" : "Change language";
     $("#themeToggle").setAttribute("aria-label", state.lang === "es" ? "Cambiar tema" : "Change theme");
     $("#themeToggle").title = state.lang === "es" ? "Cambiar tema" : "Change theme";
+    $("#birthPlace").placeholder = state.lang === "es" ? "Madrid, España" : "Madrid, Spain";
+    populateLists();
+    const city = findCity($("#birthPlace").value);
+    if (city) $("#birthPlace").value = formatCity(city);
+    if (state.lastChart?.input?.city) state.lastChart.input.place = formatCity(state.lastChart.input.city);
     if (state.lastChart) renderChart(state.lastChart);
   }
 
@@ -1388,13 +1479,15 @@
   }
 
   function populateLists() {
-    $("#cityList").innerHTML = CITY_DB.map((item) => `<option value="${escapeHtml(`${item.city}, ${item.country}`)}"></option>`).join("");
+    const cities = [...new Set(CITY_DB.map((item) => formatCity(item)))];
+    $("#cityList").innerHTML = cities.map((city) => `<option value="${escapeHtml(city)}"></option>`).join("");
     $("#timezoneList").innerHTML = TIME_ZONES.map((zone) => `<option value="${escapeHtml(zone)}"></option>`).join("");
   }
 
   function updatePlaceFields() {
     const city = findCity($("#birthPlace").value);
     if (!city) return;
+    $("#birthPlace").value = formatCity(city);
     if (!$("#latitude").value) $("#latitude").value = city.lat;
     if (!$("#longitude").value) $("#longitude").value = city.lon;
     if (!$("#timeZone").value) $("#timeZone").value = city.tz;

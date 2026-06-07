@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Tyche creates traditional Hellenistic natal charts in the browser.">
-    <title>Tyche · Hellenistic Chart</title>
+    <meta name="description" content="Tyche crea cartas natales helenísticas tradicionales en el navegador.">
+    <title>Tyche · Carta helenística</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
@@ -37,7 +37,7 @@
               <small data-i18n="brandSub">Carta natal helenística generada matemáticamente</small>
             </span>
           </a>
-          <div class="toolbar" aria-label="Preferences">
+          <div class="toolbar" aria-label="Preferencias">
             <button class="icon-button" id="languageToggle" type="button" aria-label="Cambiar idioma" title="Cambiar idioma">
               <span aria-hidden="true">ES</span>
             </button>
@@ -53,7 +53,7 @@
           <div class="intro-copy">
             <p class="eyebrow">☿ ♀ ♂ ♃ ♄</p>
             <h1 id="main-title" data-i18n="title">Crea una carta natal helenística</h1>
-            <p data-i18n="subtitle">Calcula el Hour-Marker, casas por signos enteros, secta, dignidades, lotes y configuraciones tradicionales sin enviar datos fuera del navegador.</p>
+            <p data-i18n="subtitle">Calcula el Ascendente, casas por signos enteros, secta, dignidades, lotes y configuraciones tradicionales sin enviar datos fuera del navegador.</p>
           </div>
 
           <form id="chart-form" class="chart-form" autocomplete="off">
@@ -68,7 +68,7 @@
               </label>
               <label class="field field-wide">
                 <span data-i18n="birthPlace">Lugar de nacimiento</span>
-                <input id="birthPlace" type="text" list="cityList" placeholder="Madrid, Spain" required>
+                <input id="birthPlace" type="text" list="cityList" placeholder="Madrid, España" required>
                 <datalist id="cityList"></datalist>
               </label>
               <label class="field">
@@ -102,7 +102,7 @@
                   <datalist id="timezoneList"></datalist>
                 </label>
                 <label class="field">
-                  <span data-i18n="manualOffset">Offset UTC fallback</span>
+                  <span data-i18n="manualOffset">Diferencia UTC de respaldo</span>
                   <input id="manualOffset" type="text" inputmode="text" value="+00:00" pattern="[+-][0-9]{2}:[0-9]{2}">
                 </label>
                 <label class="field">
@@ -122,7 +122,7 @@
                 <label class="field">
                   <span data-i18n="houses">Casas</span>
                   <select id="houses">
-                    <option value="whole-sign" data-i18n="wholeSign">Whole Sign Houses</option>
+                    <option value="whole-sign" data-i18n="wholeSign">Casas por signos enteros</option>
                   </select>
                 </label>
                 <label class="field">
@@ -138,7 +138,7 @@
                   <input id="orb" type="number" min="0" max="15" step="0.5" value="3">
                 </label>
                 <label class="field">
-                  <span data-i18n="terms">Términos / bounds</span>
+                  <span data-i18n="terms">Términos / límites</span>
                   <select id="termsSystem">
                     <option value="egyptian" data-i18n="egyptian">Egipcios</option>
                   </select>
@@ -185,7 +185,7 @@
 
           <div class="result-grid">
             <article class="wheel-panel">
-              <div id="chartWheel" class="chart-wheel" aria-label="Natal chart wheel"></div>
+              <div id="chartWheel" class="chart-wheel" aria-label="Rueda de carta natal"></div>
             </article>
             <div class="summary-stack">
               <article class="panel" id="coreSummary"></article>
@@ -194,7 +194,7 @@
             </div>
           </div>
 
-          <div class="tabs" role="tablist" aria-label="Chart details">
+          <div class="tabs" role="tablist" aria-label="Detalles de la carta">
             <button class="tab is-active" type="button" data-tab="planets" role="tab" aria-selected="true" data-i18n="planets">Planetas</button>
             <button class="tab" type="button" data-tab="houses" role="tab" aria-selected="false" data-i18n="places">Lugares</button>
             <button class="tab" type="button" data-tab="lots" role="tab" aria-selected="false" data-i18n="lots">Lotes</button>
