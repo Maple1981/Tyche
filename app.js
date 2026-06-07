@@ -22,14 +22,15 @@
     activePlaceIndex: -1,
     modalReturnFocus: null,
     glossaryReturnFocus: null,
+    ephemerisEngine: "fallback",
   };
 
   const I18N = {
     es: {
       brandSub: "Carta natal helenística generada matemáticamente",
       title: "Crea una carta natal helenística",
-      subtitle: "Calcula el Ascendente, las casas de signos enteros (Whole Sign Houses), la secta, la condición esencial, los lotes y otros elementos de la tradición astrológica helenística. Todo con absoluta privacidad: la carta al completo se procesa localmente en tu navegador. Solo la búsqueda de lugares consulta coordenadas externas.",
-      subtitleHtml: 'Calcula el <button type="button" data-glossary="ascendant">Ascendente</button>, las <button type="button" data-glossary="wholeSign">casas de signos enteros (Whole Sign Houses)</button>, la <button type="button" data-glossary="sect">secta</button>, las <button type="button" data-glossary="essentialCondition">dignidades</button>, los <button type="button" data-glossary="lots">lotes</button> y otros elementos de la tradición astrológica helenística. Todo con absoluta privacidad: la carta al completo se procesa localmente en tu navegador. Solo la búsqueda de lugares consulta coordenadas externas.',
+      subtitle: "Calcula el Ascendente, las casas de signos enteros (Whole Sign Houses), la secta, la condición esencial, los lotes y otros elementos de la tradición astrológica helenística. La carta se procesa localmente en tu navegador. La búsqueda de lugares consulta coordenadas externas y las imágenes del archivo histórico se cargan desde Wikimedia Commons.",
+      subtitleHtml: 'Calcula el <button type="button" data-glossary="ascendant">Ascendente</button>, las <button type="button" data-glossary="wholeSign">casas de signos enteros (Whole Sign Houses)</button>, la <button type="button" data-glossary="sect">secta</button>, la <button type="button" data-glossary="essentialCondition">condición esencial</button>, los <button type="button" data-glossary="lots">lotes</button> y otros elementos de la tradición astrológica helenística. La carta se procesa localmente en tu navegador. La búsqueda de lugares consulta coordenadas externas y las imágenes del archivo histórico se cargan desde Wikimedia Commons.',
       birthDate: "Fecha de nacimiento",
       birthTime: "Hora de nacimiento",
       birthPlace: "Lugar de nacimiento",
@@ -93,7 +94,7 @@
       dataPlace: "Lugar",
       dataSex: "Sexo",
       footerWarning: "Motor astronómico pensado para uso educativo. La información proporcionada es solo orientativa.",
-    footerPrivacy: "La carta se calcula localmente en tu navegador. No guardamos tus datos ni usamos cookies. La búsqueda de lugares consulta un servicio externo solo para obtener coordenadas. El posicionamiento de planetas utiliza una librería local.",
+    footerPrivacy: "La carta se calcula localmente en tu navegador. No guardamos tus cartas ni usamos cookies. Solo se conserva en este dispositivo la preferencia de idioma y tema. La búsqueda de lugares consulta Open-Meteo para obtener coordenadas. Las imágenes del archivo histórico se cargan desde Wikimedia Commons. El posicionamiento de planetas utiliza una librería local.",
       footerAuthors: "Autores: Maple81 y Proserpina, 2026.",
       githubLink: "Ver repositorio GitHub",
     footerAttributions: 'Atribuciones generales: imágenes de <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; datos de personajes históricos de <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a> y <a href="https://www.astro.com/astro-databank/" target="_blank" rel="noreferrer">Astro-Databank</a>; búsqueda de localización mediante <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>; efemérides locales mediante <a href="https://github.com/cosinekitty/astronomy" target="_blank" rel="noreferrer">Astronomy Engine</a> MIT, precisión aprox. ±1′, en ejecución local, sin enviar datos a terceros.',
@@ -106,26 +107,50 @@
       dayChart: "Carta diurna",
       nightChart: "Carta nocturna",
       sect: "Secta",
+      chartType: "Tipo de carta",
       sectLight: "Luminaria de la secta",
       beneficSect: "Benéfico de la secta",
       maleficSect: "Maléfico de la secta",
+      maleficContrarySect: "Maléfico contrario a la secta",
       ascendant: "Ascendente",
       descendant: "Descendente",
       mc: "MC",
       ic: "IC",
       timezoneUsed: "Zona usada",
       julianDay: "Día juliano",
+      technicalTitle: "Datos técnicos",
+      localDateTime: "Fecha local",
+      utcDateTime: "UTC usado",
+      coordinates: "Coordenadas",
+      ephemerisEngine: "Efemérides",
+      astronomyEngine: "Astronomy Engine local",
+      fallbackEngine: "Motor aproximado de respaldo",
       ascLordTitle: "Regente del Ascendente",
       ascLordText: "{lord} rige {ascSign} y cae en {lordPosition}, casa {house}. Esta casa pone el timón de la carta sobre {topics}. Su angularidad es {angularity}.",
       dignifiedText: "Condición esencial: {condition}.",
       mcWholeSignNote: "En casas de signos enteros, el MC y el IC son puntos astronómicos: no siempre caen en las casas 10 y 4. Tyche muestra la casa por signo entero donde caen.",
       noMajorDignity: "sin dignidad mayor",
+      dignityMajor: "Dignidad mayor",
+      dignityMinor: "Dignidades menores",
+      weaknesses: "Debilidades",
+      none: "ninguna",
       moonTitle: "Condición lunar",
-      moonPhase: "Fase",
-      moonAspects: "Aplicaciones",
+      moonPhase: "Fase sinódica",
+      moonElongation: "Elongación Sol→Luna",
+      moonLastSeparation: "Última separación",
+      moonNextApplication: "Próxima aplicación",
+      moonNoSeparation: "Ninguna en los últimos 30°",
+      moonNoApplication: "Ninguna en los próximos 30°",
+      moonBeforeNew: "{degrees} antes de Luna nueva",
+      moonAfterNew: "{degrees} después de Luna nueva",
+      moonAspects: "Aplicaciones y separaciones",
       moonVoc: "Vacía de curso",
-      notVoc: "No",
-      yesVoc: "Sí, de forma aproximada",
+      moonVoc30: "Vacía de curso",
+      moonNoApplyingWithinOrb: "Sin aplicación dentro de 12°",
+      notVoc: "No según la definición helenística de 30°",
+      yesVoc: "Sí según la definición helenística de 30°",
+      yes: "Sí",
+      no: "No",
       tablePlanet: "Planeta",
       tableLongitude: "Longitud",
       tableHouse: "Casa",
@@ -170,7 +195,8 @@
       fullMoon: "Luna llena",
       disseminating: "diseminante",
       lastQuarter: "cuarto menguante",
-      balsamic: "balsámica",
+      balsamic: "menguante final/balsámica",
+      conjunction: "conjunción",
       signBased: "por signo",
       degreeBased: "por grado",
       bothModes: "signo + grado",
@@ -182,7 +208,7 @@
       applying: "aplicando",
       separating: "separando",
       exact: "exacto",
-      overcoming: "{planet} domina",
+      overcoming: "{planet} domina por derecha",
       noAspects: "No hay configuraciones que mostrar con los ajustes actuales.",
       noLots: "No hay lotes seleccionados.",
       lotFormulaNote: "Sistema de fórmulas: Fortuna y Espíritu se invierten por secta; Eros y Necesidad usan la tradición basada en Fortuna y Espíritu; Coraje, Victoria y Némesis usan fórmulas planetarias herméticas.",
@@ -205,8 +231,8 @@
     en: {
       brandSub: "Mathematically generated Hellenistic natal chart",
       title: "Create a Hellenistic natal chart",
-      subtitle: "Calculate the Hour-Marker, Whole Sign Houses, sect, essential condition, lots, and other elements of the Hellenistic astrological tradition. The full chart is processed locally in your browser; only place search requests external coordinates.",
-      subtitleHtml: 'Calculate the <button type="button" data-glossary="ascendant">Hour-Marker</button>, <button type="button" data-glossary="wholeSign">Whole Sign Houses</button>, <button type="button" data-glossary="sect">sect</button>, <button type="button" data-glossary="essentialCondition">essential condition</button>, <button type="button" data-glossary="lots">lots</button>, and other elements of the Hellenistic astrological tradition. The full chart is processed locally in your browser; only place search requests external coordinates.',
+      subtitle: "Calculate the Ascendant / Hour-Marker, Whole Sign Houses, sect, essential condition, lots, and other elements of the Hellenistic astrological tradition. The chart is processed locally in your browser. Place search requests external coordinates, and historical archive images load from Wikimedia Commons.",
+      subtitleHtml: 'Calculate the <button type="button" data-glossary="ascendant">Ascendant / Hour-Marker</button>, <button type="button" data-glossary="wholeSign">Whole Sign Houses</button>, <button type="button" data-glossary="sect">sect</button>, <button type="button" data-glossary="essentialCondition">essential condition</button>, <button type="button" data-glossary="lots">lots</button>, and other elements of the Hellenistic astrological tradition. The chart is processed locally in your browser. Place search requests external coordinates, and historical archive images load from Wikimedia Commons.',
       birthDate: "Date",
       birthTime: "Exact time",
       birthPlace: "Birthplace",
@@ -270,7 +296,7 @@
       dataPlace: "Place",
       dataSex: "Sex",
       footerWarning: "Astronomical engine intended for educational use. The information provided may not be reliable.",
-    footerPrivacy: "The chart is calculated locally in your browser. We do not store your data or use cookies. Place search consults an external service only to obtain coordinates. Planet positions use a local library.",
+    footerPrivacy: "The chart is calculated locally in your browser. We do not store your charts or use cookies. Only language and theme preferences are kept on this device. Place search consults Open-Meteo to obtain coordinates. Historical archive images load from Wikimedia Commons. Planet positions use a local library.",
       footerAuthors: "Authors: Maple81 and Proserpina, 2026.",
       githubLink: "View GitHub repository",
     footerAttributions: 'General attributions: images from <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; historical figure data from <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a> and <a href="https://www.astro.com/astro-databank/" target="_blank" rel="noreferrer">Astro-Databank</a>; place search by <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>; local ephemerides by <a href="https://github.com/cosinekitty/astronomy" target="_blank" rel="noreferrer">Astronomy Engine</a> MIT, approx. ±1′ accuracy, running locally, without sending data to third parties.',
@@ -283,26 +309,50 @@
       dayChart: "Day chart",
       nightChart: "Night chart",
       sect: "Sect",
+      chartType: "Chart type",
       sectLight: "Sect light",
       beneficSect: "Benefic of sect",
       maleficSect: "Malefic of sect",
+      maleficContrarySect: "Malefic contrary to sect",
       ascendant: "Ascendant",
       descendant: "Descendant",
       mc: "MC",
       ic: "IC",
       timezoneUsed: "Zone used",
       julianDay: "Julian day",
-      ascLordTitle: "Lord of the Hour-Marker",
+      technicalTitle: "Technical data",
+      localDateTime: "Local date",
+      utcDateTime: "UTC used",
+      coordinates: "Coordinates",
+      ephemerisEngine: "Ephemerides",
+      astronomyEngine: "Local Astronomy Engine",
+      fallbackEngine: "Approximate fallback engine",
+      ascLordTitle: "Ascendant / Hour-Marker Lord",
       ascLordText: "{lord} rules {ascSign} and falls in {lordPosition}, house {house}. This house steers the chart toward {topics}. Its angularity is {angularity}.",
       dignifiedText: "Essential condition: {condition}.",
       mcWholeSignNote: "In Whole Sign Houses, the MC and IC are astronomical points: they do not always fall in houses 10 and 4. Tyche shows the whole-sign house where each point falls.",
       noMajorDignity: "no major dignity",
+      dignityMajor: "Major dignity",
+      dignityMinor: "Minor dignities",
+      weaknesses: "Weaknesses",
+      none: "none",
       moonTitle: "Lunar condition",
-      moonPhase: "Phase",
-      moonAspects: "Applications",
+      moonPhase: "Synodic phase",
+      moonElongation: "Sun→Moon elongation",
+      moonLastSeparation: "Last separation",
+      moonNextApplication: "Next application",
+      moonNoSeparation: "None in the last 30°",
+      moonNoApplication: "None in the next 30°",
+      moonBeforeNew: "{degrees} before New Moon",
+      moonAfterNew: "{degrees} after New Moon",
+      moonAspects: "Applications and separations",
       moonVoc: "Void of course",
-      notVoc: "No",
-      yesVoc: "Yes, approximately",
+      moonVoc30: "Void of course",
+      moonNoApplyingWithinOrb: "No application within 12°",
+      notVoc: "No under the Hellenistic 30° definition",
+      yesVoc: "Yes under the Hellenistic 30° definition",
+      yes: "Yes",
+      no: "No",
       tablePlanet: "Planet",
       tableLongitude: "Longitude",
       tableHouse: "House",
@@ -347,7 +397,8 @@
       fullMoon: "Full Moon",
       disseminating: "Disseminating",
       lastQuarter: "Last quarter",
-      balsamic: "Balsamic",
+      balsamic: "Final waning / balsamic",
+      conjunction: "conjunction",
       signBased: "by sign",
       degreeBased: "by degree",
       bothModes: "sign + degree",
@@ -359,7 +410,7 @@
       applying: "applying",
       separating: "separating",
       exact: "exact",
-      overcoming: "{planet} overcomes",
+      overcoming: "{planet} overcomes by superior aspect",
       noAspects: "No configurations to show with the current settings.",
       noLots: "No lots selected.",
       lotFormulaNote: "Formula system: Fortune and Spirit reverse by sect; Eros and Necessity use the Fortune/Spirit-based tradition; Courage, Victory, and Nemesis use hermetic planetary formulas.",
@@ -461,6 +512,7 @@
         title: "Zodíaco sideral",
         body: [
           "<p>Marco zodiacal referido a estrellas fijas mediante un ayanamsha. En Tyche aparece solo como opción aproximada y no como base estricta.</p>",
+          "<p>La conversión usa una precesión simple; no equivale necesariamente a Lahiri, Fagan/Bradley u otros ayanamshas.</p>",
         ],
       },
       wholeSign: {
@@ -633,6 +685,13 @@
         body: [
           "<p>El maléfico más acorde con la secta: Saturno de día, Marte de noche.</p>",
           "<p>Su condición suele considerarse más moderada que la del maléfico contrario a la secta.</p>",
+        ],
+      },
+      maleficContrarySect: {
+        title: "Maléfico contrario a la secta",
+        body: [
+          "<p>Maléfico menos acorde con la condición diurna/nocturna: Marte en carta diurna, Saturno en carta nocturna.</p>",
+          "<p>Tradicionalmente suele requerir más atención interpretativa porque tiende a expresar dificultad de forma menos moderada.</p>",
         ],
       },
       ascendant: {
@@ -813,8 +872,8 @@
       moonVoc: {
         title: "Vacía de curso",
         body: [
-          "<p>Condición aproximada en la que la Luna no perfecciona una configuración mayor antes de salir de su signo actual.</p>",
-          "<p>Tyche la trata como indicación técnica, no como juicio absoluto.</p>",
+          "<p>Tyche usa como juicio principal la definición helenística amplia: la Luna está vacía si no perfecciona una conjunción, sextil, cuadrado, trígono u oposición en los próximos 30° de movimiento lunar.</p>",
+          "<p>El indicador de ausencia de aplicación dentro de 12° se muestra aparte para no confundir una lectura por orbe con la definición de 30°.</p>",
         ],
       },
       applications: {
@@ -835,6 +894,12 @@
         title: "Copresencia",
         body: [
           "<p>Dos planetas en el mismo signo. Comparten lugar y se afectan por convivencia zodiacal, aunque no estén unidos por grado exacto.</p>",
+        ],
+      },
+      conjunction: {
+        title: "Conjunción",
+        body: [
+          "<p>Perfección corporal por grado entre dos planetas. En la condición lunar se usa para indicar que la Luna aplica o se separa de un planeta en el mismo signo.</p>",
         ],
       },
       sextile: {
@@ -989,6 +1054,7 @@
         title: "Sidereal zodiac",
         body: [
           "<p>Zodiacal frame referenced to fixed stars through an ayanamsha. In Tyche it is only an approximate advanced option.</p>",
+          "<p>The conversion uses simple precession; it is not necessarily equivalent to Lahiri, Fagan/Bradley, or other ayanamshas.</p>",
         ],
       },
       wholeSign: {
@@ -1163,6 +1229,13 @@
           "<p>Its condition is usually considered more moderated than that of the contrary-to-sect malefic.</p>",
         ],
       },
+      maleficContrarySect: {
+        title: "Malefic contrary to sect",
+        body: [
+          "<p>The malefic less aligned with the day/night condition: Mars in a day chart, Saturn in a night chart.</p>",
+          "<p>Traditionally it deserves closer interpretive attention because it tends to express difficulty less moderately.</p>",
+        ],
+      },
       ascendant: {
         title: "Hour-Marker / Ascendant",
         body: [
@@ -1198,7 +1271,7 @@
         ],
       },
       ascLord: {
-        title: "Lord of the Hour-Marker",
+        title: "Ascendant / Hour-Marker Lord",
         body: [
           "<p>The domicile ruler of the rising sign. It is one of the main indicators of life, body, character, and direction.</p>",
           "<p>The house it occupies shows which topics steer the chart; its essential condition and angularity describe the resources it has.</p>",
@@ -1341,8 +1414,8 @@
       moonVoc: {
         title: "Void of course",
         body: [
-          "<p>An approximate condition where the Moon does not perfect a major configuration before leaving its current sign.</p>",
-          "<p>Tyche treats it as a technical indication, not as an absolute judgment.</p>",
+          "<p>Tyche uses the broader Hellenistic definition as the main judgment: the Moon is void if it perfects no conjunction, sextile, square, trine, or opposition in the next 30° of lunar motion.</p>",
+          "<p>The separate no-application-within-12° indicator is shown apart so an orb-based reading is not confused with the 30° definition.</p>",
         ],
       },
       applications: {
@@ -1363,6 +1436,12 @@
         title: "Copresence",
         body: [
           "<p>Two planets in the same sign. They share a place and affect each other by zodiacal cohabitation, even without exact degree union.</p>",
+        ],
+      },
+      conjunction: {
+        title: "Conjunction",
+        body: [
+          "<p>Bodily perfection by degree between two planets. In lunar condition it shows the Moon applying to or separating from a planet in the same sign.</p>",
         ],
       },
       sextile: {
@@ -2287,6 +2366,7 @@
       ["morning", ["matutino", "oriental", "morning"]],
       ["evening", ["vespertino", "occidental", "evening"]],
       ["moonPhase", ["luna nueva", "creciente", "gibosa", "luna llena", "diseminante", "menguante", "balsamica", "new moon", "crescent", "quarter", "gibbous", "full moon", "disseminating", "balsamic"]],
+      ["conjunction", ["conjuncion", "conjunction"]],
       ["angular", ["angular"]],
       ["succedent", ["sucedente", "succedent"]],
       ["cadent", ["cadente", "cadent"]],
@@ -2305,6 +2385,21 @@
 
   function glossaryList(items) {
     return items.map((item) => glossaryMaybe(capitalizeText(item), glossaryKeyForText(item), "capitalize-first")).join(", ");
+  }
+
+  function dignityGroups(items) {
+    const groups = { major: [], minor: [], weakness: [] };
+    items.forEach((item) => {
+      const key = glossaryKeyForText(item);
+      if (["domicile", "exaltation", "triplicity"].includes(key)) groups.major.push(item);
+      else if (["bound", "decan"].includes(key)) groups.minor.push(item);
+      else if (["detriment", "fall"].includes(key)) groups.weakness.push(item);
+    });
+    return groups;
+  }
+
+  function dignityGroupText(items) {
+    return items.length ? glossaryList(items) : glossaryMaybe(capitalizeText(t("none")), "", "capitalize-first");
   }
 
   function glossaryParts(value) {
@@ -2499,6 +2594,18 @@
 
   function round(value, digits = 2) {
     return Number(value).toFixed(digits);
+  }
+
+  function formatDecimal(value, digits = 1) {
+    const text = Number(value).toFixed(digits);
+    return state.lang === "es" ? text.replace(".", ",") : text;
+  }
+
+  function formatAngle(value) {
+    const totalMinutes = Math.round(Math.abs(value) * 60);
+    const degrees = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return `${degrees}°${String(minutes).padStart(2, "0")}′`;
   }
 
   function metric(label, value, valueClass = "", labelGlossary = "", valueGlossary = "") {
@@ -2813,6 +2920,18 @@
     });
   }
 
+  function formatUtcDateTime(jd) {
+    return new Intl.DateTimeFormat(state.lang === "es" ? "es-ES" : "en", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "UTC",
+      timeZoneName: "short",
+    }).format(astronomyTimeFromJd(jd));
+  }
+
   function parseDate(value) {
     const match = /^(-?\d{1,6})-(\d{2})-(\d{2})$/.exec(value);
     if (!match) return null;
@@ -3110,10 +3229,16 @@
 
   function tropicalPositions(jd, includeModern) {
     try {
-      return astronomyTropicalPositions(jd, includeModern) || approximateTropicalPositions(jd, includeModern);
+      const astronomy = astronomyTropicalPositions(jd, includeModern);
+      if (astronomy) {
+        state.ephemerisEngine = "astronomy";
+        return astronomy;
+      }
     } catch (error) {
-      return approximateTropicalPositions(jd, includeModern);
+      // Fall through to the compact fallback below.
     }
+    state.ephemerisEngine = "fallback";
+    return approximateTropicalPositions(jd, includeModern);
   }
 
   function ayanamsa(jd) {
@@ -3255,6 +3380,47 @@
     return best;
   }
 
+  const LUNAR_ASPECTS = [
+    ["conjunction", 0],
+    ["sextile", 60],
+    ["square", 90],
+    ["trine", 120],
+    ["opposition", 180],
+  ];
+
+  function lunarAspectCandidates(moon, planet, direction = 1, maxMoonTravel = 30) {
+    const initialDelta = norm360(planet.lon - moon.lon);
+    const relativeSpeed = planet.speed - moon.speed;
+    if (Math.abs(relativeSpeed) < 0.0001 || Math.abs(moon.speed) < 0.0001) return [];
+    const candidates = [];
+    LUNAR_ASPECTS.forEach(([type, exact]) => {
+      const targets = exact === 0 || exact === 180 ? [exact] : [exact, 360 - exact];
+      targets.forEach((target) => {
+        for (let cycle = -1; cycle <= 1; cycle += 1) {
+          const numerator = target - initialDelta + 360 * cycle;
+          const days = numerator / relativeSpeed;
+          if (direction > 0 ? days <= 0.000001 : days >= -0.000001) continue;
+          const moonTravel = Math.abs(moon.speed * days);
+          if (moonTravel <= maxMoonTravel + 0.0001) {
+            candidates.push({ type, days, moonTravel });
+          }
+        }
+      });
+    });
+    return candidates;
+  }
+
+  function lunarContactLabel(contact, motionKey = "") {
+    if (!contact) return "";
+    const parts = [
+      `${PLANETS[contact.planet].symbol} ${planetName(contact.planet)}`,
+      t(contact.type),
+    ];
+    if (motionKey) parts.push(t(motionKey));
+    if (Number.isFinite(contact.moonTravel)) parts.push(formatAngle(contact.moonTravel));
+    return parts.join(" · ");
+  }
+
   function overcomingLabel(aKey, bKey, aLon, bLon) {
     const distance = (signOf(bLon) - signOf(aLon) + 12) % 12;
     if ([2, 3, 4].includes(distance)) return t("overcoming", { planet: planetName(aKey) });
@@ -3293,23 +3459,49 @@
 
   function computeMoonCondition(chart) {
     const elongation = zodiacalDistance(chart.positions.sun.lon, chart.positions.moon.lon);
-    const apps = [];
-    const moonSpeed = Math.abs(chart.positions.moon.speed);
+    const moon = chart.positions.moon;
+    const contacts = [];
+    let lastSeparation = null;
+    let nextApplication = null;
+    let hasApplyingWithinOrb = false;
     VISIBLE_KEYS.filter((key) => key !== "moon" && key !== "sun").forEach((key) => {
-      const aspect = degreeAspect(chart.positions.moon.lon, chart.positions[key].lon, 8);
-      if (!aspect) return;
-      const nextMoon = norm360(chart.positions.moon.lon + chart.positions.moon.speed);
-      const nextPlanet = norm360(chart.positions[key].lon + chart.positions[key].speed);
-      const nowDelta = Math.abs(angleDistance(chart.positions.moon.lon, chart.positions[key].lon) - { copresence: 0, sextile: 60, square: 90, trine: 120, opposition: 180 }[aspect.type]);
-      const nextDelta = Math.abs(angleDistance(nextMoon, nextPlanet) - { copresence: 0, sextile: 60, square: 90, trine: 120, opposition: 180 }[aspect.type]);
-      const motion = nextDelta < nowDelta && moonSpeed > Math.abs(chart.positions[key].speed) ? t("applying") : t("separating");
-      apps.push(`${PLANETS[key].symbol} ${planetName(key)} ${t(aspect.type)} (${motion})`);
+      const planet = chart.positions[key];
+      const nextCandidates = lunarAspectCandidates(moon, planet, 1, 30)
+        .map((candidate) => ({ ...candidate, planet: key }));
+      const previousCandidates = lunarAspectCandidates(moon, planet, -1, 30)
+        .map((candidate) => ({ ...candidate, planet: key }));
+      nextCandidates.forEach((candidate) => {
+        if (!nextApplication || candidate.days < nextApplication.days) nextApplication = candidate;
+      });
+      previousCandidates.forEach((candidate) => {
+        if (!lastSeparation || candidate.days > lastSeparation.days) lastSeparation = candidate;
+      });
+
+      const near = degreeAspect(moon.lon, planet.lon, 12);
+      if (near) {
+        const nextMoon = norm360(moon.lon + moon.speed);
+        const nextPlanet = norm360(planet.lon + planet.speed);
+        const exact = { copresence: 0, sextile: 60, square: 90, trine: 120, opposition: 180 }[near.type];
+        const nowDelta = Math.abs(angleDistance(moon.lon, planet.lon) - exact);
+        const nextDelta = Math.abs(angleDistance(nextMoon, nextPlanet) - exact);
+        const motion = nextDelta < nowDelta ? "applying" : "separating";
+        if (motion === "applying") hasApplyingWithinOrb = true;
+        contacts.push({
+          planet: key,
+          type: near.type === "copresence" ? "conjunction" : near.type,
+          motion,
+          delta: near.delta,
+        });
+      }
     });
     return {
       phase: lunarPhaseName(elongation),
       elongation,
-      applications: apps,
-      voidOfCourse: apps.every((item) => item.includes(t("separating"))),
+      contacts,
+      lastSeparation,
+      nextApplication,
+      voidOfCourse: !nextApplication,
+      hasApplyingWithinOrb,
     };
   }
 
@@ -3400,6 +3592,7 @@
       jd: time.jd,
       zoneLabel: time.zoneLabel,
       offset: time.offset,
+      ephemerisEngine: state.ephemerisEngine,
       positions,
       planetKeys,
       angles,
@@ -3409,6 +3602,7 @@
       sectLight: isDay ? "sun" : "moon",
       beneficOfSect: isDay ? "jupiter" : "venus",
       maleficOfSect: isDay ? "saturn" : "mars",
+      maleficContrarySect: isDay ? "mars" : "saturn",
       mcHouse,
       icHouse,
       lots,
@@ -3428,6 +3622,7 @@
     renderCoreSummary(chart);
     renderAscLord(chart);
     renderMoon(chart);
+    renderTechnicalPanel(chart);
     renderPlanetTable(chart);
     renderHouseTable(chart);
     renderLotTable(chart);
@@ -3445,19 +3640,21 @@
 
   function renderCoreSummary(chart) {
     const mcNote = state.lang === "es"
-      ? `En ${glossaryTerm("casas de signos enteros", "wholeSign")}, el ${glossaryTerm(t("mc"), "mc")} y el ${glossaryTerm(t("ic"), "ic")} son puntos astronómicos: no siempre caen en las casas 10 y 4. Tyche muestra la casa por signo entero donde caen.`
-      : `In ${glossaryTerm("Whole Sign Houses", "wholeSign")}, the ${glossaryTerm(t("mc"), "mc")} and ${glossaryTerm(t("ic"), "ic")} are astronomical points: they do not always fall in houses 10 and 4. Tyche shows the whole-sign house where each point falls.`;
+      ? `<strong>Nota sobre ${glossaryTerm(t("mc"), "mc")}/${glossaryTerm(t("ic"), "ic")}:</strong> en ${glossaryTerm("casas de signos enteros", "wholeSign")}, las casas se cuentan desde el signo Ascendente. El ${glossaryTerm(t("mc"), "mc")} y el ${glossaryTerm(t("ic"), "ic")} no son cúspides de casa, sino puntos astronómicos sensibles; por eso Tyche muestra también en qué casa por signo entero caen.`
+      : `<strong>Note on ${glossaryTerm(t("mc"), "mc")}/${glossaryTerm(t("ic"), "ic")}:</strong> in ${glossaryTerm("Whole Sign Houses", "wholeSign")}, houses are counted from the rising sign. The ${glossaryTerm(t("mc"), "mc")} and ${glossaryTerm(t("ic"), "ic")} are not house cusps, but sensitive astronomical points; this is why Tyche also shows which whole-sign house contains them.`;
     const precisionNote = state.lang === "es"
       ? `${glossaryTerm("Efemérides", "ephemeris")} locales con Astronomy Engine, precisión aproximada ±1′ para uso educativo; revisa cartas críticas con efemérides profesionales.`
       : `Local ${glossaryTerm("ephemerides", "ephemeris")} with Astronomy Engine, approximately ±1′ accuracy for educational use; verify critical charts with professional ephemerides.`;
     const html = `
       <h3>${glossaryTerm(t("sect"), "sect")}</h3>
       <div class="metric-grid">
-        ${metric(t("sect"), chart.isDay ? t("dayChart") : t("nightChart"), "", "sect")}
+        ${metric(t("chartType"), chart.isDay ? t("dayChart") : t("nightChart"), "", "sect")}
         ${metric(t("sectLight"), `${PLANETS[chart.sectLight].symbol} ${planetName(chart.sectLight)}`, "", "sectLight")}
         ${metric(t("beneficSect"), `${PLANETS[chart.beneficOfSect].symbol} ${planetName(chart.beneficOfSect)}`, "", "beneficSect")}
         ${metric(t("maleficSect"), `${PLANETS[chart.maleficOfSect].symbol} ${planetName(chart.maleficOfSect)}`, "", "maleficSect")}
+        ${metric(t("maleficContrarySect"), `${PLANETS[chart.maleficContrarySect].symbol} ${planetName(chart.maleficContrarySect)}`, "", "maleficContrarySect")}
         ${metric(t("ascendant"), formatDegree(chart.angles.asc), "", "ascendant")}
+        ${metric(t("descendant"), formatDegree(chart.angles.desc), "", "descendant")}
         ${metric(t("mc"), `${formatDegree(chart.angles.mc)} · ${t("tableHouse")} ${chart.mcHouse}`, "", "mc")}
         ${metric(t("ic"), `${formatDegree(chart.angles.ic)} · ${t("tableHouse")} ${chart.icHouse}`, "", "ic")}
         ${metric(t("timezoneUsed"), chart.zoneLabel, "", "timezoneUsed")}
@@ -3472,9 +3669,7 @@
     const ascSign = SIGNS[chart.ascSign];
     const lord = ascSign.ruler;
     const p = chart.positions[lord];
-    const condition = p.majorDignities.length
-      ? glossaryList(p.majorDignities)
-      : glossaryMaybe(capitalizeText(t("noMajorDignity")), "noMajorDignity", "capitalize-first");
+    const groups = dignityGroups(p.dignities);
     $("#ascLordPanel").innerHTML = `
       <h3>${glossaryTerm(t("ascLordTitle"), "ascLord")}</h3>
       <p class="text-note">${escapeHtml(t("ascLordText", {
@@ -3485,20 +3680,50 @@
         topics: houseTopics(p.house),
         angularity: t(p.angularity),
       }))}</p>
-      <p class="text-note"><strong>${glossaryTerm(t("tableCondition"), "essentialCondition")}:</strong> ${condition}.</p>
-      ${badges(p.dignities)}
+      <div class="condition-list">
+        <p><strong>${glossaryTerm(t("dignityMajor"), "essentialCondition")}:</strong> ${dignityGroupText(groups.major)}.</p>
+        <p><strong>${glossaryTerm(t("dignityMinor"), "essentialCondition")}:</strong> ${dignityGroupText(groups.minor)}.</p>
+        <p><strong>${glossaryTerm(t("weaknesses"), "essentialCondition")}:</strong> ${dignityGroupText(groups.weakness)}.</p>
+      </div>
     `;
   }
 
   function renderMoon(chart) {
-    const apps = chart.moon.applications.length ? chart.moon.applications.join(" · ") : (state.lang === "es" ? "Sin aplicaciones mayores cercanas" : "No close major applications");
+    const phaseDistance = chart.moon.elongation > 180 ? 360 - chart.moon.elongation : chart.moon.elongation;
+    const phaseContext = t(chart.moon.elongation > 180 ? "moonBeforeNew" : "moonAfterNew", {
+      degrees: `${formatDecimal(phaseDistance, 1)}°`,
+    });
+    const lastSeparation = lunarContactLabel(chart.moon.lastSeparation, "separating") || t("moonNoSeparation");
+    const nextApplication = lunarContactLabel(chart.moon.nextApplication, "applying") || t("moonNoApplication");
     $("#moonPanel").innerHTML = `
       <h3>${glossaryTerm(t("moonTitle"), "lunarCondition")}</h3>
       <div class="metric-grid">
-        ${metric(t("moonPhase"), `${chart.moon.phase} · ${round(chart.moon.elongation, 1)}°`, "capitalize-first", "moonPhase", "moonPhase")}
-        ${metric(t("moonVoc"), chart.moon.voidOfCourse ? t("yesVoc") : t("notVoc"), "", "moonVoc")}
+        ${metric(t("moonPhase"), `${chart.moon.phase} · ${phaseContext}`, "capitalize-first", "moonPhase", "moonPhase")}
+        ${metric(t("moonElongation"), `${formatDecimal(chart.moon.elongation, 1)}°`, "", "moonPhase")}
+        ${metric(t("moonLastSeparation"), lastSeparation, "", "applications")}
+        ${metric(t("moonNextApplication"), nextApplication, "", "applications")}
+        ${metric(t("moonVoc30"), chart.moon.voidOfCourse ? t("yesVoc") : t("notVoc"), "", "moonVoc")}
+        ${metric(t("moonNoApplyingWithinOrb"), chart.moon.hasApplyingWithinOrb ? t("no") : t("yes"), "", "moonVoc")}
       </div>
-      <p class="text-note"><strong>${glossaryTerm(t("moonAspects"), "applications")}:</strong> ${escapeHtml(apps)}</p>
+    `;
+  }
+
+  function renderTechnicalPanel(chart) {
+    const engine = chart.ephemerisEngine === "astronomy" ? t("astronomyEngine") : t("fallbackEngine");
+    $("#technicalPanel").innerHTML = `
+      <details>
+        <summary>${escapeHtml(t("technicalTitle"))}</summary>
+        <div class="technical-grid">
+          ${metric(t("localDateTime"), `${formatDateLabel(chart.input.date)} · ${chart.input.time || "—"}`)}
+          ${metric(t("utcDateTime"), formatUtcDateTime(chart.jd))}
+          ${metric(t("timezoneUsed"), chart.zoneLabel, "", "timezoneUsed")}
+          ${metric(t("coordinates"), `${formatDecimal(chart.input.latitude, 4)}, ${formatDecimal(chart.input.longitude, 4)}`)}
+          ${metric(t("calendar"), t(chart.input.calendar))}
+          ${metric(t("zodiac"), t(chart.input.zodiac), "", "zodiac")}
+          ${metric(t("houses"), t("wholeSign"), "", "wholeSign")}
+          ${metric(t("ephemerisEngine"), engine, "", "ephemeris")}
+        </div>
+      </details>
     `;
   }
 

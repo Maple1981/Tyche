@@ -149,5 +149,6 @@ Calculate:
 
 - Lunar phase angle from Sun to Moon.
 - Named phase.
-- Applying and separating major configurations to the seven visible planets.
-- Optional void-of-course flag when no applying major aspect perfects before the Moon leaves its current sign.
+- Last separating major contact and next applying major contact to the visible planets, using conjunction for bodily contact and sextile, square, trine, and opposition for the other major relationships.
+- Void-of-course by the broader Hellenistic 30-degree definition: the Moon is void when no major contact perfects within the next 30 degrees of lunar motion.
+- A separate modern/orb-style indicator for whether there is no applying contact within the displayed lunar orb. Do not collapse this into the Hellenistic void-of-course judgment.

@@ -59,7 +59,7 @@
         <section class="workbench" aria-labelledby="main-title">
           <div class="intro-copy">
             <h1 id="main-title" data-i18n="title">Crea una carta natal helenística</h1>
-            <p data-i18n-html="subtitleHtml">Calcula el <button type="button" data-glossary="ascendant">Ascendente</button>, las <button type="button" data-glossary="wholeSign">casas de signos enteros (Whole Sign Houses)</button>, la <button type="button" data-glossary="sect">secta</button>, las <button type="button" data-glossary="essentialCondition">dignidades</button>, los <button type="button" data-glossary="lots">lotes</button> y otros elementos de la tradición astrológica helenística. Todo con absoluta privacidad: la carta al completo se procesa localmente en tu navegador. Solo la búsqueda de lugares consulta coordenadas externas.</p>
+            <p data-i18n-html="subtitleHtml">Calcula el <button type="button" data-glossary="ascendant">Ascendente</button>, las <button type="button" data-glossary="wholeSign">casas de signos enteros (Whole Sign Houses)</button>, la <button type="button" data-glossary="sect">secta</button>, la <button type="button" data-glossary="essentialCondition">condición esencial</button>, los <button type="button" data-glossary="lots">lotes</button> y otros elementos de la tradición astrológica helenística. La carta se procesa localmente en tu navegador. La búsqueda de lugares consulta coordenadas externas y las imágenes del archivo histórico se cargan desde Wikimedia Commons.</p>
           </div>
 
           <form id="chart-form" class="chart-form" autocomplete="off">
@@ -200,6 +200,7 @@
               <article class="panel" id="coreSummary"></article>
               <article class="panel emphasis" id="ascLordPanel"></article>
               <article class="panel" id="moonPanel"></article>
+              <article class="panel technical-panel" id="technicalPanel"></article>
             </div>
           </div>
 
@@ -222,7 +223,7 @@
 
       <footer class="site-footer">
         <p data-i18n="footerWarning">Motor astronómico pensado para uso educativo. La información proporcionada es solo orientativa.</p>
-        <p data-i18n="footerPrivacy">La carta se calcula localmente en tu navegador. No guardamos tus datos ni usamos cookies. La búsqueda de lugares consulta un servicio externo solo para obtener coordenadas. El posicionamiento de planetas utiliza una librería local.</p>
+        <p data-i18n="footerPrivacy">La carta se calcula localmente en tu navegador. No guardamos tus cartas ni usamos cookies. Solo se conserva en este dispositivo la preferencia de idioma y tema. La búsqueda de lugares consulta Open-Meteo para obtener coordenadas. Las imágenes del archivo histórico se cargan desde Wikimedia Commons. El posicionamiento de planetas utiliza una librería local.</p>
         <p><span data-i18n="footerAuthors">Autores: Maple81 y Proserpina, 2026.</span> <a href="https://github.com/Maple1981/Tyche" target="_blank" rel="noreferrer" data-i18n="githubLink">Ver repositorio GitHub</a></p>
         <p class="attribution-line" data-i18n-html="footerAttributions">Atribuciones generales: imágenes de <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; datos de personajes históricos de <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a> y <a href="https://www.astro.com/astro-databank/" target="_blank" rel="noreferrer">Astro-Databank</a>; búsqueda de localización mediante <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>; efemérides locales mediante <a href="https://github.com/cosinekitty/astronomy" target="_blank" rel="noreferrer">Astronomy Engine</a> MIT, precisión aprox. ±1′, en ejecución local, sin enviar datos a terceros.</p>
       </footer>

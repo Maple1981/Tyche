@@ -41,7 +41,7 @@ Defaults should remain:
 
 The app does not send birth date, time, or chart data anywhere. Chart and ephemeris calculations are performed in the browser.
 
-Place search may contact an external geocoding service with the typed place query in order to obtain coordinates. Do not describe the whole app as completely anonymous.
+Place search may contact an external geocoding service with the typed place query in order to obtain coordinates. Historical example portraits load from Wikimedia Commons. Language and theme preferences are kept in localStorage on the user's device. Do not describe the whole app as completely anonymous.
 
 No personal examples, private data, source attachments, OCR dumps, or spreadsheets should be committed.
 

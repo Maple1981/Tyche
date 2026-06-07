@@ -22,11 +22,12 @@ Core derived data:
 - MC/IC sign and their whole sign house.
 - Sect by solar altitude: diurnal if the Sun is above the horizon, nocturnal if below.
 - Benefic/malefic of the sect: Jupiter/Saturn for day, Venus/Mars for night.
+- Also show the malefic contrary to sect: Mars in day charts and Saturn in night charts.
 - Essential condition: domicile, exaltation, triplicity, Egyptian bounds, decans, detriment, fall.
 - Angularity by whole sign: angular 1/4/7/10, succedent 2/5/8/11, cadent 3/6/9/12.
 - Lots: Fortune, Spirit, Eros, Necessity, Courage, Victory, Nemesis.
 - Solar phase states: morning/evening, under beams, combustion, cazimi.
-- Lunar condition: phase, applying/separating aspects, optional void-of-course.
+- Lunar condition: synodic phase, last separation, next application, Hellenistic 30-degree void-of-course, and a separate no-application-within-orb indicator.
 
 This app uses vendored Astronomy Engine for browser-side ephemerides, with the older compact formulas kept only as fallback. Make the approximate +/-1 arcminute limitation visible in the UI and documentation; do not present the results as professional ephemeris-grade.
 
