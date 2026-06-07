@@ -793,6 +793,111 @@ td {
   margin-top: 10px;
 }
 
+.interpretation-panel {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.interpretation-heading {
+  display: grid;
+  gap: 4px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 10px;
+}
+
+.interpretation-heading h3,
+.interpretation-reading h4,
+.interpretation-block h4,
+.interpretation-block h5,
+.interpretation-summary h4,
+.interpretation-evidence summary {
+  margin: 0;
+  color: var(--blue-deep);
+  font-variant: small-caps;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0;
+}
+
+.interpretation-heading p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.interpretation-heading h3 {
+  font-size: 1.35rem;
+}
+
+.interpretation-reading h4,
+.interpretation-block h5,
+.interpretation-summary h4,
+.interpretation-evidence summary {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.interpretation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 18px;
+}
+
+.interpretation-summary {
+  grid-column: 1 / -1;
+  border-left: 3px solid var(--blue);
+  padding-left: 12px;
+}
+
+.interpretation-reading {
+  grid-column: 1 / -1;
+}
+
+.interpretation-reading-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 18px;
+  margin-top: 8px;
+}
+
+.interpretation-block {
+  min-width: 0;
+  border-top: 1px dotted color-mix(in srgb, var(--blue) 42%, var(--line));
+  padding-top: 10px;
+}
+
+.interpretation-block p,
+.interpretation-summary p {
+  margin: 6px 0 0;
+  color: var(--ink);
+  line-height: 1.62;
+}
+
+.interpretation-evidence {
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+
+.interpretation-evidence summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.interpretation-evidence ol {
+  margin: 10px 0 0;
+  padding-left: 1.35rem;
+  color: var(--muted);
+  line-height: 1.58;
+}
+
+.interpretation-evidence li + li {
+  margin-top: 6px;
+}
+
+.interpretation-timing {
+  margin: 0;
+}
+
 .precision-note {
   margin: 16px 0 0;
   color: var(--muted);
@@ -1128,6 +1233,8 @@ body.night .person-card button {
   .form-grid,
   .advanced-grid,
   .metric-grid,
+  .interpretation-grid,
+  .interpretation-reading-grid,
   .technical-grid,
   .lot-fieldset {
     grid-template-columns: 1fr;

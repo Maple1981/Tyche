@@ -119,6 +119,28 @@
       timezoneUsed: "Zona usada",
       julianDay: "Día juliano",
       technicalTitle: "Datos técnicos",
+      interpretationTitle: "Juicio natal",
+      interpretationSummary: "Resumen claro",
+      interpretationReading: "Lectura tradicional",
+      interpretationEvidence: "Evidencias técnicas",
+      interpretationWhy: "Por qué Tyche lo interpreta así",
+      interpretationTimingNote: "Nota temporal",
+      interpretationTimingText: "Esta lectura describe la estructura natal. Para predicción o activación temporal se necesitan técnicas separadas como profecciones anuales, liberación zodiacal o tránsitos a puntos activados.",
+      dominantTopicTitle: "Tema dominante",
+      lifeDirectionTitle: "Dirección vital",
+      resourcesTitle: "Apoyos",
+      tensionsTitle: "Fricciones",
+      evidenceAscLordHouse: "El regente del Ascendente cae en casa {house}: {topics}.",
+      evidenceAscLordAngularity: "Su angularidad es {angularity}, por lo que su testimonio tiene {weight}.",
+      evidenceAscLordCondition: "Su condición esencial indica: {condition}.",
+      evidenceSect: "La carta es {sect}; {sectLight} es la luminaria de la secta, {benefic} actúa como benéfico de la secta y {malefic} como maléfico contrario a la secta.",
+      evidenceMcHouse: "El MC cae por signos enteros en casa {house}, reforzando {topics}.",
+      evidenceAngularPlanets: "Planetas visibles angulares: {planets}.",
+      evidenceLots: "Fortuna cae en casa {fortuneHouse} y Espíritu en casa {spiritHouse}.",
+      evidenceNoLot: "No se han seleccionado Fortuna y Espíritu a la vez; la lectura de lotes queda limitada.",
+      testimonyStrong: "peso alto",
+      testimonyMedium: "peso medio",
+      testimonyLow: "peso indirecto",
       localDateTime: "Fecha local",
       utcDateTime: "UTC usado",
       coordinates: "Coordenadas",
@@ -321,6 +343,28 @@
       timezoneUsed: "Zone used",
       julianDay: "Julian day",
       technicalTitle: "Technical data",
+      interpretationTitle: "Natal judgment",
+      interpretationSummary: "Clear summary",
+      interpretationReading: "Traditional reading",
+      interpretationEvidence: "Technical evidence",
+      interpretationWhy: "Why Tyche reads it this way",
+      interpretationTimingNote: "Timing note",
+      interpretationTimingText: "This reading describes the natal structure. Prediction or activation in time requires separate techniques such as annual profections, zodiacal releasing, or transits to activated points.",
+      dominantTopicTitle: "Dominant topic",
+      lifeDirectionTitle: "Life direction",
+      resourcesTitle: "Supports",
+      tensionsTitle: "Frictions",
+      evidenceAscLordHouse: "The Ascendant / Hour-Marker lord falls in house {house}: {topics}.",
+      evidenceAscLordAngularity: "Its angularity is {angularity}, so its testimony carries {weight}.",
+      evidenceAscLordCondition: "Its essential condition indicates: {condition}.",
+      evidenceSect: "The chart is {sect}; {sectLight} is the sect light, {benefic} acts as the benefic of sect, and {malefic} as the malefic contrary to sect.",
+      evidenceMcHouse: "The MC falls by whole signs in house {house}, reinforcing {topics}.",
+      evidenceAngularPlanets: "Angular visible planets: {planets}.",
+      evidenceLots: "Fortune falls in house {fortuneHouse}, and Spirit in house {spiritHouse}.",
+      evidenceNoLot: "Fortune and Spirit are not both selected; the lot testimony is limited.",
+      testimonyStrong: "strong weight",
+      testimonyMedium: "medium weight",
+      testimonyLow: "indirect weight",
       localDateTime: "Local date",
       utcDateTime: "UTC used",
       coordinates: "Coordinates",
@@ -3623,6 +3667,7 @@
     renderAscLord(chart);
     renderMoon(chart);
     renderTechnicalPanel(chart);
+    renderInterpretation(chart);
     renderPlanetTable(chart);
     renderHouseTable(chart);
     renderLotTable(chart);
@@ -3724,6 +3769,256 @@
           ${metric(t("ephemerisEngine"), engine, "", "ephemeris")}
         </div>
       </details>
+    `;
+  }
+
+  function planetLabel(key) {
+    return `${PLANETS[key]?.symbol || ""} ${planetName(key)}`.trim();
+  }
+
+  function signLabel(index) {
+    const sign = SIGNS[((index % 12) + 12) % 12];
+    return `${sign.symbol} ${sign[state.lang]}`;
+  }
+
+  function naturalList(items) {
+    const list = items.filter(Boolean);
+    if (!list.length) return capitalizeText(t("none"));
+    if (list.length === 1) return list[0];
+    const last = list[list.length - 1];
+    const rest = list.slice(0, -1).join(", ");
+    return state.lang === "es" ? `${rest} y ${last}` : `${rest} and ${last}`;
+  }
+
+  function plainDignityText(items) {
+    const groups = dignityGroups(items || []);
+    const parts = [];
+    if (groups.major.length) parts.push(`${t("dignityMajor")}: ${capitalizeList(groups.major)}`);
+    if (groups.minor.length) parts.push(`${t("dignityMinor")}: ${capitalizeList(groups.minor)}`);
+    if (groups.weakness.length) parts.push(`${t("weaknesses")}: ${capitalizeList(groups.weakness)}`);
+    return parts.length ? parts.join("; ") : capitalizeText(t("noMajorDignity"));
+  }
+
+  function angularityWeight(angularity) {
+    if (angularity === "angular") return t("testimonyStrong");
+    if (angularity === "succedent") return t("testimonyMedium");
+    return t("testimonyLow");
+  }
+
+  function angularityReading(angularity) {
+    const texts = {
+      es: {
+        angular: "de forma visible, activa y dominante",
+        succedent: "de forma sostenida, acumulativa y de fuerza media",
+        cadent: "de forma más indirecta, retirada o menos visible",
+      },
+      en: {
+        angular: "in a visible, active, and dominant way",
+        succedent: "in a sustained, cumulative, medium-strength way",
+        cadent: "in a more indirect, withdrawn, or less visible way",
+      },
+    };
+    return texts[state.lang]?.[angularity] || texts.es[angularity] || angularity;
+  }
+
+  function signStyleReading(sign) {
+    const element = {
+      es: {
+        fire: "caliente, activa y orientada a la acción",
+        earth: "concreta, material y estabilizadora",
+        air: "relacional, discursiva y móvil",
+        water: "sensible, corporal y receptiva",
+      },
+      en: {
+        fire: "hot, active, and action-oriented",
+        earth: "concrete, material, and stabilizing",
+        air: "relational, discursive, and mobile",
+        water: "sensitive, bodily, and receptive",
+      },
+    };
+    const mode = {
+      es: { cardinal: "iniciadora", fixed: "sostenida", mutable: "adaptable" },
+      en: { cardinal: "initiating", fixed: "sustained", mutable: "adaptable" },
+    };
+    const elementText = element[state.lang]?.[sign.element] || sign.element;
+    const modeText = mode[state.lang]?.[sign.mode] || sign.mode;
+    return state.lang === "es"
+      ? `El signo aporta una expresión ${elementText}, con cualidad ${modeText}.`
+      : `The sign gives a ${elementText} expression, with a ${modeText} quality.`;
+  }
+
+  function essentialConditionReading(position) {
+    const groups = dignityGroups(position.dignities || []);
+    const major = groups.major.map(capitalizeText);
+    const minor = groups.minor.map(capitalizeText);
+    const weakness = groups.weakness.map(capitalizeText);
+    if (state.lang === "es") {
+      if (major.length && weakness.length) {
+        return `Combina recursos propios (${major.join(", ")}) con fricción esencial (${weakness.join(", ")}).`;
+      }
+      if (major.length) return `Opera con recursos propios por ${major.join(", ")}.`;
+      if (weakness.length) {
+        const minorText = minor.length ? `, aunque recibe apoyo menor por ${minor.join(", ")}` : "";
+        return `Actúa con fricción esencial por ${weakness.join(", ")}${minorText}.`;
+      }
+      return `No muestra dignidad mayor; su fuerza depende más de angularidad, regencias y configuraciones.`;
+    }
+    if (major.length && weakness.length) {
+      return `It combines resources of its own (${major.join(", ")}) with essential friction (${weakness.join(", ")}).`;
+    }
+    if (major.length) return `It operates with resources of its own through ${major.join(", ")}.`;
+    if (weakness.length) {
+      const minorText = minor.length ? `, though it receives minor support through ${minor.join(", ")}` : "";
+      return `It acts with essential friction through ${weakness.join(", ")}${minorText}.`;
+    }
+    return `It shows no major dignity; its strength depends more on angularity, rulerships, and configurations.`;
+  }
+
+  function visibleAngularPlanets(chart) {
+    return VISIBLE_KEYS.filter((key) => chart.positions[key]?.angularity === "angular");
+  }
+
+  function lotByKey(chart, key) {
+    return chart.lots.find((lot) => lot.key === key);
+  }
+
+  function scoreChartTopics(chart) {
+    const houses = Array.from({ length: 12 }, (_, index) => ({
+      house: index + 1,
+      score: 0,
+      reasons: [],
+    }));
+    const add = (house, points, reason) => {
+      if (!house) return;
+      const target = houses[house - 1];
+      target.score += points;
+      target.reasons.push(reason);
+    };
+    const ascLord = SIGNS[chart.ascSign].ruler;
+    add(chart.positions[ascLord]?.house, 5, t("ascLordTitle"));
+    add(chart.positions[chart.sectLight]?.house, 2, t("sectLight"));
+    add(chart.mcHouse, 2, t("mc"));
+    visibleAngularPlanets(chart).forEach((key) => add(chart.positions[key].house, 1.5, planetName(key)));
+    add(lotByKey(chart, "fortune")?.house, 1.25, t("fortune"));
+    add(lotByKey(chart, "spirit")?.house, 1.25, t("spirit"));
+    return houses.sort((a, b) => b.score - a.score || a.house - b.house);
+  }
+
+  function interpretChart(chart) {
+    const ascSign = SIGNS[chart.ascSign];
+    const ascLord = ascSign.ruler;
+    const ascLordPosition = chart.positions[ascLord];
+    const ascLordSign = SIGNS[signOf(ascLordPosition.lon)];
+    const dominant = scoreChartTopics(chart)[0];
+    const sectLight = chart.sectLight;
+    const benefic = chart.beneficOfSect;
+    const malefic = chart.maleficContrarySect;
+    const beneficPosition = chart.positions[benefic];
+    const maleficPosition = chart.positions[malefic];
+    const angularPlanets = visibleAngularPlanets(chart);
+    const fortune = lotByKey(chart, "fortune");
+    const spirit = lotByKey(chart, "spirit");
+    const sectLabel = chart.isDay ? t("dayChart") : t("nightChart");
+    const sectContext = sectLabel.toLocaleLowerCase(state.lang === "es" ? "es-ES" : "en");
+    const sectDescription = state.lang === "es" ? `una ${sectContext}` : `a ${sectContext}`;
+
+    const summary = state.lang === "es"
+      ? `La carta concentra sus testimonios principales en la casa ${dominant.house}: ${houseTopics(dominant.house)}. El hilo rector es ${planetLabel(ascLord)}, regente del Ascendente, situado en casa ${ascLordPosition.house}; por eso la lectura parte de la dirección vital y no de una posición aislada.`
+      : `The chart concentrates its main testimonies in house ${dominant.house}: ${houseTopics(dominant.house)}. The guiding thread is ${planetLabel(ascLord)}, lord of the Ascendant / Hour-Marker, placed in house ${ascLordPosition.house}; this is why the reading begins from life direction rather than from an isolated placement.`;
+
+    const lifeDirection = state.lang === "es"
+      ? `El Ascendente está en ${signLabel(chart.ascSign)}, de modo que ${planetLabel(ascLord)} administra el timón de la carta. Al caer en ${signLabel(signOf(ascLordPosition.lon))}, casa ${ascLordPosition.house}, orienta la vida hacia ${houseTopics(ascLordPosition.house)}. ${signStyleReading(ascLordSign)} Al estar ${t(ascLordPosition.angularity)}, ese foco se manifiesta ${angularityReading(ascLordPosition.angularity)}. ${essentialConditionReading(ascLordPosition)}`
+      : `The Ascendant / Hour-Marker is in ${signLabel(chart.ascSign)}, so ${planetLabel(ascLord)} steers the chart. Placed in ${signLabel(signOf(ascLordPosition.lon))}, house ${ascLordPosition.house}, it turns life direction toward ${houseTopics(ascLordPosition.house)}. ${signStyleReading(ascLordSign)} Being ${t(ascLordPosition.angularity)}, this focus manifests ${angularityReading(ascLordPosition.angularity)}. ${essentialConditionReading(ascLordPosition)}`;
+
+    const resources = state.lang === "es"
+      ? `En esta ${sectContext}, ${planetLabel(benefic)} es el benéfico de la secta y cae en casa ${beneficPosition.house}: ${houseTopics(beneficPosition.house)}. Sus testimonios señalan dónde la carta tiende a recibir cohesión, alivio o aumento, especialmente si se conecta con los lugares dominantes.`
+      : `In this ${sectContext}, ${planetLabel(benefic)} is the benefic of sect and falls in house ${beneficPosition.house}: ${houseTopics(beneficPosition.house)}. Its testimonies indicate where the chart tends to receive cohesion, relief, or increase, especially when it connects with the dominant places.`;
+
+    const tensions = state.lang === "es"
+      ? `${planetLabel(malefic)} es el maléfico contrario a la secta y cae en casa ${maleficPosition.house}: ${houseTopics(maleficPosition.house)}. Este testimonio no cancela el tema, pero lo vuelve más exigente: conviene leerlo como zona de fricción, corte, exceso o disciplina forzada según sus configuraciones.`
+      : `${planetLabel(malefic)} is the malefic contrary to sect and falls in house ${maleficPosition.house}: ${houseTopics(maleficPosition.house)}. This testimony does not cancel the topic, but it makes it more demanding: read it as a place of friction, severing, excess, or forced discipline according to its configurations.`;
+
+    const lotReading = fortune && spirit
+      ? (state.lang === "es"
+        ? `Fortuna en casa ${fortune.house} describe el plano del cuerpo, las circunstancias y aquello que acontece; Espíritu en casa ${spirit.house} describe intención, acción deliberada y orientación electiva. Leídos junto al regente del Ascendente, separan lo que sobreviene de lo que el nativo intenta dirigir.`
+        : `Fortune in house ${fortune.house} describes the level of body, circumstance, and what happens; Spirit in house ${spirit.house} describes intention, deliberate action, and elective direction. Read with the Ascendant lord, they separate what befalls from what the native tries to direct.`)
+      : (state.lang === "es"
+        ? `La lectura de lotes queda limitada porque Fortuna y Espíritu no están seleccionados a la vez.`
+        : `The lot reading is limited because Fortune and Spirit are not both selected.`);
+
+    const evidence = [
+      t("evidenceAscLordHouse", {
+        house: ascLordPosition.house,
+        topics: houseTopics(ascLordPosition.house),
+      }),
+      t("evidenceAscLordAngularity", {
+        angularity: t(ascLordPosition.angularity),
+        weight: angularityWeight(ascLordPosition.angularity),
+      }),
+      t("evidenceAscLordCondition", {
+        condition: plainDignityText(ascLordPosition.dignities),
+      }),
+      t("evidenceSect", {
+        sect: sectDescription,
+        sectLight: planetLabel(sectLight),
+        benefic: planetLabel(benefic),
+        malefic: planetLabel(malefic),
+      }),
+      t("evidenceMcHouse", {
+        house: chart.mcHouse,
+        topics: houseTopics(chart.mcHouse),
+      }),
+      t("evidenceAngularPlanets", {
+        planets: angularPlanets.length ? naturalList(angularPlanets.map(planetLabel)) : capitalizeText(t("none")),
+      }),
+      fortune && spirit
+        ? t("evidenceLots", { fortuneHouse: fortune.house, spiritHouse: spirit.house })
+        : t("evidenceNoLot"),
+    ];
+
+    return {
+      summary,
+      blocks: [
+        { title: t("lifeDirectionTitle"), text: lifeDirection },
+        { title: t("resourcesTitle"), text: resources },
+        { title: t("tensionsTitle"), text: tensions },
+        { title: t("lots"), text: lotReading },
+      ],
+      evidence,
+    };
+  }
+
+  function renderInterpretation(chart) {
+    const interpretation = interpretChart(chart);
+    $("#interpretationPanel").innerHTML = `
+      <div class="interpretation-heading">
+        <h3>${escapeHtml(t("interpretationTitle"))}</h3>
+        <p>${escapeHtml(t("interpretationWhy"))}</p>
+      </div>
+      <div class="interpretation-grid">
+        <section class="interpretation-summary">
+          <h4>${escapeHtml(t("interpretationSummary"))}</h4>
+          <p>${escapeHtml(interpretation.summary)}</p>
+        </section>
+        <section class="interpretation-reading">
+          <h4>${escapeHtml(t("interpretationReading"))}</h4>
+          <div class="interpretation-reading-grid">
+            ${interpretation.blocks.map((block) => `
+              <section class="interpretation-block">
+                <h5>${escapeHtml(block.title)}</h5>
+                <p>${escapeHtml(block.text)}</p>
+              </section>
+            `).join("")}
+          </div>
+        </section>
+      </div>
+      <details class="interpretation-evidence" open>
+        <summary>${escapeHtml(t("interpretationEvidence"))}</summary>
+        <ol>
+          ${interpretation.evidence.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+        </ol>
+      </details>
+      <p class="text-note interpretation-timing"><strong>${escapeHtml(t("interpretationTimingNote"))}:</strong> ${escapeHtml(t("interpretationTimingText"))}</p>
     `;
   }
 

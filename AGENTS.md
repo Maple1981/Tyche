@@ -49,6 +49,14 @@ Preferred reading order:
 5. Inspect Fortune, Spirit, their rulers, and derived context.
 6. Use triplicity rulers of the sect light for broad support/stability.
 
+Interpretation output:
+
+- Generate judgments from accumulated testimonies, not isolated planet-in-sign keywords.
+- Keep natal interpretation separate from prediction/timing unless a timing technique module supplies activated houses, planets, or periods.
+- Show the technical evidence behind the reading so the user can see why Tyche reached that judgment.
+- Treat angularity as prominence, not automatic ease or benefit.
+- Use cautious educational language: describe tendencies, pressures, supports, and dominant topics; do not state fatalistic certainties.
+
 ## UI Direction
 
 The interface should feel mobile-first, calm, scholarly, and usable:
