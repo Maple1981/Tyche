@@ -68,3 +68,10 @@ The interface should feel mobile-first, calm, scholarly, and usable:
 - Do not include personal chart examples or personal data in docs.
 - Do not mention external source names in the project documentation.
 - Hard rule: do not run `git push`, publish, deploy, or update GitHub Pages unless the user explicitly asks for that exact action in the current turn.
+
+## Historical Examples
+
+- Use only public historical figures with a documented exact date, clock time, birthplace, and sex.
+- When using rated birth-data collections, prefer AA/A/B-level records and leave out C, DD, X, rectified, speculative, or time-unknown records unless the user explicitly approves them.
+- Prefer post-calendar-reform Gregorian examples. If adding a figure from a place or period using the Julian calendar, encode the calendar explicitly and make the display label unambiguous; never silently convert or mix Julian and Gregorian dates.
+- Historical example places should include coordinates and a deliberate time offset or IANA zone so charts do not depend on browser guesses.

@@ -186,6 +186,16 @@ button {
   font-weight: 700;
 }
 
+.toolbar-icon {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 main {
   max-width: 1180px;
   margin: 0 auto;
@@ -820,7 +830,39 @@ td {
 }
 
 .person-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 1rem;
+}
+
+.person-wiki {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  color: var(--muted);
+  line-height: 1;
+  text-decoration: none;
+}
+
+.person-wiki svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.person-wiki:hover,
+.person-wiki:focus-visible {
+  color: var(--blue-deep);
+  background: color-mix(in srgb, var(--blue-soft) 55%, transparent);
 }
 
 .person-card dl {

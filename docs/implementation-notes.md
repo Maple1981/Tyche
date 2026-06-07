@@ -39,3 +39,13 @@ Defaults should remain:
 The app does not send birth data anywhere. All calculations are in the browser.
 
 No personal examples, private data, source attachments, OCR dumps, or spreadsheets should be committed.
+
+## Historical Examples
+
+The historical figure modal should only include public figures whose birth date, clock time, birthplace, and sex are documented with enough precision for an example chart.
+
+When using rated birth-data collections, prefer AA/A/B-level records. Leave out C, DD, X, rectified, speculative, or time-unknown records unless the user explicitly approves them.
+
+Prefer Gregorian examples from periods and jurisdictions after calendar reform. If a future example uses a Julian-calendar birth date, the entry must store that calendar explicitly and its visible label must make the calendar clear. Do not silently convert between Julian and Gregorian dates.
+
+Each historical example should carry coordinates and a deliberate time offset or IANA time zone so selecting it produces a reproducible chart.
