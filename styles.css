@@ -103,7 +103,6 @@ button {
   height: 38px;
   overflow: hidden;
   background: color-mix(in srgb, var(--surface) 76%, var(--bg));
-  border-bottom: 1px solid color-mix(in srgb, var(--blue) 26%, var(--line));
   color: var(--blue);
 }
 
