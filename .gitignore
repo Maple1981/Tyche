@@ -1,0 +1,21 @@
+# Source attachments and extraction scratch
+*.pdf
+*.xls
+*.xlsx
+*.xlsm
+*.csv
+*.tsv
+*.ocr.txt
+*.extract.txt
+
+# Local/editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Temporary build/test artifacts
+.tmp*/
+tmp/
+dist/
+coverage/
