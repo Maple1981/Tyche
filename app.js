@@ -1573,7 +1573,7 @@
     updateClearPlaceButton();
     hidePlaceSuggestions();
     closePeopleModal();
-    $("#chart-form").scrollIntoView({ behavior: "smooth", block: "start" });
+    calculateCurrentChart();
   }
 
   function formatDateLabel(value) {
@@ -2165,6 +2165,14 @@
     $("#results").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
+  function calculateCurrentChart() {
+    $("#formStatus").textContent = "";
+    updatePlaceFields();
+    hidePlaceSuggestions();
+    const chart = computeChart(readInput());
+    renderChart(chart);
+  }
+
   function renderCoreSummary(chart) {
     const html = `
       <h3>${escapeHtml(t("sect"))}</h3>
@@ -2547,12 +2555,8 @@
     $("#gender").addEventListener("change", clearHistoricalSelection);
     $("#chart-form").addEventListener("submit", (event) => {
       event.preventDefault();
-      $("#formStatus").textContent = "";
       try {
-        updatePlaceFields();
-        hidePlaceSuggestions();
-        const chart = computeChart(readInput());
-        renderChart(chart);
+        calculateCurrentChart();
       } catch (error) {
         $("#formStatus").textContent = error.message || String(error);
       }
