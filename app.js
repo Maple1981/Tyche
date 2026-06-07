@@ -13,7 +13,7 @@
 
   const I18N = {
     es: {
-      brandSub: "Carta helenística estricta",
+      brandSub: "Carta natal helenística generada matemáticamente",
       title: "Crea una carta natal helenística",
       subtitle: "Calcula el Hour-Marker, casas por signos enteros, secta, dignidades, lotes y configuraciones tradicionales sin enviar datos fuera del navegador.",
       birthDate: "Fecha",
@@ -161,7 +161,7 @@
       topics12: "enemigos, pérdida, encierro, sufrimiento y condiciones forzadas",
     },
     en: {
-      brandSub: "Strict Hellenistic chart",
+      brandSub: "Mathematically generated Hellenistic natal chart",
       title: "Create a Hellenistic natal chart",
       subtitle: "Calculate the Hour-Marker, whole sign houses, sect, dignities, lots, and traditional configurations without sending data outside the browser.",
       birthDate: "Date",
