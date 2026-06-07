@@ -99,12 +99,31 @@ button {
 }
 
 .frieze {
-  height: 14px;
-  background:
-    linear-gradient(90deg, var(--blue) 50%, transparent 0) 0 0 / 24px 4px repeat-x,
-    linear-gradient(90deg, transparent 50%, var(--blue) 0) 0 10px / 24px 4px repeat-x,
-    repeating-linear-gradient(90deg, var(--blue) 0 4px, transparent 4px 10px, var(--blue) 10px 14px, transparent 14px 24px);
-  opacity: 0.92;
+  position: relative;
+  height: 26px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--surface) 76%, var(--bg));
+  border-bottom: 1px solid color-mix(in srgb, var(--blue) 26%, var(--line));
+}
+
+.frieze::before {
+  content: "";
+  position: absolute;
+  inset: 3px 0 5px;
+  background: var(--blue);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 72 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 2H68V18H4V7H56V13H18' fill='none' stroke='black' stroke-width='3.1' stroke-linecap='square' stroke-linejoin='miter'/%3E%3C/svg%3E") left center / 72px 20px repeat-x;
+  mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 72 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 2H68V18H4V7H56V13H18' fill='none' stroke='black' stroke-width='3.1' stroke-linecap='square' stroke-linejoin='miter'/%3E%3C/svg%3E") left center / 72px 20px repeat-x;
+}
+
+.frieze::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 2px;
+  left: 0;
+  height: 2px;
+  background: var(--blue);
+  opacity: 0.82;
 }
 
 .topbar-inner {
