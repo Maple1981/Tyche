@@ -14,6 +14,7 @@
     lastChart: null,
     activeCityKey: "",
     selectedCity: null,
+    selectedPersonName: "",
     placeSuggestions: [],
     placeSearchTimer: 0,
     placeSearchController: null,
@@ -94,6 +95,9 @@
       invalidTimeZone: "Zona horaria no reconocida; usando la diferencia UTC manual.",
       invalidOffset: "La diferencia UTC manual debe tener formato +01:00 o -05:00.",
       chartFor: "Carta para {place}",
+      chartForPerson: "Carta para {name}",
+      anonymousChart: "Carta anónima",
+      chartMeta: "Fecha: {date} · Hora: {time} · Lugar de nacimiento: {place} · Sexo: {sex}",
       dayChart: "Carta diurna",
       nightChart: "Carta nocturna",
       sect: "Secta",
@@ -260,6 +264,9 @@
       invalidTimeZone: "Time zone not recognized; using the manual offset.",
       invalidOffset: "Manual offset must look like +01:00 or -05:00.",
       chartFor: "Chart for {place}",
+      chartForPerson: "Chart for {name}",
+      anonymousChart: "Anonymous chart",
+      chartMeta: "Date: {date} · Time: {time} · Birthplace: {place} · Sex: {sex}",
       dayChart: "Day chart",
       nightChart: "Night chart",
       sect: "Sect",
@@ -992,9 +999,14 @@
   function selectPlaceSuggestion(index) {
     const city = state.placeSuggestions[index];
     if (!city) return;
+    clearHistoricalSelection();
     applyCityToFields(city, true);
     hidePlaceSuggestions();
     $("#birthPlace").blur();
+  }
+
+  function clearHistoricalSelection() {
+    state.selectedPersonName = "";
   }
 
   function renderHistoricalPeople() {
@@ -1035,6 +1047,7 @@
     const person = HISTORICAL_PEOPLE.find((item) => item.id === id);
     if (!person) return;
     state.selectedCity = person.place;
+    state.selectedPersonName = person.name;
     state.activeCityKey = cityKey(person.place);
     $("#birthDate").value = person.date;
     $("#birthTime").value = person.time;
@@ -1048,6 +1061,27 @@
     hidePlaceSuggestions();
     closePeopleModal();
     $("#chart-form").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function formatDateLabel(value) {
+    const date = parseDate(value);
+    if (!date) return value || "—";
+    return new Intl.DateTimeFormat(state.lang === "es" ? "es-ES" : "en", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      timeZone: "UTC",
+    }).format(new Date(Date.UTC(date.y, date.m - 1, date.d)));
+  }
+
+  function chartMetaText(input) {
+    const place = input.place || `${round(input.latitude)}, ${round(input.longitude)}`;
+    return t("chartMeta", {
+      date: formatDateLabel(input.date),
+      time: input.time || "—",
+      place,
+      sex: input.gender ? t(input.gender) : t("notUsed"),
+    });
   }
 
   function parseDate(value) {
@@ -1512,6 +1546,8 @@
       date: $("#birthDate").value,
       time: $("#birthTime").value,
       place: city ? formatCity(city) : placeValue,
+      personName: state.selectedPersonName,
+      gender: $("#gender").value,
       city,
       latitude,
       longitude,
@@ -1601,7 +1637,10 @@
   function renderChart(chart) {
     state.lastChart = chart;
     $("#results").hidden = false;
-    $("#chartTitle").textContent = t("chartFor", { place: chart.input.place || `${round(chart.input.latitude)}, ${round(chart.input.longitude)}` });
+    $("#chartTitle").textContent = chart.input.personName
+      ? t("chartForPerson", { name: chart.input.personName })
+      : t("anonymousChart");
+    $("#chartMeta").textContent = chartMetaText(chart.input);
     $("#chartWheel").innerHTML = renderWheel(chart);
     renderCoreSummary(chart);
     renderAscLord(chart);
@@ -1936,6 +1975,7 @@
       queuePlaceSearch();
     });
     birthPlace.addEventListener("input", () => {
+      clearHistoricalSelection();
       state.selectedCity = null;
       state.activeCityKey = "";
       queuePlaceSearch();
@@ -1962,6 +2002,7 @@
       }, 120);
     });
     $("#clearPlace").addEventListener("click", () => {
+      clearHistoricalSelection();
       state.selectedCity = null;
       state.activeCityKey = "";
       birthPlace.value = "";
@@ -1982,8 +2023,15 @@
     document.addEventListener("pointerdown", (event) => {
       if (!event.target.closest(".place-field")) hidePlaceSuggestions();
     });
-    $("#birthDate").addEventListener("change", updatePlaceFields);
-    $("#birthTime").addEventListener("change", updatePlaceFields);
+    $("#birthDate").addEventListener("change", () => {
+      clearHistoricalSelection();
+      updatePlaceFields();
+    });
+    $("#birthTime").addEventListener("change", () => {
+      clearHistoricalSelection();
+      updatePlaceFields();
+    });
+    $("#gender").addEventListener("change", clearHistoricalSelection);
     $("#chart-form").addEventListener("submit", (event) => {
       event.preventDefault();
       $("#formStatus").textContent = "";
