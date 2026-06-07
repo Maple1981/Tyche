@@ -11,4 +11,4 @@ It calculates a browser-side natal chart with:
 - Day/night theme.
 - Local serif typography and responsive mobile-first layout.
 
-The astronomy engine is approximate and intended for study, exploration, and interface use. Critical charts should be checked against professional ephemerides.
+Planetary positions are calculated locally in the browser with vendored Astronomy Engine, an MIT-licensed JavaScript ephemeris library with approximate +/-1 arcminute accuracy. Critical charts should still be checked against professional ephemerides.

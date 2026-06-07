@@ -28,7 +28,7 @@ Core derived data:
 - Solar phase states: morning/evening, under beams, combustion, cazimi.
 - Lunar condition: phase, applying/separating aspects, optional void-of-course.
 
-This app uses approximate browser-side astronomy. Make that limitation visible in the UI and documentation; do not present the results as professional ephemeris-grade.
+This app uses vendored Astronomy Engine for browser-side ephemerides, with the older compact formulas kept only as fallback. Make the approximate +/-1 arcminute limitation visible in the UI and documentation; do not present the results as professional ephemeris-grade.
 
 ## Interpretive Guardrails
 
@@ -66,7 +66,7 @@ The interface should feel mobile-first, calm, scholarly, and usable:
 - Keep all synthesized doctrine in `docs/*.md`.
 - Do not add source PDFs, spreadsheets, extracts, OCR dumps, or attachment-derived scratch files to the repository.
 - Do not include personal chart examples or personal data in docs.
-- Do not mention external source names in the project documentation.
+- Do not mention external source names in doctrine notes, except for explicitly requested technical dependency documentation, licenses, and footer attributions.
 - Hard rule: do not run `git push`, publish, deploy, or update GitHub Pages unless the user explicitly asks for that exact action in the current turn.
 
 ## Historical Examples

@@ -70,7 +70,7 @@
       planets: "Planetas",
       places: "Lugares",
       configurations: "Configuraciones",
-      precisionNote: "Motor astronómico aproximado para uso educativo; revisa cartas críticas con efemérides profesionales.",
+      precisionNote: "Efemérides locales con Astronomy Engine, precisión aproximada ±1′ para uso educativo; revisa cartas críticas con efemérides profesionales.",
       missingDate: "Añade fecha y hora de nacimiento.",
       missingPlace: "Elige una ciudad sugerida o introduce latitud, longitud y zona horaria.",
       missingCoords: "Faltan coordenadas válidas.",
@@ -93,7 +93,7 @@
       footerPrivacy: "La carta se calcula localmente en tu navegador. No guardamos tus datos ni usamos cookies. La búsqueda de lugares consulta un servicio externo solo para obtener coordenadas.",
       footerAuthors: "Autores: Maple81 y Proserpina, 2026.",
       githubLink: "Ver repositorio GitHub",
-      footerAttributions: 'Atribuciones generales: imágenes de <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; datos de personajes históricos de <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a> y <a href="https://www.astro.com/astro-databank/" target="_blank" rel="noreferrer">Astro-Databank</a>; búsqueda de localización mediante <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>.',
+      footerAttributions: 'Atribuciones generales: imágenes de <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; datos de personajes históricos de <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a> y <a href="https://www.astro.com/astro-databank/" target="_blank" rel="noreferrer">Astro-Databank</a>; búsqueda de localización mediante <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>; efemérides locales mediante <a href="https://github.com/cosinekitty/astronomy" target="_blank" rel="noreferrer">Astronomy Engine</a> MIT, precisión aprox. ±1′, sin enviar datos de nacimiento a terceros.',
       invalidTimeZone: "Zona horaria no reconocida; usando la diferencia UTC manual.",
       invalidOffset: "La diferencia UTC manual debe tener formato +01:00 o -05:00.",
       chartFor: "Carta para {place}",
@@ -245,7 +245,7 @@
       planets: "Planets",
       places: "Places",
       configurations: "Configurations",
-      precisionNote: "Approximate educational astronomy engine; verify critical charts with professional ephemerides.",
+      precisionNote: "Local Astronomy Engine ephemerides, approximately ±1′ accuracy for educational use; verify critical charts with professional ephemerides.",
       missingDate: "Add birth date and time.",
       missingPlace: "Choose a suggested city or enter latitude, longitude, and time zone.",
       missingCoords: "Valid coordinates are missing.",
@@ -268,7 +268,7 @@
       footerPrivacy: "The chart is calculated locally in your browser. We do not store your data or use cookies. Place search consults an external service only to obtain coordinates.",
       footerAuthors: "Authors: Maple81 and Proserpina, 2026.",
       githubLink: "View GitHub repository",
-      footerAttributions: 'General attributions: images from <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; historical figure data from <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a> and <a href="https://www.astro.com/astro-databank/" target="_blank" rel="noreferrer">Astro-Databank</a>; place search by <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>.',
+      footerAttributions: 'General attributions: images from <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; historical figure data from <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a> and <a href="https://www.astro.com/astro-databank/" target="_blank" rel="noreferrer">Astro-Databank</a>; place search by <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>; local ephemerides by <a href="https://github.com/cosinekitty/astronomy" target="_blank" rel="noreferrer">Astronomy Engine</a> MIT, approx. ±1′ accuracy, without sending birth data to third parties.',
       invalidTimeZone: "Time zone not recognized; using the manual offset.",
       invalidOffset: "Manual offset must look like +01:00 or -05:00.",
       chartFor: "Chart for {place}",
@@ -1839,7 +1839,50 @@
     return { lon: norm360(lon), lat, x: xh, y: yh, z: zh };
   }
 
-  function tropicalPositions(jd, includeModern) {
+  function astronomyBodyName(key) {
+    return {
+      mercury: "Mercury",
+      venus: "Venus",
+      mars: "Mars",
+      jupiter: "Jupiter",
+      saturn: "Saturn",
+      uranus: "Uranus",
+      neptune: "Neptune",
+      pluto: "Pluto",
+    }[key];
+  }
+
+  function astronomyTimeFromJd(jd) {
+    return new Date((jd - 2440587.5) * DAY_MS);
+  }
+
+  function astronomyTropicalPositions(jd, includeModern) {
+    const engine = typeof Astronomy !== "undefined" ? Astronomy : null;
+    if (!engine) return null;
+    const time = engine.MakeTime(astronomyTimeFromJd(jd));
+    const result = {
+      sun: { lon: norm360(engine.SunPosition(time).elon), lat: 0 },
+      moon: (() => {
+        const moon = engine.EclipticGeoMoon(time);
+        return { lon: norm360(moon.lon), lat: moon.lat };
+      })(),
+    };
+    const keys = ["mercury", "venus", "mars", "jupiter", "saturn"];
+    if (includeModern) keys.push(...MODERN_KEYS);
+    keys.forEach((key) => {
+      const bodyName = astronomyBodyName(key);
+      const body = engine.Body?.[bodyName];
+      if (!body) return;
+      const ecliptic = engine.Ecliptic(engine.GeoVector(body, time, true));
+      result[key] = {
+        lon: norm360(ecliptic.elon),
+        lat: ecliptic.elat,
+      };
+    });
+    return result;
+  }
+
+  function approximateTropicalPositions(jd, includeModern) {
     const d = jd - 2451543.5;
     const sunVector = heliocentricCoords("earth", d);
     const result = {
@@ -1860,6 +1903,14 @@
       };
     });
     return result;
+  }
+
+  function tropicalPositions(jd, includeModern) {
+    try {
+      return astronomyTropicalPositions(jd, includeModern) || approximateTropicalPositions(jd, includeModern);
+    } catch (error) {
+      return approximateTropicalPositions(jd, includeModern);
+    }
   }
 
   function ayanamsa(jd) {
@@ -2203,6 +2254,7 @@
         ${metric(t("timezoneUsed"), chart.zoneLabel)}
       </div>
       <p class="text-note">${escapeHtml(t("mcWholeSignNote"))}</p>
+      <p class="text-note">${escapeHtml(t("precisionNote"))}</p>
     `;
     $("#coreSummary").innerHTML = html;
   }

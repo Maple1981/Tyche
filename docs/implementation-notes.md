@@ -8,17 +8,19 @@ The project is intentionally small:
 - `styles.css` for responsive visual design.
 - `app.js` for calculations, translations, rendering, and UI state.
 - `assets/fonts` for local font files.
+- `assets/vendor/astronomy.browser.min.js` for local ephemeris calculations.
 - `docs` for synthesized domain notes.
 
 No backend, bundler, package manager, or build pipeline is required.
 
 ## Astronomical Precision
 
-The browser engine uses compact approximate formulas so it can run offline. This is enough for a learning and exploratory chart tool, but not a replacement for professional ephemerides. The UI should disclose this near the results.
+The browser engine uses vendored Astronomy Engine 2.1.19 for Sun, Moon, and planetary positions. It is MIT-licensed, runs locally in the browser, and declares approximate +/-1 arcminute accuracy. This is a major improvement over the previous compact orbital fallback, but still not a replacement for professional ephemerides in critical work.
+
+`app.js` keeps the older compact formulas as a fallback in case the local vendor file fails to load. Normal production calculations should use Astronomy Engine.
 
 Risk areas:
 
-- Moon position can drift more than slow planets.
 - Ancient dates and calendar conversions are not fully supported.
 - Time zone accuracy depends on browser IANA data or manual offset.
 - Place lookup is limited to the embedded gazetteer unless coordinates are entered manually.
@@ -37,7 +39,7 @@ Defaults should remain:
 
 ## Privacy
 
-The app does not send birth date, time, or chart data anywhere. Chart calculations are performed in the browser.
+The app does not send birth date, time, or chart data anywhere. Chart and ephemeris calculations are performed in the browser.
 
 Place search may contact an external geocoding service with the typed place query in order to obtain coordinates. Do not describe the whole app as completely anonymous.
 
