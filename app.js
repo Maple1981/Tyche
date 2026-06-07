@@ -24,7 +24,7 @@
     es: {
       brandSub: "Carta natal helenística generada matemáticamente",
       title: "Crea una carta natal helenística",
-      subtitle: "Calcula el Ascendente, casas por signos enteros, secta, dignidades, lotes y configuraciones tradicionales de la astrología helenística más pura. Tus datos natales se procesan en tu navegador; sólo la búsqueda de lugar consulta coordenadas externas.",
+      subtitle: "Calcula el Ascendente, casas por signos enteros, secta, dignidades, lotes y configuraciones tradicionales de la astrología helenística más pura. Todo con absoluta privacidad, sin enviar ningún dato fuera de tu navegador. Sólo la búsqueda de lugar consulta coordenadas externas.",
       birthDate: "Fecha",
       birthTime: "Hora exacta",
       birthPlace: "Lugar de nacimiento",
