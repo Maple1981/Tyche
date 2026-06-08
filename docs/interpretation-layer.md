@@ -6,6 +6,8 @@ The interpretation layer turns calculated chart data into a natal judgment. It m
 
 The first implementation is natal only. Timing, prediction, and activation require separate modules.
 
+The user-facing layer should be plain and accessible. Technical terms may remain in the evidence section and glossary, but the first reading should say what the chart emphasizes in ordinary language.
+
 ## Reading Order
 
 The default hierarchy is:
@@ -19,6 +21,8 @@ The default hierarchy is:
 7. Fortune and Spirit, when selected.
 
 This order keeps the app from treating every placement as equally important.
+
+The visible summary should normally show the first three strongest topical focuses, not only one dominant house. A single house can be technically central without describing the whole chart by itself.
 
 ## Unit of Judgment
 
@@ -36,12 +40,22 @@ Prominence and ease must remain separate:
 - The benefic of sect tends to show help or cohesion.
 - The malefic contrary to sect needs special attention as a sharper source of pressure.
 
+In the plain-language layer, translate technical roles:
+
+- Benefic of sect: the planet that most facilitates.
+- Malefic contrary to sect: the planet that most demands attention.
+- Angularity: visibility and strength, not automatic ease.
+- Fortune: what arrives through body, circumstance, and events.
+- Spirit: what the person tries to direct through intention and action.
+
+House topics may be softened in the plain-language layer, especially for difficult houses, while the technical tables can retain stricter vocabulary.
+
 ## Output Structure
 
 The UI should expose three levels:
 
-1. Clear summary.
-2. Traditional reading.
+1. One-sentence reading.
+2. Plain-language interpretation.
 3. Technical evidence.
 
 The evidence list is not decoration. It is the audit trail that shows why Tyche has produced a judgment. If the evidence is weak or missing, the text should say so plainly instead of pretending certainty.

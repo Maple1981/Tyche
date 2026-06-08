@@ -52,6 +52,8 @@ Preferred reading order:
 Interpretation output:
 
 - Generate judgments from accumulated testimonies, not isolated planet-in-sign keywords.
+- In the visible interpretation panel, use plain language first and keep technical vocabulary in the evidence/glossary layer.
+- Show the three strongest topical focuses when possible instead of forcing the whole chart into one dominant house.
 - Keep natal interpretation separate from prediction/timing unless a timing technique module supplies activated houses, planets, or periods.
 - Show the technical evidence behind the reading so the user can see why Tyche reached that judgment.
 - Treat angularity as prominence, not automatic ease or benefit.
@@ -67,8 +69,8 @@ The interface should feel mobile-first, calm, scholarly, and usable:
 - Standard zodiac and planetary glyphs.
 - Day/night theme toggle.
 - English/Spanish language toggle.
-- First-screen form fields: birth date, birth time, birthplace, optional sex, advanced options button.
-- Advanced options: zodiac, house system, orb, lots, terms system, modern planets, strict vs mixed mode.
+- First-screen form fields: birth date, birth time, birthplace, and advanced options button.
+- Advanced options: optional sex metadata, zodiac, house system, orb, lots, terms system, modern planets, strict vs mixed mode.
 
 ## Repository Hygiene
 

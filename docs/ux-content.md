@@ -9,7 +9,6 @@ Primary fields:
 - Birth date.
 - Birth time.
 - Birthplace.
-- Optional sex when a technique requires it.
 - Submit button.
 - Advanced options disclosure.
 
@@ -25,6 +24,7 @@ Advanced options:
 - Strict Hellenistic vs mixed modern mode.
 - Time zone and manual offset controls.
 - Coordinates controls.
+- Optional sex metadata. It does not affect current base calculations and is reserved for historical examples or future traditional techniques that explicitly require it.
 
 ## Output Hierarchy
 
@@ -33,11 +33,12 @@ After calculation, show the result in this order:
 1. Chart wheel.
 2. Sect and core angles.
 3. Hour-Marker lord panel.
-4. Planet table.
-5. Whole sign houses.
-6. Lots.
-7. Configurations/aspects.
-8. Notes on astronomical precision.
+4. Plain-language natal reading with technical evidence.
+5. Planet table.
+6. Whole sign houses.
+7. Lots.
+8. Configurations/aspects.
+9. Notes on astronomical precision.
 
 The Hour-Marker lord panel should answer:
 
@@ -52,6 +53,8 @@ Whole Sign Houses should explain that the MC and IC are astronomical points and 
 ## Tone
 
 Use concise, sober interpretive language. Avoid deterministic fatalism, medical/legal claims, and overly modern psychological sun-sign phrasing.
+
+The interpretation panel should read like a clear human explanation first. Use technical terms such as benefic, malefic, sect, testimony, dignity, and angularity in the evidence layer or glossary; translate them in the first layer into support, tension, repeated signals, resources, visibility, and difficulty.
 
 Examples of preferred language:
 

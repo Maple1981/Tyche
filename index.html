@@ -80,14 +80,6 @@
                 </div>
                 <div id="placeSuggestions" class="place-suggestions" role="listbox" hidden></div>
               </div>
-              <label class="field">
-                <span data-i18n="gender" data-glossary="sex">Sexo</span>
-                <select id="gender">
-                  <option value="" data-i18n="notUsed">No usado</option>
-                  <option value="female" data-i18n="female">Femenino</option>
-                  <option value="male" data-i18n="male">Masculino</option>
-                </select>
-              </label>
             </div>
 
             <details class="advanced-panel">
@@ -96,6 +88,14 @@
                 <span class="summary-chevron" aria-hidden="true"></span>
               </summary>
               <div class="advanced-grid">
+                <label class="field">
+                  <span data-i18n="gender" data-glossary="sex">Sexo</span>
+                  <select id="gender">
+                    <option value="" data-i18n="notUsed">No usado</option>
+                    <option value="female" data-i18n="female">Femenino</option>
+                    <option value="male" data-i18n="male">Masculino</option>
+                  </select>
+                </label>
                 <label class="field">
                   <span data-i18n="latitude" data-glossary="latitude">Latitud</span>
                   <input id="latitude" type="number" step="0.0001" placeholder="40.4168">
@@ -226,7 +226,7 @@
       <footer class="site-footer">
         <p data-i18n="footerWarning">Motor astronómico pensado para uso educativo. La información proporcionada es solo orientativa.</p>
         <p data-i18n="footerPrivacy">La carta se calcula localmente en tu navegador. No guardamos tus cartas ni usamos cookies. Solo se conserva en este dispositivo la preferencia de idioma y tema. La búsqueda de lugares consulta Open-Meteo para obtener coordenadas. Las imágenes del archivo histórico se cargan desde Wikimedia Commons. El posicionamiento de planetas utiliza una librería local.</p>
-        <p><span data-i18n="footerAuthors">Autores: Maple81 y Proserpina, 2026.</span> <a href="https://github.com/Maple1981/Tyche" target="_blank" rel="noreferrer" data-i18n="githubLink">Ver repositorio GitHub</a></p>
+        <p><span data-i18n="footerAuthors">Autores: Maple81 y Hélène de Troie, 2026.</span> <a href="https://github.com/Maple1981/Tyche" target="_blank" rel="noreferrer" data-i18n="githubLink">Ver repositorio GitHub</a></p>
         <p class="attribution-line" data-i18n-html="footerAttributions">Atribuciones generales: imágenes de <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; datos de personajes históricos de <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a> y <a href="https://www.astro.com/astro-databank/" target="_blank" rel="noreferrer">Astro-Databank</a>; búsqueda de localización mediante <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>; efemérides locales mediante <a href="https://github.com/cosinekitty/astronomy" target="_blank" rel="noreferrer">Astronomy Engine</a> MIT, precisión aprox. ±1′, en ejecución local, sin enviar datos a terceros.</p>
       </footer>
     </div>

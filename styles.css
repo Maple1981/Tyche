@@ -810,6 +810,7 @@ td {
 .interpretation-reading h4,
 .interpretation-block h4,
 .interpretation-block h5,
+.interpretation-lead h4,
 .interpretation-summary h4,
 .interpretation-evidence summary {
   margin: 0;
@@ -831,6 +832,7 @@ td {
 
 .interpretation-reading h4,
 .interpretation-block h5,
+.interpretation-lead h4,
 .interpretation-summary h4,
 .interpretation-evidence summary {
   font-size: 0.95rem;
@@ -847,6 +849,47 @@ td {
   grid-column: 1 / -1;
   border-left: 3px solid var(--blue);
   padding-left: 12px;
+}
+
+.interpretation-lead {
+  grid-column: 1 / -1;
+  border: 1px solid color-mix(in srgb, var(--blue) 42%, var(--line));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--blue-soft) 46%, transparent);
+  padding: 12px;
+}
+
+.interpretation-lead p {
+  margin: 6px 0 0;
+  color: var(--ink);
+  font-size: 1.04rem;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.focus-list {
+  display: grid;
+  gap: 6px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.focus-list-title {
+  margin: 12px 0 0;
+  color: var(--blue-deep);
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-variant: small-caps;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0;
+}
+
+.focus-list li {
+  border-top: 1px dotted color-mix(in srgb, var(--blue) 40%, var(--line));
+  padding-top: 7px;
+  color: var(--muted);
+  line-height: 1.5;
 }
 
 .interpretation-reading {
