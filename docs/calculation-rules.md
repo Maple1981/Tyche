@@ -118,6 +118,8 @@ Principal lots:
 - Fortune: day Asc + Moon - Sun; night Asc + Sun - Moon.
 - Spirit: day Asc + Sun - Moon; night Asc + Moon - Sun.
 
+The standard rule reverses the luminaries by day and night. A small number of near-horizon charts may be discussed with a diurnal lot calculation when the Sun is just below the Ascendant and the example is explicitly framed that way. Tyche should not silently switch formulas for ordinary charts; if that exception is ever implemented, it should be visible as a technical option or a clearly labeled historical-example override.
+
 Eros and Necessity use the older Fortune/Spirit-based tradition:
 
 - Eros: day Asc + Spirit - Fortune; night Asc + Fortune - Spirit.
