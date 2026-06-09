@@ -21,7 +21,7 @@ Advanced options:
 - Lots to show.
 - Terms/bounds system.
 - Include modern planets.
-- Strict Hellenistic vs mixed modern mode.
+- Traditional Hellenistic vs Traditional + modern planets mode.
 - Time zone and manual offset controls.
 - Coordinates controls.
 - Optional sex metadata. It does not affect current base calculations and is reserved for historical examples or future traditional techniques that explicitly require it.
@@ -33,7 +33,7 @@ After calculation, show the result in this order:
 1. Chart wheel.
 2. Sect and core angles.
 3. Hour-Marker lord panel.
-4. Plain-language natal reading with technical evidence.
+4. Plain-language natal reading with collapsible technical evidence.
 5. Planet table.
 6. Whole sign houses.
 7. Lots.
@@ -55,6 +55,10 @@ Whole Sign Houses should explain that the MC and IC are astronomical points and 
 Use concise, sober interpretive language. Avoid deterministic fatalism, medical/legal claims, and overly modern psychological sun-sign phrasing.
 
 The interpretation panel should read like a clear human explanation first. Use technical terms such as benefic, malefic, sect, testimony, dignity, and angularity in the evidence layer or glossary; translate them in the first layer into support, tension, repeated signals, resources, visibility, and difficulty.
+
+Do not erase traditional difficult topics from technical tables or glossary entries. In the plain reading, contextualize them so they do not sound like a fatalistic sentence.
+
+Use paired labels such as `Lugares/Casas` when a UI element needs both traditional vocabulary and immediate clarity.
 
 Examples of preferred language:
 

@@ -35,7 +35,7 @@ Defaults should remain:
 - Sign-based aspects.
 - Seven visible planets.
 - Egyptian bounds.
-- Strict Hellenistic mode.
+- Traditional Hellenistic mode, internally equivalent to strict Hellenistic mode.
 
 ## Privacy
 

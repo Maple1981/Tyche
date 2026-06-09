@@ -48,7 +48,9 @@ In the plain-language layer, translate technical roles:
 - Fortune: what arrives through body, circumstance, and events.
 - Spirit: what the person tries to direct through intention and action.
 
-House topics may be softened in the plain-language layer, especially for difficult houses, while the technical tables can retain stricter vocabulary.
+The plain-language layer may add context for difficult houses, but it should not censor the traditional topics. Technical surfaces can retain words such as illness, death, enemies, loss, and confinement when those are the relevant house topics.
+
+When space allows, UI labels can use paired terms such as `Lugares/Casas` and `Lugar/Casa` so the traditional vocabulary remains visible while the interface stays readable.
 
 ## Output Structure
 
@@ -58,7 +60,9 @@ The UI should expose three levels:
 2. Plain-language interpretation.
 3. Technical evidence.
 
-The evidence list is not decoration. It is the audit trail that shows why Tyche has produced a judgment. If the evidence is weak or missing, the text should say so plainly instead of pretending certainty.
+The evidence list is not decoration. It is the audit trail that shows why Tyche has produced a judgment. It can be collapsed by default, but it must remain easy to open. If the evidence is weak or missing, the text should say so plainly instead of pretending certainty.
+
+The reading may also show compact qualitative indicators, such as prominence, ease, support, and tension. These are reading aids, not absolute scores.
 
 ## Timing Boundary
 

@@ -810,6 +810,7 @@ td {
 .interpretation-reading h4,
 .interpretation-block h4,
 .interpretation-block h5,
+.interpretation-hierarchy h4,
 .interpretation-lead h4,
 .interpretation-summary h4,
 .interpretation-evidence summary {
@@ -832,6 +833,7 @@ td {
 
 .interpretation-reading h4,
 .interpretation-block h5,
+.interpretation-hierarchy h4,
 .interpretation-lead h4,
 .interpretation-summary h4,
 .interpretation-evidence summary {
@@ -886,8 +888,60 @@ td {
 }
 
 .focus-list li {
+  display: grid;
+  gap: 3px;
   border-top: 1px dotted color-mix(in srgb, var(--blue) 40%, var(--line));
   padding-top: 7px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.focus-list strong {
+  color: var(--ink);
+}
+
+.focus-list span {
+  font-size: 0.88rem;
+}
+
+.quality-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.quality-badges span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  border: 1px solid color-mix(in srgb, var(--blue) 44%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--blue-soft) 52%, transparent);
+  color: var(--blue-deep);
+  padding: 4px 9px;
+  font-size: 0.78rem;
+}
+
+.quality-badges b {
+  color: var(--muted);
+  font-variant: small-caps;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0;
+}
+
+.interpretation-hierarchy {
+  grid-column: 1 / -1;
+  border-top: 1px dotted color-mix(in srgb, var(--blue) 42%, var(--line));
+  padding-top: 10px;
+}
+
+.interpretation-hierarchy ol {
+  display: grid;
+  gap: 7px;
+  margin: 8px 0 0;
+  padding-left: 1.25rem;
   color: var(--muted);
   line-height: 1.5;
 }

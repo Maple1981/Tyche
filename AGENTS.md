@@ -54,6 +54,8 @@ Interpretation output:
 - Generate judgments from accumulated testimonies, not isolated planet-in-sign keywords.
 - In the visible interpretation panel, use plain language first and keep technical vocabulary in the evidence/glossary layer.
 - Show the three strongest topical focuses when possible instead of forcing the whole chart into one dominant house.
+- Use `Lugares/Casas` or `Lugar/Casa` in UI labels when space allows, so the traditional term remains visible.
+- Do not remove difficult traditional topics from technical surfaces; contextualize them in the reading instead of censoring words such as illness, death, enemies, or loss.
 - Keep natal interpretation separate from prediction/timing unless a timing technique module supplies activated houses, planets, or periods.
 - Show the technical evidence behind the reading so the user can see why Tyche reached that judgment.
 - Treat angularity as prominence, not automatic ease or benefit.

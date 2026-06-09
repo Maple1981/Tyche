@@ -58,9 +58,9 @@
       orb: "Orbe",
       terms: "Términos / límites",
       egyptian: "Egipcios",
-      techniqueMode: "Técnica",
-      strict: "Helenística estricta",
-      mixed: "Mixta con modernos",
+      techniqueMode: "Enfoque",
+      strict: "Tradicional helenística",
+      mixed: "Tradicional + planetas modernos",
       includeModern: "Incluir Urano, Neptuno y Plutón",
       lots: "Lotes",
       fortune: "Fortuna",
@@ -71,7 +71,7 @@
       calculate: "Calcular carta",
       resultEyebrow: "Resultado",
       planets: "Planetas",
-      places: "Lugares",
+      places: "Lugares/Casas",
       configurations: "Configuraciones",
       precisionNote: "Cálculo astronómico local: Astronomy Engine. Precisión aproximada ±1′. Para rectificaciones, cartas críticas o investigación profesional, conviene contrastar con efemérides especializadas.",
       missingDate: "Añade fecha y hora de nacimiento.",
@@ -120,18 +120,31 @@
       julianDay: "Día juliano",
       technicalTitle: "Datos técnicos",
       interpretationTitle: "Lectura natal",
-      interpretationLeadTitle: "Lectura en una frase",
-      interpretationSummary: "Lo principal de la carta",
+      interpretationLeadTitle: "En una frase",
+      interpretationSummary: "Lo más importante",
       interpretationReading: "Interpretación",
-      interpretationEvidence: "Por qué Tyche lo interpreta así",
-      interpretationWhy: "Primero aparece una lectura en lenguaje llano. La justificación técnica queda desplegada debajo.",
+      interpretationEvidence: "Ver base técnica",
+      interpretationWhy: "Primero aparece una lectura en lenguaje llano. La base técnica queda disponible debajo.",
       interpretationTimingNote: "Sobre predicción",
-      interpretationTimingText: "Esta lectura describe la estructura natal. Para predicción o activación temporal se necesitan técnicas separadas como profecciones anuales, liberación zodiacal o tránsitos a puntos activados.",
+      interpretationTimingText: "Esta lectura no predice fechas. Describe temas de fondo de la carta natal. Para saber cuándo se activan, hay que usar técnicas de tiempo como profecciones anuales, liberación zodiacal o tránsitos relevantes.",
       dominantTopicTitle: "Focos principales",
-      mainFocusTitle: "Focos principales",
-      lifeDirectionTitle: "Dirección vital",
-      resourcesTitle: "Zonas de apoyo",
-      tensionsTitle: "Zonas de tensión",
+      mainFocusTitle: "Zonas más activadas",
+      hierarchyTitle: "Base de lectura",
+      lifeDirectionTitle: "Hacia dónde tira la carta",
+      resourcesTitle: "Donde la carta facilita",
+      tensionsTitle: "Donde la carta exige más",
+      prominenceLabel: "Prominencia",
+      easeLabel: "Facilidad",
+      tensionLabel: "Tensión",
+      supportLabel: "Apoyo",
+      qualityTitle: "Indicadores de lectura",
+      signalsLabel: "Señales",
+      highLevel: "alta",
+      mediumLevel: "media",
+      lowLevel: "baja",
+      strongLevel: "fuerte",
+      moderateLevel: "moderado",
+      secondaryLevel: "secundario",
       evidenceAscLordHouse: "El regente del Ascendente cae en casa {house}: {topics}.",
       evidenceAscLordAngularity: "Su angularidad es {angularity}, por lo que esta señal tiene {weight}.",
       evidenceAscLordCondition: "Su condición esencial indica: {condition}.",
@@ -153,7 +166,7 @@
       ascLordTitle: "Regente del Ascendente",
       ascLordText: "{lord} rige {ascSign} y cae en {lordPosition}, casa {house}. Esta casa pone el timón de la carta sobre {topics}. Su angularidad es {angularity}.",
       dignifiedText: "Condición esencial: {condition}.",
-      mcWholeSignNote: "En casas de signos enteros, el MC y el IC son puntos astronómicos: no siempre caen en las casas 10 y 4. Tyche muestra la casa por signo entero donde caen.",
+      mcWholeSignNote: "En casas de signos enteros, las casas se cuentan desde el signo Ascendente. El MC y el IC no abren las casas 10 y 4: son puntos astronómicos sensibles. Tyche muestra también en qué casa caen.",
       noMajorDignity: "sin dignidad mayor",
       dignityMajor: "Dignidad mayor",
       dignityMinor: "Dignidades menores",
@@ -182,7 +195,7 @@
       tableCondition: "Condición esencial",
       tableAngularity: "Angularidad",
       tablePhase: "Fase solar",
-      tablePlace: "Lugar",
+      tablePlace: "Lugar/Casa",
       tableSign: "Signo",
       tableRuler: "Regente",
       tablePlanets: "Planetas",
@@ -285,9 +298,9 @@
       orb: "Orb",
       terms: "Terms / bounds",
       egyptian: "Egyptian",
-      techniqueMode: "Technique",
-      strict: "Strict Hellenistic",
-      mixed: "Mixed with moderns",
+      techniqueMode: "Approach",
+      strict: "Traditional Hellenistic",
+      mixed: "Traditional + modern planets",
       includeModern: "Include Uranus, Neptune, and Pluto",
       lots: "Lots",
       fortune: "Fortune",
@@ -298,7 +311,7 @@
       calculate: "Calculate chart",
       resultEyebrow: "Result",
       planets: "Planets",
-      places: "Places",
+      places: "Places/Houses",
       configurations: "Configurations",
       precisionNote: "Local astronomical calculation: Astronomy Engine. Approximate accuracy ±1′. For rectification, critical charts, or professional research, compare with specialized ephemerides.",
       missingDate: "Add birth date and time.",
@@ -347,18 +360,31 @@
       julianDay: "Julian day",
       technicalTitle: "Technical data",
       interpretationTitle: "Natal reading",
-      interpretationLeadTitle: "One-sentence reading",
-      interpretationSummary: "What matters most",
+      interpretationLeadTitle: "In one sentence",
+      interpretationSummary: "Most important",
       interpretationReading: "Interpretation",
-      interpretationEvidence: "Why Tyche reads it this way",
-      interpretationWhy: "First comes a plain-language reading. The technical justification stays expanded below.",
+      interpretationEvidence: "View technical basis",
+      interpretationWhy: "First comes a plain-language reading. The technical basis stays available below.",
       interpretationTimingNote: "About prediction",
-      interpretationTimingText: "This reading describes the natal structure. Prediction or activation in time requires separate techniques such as annual profections, zodiacal releasing, or transits to activated points.",
+      interpretationTimingText: "This reading does not predict dates. It describes background themes in the natal chart. To know when they activate, use timing techniques such as annual profections, zodiacal releasing, or relevant transits.",
       dominantTopicTitle: "Main focuses",
-      mainFocusTitle: "Main focuses",
-      lifeDirectionTitle: "Life direction",
-      resourcesTitle: "Support zones",
-      tensionsTitle: "Tension zones",
+      mainFocusTitle: "Most activated zones",
+      hierarchyTitle: "Reading basis",
+      lifeDirectionTitle: "Where the chart pulls",
+      resourcesTitle: "Where the chart facilitates",
+      tensionsTitle: "Where the chart asks more",
+      prominenceLabel: "Prominence",
+      easeLabel: "Ease",
+      tensionLabel: "Tension",
+      supportLabel: "Support",
+      qualityTitle: "Reading indicators",
+      signalsLabel: "Signals",
+      highLevel: "high",
+      mediumLevel: "medium",
+      lowLevel: "low",
+      strongLevel: "strong",
+      moderateLevel: "moderate",
+      secondaryLevel: "secondary",
       evidenceAscLordHouse: "The Ascendant / Hour-Marker lord falls in house {house}: {topics}.",
       evidenceAscLordAngularity: "Its angularity is {angularity}, so this signal carries {weight}.",
       evidenceAscLordCondition: "Its essential condition indicates: {condition}.",
@@ -380,7 +406,7 @@
       ascLordTitle: "Ascendant / Hour-Marker Lord",
       ascLordText: "{lord} rules {ascSign} and falls in {lordPosition}, house {house}. This house steers the chart toward {topics}. Its angularity is {angularity}.",
       dignifiedText: "Essential condition: {condition}.",
-      mcWholeSignNote: "In Whole Sign Houses, the MC and IC are astronomical points: they do not always fall in houses 10 and 4. Tyche shows the whole-sign house where each point falls.",
+      mcWholeSignNote: "In Whole Sign Houses, houses are counted from the Ascendant sign. The MC and IC do not open houses 10 and 4: they are sensitive astronomical points. Tyche also shows which house they fall in.",
       noMajorDignity: "no major dignity",
       dignityMajor: "Major dignity",
       dignityMinor: "Minor dignities",
@@ -409,7 +435,7 @@
       tableCondition: "Essential condition",
       tableAngularity: "Angularity",
       tablePhase: "Solar phase",
-      tablePlace: "Place",
+      tablePlace: "Place/House",
       tableSign: "Sign",
       tableRuler: "Ruler",
       tablePlanets: "Planets",
@@ -3691,8 +3717,8 @@
 
   function renderCoreSummary(chart) {
     const mcNote = state.lang === "es"
-      ? `<strong>Nota sobre ${glossaryTerm(t("mc"), "mc")}/${glossaryTerm(t("ic"), "ic")}:</strong> en ${glossaryTerm("casas de signos enteros", "wholeSign")}, las casas se cuentan desde el signo Ascendente. El ${glossaryTerm(t("mc"), "mc")} y el ${glossaryTerm(t("ic"), "ic")} no son cúspides de casa, sino puntos astronómicos sensibles; por eso Tyche muestra también en qué casa por signo entero caen.`
-      : `<strong>Note on ${glossaryTerm(t("mc"), "mc")}/${glossaryTerm(t("ic"), "ic")}:</strong> in ${glossaryTerm("Whole Sign Houses", "wholeSign")}, houses are counted from the rising sign. The ${glossaryTerm(t("mc"), "mc")} and ${glossaryTerm(t("ic"), "ic")} are not house cusps, but sensitive astronomical points; this is why Tyche also shows which whole-sign house contains them.`;
+      ? `<strong>Nota sobre ${glossaryTerm(t("mc"), "mc")}/${glossaryTerm(t("ic"), "ic")}:</strong> en ${glossaryTerm("casas de signos enteros", "wholeSign")}, las casas se cuentan desde el signo Ascendente. El ${glossaryTerm(t("mc"), "mc")} y el ${glossaryTerm(t("ic"), "ic")} no abren las casas 10 y 4: son puntos astronómicos sensibles. Por eso Tyche muestra también en qué casa caen.`
+      : `<strong>Note on ${glossaryTerm(t("mc"), "mc")}/${glossaryTerm(t("ic"), "ic")}:</strong> in ${glossaryTerm("Whole Sign Houses", "wholeSign")}, houses are counted from the Ascendant sign. The ${glossaryTerm(t("mc"), "mc")} and ${glossaryTerm(t("ic"), "ic")} do not open houses 10 and 4: they are sensitive astronomical points. This is why Tyche also shows which house they fall in.`;
     const precisionNote = state.lang === "es"
       ? `${glossaryTerm("Cálculo astronómico", "ephemeris")} local: Astronomy Engine. Precisión aproximada ±1′. Para rectificaciones, cartas críticas o investigación profesional, conviene contrastar con efemérides especializadas.`
       : `Local ${glossaryTerm("astronomical calculation", "ephemeris")}: Astronomy Engine. Approximate accuracy ±1′. For rectification, critical charts, or professional research, compare with specialized ephemerides.`;
@@ -3959,6 +3985,10 @@
     return focuses.map(focusLabel).join("; ");
   }
 
+  function focusReasonsText(focus) {
+    return [...new Set(focus.reasons)].join(", ");
+  }
+
   function isConnectedWithFocus(position, focuses, ascLordPosition) {
     if (!position) return false;
     const mainHouses = focuses.map((focus) => focus.house);
@@ -3991,6 +4021,102 @@
       : "It looks like a secondary tension: worth noting, but not dominant in the overall structure.";
   }
 
+  function focusLeadReading(focuses) {
+    const dominant = focuses[0];
+    const house = dominant?.house || 1;
+    const hasPublicFocus = focuses.some((focus) => focus.house === 10);
+    if (state.lang === "es") {
+      if (house === 4) {
+        return `El motor de la carta nace en temas de raíz: ${plainHouseTopics(4)}. ${hasPublicFocus ? "Esto no impide visibilidad pública; más bien muestra desde dónde se alimenta la proyección exterior." : "Esto muestra desde dónde se alimenta la dirección vital."}`;
+      }
+      if (house === 2) {
+        return `La carta pone énfasis en recursos: ${plainHouseTopics(2)}. No habla solo de dinero, sino de herramientas, valor y medios concretos para sostener la vida.`;
+      }
+      if (house === 6 || house === 8 || house === 12) {
+        return `Una parte importante de la carta se concentra en temas exigentes de casa ${house}: ${plainHouseTopics(house)}. Esto no describe un destino cerrado, sino áreas donde la vida pide más elaboración y manejo consciente.`;
+      }
+      if (house === 7) {
+        return `La carta se entiende muy bien desde la relación con otros: ${plainHouseTopics(7)}. No habla solo de pareja, sino también de interlocutores, audiencias, acuerdos y confrontación.`;
+      }
+      return `Esta carta se entiende sobre todo desde ${plainHouseTopics(house)}. Ese foco aparece reforzado por varias piezas, no por una sola posición.`;
+    }
+    if (house === 4) {
+      return `The chart's engine starts in root matters: ${plainHouseTopics(4)}. ${hasPublicFocus ? "This does not prevent public visibility; it shows where outward projection is fed from." : "This shows where life direction is fed from."}`;
+    }
+    if (house === 2) {
+      return `The chart emphasizes resources: ${plainHouseTopics(2)}. This is not only money, but tools, value, and concrete means for sustaining life.`;
+    }
+    if (house === 6 || house === 8 || house === 12) {
+      return `A major part of the chart gathers around demanding house ${house} themes: ${plainHouseTopics(house)}. This is not a closed fate, but an area that asks for more elaboration and conscious handling.`;
+    }
+    if (house === 7) {
+      return `The chart is strongly understood through relation with others: ${plainHouseTopics(7)}. This is not only partnership, but interlocutors, audiences, agreements, and confrontation.`;
+    }
+    return `This chart is best understood through ${plainHouseTopics(house)}. That focus is reinforced by several pieces, not by one isolated placement.`;
+  }
+
+  function essentialEaseLevel(position) {
+    const groups = dignityGroups(position.dignities || []);
+    if (groups.major.length && !groups.weakness.length) return "highLevel";
+    if (groups.weakness.length && !groups.major.length) return "lowLevel";
+    return "mediumLevel";
+  }
+
+  function supportLevel(position, focuses, ascLordPosition) {
+    const groups = dignityGroups(position.dignities || []);
+    if (isConnectedWithFocus(position, focuses, ascLordPosition) && groups.major.length) return "strongLevel";
+    if (isConnectedWithFocus(position, focuses, ascLordPosition)) return "moderateLevel";
+    return "secondaryLevel";
+  }
+
+  function tensionLevel(position, focuses, ascLordPosition) {
+    const groups = dignityGroups(position.dignities || []);
+    if (isConnectedWithFocus(position, focuses, ascLordPosition) && groups.weakness.length) return "highLevel";
+    if (isConnectedWithFocus(position, focuses, ascLordPosition)) return "mediumLevel";
+    return "lowLevel";
+  }
+
+  function prominenceLevel(position) {
+    if (position.angularity === "angular") return "highLevel";
+    if (position.angularity === "succedent") return "mediumLevel";
+    return "lowLevel";
+  }
+
+  function maleficMitigationReading(maleficPosition, beneficPosition) {
+    const groups = dignityGroups(maleficPosition.dignities || []);
+    const hasResources = groups.major.length > 0;
+    const hasWeakness = groups.weakness.length > 0;
+    const beneficContact = Boolean(signAspectType(signOf(maleficPosition.lon), signOf(beneficPosition.lon)));
+    if (state.lang === "es") {
+      if (hasResources && beneficContact) {
+        return "Esta tensión está parcialmente compensada porque el planeta tiene recursos propios y además se conecta por signo con el planeta que más facilita.";
+      }
+      if (hasResources) {
+        return "Esta tensión está parcialmente compensada porque el planeta tiene recursos propios en su condición esencial.";
+      }
+      if (beneficContact) {
+        return "Esta tensión recibe cierta compensación porque se conecta por signo con el planeta que más facilita.";
+      }
+      if (hasWeakness) {
+        return "Al no verse claramente compensada, esta tensión puede sentirse más cruda o menos integrada.";
+      }
+      return "No aparece una mitigación fuerte, pero tampoco una debilidad mayor clara; conviene leerla con sus aspectos y casa.";
+    }
+    if (hasResources && beneficContact) {
+      return "This tension is partly compensated because the planet has resources of its own and is also configured by sign with the planet that most facilitates.";
+    }
+    if (hasResources) {
+      return "This tension is partly compensated because the planet has resources of its own in essential condition.";
+    }
+    if (beneficContact) {
+      return "This tension receives some compensation because it is configured by sign with the planet that most facilitates.";
+    }
+    if (hasWeakness) {
+      return "Without clear compensation, this tension can feel rawer or less integrated.";
+    }
+    return "No strong mitigation appears, but no clear major weakness appears either; read it through its aspects and house.";
+  }
+
   function visibleAngularPlanets(chart) {
     return VISIBLE_KEYS.filter((key) => chart.positions[key]?.angularity === "angular");
   }
@@ -4012,10 +4138,10 @@
       target.reasons.push(reason);
     };
     const ascLord = SIGNS[chart.ascSign].ruler;
-    add(chart.positions[ascLord]?.house, 5, t("ascLordTitle"));
-    add(chart.positions[chart.sectLight]?.house, 2, t("sectLight"));
+    add(chart.positions[ascLord]?.house, 5, `${t("ascLordTitle")}: ${planetLabel(ascLord)}`);
+    add(chart.positions[chart.sectLight]?.house, 2, `${t("sectLight")}: ${planetLabel(chart.sectLight)}`);
     add(chart.mcHouse, 2, t("mc"));
-    visibleAngularPlanets(chart).forEach((key) => add(chart.positions[key].house, 1.5, planetName(key)));
+    visibleAngularPlanets(chart).forEach((key) => add(chart.positions[key].house, 1.5, `${planetLabel(key)} ${t("angular")}`));
     add(lotByKey(chart, "fortune")?.house, 1.25, t("fortune"));
     add(lotByKey(chart, "spirit")?.house, 1.25, t("spirit"));
     return houses.sort((a, b) => b.score - a.score || a.house - b.house);
@@ -4041,9 +4167,7 @@
     const sectDescription = state.lang === "es" ? `una ${sectContext}` : `a ${sectContext}`;
     const secondaryFocuses = focuses.slice(1);
 
-    const lead = state.lang === "es"
-      ? `Esta carta se entiende mejor mirando primero ${plainHouseTopics(dominant.house)}. Ese foco aparece reforzado por varias piezas, no por una sola posición.`
-      : `This chart is best understood by looking first at ${plainHouseTopics(dominant.house)}. That focus is reinforced by several pieces, not by one isolated placement.`;
+    const lead = focusLeadReading(focuses);
     const summary = state.lang === "es"
       ? `La carta pone mucho peso en la casa ${dominant.house}: ${plainHouseTopics(dominant.house)}. ${secondaryFocuses.length ? `También conviene mirar ${naturalList(secondaryFocuses.map((focus) => `casa ${focus.house}`))}, porque completan el dibujo general.` : ""} El hilo rector sigue siendo ${planetLabel(ascLord)}, regente del Ascendente, situado en casa ${ascLordPosition.house}; por eso la lectura parte de la dirección vital y no de una posición aislada.`
       : `The chart puts a great deal of weight on house ${dominant.house}: ${plainHouseTopics(dominant.house)}. ${secondaryFocuses.length ? `It is also worth reading ${naturalList(secondaryFocuses.map((focus) => `house ${focus.house}`))}, because they complete the general pattern.` : ""} The guiding thread remains ${planetLabel(ascLord)}, lord of the Ascendant / Hour-Marker, placed in house ${ascLordPosition.house}; this is why the reading begins from life direction rather than from an isolated placement.`;
@@ -4057,8 +4181,8 @@
       : `In this ${sectContext}, ${planetLabel(benefic)} is the planet that most facilitates the chart (technically: benefic of sect). It is in house ${beneficPosition.house}: ${plainHouseTopics(beneficPosition.house)}. It shows where things tend to grow, find support, or open opportunities. ${connectionReading(beneficPosition, focuses, ascLordPosition, "support")}`;
 
     const tensions = state.lang === "es"
-      ? `${planetLabel(malefic)} es el planeta que más exige (técnicamente: maléfico contrario a la secta). Está en casa ${maleficPosition.house}: ${plainHouseTopics(maleficPosition.house)}. Señala dónde puede haber presión, conflicto, urgencia, desgaste o necesidad de manejar mejor la energía. ${connectionReading(maleficPosition, focuses, ascLordPosition, "tension")}`
-      : `${planetLabel(malefic)} is the planet that most demands attention (technically: malefic contrary to sect). It is in house ${maleficPosition.house}: ${plainHouseTopics(maleficPosition.house)}. It marks where there may be pressure, conflict, urgency, strain, or a need to handle energy more consciously. ${connectionReading(maleficPosition, focuses, ascLordPosition, "tension")}`;
+      ? `${planetLabel(malefic)} es el planeta que más tensión puede introducir en esta carta (técnicamente: maléfico contrario a la secta). Está en casa ${maleficPosition.house}: ${plainHouseTopics(maleficPosition.house)}. No significa algo malo por sí mismo: señala dónde puede haber presión, conflicto, urgencia, desgaste o necesidad de manejar mejor la energía. ${connectionReading(maleficPosition, focuses, ascLordPosition, "tension")} ${maleficMitigationReading(maleficPosition, beneficPosition)}`
+      : `${planetLabel(malefic)} is the planet that can introduce the most tension in this chart (technically: malefic contrary to sect). It is in house ${maleficPosition.house}: ${plainHouseTopics(maleficPosition.house)}. This does not mean something bad by itself: it marks where there may be pressure, conflict, urgency, strain, or a need to handle energy more consciously. ${connectionReading(maleficPosition, focuses, ascLordPosition, "tension")} ${maleficMitigationReading(maleficPosition, beneficPosition)}`;
 
     const lotReading = fortune && spirit
       ? (state.lang === "es"
@@ -4101,10 +4225,37 @@
         : t("evidenceNoLot"),
     ];
 
+    const angularPlanetsText = angularPlanets.length ? naturalList(angularPlanets.map(planetLabel)) : capitalizeText(t("none"));
+    const hierarchy = [
+      state.lang === "es"
+        ? `${t("ascLordTitle")}: ${planetLabel(ascLord)} en casa ${ascLordPosition.house} -> dirección vital.`
+        : `${t("ascLordTitle")}: ${planetLabel(ascLord)} in house ${ascLordPosition.house} -> life direction.`,
+      state.lang === "es"
+        ? `${t("mc")}: casa ${chart.mcHouse} -> proyección pública y acción visible.`
+        : `${t("mc")}: house ${chart.mcHouse} -> public projection and visible action.`,
+      state.lang === "es"
+        ? `Planetas visibles angulares: ${angularPlanetsText} -> lo que más se nota.`
+        : `Angular visible planets: ${angularPlanetsText} -> what stands out most.`,
+    ];
+    if (fortune && spirit) {
+      hierarchy.push(state.lang === "es"
+        ? `${t("fortune")}/${t("spirit")}: casas ${fortune.house}/${spirit.house} -> circunstancias e intención.`
+        : `${t("fortune")}/${t("spirit")}: houses ${fortune.house}/${spirit.house} -> circumstance and intention.`);
+    }
+
+    const qualities = [
+      { label: t("prominenceLabel"), value: t(prominenceLevel(ascLordPosition)) },
+      { label: t("easeLabel"), value: t(essentialEaseLevel(ascLordPosition)) },
+      { label: t("tensionLabel"), value: t(tensionLevel(maleficPosition, focuses, ascLordPosition)) },
+      { label: t("supportLabel"), value: t(supportLevel(beneficPosition, focuses, ascLordPosition)) },
+    ];
+
     return {
       lead,
       summary,
       focuses,
+      hierarchy,
+      qualities,
       blocks: [
         { title: t("lifeDirectionTitle"), text: lifeDirection },
         { title: t("resourcesTitle"), text: resources },
@@ -4130,10 +4281,26 @@
         <section class="interpretation-summary">
           <h4>${escapeHtml(t("interpretationSummary"))}</h4>
           <p>${escapeHtml(interpretation.summary)}</p>
+          <div class="quality-badges" aria-label="${escapeHtml(t("qualityTitle"))}">
+            ${interpretation.qualities.map((item) => `
+              <span><b>${escapeHtml(item.label)}</b>${escapeHtml(capitalizeText(item.value))}</span>
+            `).join("")}
+          </div>
           <p class="focus-list-title">${escapeHtml(t("mainFocusTitle"))}</p>
           <ul class="focus-list">
-            ${interpretation.focuses.map((focus) => `<li>${escapeHtml(focusLabel(focus))}</li>`).join("")}
+            ${interpretation.focuses.map((focus) => `
+              <li>
+                <strong>${escapeHtml(focusLabel(focus))}</strong>
+                <span>${escapeHtml(t("signalsLabel"))}: ${escapeHtml(focusReasonsText(focus))}</span>
+              </li>
+            `).join("")}
           </ul>
+        </section>
+        <section class="interpretation-hierarchy">
+          <h4>${escapeHtml(t("hierarchyTitle"))}</h4>
+          <ol>
+            ${interpretation.hierarchy.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+          </ol>
         </section>
         <section class="interpretation-reading">
           <h4>${escapeHtml(t("interpretationReading"))}</h4>
@@ -4147,7 +4314,7 @@
           </div>
         </section>
       </div>
-      <details class="interpretation-evidence" open>
+      <details class="interpretation-evidence">
         <summary>${escapeHtml(t("interpretationEvidence"))}</summary>
         <ol>
           ${interpretation.evidence.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
