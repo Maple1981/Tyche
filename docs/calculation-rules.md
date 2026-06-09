@@ -35,6 +35,14 @@ Calculate:
 
 Whole sign houses begin from the Ascendant sign.
 
+As a secondary prominence flag, mark visible planets within about 5 degrees of the exact Ascendant, Descendant, MC, or IC. This does not change Whole Sign House angularity; it only adds an "near exact angle" testimony for interpretation and evidence.
+
+Boundary notices are audit flags, not reinterpretations. Show them when:
+
+- The Ascendant is within 1 degree of a sign change.
+- A selected lot is within 1 degree of a sign/whole-sign-house change.
+- A visible planet is within 30 arcminutes of an Egyptian bound change.
+
 ## Sect
 
 Sect is determined by the Sun's altitude:
@@ -107,9 +115,19 @@ Use sign-based configurations as the strict default:
 - Opposition: signs six signs apart, 180 degrees by degree.
 - Aversion: signs that do not see one another by the above relationships.
 
+Copresence is a cohabitation testimony rather than an automatically benefic or malefic relationship. It can intensify support or pressure depending on the planets involved, sect, essential condition, reception, degree closeness, and solar visibility.
+
 Degree-based aspects are optional and use configurable orbs. A planet can be configured by sign but not perfected by degree.
 
 Right-sided/superior configurations matter. In sextiles, squares, and trines, the planet earlier in zodiacal order by the relevant configured interval overcomes the planet later in zodiacal order. The superior square, or being upon the tenth, deserves special emphasis. The direction must remain explicit: a benefic or malefic overcoming a significator is not judged the same as a significator retaining the superior position against that benefic or malefic.
+
+Reception should be calculated only when two planets are configured. A planet receives another when it has dignity in the sign or bound occupied by the other planet:
+
+- Strong reception: domicile or exaltation.
+- Medium reception: active-by-sect triplicity or bound.
+- Weak reception: out-of-sect triplicity or cooperating triplicity.
+
+Reception mitigates pressure when a malefic testimony is received by the significator, or when the malefic receives the significator in a way that gives the contact a formal channel. It can also strengthen benefic support. It should be shown as its own testimony instead of being hidden inside a generic aspect score.
 
 ## Lots
 
@@ -146,6 +164,12 @@ For each non-luminary planet:
 - Cazimi within 1 degree.
 
 For strict mode, use "in the heart" for the 1-degree condition and show "cazimi" as a familiar parenthetical label. Tyche intentionally uses this broader 1-degree convention; some narrower traditions use about 17 arcminutes, so the UI must describe the convention rather than imply universality.
+
+When a planet is under the beams, combust, or in the heart, show the exact distance from the Sun in the planet table. For under-the-beams and combust states, also show whether chariot mitigation is present by domicile, exaltation, or bound.
+
+## Annual Profections Boundary
+
+Annual profections are a future timing module. The basic calculation is one sign per year from the rising sign; the sign reached by age and its domicile lord become activated for that year. Tyche must not use this in the natal judgment until the UI supplies an age/year and the module can show the profected place, lord of the year, and activated natal testimonies.
 
 ## Lunar Condition
 

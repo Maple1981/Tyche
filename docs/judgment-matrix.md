@@ -26,10 +26,12 @@ Modifying testimonies:
 
 - Solar phase of key planets: morning/evening, under the beams, combustion, and in the heart.
 - Chariot mitigation: a planet under the beams or combust is less hindered when it has its own domicile, exaltation, or bound.
+- Exact solar distance should be visible for under-the-beams, combust, and in-the-heart states so the user can audit the threshold.
 - Configurations by sign between significators and benefics/malefics.
 - Degree closeness when the user enables degree aspects or when contact is within about three degrees.
 - Overcoming by superior configuration, especially from the malefic contrary to sect.
 - Lunar phase, last separation, next application, void-of-course by the broad 30-degree definition, void-of-course before sign exit, and the separate close-application indicator.
+- Reception mitigates difficult testimony and can strengthen benefic testimony when configured planets receive one another by dignity.
 
 ## Solar Phase
 
@@ -55,6 +57,7 @@ For judgment:
 - A benefic of sect carries cleaner support than the benefic contrary to sect.
 - Superior overcoming makes the active planet more dominant in the relationship. Keep the direction visible: benefic-over-significator, malefic-over-significator, and significator-over-benefic/malefic are different testimonies.
 - Close contact within about three degrees is more acute than a general sign-based relationship.
+- Copresence intensifies shared place/cohabitation. Do not treat it as inherently helpful or harmful; judge its quality from the planets, sect, condition, reception, degree closeness, and solar visibility.
 
 Bonification and maltreatment should be graded rather than treated as binary:
 
@@ -112,6 +115,39 @@ Use:
 Both void-of-course criteria should appear in the evidence layer, not only in the lunar panel.
 
 If the next application is to the benefic of sect, the lunar transmission is softened. If it is to the malefic contrary to sect, it carries more pressure.
+
+## Reception
+
+Reception is a formal mitigation layer. It is not the same as any ordinary benefic aspect, and it should not be implied merely because two planets are configured.
+
+Tyche currently tracks reception among the main significators used in the interpretation layer:
+
+- Ascendant lord.
+- Sect light.
+- Fortune lord.
+- Spirit lord.
+- Benefic of sect.
+- Malefic contrary to sect.
+
+Reception is counted when two planets are configured and one has dignity where the other is placed:
+
+- Strong reception: domicile or exaltation.
+- Medium reception: active-by-sect triplicity or bound.
+- Weak reception: out-of-sect triplicity or cooperating triplicity.
+
+In the interpretation layer, reception lowers the intensity of malefic pressure when relevant and can raise the intensity of benefic support. It must appear in the evidence so the user can see why the testimony was softened or strengthened.
+
+Future refinements may distinguish applying/separating reception, mutual reception, degree closeness, and reception through a planet that is itself badly obscured or unable to act.
+
+## Boundary Notices
+
+Boundary notices warn about sensitivity without changing the judgment by themselves:
+
+- Ascendant near sign change can change the rising sign, all whole-sign houses, and the Ascendant lord.
+- Lots near sign change can shift lot house and lot lord with small changes in time or coordinates.
+- Planets near Egyptian bound changes can alter minor dignity and reception-by-bound testimony.
+
+These notices belong in the evidence/audit layer. They should not become fatalistic text in the plain-language interpretation.
 
 ## Timing Boundary
 

@@ -36,6 +36,8 @@ This app uses vendored Astronomy Engine for browser-side ephemerides, with the o
 
 ## Interpretive Guardrails
 
+PDF-derived doctrine in `docs/*.md` is the primary source layer. Public podcast/transcript synthesis is secondary: use it to refine reading order, weighting, wording, and future-module planning, but do not let it override the primary PDF synthesis when the two conflict.
+
 Avoid modern conflations:
 
 - Do not equate Aries with the first house, Taurus with the second, etc.
@@ -86,6 +88,8 @@ The interface should feel mobile-first, calm, scholarly, and usable:
 - Do not add source PDFs, spreadsheets, extracts, OCR dumps, or attachment-derived scratch files to the repository.
 - Do not include personal chart examples or personal data in docs.
 - Do not mention external source names in doctrine notes, except for explicitly requested technical dependency documentation, licenses, and footer attributions.
+- Podcast/transcript material may be used only as paraphrased synthesis and source URLs. Never commit transcript dumps, long verbatim excerpts, OCR, or attachment-derived scratch files.
+- Keep the public transcript source map in `docs/public-transcript-synthesis.md`, and treat the priority episode list there as the first review layer for interpretation changes.
 - Hard rule: do not run `git push`, publish, deploy, or update GitHub Pages unless the user explicitly asks for that exact action in the current turn.
 
 ## Historical Examples
@@ -95,3 +99,4 @@ The interface should feel mobile-first, calm, scholarly, and usable:
 - Prefer post-calendar-reform Gregorian examples. If adding a figure from a place or period using the Julian calendar, encode the calendar explicitly and make the display label unambiguous; never silently convert or mix Julian and Gregorian dates.
 - Historical example places should include coordinates and a deliberate time offset or IANA zone so charts do not depend on browser guesses.
 - Show source/rating metadata for historical examples when it has been audited. Never invent Rodden ratings or exact time-source notes.
+- Keep the natal-data source separate from any note that a chart was discussed in a secondary interpretive source. Do not imply that an example discussion is the source of the birth time unless verified.

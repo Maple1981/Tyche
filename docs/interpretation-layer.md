@@ -18,17 +18,20 @@ The default hierarchy is:
 4. Angular visible planets.
 5. Benefic of the sect and malefic contrary to sect.
 6. MC/IC as astronomical points within Whole Sign Houses.
-7. Fortune and Spirit, when selected.
-8. Solar phase and concealment of key planets.
-9. Configurations, bonification, maltreatment, and overcoming.
-10. Lunar condition and application/separation.
-11. Triplicity rulers of the sect light as background support.
+7. Visible planets close to exact angles as an additional prominence flag.
+8. Fortune and Spirit, when selected.
+9. Solar phase and concealment of key planets.
+10. Configurations, bonification, maltreatment, overcoming, and reception.
+11. Lunar condition and application/separation.
+12. Triplicity rulers of the sect light as background support.
 
 This order keeps the app from treating every placement as equally important.
 
 The visible summary should normally show the first three strongest topical focuses, not only one dominant house. A single house can be technically central without describing the whole chart by itself.
 
 Public projection should be its own plain-language block when interpretation is rendered. It should combine MC, the 10th whole-sign house, the ruler of the 10th house, and visible planets in the 10th. This block clarifies reputation, craft, rank, and action in public without replacing the Ascendant lord as the main life-direction thread.
+
+The public transcript synthesis in `docs/public-transcript-synthesis.md` supports this order as Tyche's current source map for practical delineation.
 
 ## Unit of Judgment
 
@@ -37,6 +40,17 @@ A judgment should combine:
 `planet + house + sign + condition + angularity + sect + configurations + rulerships + lots`
 
 The house supplies the life topic. The planet supplies the actor or principle. The sign describes style and environment. Essential condition describes whether the planet has resources of its own or acts with friction. Angularity describes prominence, not automatic benefit.
+
+## Rulership Grammar
+
+Rulers of places are one of the main ways Tyche should connect topics:
+
+- A place supplies the topic.
+- The ruler of that place administers or carries that topic.
+- The ruler's house shows where the topic is redirected, expressed, supported, or pressured.
+- The ruler's condition, angularity, sect status, solar phase, and configurations describe how well that administration works.
+
+This applies even when a place is empty. Do not treat empty places as inactive when their rulers are prominent.
 
 The detailed weighting rules live in `docs/judgment-matrix.md`. That matrix is the checklist for whether a calculated factor should enter the visible report, the evidence layer, or a future module.
 
@@ -47,6 +61,7 @@ Prominence and ease must remain separate:
 - Detriment and fall indicate friction.
 - The benefic of sect tends to show help or cohesion.
 - The malefic contrary to sect needs special attention as a sharper source of pressure.
+- Reception can mitigate pressure or strengthen help when configured planets receive one another by dignity.
 
 In the plain-language layer, translate technical roles:
 

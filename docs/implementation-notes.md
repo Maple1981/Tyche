@@ -45,6 +45,12 @@ Place search may contact an external geocoding service with the typed place quer
 
 No personal examples, private data, source attachments, OCR dumps, or spreadsheets should be committed.
 
+## Public Transcript Handling
+
+Podcast transcripts are treated as review aids, not repository content. Keep only paraphrased doctrine, implementation rules, and public URLs in `docs/public-transcript-synthesis.md`.
+
+The priority transcript list in that file is the first pass for interpretation changes: basic reading order, Whole Sign Houses, place meanings, sect, essential condition, mitigation/reception, solar phase, Fortune/Spirit, and future annual profections. Secondary transcript material can enrich the docs, but should not override the priority layer unless the calculation or interpretation rules are updated explicitly.
+
 ## Historical Examples
 
 The historical figure modal should only include public figures whose birth date, clock time, birthplace, and sex are documented with enough precision for an example chart.
@@ -58,3 +64,5 @@ Each historical example should carry coordinates and a deliberate time offset or
 Each visible person card may display a source line and, when audited, a birth-data rating or time-source note. Do not invent or infer ratings. If a rating or exact time source has not been checked, leave the rating field empty rather than implying documentary certainty.
 
 If a historical example has not yet been individually audited for Rodden rating or time-source wording, the UI should say so explicitly. A visible pending-audit note is preferable to silent omission or a guessed rating.
+
+Keep natal-data provenance separate from interpretive-reference provenance. `dataSource` should identify the source of the birth data, while an optional Brennan/source-reference field may record whether the chart was treated in a secondary interpretive source. Do not imply that a chart example source is the source of the recorded birth time unless that has been checked directly.

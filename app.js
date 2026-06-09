@@ -221,6 +221,7 @@
       tableLot: "Lote",
       tableLord: "Regente del lote",
       tableLordHouse: "Casa del regente",
+      tableFormula: "Fórmula",
       tableAspect: "Configuración",
       tablePair: "Par",
       tableMode: "Modo",
@@ -271,6 +272,11 @@
       noAspects: "No hay configuraciones que mostrar con los ajustes actuales.",
       noLots: "No hay lotes seleccionados.",
       lotFormulaNote: "Sistema de fórmulas: Fortuna y Espíritu se invierten por secta; Eros y Necesidad usan la tradición basada en Fortuna y Espíritu; Coraje, Victoria y Némesis usan fórmulas planetarias herméticas.",
+      fromSun: "del Sol",
+      chariotBy: "en su carro por {condition}",
+      noChariot: "sin carro",
+      natalDataSource: "Fuente de datos natales",
+      brennanReference: "Referencia Brennan",
       manualOffsetSource: "diferencia UTC manual",
       historicalOffsetSource: "datos históricos del personaje",
       lmtOffsetSource: "LMT por longitud del lugar",
@@ -482,6 +488,7 @@
       tableLot: "Lot",
       tableLord: "Lot lord",
       tableLordHouse: "Lord house",
+      tableFormula: "Formula",
       tableAspect: "Configuration",
       tablePair: "Pair",
       tableMode: "Mode",
@@ -532,6 +539,11 @@
       noAspects: "No configurations to show with the current settings.",
       noLots: "No lots selected.",
       lotFormulaNote: "Formula system: Fortune and Spirit reverse by sect; Eros and Necessity use the Fortune/Spirit-based tradition; Courage, Victory, and Nemesis use hermetic planetary formulas.",
+      fromSun: "from the Sun",
+      chariotBy: "chariot by {condition}",
+      noChariot: "no chariot",
+      natalDataSource: "Natal data source",
+      brennanReference: "Brennan reference",
       manualOffsetSource: "manual UTC offset",
       historicalOffsetSource: "historical figure data",
       lmtOffsetSource: "LMT by birthplace longitude",
@@ -1013,6 +1025,7 @@
         title: "Copresencia",
         body: [
           "<p>Dos planetas en el mismo signo. Comparten lugar y se afectan por convivencia zodiacal, aunque no estén unidos por grado exacto.</p>",
+          "<p>No es automáticamente apoyo ni daño: intensifica la convivencia, y su cualidad depende de la naturaleza de los planetas, secta, condición, recepción, cercanía corporal y ocultación solar.</p>",
         ],
       },
       conjunction: {
@@ -1062,6 +1075,13 @@
         body: [
           "<p>En configuraciones diestras, especialmente el cuadrado superior, un planeta puede dominar a otro desde una posición zodiacal más fuerte.</p>",
           "<p>Tyche distingue la dirección del testimonio: no pesa igual que el benéfico o maléfico domine al significador, que el significador conserve la posición superior frente a ese contacto.</p>",
+        ],
+      },
+      reception: {
+        title: "Recepción",
+        body: [
+          "<p>Mitigación que aparece cuando dos planetas configurados se reciben por dignidad: domicilio, exaltación, triplicidad o término.</p>",
+          "<p>En un contacto difícil, la recepción da al planeta presionado o al planeta que presiona un canal formal para manejar la relación; no borra la tensión, pero puede moderarla.</p>",
         ],
       },
       aspectPair: {
@@ -1557,6 +1577,7 @@
         title: "Copresence",
         body: [
           "<p>Two planets in the same sign. They share a place and affect each other by zodiacal cohabitation, even without exact degree union.</p>",
+          "<p>It is not automatically helpful or harmful: it intensifies cohabitation, and its quality depends on the planets involved, sect, condition, reception, bodily closeness, and solar concealment.</p>",
         ],
       },
       conjunction: {
@@ -1606,6 +1627,13 @@
         body: [
           "<p>In right-sided configurations, especially the superior square, one planet may overcome another from a stronger zodiacal position.</p>",
           "<p>Tyche distinguishes the direction of the testimony: it is not the same for the benefic or malefic to dominate the significator as for the significator to retain the superior position against that contact.</p>",
+        ],
+      },
+      reception: {
+        title: "Reception",
+        body: [
+          "<p>A mitigation that appears when two configured planets receive one another by dignity: domicile, exaltation, triplicity, or bound.</p>",
+          "<p>In a difficult contact, reception gives the pressured planet or the pressuring planet a formal channel for handling the relationship; it does not erase tension, but it can moderate it.</p>",
         ],
       },
       aspectPair: {
@@ -2882,6 +2910,7 @@
       ["separating", ["separando", "separating"]],
       ["aspects", ["por signo", "by sign", "por grado", "by degree", "signo + grado", "sign + degree"]],
       ["overcoming", ["domina", "overcomes"]],
+      ["reception", ["recepcion", "reception", "recibe"]],
     ];
     return matchers.find(([, needles]) => needles.some((needle) => normalized.includes(needle)))?.[0] || "";
   }
@@ -3371,13 +3400,20 @@
     const roddenText = person.roddenRating || t("dataRoddenPending");
     const timeText = localizedValue(person.timeSource) || t("dataTimeSourcePrepared");
     const rows = [
-      `<dt>${escapeHtml(t("dataSource"))}</dt>`,
+      `<dt>${escapeHtml(t("natalDataSource"))}</dt>`,
       `<dd>${escapeHtml(historicalDataSourceText(person))}</dd>`,
       `<dt>${escapeHtml(t("dataRodden"))}</dt>`,
       `<dd>${escapeHtml(roddenText)}</dd>`,
       `<dt>${escapeHtml(t("dataTimeSource"))}</dt>`,
       `<dd>${escapeHtml(timeText)}</dd>`,
     ];
+    const brennanReference = localizedValue(person.brennanReference);
+    if (brennanReference) {
+      rows.push(
+        `<dt>${escapeHtml(t("brennanReference"))}</dt>`,
+        `<dd>${escapeHtml(brennanReference)}</dd>`
+      );
+    }
     return rows.join("");
   }
 
@@ -3983,6 +4019,107 @@
     return "";
   }
 
+  function receptionKindLabel(kind) {
+    if (kind === "domicile") return t("domicile");
+    if (kind === "exaltation") return t("exaltation");
+    if (kind === "triplicityActive") return t("triplicityActive");
+    if (kind === "triplicityOutOfSect") return t("triplicityOutOfSect");
+    if (kind === "triplicityCooperating") return t("triplicityCooperatingRole");
+    if (kind === "bound") return state.lang === "es" ? "término" : "bound";
+    return kind;
+  }
+
+  function receptionRank(kinds) {
+    if (kinds.includes("domicile") || kinds.includes("exaltation")) return "strong";
+    if (kinds.includes("triplicityActive") || kinds.includes("bound")) return "medium";
+    if (kinds.length) return "weak";
+    return "";
+  }
+
+  function receptionRankScore(rank) {
+    return { strong: 3, medium: 2, weak: 1 }[rank] || 0;
+  }
+
+  function receptionAuthority(receiver, guestLon, chart) {
+    if (!VISIBLE_KEYS.includes(receiver)) return { receiver, kinds: [], labels: [], rank: "" };
+    const signIndex = signOf(guestLon);
+    const sign = SIGNS[signIndex];
+    const trip = TRIPLICITY[sign.element];
+    const kinds = [];
+    if (sign.ruler === receiver) kinds.push("domicile");
+    if (EXALTATIONS[receiver] === signIndex) kinds.push("exaltation");
+    if (trip.day === receiver) kinds.push(chart.isDay ? "triplicityActive" : "triplicityOutOfSect");
+    if (trip.night === receiver) kinds.push(chart.isDay ? "triplicityOutOfSect" : "triplicityActive");
+    if (trip.coop === receiver) kinds.push("triplicityCooperating");
+    if (boundLordFor(guestLon) === receiver) kinds.push("bound");
+    return {
+      receiver,
+      kinds,
+      labels: kinds.map(receptionKindLabel),
+      rank: receptionRank(kinds),
+    };
+  }
+
+  function receptionBetween(actor, target, chart) {
+    const actorPos = chart.positions[actor];
+    const targetPos = chart.positions[target];
+    const targetReceivesActor = receptionAuthority(target, actorPos.lon, chart);
+    const actorReceivesTarget = receptionAuthority(actor, targetPos.lon, chart);
+    const strongest = Math.max(
+      receptionRankScore(targetReceivesActor.rank),
+      receptionRankScore(actorReceivesTarget.rank)
+    );
+    return {
+      targetReceivesActor,
+      actorReceivesTarget,
+      strongest,
+      hasReception: strongest > 0,
+    };
+  }
+
+  function shiftLevel(level, direction) {
+    const levels = ["lowLevel", "mediumLevel", "strongLevel"];
+    const tensionLevels = ["lowLevel", "mediumLevel", "highLevel"];
+    const list = level === "highLevel" ? tensionLevels : levels;
+    const index = list.indexOf(level);
+    if (index < 0) return level;
+    return list[Math.max(0, Math.min(list.length - 1, index + direction))];
+  }
+
+  function adjustIntensityForReception(level, role, reception) {
+    if (!reception?.hasReception) return level;
+    if (role === "support") return reception.strongest >= 2 ? shiftLevel(level, 1) : level;
+    return reception.strongest >= 2 ? shiftLevel(level, -1) : level;
+  }
+
+  function receptionPhrase(target, actor, reception) {
+    const parts = [];
+    if (reception.targetReceivesActor.kinds.length) {
+      parts.push(state.lang === "es"
+        ? `${planetLabel(target)} recibe a ${planetLabel(actor)} por ${naturalList(reception.targetReceivesActor.labels)}`
+        : `${planetLabel(target)} receives ${planetLabel(actor)} by ${naturalList(reception.targetReceivesActor.labels)}`);
+    }
+    if (reception.actorReceivesTarget.kinds.length) {
+      parts.push(state.lang === "es"
+        ? `${planetLabel(actor)} recibe a ${planetLabel(target)} por ${naturalList(reception.actorReceivesTarget.labels)}`
+        : `${planetLabel(actor)} receives ${planetLabel(target)} by ${naturalList(reception.actorReceivesTarget.labels)}`);
+    }
+    return parts.join("; ");
+  }
+
+  function receptionNote(target, actor, reception, role) {
+    if (!reception?.hasReception) return "";
+    const phrase = receptionPhrase(target, actor, reception);
+    if (state.lang === "es") {
+      return role === "support"
+        ? ` Hay recepción (${phrase}), lo que refuerza el canal de ayuda.`
+        : ` Hay recepción (${phrase}), así que la presión queda mitigada y actúa con más canal que crudeza.`;
+    }
+    return role === "support"
+      ? ` There is reception (${phrase}), strengthening the channel of help.`
+      : ` There is reception (${phrase}), so the pressure is mitigated and has more channel than rawness.`;
+  }
+
   function lotLongitude(key, chart) {
     const asc = chart.angles.asc;
     const p = chart.positions;
@@ -3997,6 +4134,22 @@
     formula.victory = day ? asc + p.jupiter.lon - formula.spirit : asc + formula.spirit - p.jupiter.lon;
     formula.nemesis = day ? asc + formula.fortune - p.saturn.lon : asc + p.saturn.lon - formula.fortune;
     return norm360(formula[key]);
+  }
+
+  function lotFormulaText(key, isDay) {
+    const asc = "Asc";
+    const fortune = t("fortune");
+    const spirit = t("spirit");
+    const map = {
+      fortune: isDay ? `${asc} + ${planetName("moon")} − ${planetName("sun")}` : `${asc} + ${planetName("sun")} − ${planetName("moon")}`,
+      spirit: isDay ? `${asc} + ${planetName("sun")} − ${planetName("moon")}` : `${asc} + ${planetName("moon")} − ${planetName("sun")}`,
+      eros: isDay ? `${asc} + ${spirit} − ${fortune}` : `${asc} + ${fortune} − ${spirit}`,
+      necessity: isDay ? `${asc} + ${fortune} − ${spirit}` : `${asc} + ${spirit} − ${fortune}`,
+      courage: isDay ? `${asc} + ${fortune} − ${planetName("mars")}` : `${asc} + ${planetName("mars")} − ${fortune}`,
+      victory: isDay ? `${asc} + ${planetName("jupiter")} − ${spirit}` : `${asc} + ${spirit} − ${planetName("jupiter")}`,
+      nemesis: isDay ? `${asc} + ${fortune} − ${planetName("saturn")}` : `${asc} + ${planetName("saturn")} − ${fortune}`,
+    };
+    return map[key] || "—";
   }
 
   function lotName(key) {
@@ -4672,6 +4825,16 @@
       || boundLordFor(position.lon) === planet;
   }
 
+  function solarChariotReason(planet, position) {
+    if (!VISIBLE_KEYS.includes(planet) || planet === "sun" || planet === "moon") return "";
+    const signIndex = signOf(position.lon);
+    const reasons = [];
+    if (SIGNS[signIndex].ruler === planet) reasons.push(t("domicile"));
+    if (EXALTATIONS[planet] === signIndex) reasons.push(t("exaltation"));
+    if (boundLordFor(position.lon) === planet) reasons.push(t("bound", { planet: planetName(planet) }));
+    return naturalList(reasons);
+  }
+
   function solarPhaseState(planet, chart) {
     if (planet === "sun" || planet === "moon" || !VISIBLE_KEYS.includes(planet)) {
       return { category: "luminary", side: "", distance: null, chariot: false };
@@ -4690,6 +4853,19 @@
       distance,
       chariot: ["combust", "underBeams"].includes(category) && hasSolarChariot(planet, position),
     };
+  }
+
+  function solarPhaseTableText(planet, chart) {
+    const stateInfo = solarPhaseState(planet, chart);
+    const phase = chart.positions[planet]?.phase || "—";
+    if (!["cazimi", "combust", "underBeams"].includes(stateInfo.category)) return phase;
+    const parts = [phase, `${formatAngle(stateInfo.distance)} ${t("fromSun")}`];
+    if (["combust", "underBeams"].includes(stateInfo.category)) {
+      parts.push(stateInfo.chariot
+        ? t("chariotBy", { condition: solarChariotReason(planet, chart.positions[planet]) })
+        : t("noChariot"));
+    }
+    return parts.join(" · ");
   }
 
   function solarPhasePlainText(planet, chart) {
@@ -4744,7 +4920,7 @@
       : "The key planets are not under strong solar concealment; read their topics mainly through house, essential condition, sect, and configurations.";
   }
 
-  function relationIntensity(actor, target, chart, role, signType, degree, actorSuperior, targetSuperior) {
+  function relationIntensity(actor, target, chart, role, signType, degree, actorSuperior, targetSuperior, reception) {
     const actorPos = chart.positions[actor];
     const actorStrength = dignityStrength(actor, actorPos, chart);
     const actorSolar = solarPhaseState(actor, chart);
@@ -4754,14 +4930,22 @@
     const harsh = ["copresence", "square", "opposition"].includes(signType);
 
     if (role === "support") {
-      if (!actorObscured && (acute || actorSuperior || friendly) && (actorStrength.strong || actorPos.angularity === "angular")) return "strongLevel";
-      if (!actorObscured && (friendly || acute || actorStrength.medium || actorPos.angularity === "succedent")) return "mediumLevel";
-      return "lowLevel";
+      if (!actorObscured && (acute || actorSuperior || friendly) && (actorStrength.strong || actorPos.angularity === "angular")) {
+        return adjustIntensityForReception("strongLevel", role, reception);
+      }
+      if (!actorObscured && (friendly || acute || actorStrength.medium || actorPos.angularity === "succedent")) {
+        return adjustIntensityForReception("mediumLevel", role, reception);
+      }
+      return adjustIntensityForReception("lowLevel", role, reception);
     }
 
-    if ((acute || actorSuperior || harsh) && !targetSuperior && (actorStrength.strong || actorPos.angularity === "angular")) return "highLevel";
-    if (actorSuperior || acute || harsh || actorStrength.medium) return "mediumLevel";
-    return "lowLevel";
+    if ((acute || actorSuperior || harsh) && !targetSuperior && (actorStrength.strong || actorPos.angularity === "angular")) {
+      return adjustIntensityForReception("highLevel", role, reception);
+    }
+    if (actorSuperior || acute || harsh || actorStrength.medium) {
+      return adjustIntensityForReception("mediumLevel", role, reception);
+    }
+    return adjustIntensityForReception("lowLevel", role, reception);
   }
 
   function planetRelationJudgment(target, actor, chart, role) {
@@ -4778,29 +4962,31 @@
     const relation = t(signType);
     const targetName = planetLabel(target);
     const actorName = planetLabel(actor);
-    const intensity = relationIntensity(actor, target, chart, role, signType, degree, actorSuperior, targetSuperior);
+    const reception = receptionBetween(actor, target, chart);
+    const intensity = relationIntensity(actor, target, chart, role, signType, degree, actorSuperior, targetSuperior, reception);
+    const receptionText = receptionNote(target, actor, reception, role);
     if (state.lang === "es") {
       if (role === "support") {
         const superiority = actorSuperior
           ? " El apoyo llega desde posición superior."
           : targetSuperior ? " El significador recibe apoyo sin perder posición superior." : "";
-        return `${targetName} recibe testimonio de ${actorName} por ${relation}${acute ? " muy cerca de perfección" : " por signo"}; esto funciona como bonificación o apoyo de intensidad ${t(intensity)}.${superiority}`;
+        return `${targetName} recibe testimonio de ${actorName} por ${relation}${acute ? " muy cerca de perfección" : " por signo"}; esto funciona como bonificación o apoyo de intensidad ${t(intensity)}.${superiority}${receptionText}`;
       }
       const superiority = actorSuperior
         ? ", y además lo domina por superioridad"
         : targetSuperior ? ", aunque el significador queda en posición superior frente a esa presión" : "";
-      return `${targetName} recibe presión de ${actorName} por ${relation}${acute ? " muy cerca de perfección" : " por signo"}${superiority}; esto pesa como maltrato o exigencia de intensidad ${t(intensity)}.`;
+      return `${targetName} recibe presión de ${actorName} por ${relation}${acute ? " muy cerca de perfección" : " por signo"}${superiority}; esto pesa como maltrato o exigencia de intensidad ${t(intensity)}.${receptionText}`;
     }
     if (role === "support") {
       const superiority = actorSuperior
         ? " The support comes from a superior position."
         : targetSuperior ? " The significator receives support while retaining the superior position." : "";
-      return `${targetName} receives testimony from ${actorName} by ${relation}${acute ? " very close to perfection" : " by sign"}; this acts as ${t(intensity)} bonification or support.${superiority}`;
+      return `${targetName} receives testimony from ${actorName} by ${relation}${acute ? " very close to perfection" : " by sign"}; this acts as ${t(intensity)} bonification or support.${superiority}${receptionText}`;
     }
     const superiority = actorSuperior
       ? ", and also overcomes it from the superior position"
       : targetSuperior ? ", though the significator holds the superior position against that pressure" : "";
-    return `${targetName} receives pressure from ${actorName} by ${relation}${acute ? " very close to perfection" : " by sign"}${superiority}; this weighs as ${t(intensity)} maltreatment or demand.`;
+    return `${targetName} receives pressure from ${actorName} by ${relation}${acute ? " very close to perfection" : " by sign"}${superiority}; this weighs as ${t(intensity)} maltreatment or demand.${receptionText}`;
   }
 
   function configurationsReading(chart, focuses, ascLordPosition) {
@@ -4824,6 +5010,29 @@
     return state.lang === "es"
       ? "No aparece una relación planetaria dominante sobre los significadores principales; por eso el juicio se apoya más en regencias, casas, secta y condición esencial."
       : "No dominant planetary relation appears on the main significators; the judgment therefore leans more on rulerships, houses, sect, and essential condition.";
+  }
+
+  function receptionEvidenceItems(chart) {
+    const ascLord = SIGNS[chart.ascSign].ruler;
+    const targets = [...new Set([ascLord, chart.sectLight, lotByKey(chart, "fortune")?.lord, lotByKey(chart, "spirit")?.lord])]
+      .filter(Boolean);
+    const actors = [...new Set([chart.beneficOfSect, chart.maleficContrarySect])];
+    const items = [];
+    targets.forEach((target) => {
+      actors.forEach((actor) => {
+        if (target === actor) return;
+        const signType = signAspectType(signOf(chart.positions[target].lon), signOf(chart.positions[actor].lon));
+        if (!signType) return;
+        const reception = receptionBetween(actor, target, chart);
+        if (!reception.hasReception) return;
+        const role = actor === chart.beneficOfSect ? "support" : "tension";
+        const phrase = receptionPhrase(target, actor, reception);
+        items.push(state.lang === "es"
+          ? `Recepción (${role === "support" ? "apoyo" : "mitigación"}): ${phrase}.`
+          : `Reception (${role === "support" ? "support" : "mitigation"}): ${phrase}.`);
+      });
+    });
+    return [...new Set(items)].slice(0, 4);
   }
 
   function triplicityFoundationReading(chart) {
@@ -4907,6 +5116,83 @@
     return VISIBLE_KEYS.filter((key) => chart.positions[key]?.angularity === "angular");
   }
 
+  function angleDisplayName(angleKey) {
+    if (angleKey === "asc") return t("ascendant");
+    if (angleKey === "desc") return t("descendant");
+    if (angleKey === "mc") return t("mc");
+    if (angleKey === "ic") return t("ic");
+    return angleKey.toUpperCase();
+  }
+
+  function visiblePlanetsNearAngles(chart, orb = 5) {
+    const angles = ["asc", "desc", "mc", "ic"];
+    return VISIBLE_KEYS
+      .map((key) => {
+        const position = chart.positions[key];
+        const closest = angles
+          .map((angleKey) => ({
+            key,
+            angleKey,
+            delta: angleDistance(position.lon, chart.angles[angleKey]),
+          }))
+          .sort((a, b) => a.delta - b.delta)[0];
+        return closest && closest.delta <= orb ? closest : null;
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.delta - b.delta);
+  }
+
+  function exactAngleListText(items) {
+    return naturalList(items.map((item) => (
+      state.lang === "es"
+        ? `${planetLabel(item.key)} a ${formatAngle(item.delta)} de ${angleDisplayName(item.angleKey)}`
+        : `${planetLabel(item.key)} within ${formatAngle(item.delta)} of ${angleDisplayName(item.angleKey)}`
+    )));
+  }
+
+  function distanceToSignBoundary(lon) {
+    const degree = degreeInSign(lon);
+    return Math.min(degree, 30 - degree);
+  }
+
+  function distanceToBoundBoundary(lon) {
+    const sign = SIGNS[signOf(lon)];
+    const degree = degreeInSign(lon);
+    const internalBoundaries = BOUNDS[sign.key]
+      .map((entry) => entry[1])
+      .filter((boundary) => boundary > 0 && boundary < 30);
+    if (!internalBoundaries.length) return Infinity;
+    return Math.min(...internalBoundaries.map((boundary) => Math.abs(degree - boundary)));
+  }
+
+  function boundaryWarnings(chart) {
+    const warnings = [];
+    const ascDistance = distanceToSignBoundary(chart.angles.asc);
+    if (ascDistance <= 1) {
+      warnings.push(state.lang === "es"
+        ? `Ascendente a ${formatAngle(ascDistance)} del cambio de signo.`
+        : `Ascendant within ${formatAngle(ascDistance)} of a sign change.`);
+    }
+    chart.lots.forEach((lot) => {
+      const distance = distanceToSignBoundary(lot.lon);
+      if (distance <= 1) {
+        warnings.push(state.lang === "es"
+          ? `${lotName(lot.key)} a ${formatAngle(distance)} del cambio de signo/casa.`
+          : `${lotName(lot.key)} within ${formatAngle(distance)} of a sign/house change.`);
+      }
+    });
+    VISIBLE_KEYS.forEach((key) => {
+      const position = chart.positions[key];
+      const distance = distanceToBoundBoundary(position.lon);
+      if (distance <= 0.5) {
+        warnings.push(state.lang === "es"
+          ? `${planetLabel(key)} a ${formatAngle(distance)} del cambio de término.`
+          : `${planetLabel(key)} within ${formatAngle(distance)} of a bound change.`);
+      }
+    });
+    return warnings;
+  }
+
   function lotByKey(chart, key) {
     return chart.lots.find((lot) => lot.key === key);
   }
@@ -4929,6 +5215,9 @@
     add(chart.positions[chart.sectLight]?.house, 2, `${t("sectLight")}: ${planetLabel(chart.sectLight)}`);
     add(chart.mcHouse, 2, t("mc"));
     visibleAngularPlanets(chart).forEach((key) => add(chart.positions[key].house, 1.5, `${planetLabel(key)} ${t("angular")}`));
+    visiblePlanetsNearAngles(chart).forEach((item) => {
+      add(chart.positions[item.key].house, 0.75, `${planetLabel(item.key)} ${state.lang === "es" ? "cerca de" : "near"} ${angleDisplayName(item.angleKey)}`);
+    });
     add(lotByKey(chart, "fortune")?.house, 1.25, t("fortune"));
     add(lotByKey(chart, "spirit")?.house, 1.25, t("spirit"));
     add(chart.positions[trip.primary]?.house, 1.15, `${t("sectLight")} ${planetLabel(trip.primary)}`);
@@ -4969,6 +5258,9 @@
     const beneficPosition = chart.positions[benefic];
     const maleficPosition = chart.positions[malefic];
     const angularPlanets = visibleAngularPlanets(chart);
+    const exactAnglePlanets = visiblePlanetsNearAngles(chart);
+    const receptionEvidence = receptionEvidenceItems(chart);
+    const boundaryEvidence = boundaryWarnings(chart);
     const fortune = lotByKey(chart, "fortune");
     const spirit = lotByKey(chart, "spirit");
     const sectLabel = chart.isDay ? t("dayChart") : t("nightChart");
@@ -5038,6 +5330,15 @@
       t("evidenceAngularPlanets", {
         planets: angularPlanets.length ? naturalList(angularPlanets.map(planetLabel)) : capitalizeText(t("none")),
       }),
+      state.lang === "es"
+        ? `Planetas visibles cerca de ángulos exactos: ${exactAnglePlanets.length ? exactAngleListText(exactAnglePlanets) : capitalizeText(t("none"))}.`
+        : `Visible planets near exact angles: ${exactAnglePlanets.length ? exactAngleListText(exactAnglePlanets) : capitalizeText(t("none"))}.`,
+      ...(receptionEvidence.length ? receptionEvidence : [state.lang === "es"
+        ? "Recepción: no destaca entre los significadores principales configurados."
+        : "Reception: none stands out among the configured main significators."]),
+      ...(boundaryEvidence.length ? [state.lang === "es"
+        ? `Avisos de frontera: ${boundaryEvidence.join(" ")}`
+        : `Boundary notices: ${boundaryEvidence.join(" ")}`] : []),
       fortune && spirit
         ? t("evidenceLots", { fortuneHouse: fortune.house, spiritHouse: spirit.house })
         : t("evidenceNoLot"),
@@ -5066,6 +5367,9 @@
       state.lang === "es"
         ? `Planetas visibles angulares: ${angularPlanetsText} -> lo que más se nota.`
         : `Angular visible planets: ${angularPlanetsText} -> what stands out most.`,
+      ...(exactAnglePlanets.length ? [state.lang === "es"
+        ? `Cercanía a ángulos exactos: ${exactAngleListText(exactAnglePlanets)} -> prominencia adicional.`
+        : `Near exact angles: ${exactAngleListText(exactAnglePlanets)} -> additional prominence.`] : []),
     ];
     if (fortune && spirit) {
       hierarchy.push(state.lang === "es"
@@ -5177,7 +5481,7 @@
         escapeHtml(String(p.house)),
         condition,
         glossaryMaybe(capitalizeText(t(p.angularity)), p.angularity, "capitalize-first"),
-        glossaryParts(p.phase || "—"),
+        glossaryParts(solarPhaseTableText(key, chart)),
       ];
     });
     $("#tab-planets").innerHTML = makeTable(headers, rows);
@@ -5221,6 +5525,7 @@
       tableHead(t("tableHouse"), "house"),
       tableHead(t("tableLord"), "lotLord"),
       tableHead(t("tableLordHouse"), "lotLordHouse"),
+      tableHead(t("tableFormula"), "lots"),
     ];
     const rows = chart.lots.map((lot) => [
       glossaryTerm(capitalizeText(lotName(lot.key)), lotGlossaryKey(lot.key), "capitalize-first"),
@@ -5228,6 +5533,7 @@
       escapeHtml(String(lot.house)),
       escapeHtml(`${PLANETS[lot.lord].symbol} ${planetName(lot.lord)}`),
       escapeHtml(String(lot.lordHouse || "—")),
+      escapeHtml(lotFormulaText(lot.key, chart.isDay)),
     ]);
     const lotNote = state.lang === "es"
       ? `Sistema de fórmulas: ${glossaryTerm(t("fortune"), "lotFortune")} y ${glossaryTerm(t("spirit"), "lotSpirit")} se invierten por ${glossaryTerm(t("sect"), "sect")}; ${glossaryTerm("Eros", "lotEros")} y ${glossaryTerm(t("necessity"), "lotNecessity")} usan la tradición basada en ${glossaryTerm(t("fortune"), "lotFortune")} y ${glossaryTerm(t("spirit"), "lotSpirit")}; ${glossaryTerm(t("courage"), "lotCourage")}, ${glossaryTerm(t("victory"), "lotVictory")} y ${glossaryTerm("Némesis", "lotNemesis")} usan fórmulas planetarias herméticas.`
