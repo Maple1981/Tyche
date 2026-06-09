@@ -54,3 +54,5 @@ When using rated birth-data collections, prefer AA/A/B-level records. Leave out 
 Prefer Gregorian examples from periods and jurisdictions after calendar reform. If a future example uses a Julian-calendar birth date, the entry must store that calendar explicitly and its visible label must make the calendar clear. Do not silently convert between Julian and Gregorian dates.
 
 Each historical example should carry coordinates and a deliberate time offset or IANA time zone so selecting it produces a reproducible chart.
+
+Each visible person card may display a source line and, when audited, a birth-data rating or time-source note. Do not invent or infer ratings. If a rating or exact time source has not been checked, leave the rating field empty rather than implying documentary certainty.

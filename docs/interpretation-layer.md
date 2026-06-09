@@ -28,6 +28,8 @@ This order keeps the app from treating every placement as equally important.
 
 The visible summary should normally show the first three strongest topical focuses, not only one dominant house. A single house can be technically central without describing the whole chart by itself.
 
+Public projection should be its own plain-language block when interpretation is rendered. It should combine MC, the 10th whole-sign house, the ruler of the 10th house, and visible planets in the 10th. This block clarifies reputation, craft, rank, and action in public without replacing the Ascendant lord as the main life-direction thread.
+
 ## Unit of Judgment
 
 A judgment should combine:

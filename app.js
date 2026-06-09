@@ -93,6 +93,9 @@
       dataDate: "Fecha",
       dataPlace: "Lugar",
       dataSex: "Sexo",
+      dataSource: "Fuente",
+      dataRodden: "Rodden",
+      dataTimeSource: "Hora",
       footerWarning: "Motor astronómico pensado para uso educativo. La información proporcionada es solo orientativa.",
     footerPrivacy: "La carta se calcula localmente en tu navegador. No guardamos tus cartas ni usamos cookies. Solo se conserva en este dispositivo la preferencia de idioma y tema. La búsqueda de lugares consulta Open-Meteo para obtener coordenadas. Las imágenes del archivo histórico se cargan desde Wikimedia Commons. El posicionamiento de planetas utiliza una librería local.",
       footerAuthors: "Autores: Maple81 y Hélène de Troie, 2026.",
@@ -131,6 +134,7 @@
       mainFocusTitle: "Zonas más activadas",
       hierarchyTitle: "Base de lectura",
       lifeDirectionTitle: "Hacia dónde tira la carta",
+      publicProjectionTitle: "Proyección pública",
       resourcesTitle: "Donde la carta facilita",
       tensionsTitle: "Donde la carta exige más",
       visibilityTitle: "Visibilidad y ocultación",
@@ -188,9 +192,12 @@
       moonAspects: "Aplicaciones y separaciones",
       moonVoc: "Vacía de curso",
       moonVoc30: "Vacía de curso, definición helenística",
+      moonVocSign: "Vacía de curso, hasta salir del signo",
       moonNoApplyingWithinOrb: "Sin aplicación cercana, 12°",
       notVoc: "No según la definición helenística de 30°",
       yesVoc: "Sí según la definición helenística de 30°",
+      notVocSign: "No, perfecciona antes de salir del signo",
+      yesVocSign: "Sí, no perfecciona antes de salir del signo",
       yes: "Sí",
       no: "No",
       tablePlanet: "Planeta",
@@ -337,6 +344,9 @@
       dataDate: "Date",
       dataPlace: "Place",
       dataSex: "Sex",
+      dataSource: "Source",
+      dataRodden: "Rodden",
+      dataTimeSource: "Time",
       footerWarning: "Astronomical engine intended for educational use. The information provided may not be reliable.",
     footerPrivacy: "The chart is calculated locally in your browser. We do not store your charts or use cookies. Only language and theme preferences are kept on this device. Place search consults Open-Meteo to obtain coordinates. Historical archive images load from Wikimedia Commons. Planet positions use a local library.",
       footerAuthors: "Authors: Maple81 and Hélène de Troie, 2026.",
@@ -375,6 +385,7 @@
       mainFocusTitle: "Most activated zones",
       hierarchyTitle: "Reading basis",
       lifeDirectionTitle: "Where the chart pulls",
+      publicProjectionTitle: "Public projection",
       resourcesTitle: "Where the chart facilitates",
       tensionsTitle: "Where the chart asks more",
       visibilityTitle: "Visibility and concealment",
@@ -432,9 +443,12 @@
       moonAspects: "Applications and separations",
       moonVoc: "Void of course",
       moonVoc30: "Void of course, Hellenistic definition",
+      moonVocSign: "Void of course, until sign exit",
       moonNoApplyingWithinOrb: "No close application, 12°",
       notVoc: "No under the Hellenistic 30° definition",
       yesVoc: "Yes under the Hellenistic 30° definition",
+      notVocSign: "No, perfects before leaving the sign",
+      yesVocSign: "Yes, does not perfect before leaving the sign",
       yes: "Yes",
       no: "No",
       tablePlanet: "Planet",
@@ -549,7 +563,7 @@
         title: "Latitud",
         body: [
           "<p>Coordenada norte-sur del nacimiento. Interviene en el cálculo del horizonte, el Ascendente y la altura solar.</p>",
-          "<p>Latitudes extremas pueden producir ángulos más inestables en motores simplificados.</p>",
+          "<p>En latitudes extremas, la geometría del horizonte vuelve los ángulos especialmente sensibles. Revisa cartas críticas con cuidado.</p>",
         ],
       },
       longitude: {
@@ -848,7 +862,7 @@
         title: "Triplicidad",
         body: [
           "<p>Regencia por elemento, con un regente diurno, uno nocturno y uno cooperante. Depende de la secta de la carta.</p>",
-          "<p>Se usa para evaluar soporte, estabilidad y colaboración elemental.</p>",
+          "<p>El regente activo por secta pesa más como recurso; el regente fuera de secta conserva testimonio, pero con menos prioridad; el cooperante modifica y acompaña a ambos.</p>",
         ],
       },
       bound: {
@@ -937,6 +951,7 @@
         title: "En el corazón (cazimi)",
         body: [
           "<p>Planeta dentro de aproximadamente 1° del Sol. En lugar de simple ocultamiento, se interpreta como una unión muy concentrada con la autoridad solar.</p>",
+          "<p>Tyche usa el umbral amplio de 1°. Algunas tradiciones usan un margen más estrecho, como unos 17′.</p>",
         ],
       },
       lunarCondition: {
@@ -957,7 +972,7 @@
         title: "Vacía de curso",
         body: [
           "<p>Tyche usa como juicio principal la definición helenística amplia: la Luna está vacía si no perfecciona una conjunción, sextil, cuadrado, trígono u oposición en los próximos 30° de movimiento lunar.</p>",
-          "<p>El indicador de ausencia de aplicación dentro de 12° se muestra aparte para no confundir una lectura por orbe con la definición de 30°.</p>",
+          "<p>También se muestra si la Luna perfecciona o no antes de abandonar el signo. El indicador de ausencia de aplicación dentro de 12° se mantiene aparte para no confundir una lectura por orbe con la definición de 30°.</p>",
         ],
       },
       applications: {
@@ -1026,6 +1041,7 @@
         title: "Dominio / superación",
         body: [
           "<p>En configuraciones diestras, especialmente el cuadrado superior, un planeta puede dominar a otro desde una posición zodiacal más fuerte.</p>",
+          "<p>Tyche distingue la dirección del testimonio: no pesa igual que el benéfico o maléfico domine al significador, que el significador conserve la posición superior frente a ese contacto.</p>",
         ],
       },
       aspectPair: {
@@ -1091,7 +1107,7 @@
         title: "Latitude",
         body: [
           "<p>North-south birth coordinate. It affects the horizon, Ascendant, and solar altitude.</p>",
-          "<p>Extreme latitudes can make angles less stable in simplified engines.</p>",
+          "<p>At extreme latitudes, horizon geometry makes angles especially sensitive. Review critical charts with care.</p>",
         ],
       },
       longitude: {
@@ -1390,7 +1406,7 @@
         title: "Triplicity",
         body: [
           "<p>Elemental rulership with a day ruler, night ruler, and cooperating ruler. It depends on the chart's sect.</p>",
-          "<p>It is used to judge support, stability, and elemental collaboration.</p>",
+          "<p>The ruler active by sect carries more weight as a resource; the out-of-sect ruler still testifies, but with lower priority; the cooperating ruler modifies and assists both.</p>",
         ],
       },
       bound: {
@@ -1479,6 +1495,7 @@
         title: "In the heart (cazimi)",
         body: [
           "<p>A planet within about 1° of the Sun. Instead of simple concealment, it is interpreted as concentrated union with solar authority.</p>",
+          "<p>Tyche uses the broad 1° threshold. Some traditions use a narrower margin, such as about 17′.</p>",
         ],
       },
       lunarCondition: {
@@ -1499,7 +1516,7 @@
         title: "Void of course",
         body: [
           "<p>Tyche uses the broader Hellenistic definition as the main judgment: the Moon is void if it perfects no conjunction, sextile, square, trine, or opposition in the next 30° of lunar motion.</p>",
-          "<p>The separate no-application-within-12° indicator is shown apart so an orb-based reading is not confused with the 30° definition.</p>",
+          "<p>Tyche also shows whether the Moon perfects before leaving its sign. The separate no-application-within-12° indicator remains apart so an orb-based reading is not confused with the 30° definition.</p>",
         ],
       },
       applications: {
@@ -1568,6 +1585,7 @@
         title: "Overcoming",
         body: [
           "<p>In right-sided configurations, especially the superior square, one planet may overcome another from a stronger zodiacal position.</p>",
+          "<p>Tyche distinguishes the direction of the testimony: it is not the same for the benefic or malefic to dominate the significator as for the significator to retain the superior position against that contact.</p>",
         ],
       },
       aspectPair: {
@@ -3298,6 +3316,37 @@
     state.selectedZoneSource = "";
   }
 
+  function localizedValue(value) {
+    if (!value) return "";
+    if (typeof value === "string") return value;
+    return value[state.lang] || value.es || value.en || "";
+  }
+
+  function historicalDataSourceText(person) {
+    return localizedValue(person.dataSource)
+      || (state.lang === "es" ? "Wikipedia / Astro-Databank" : "Wikipedia / Astro-Databank");
+  }
+
+  function historicalQualityRows(person) {
+    const rows = [
+      `<dt>${escapeHtml(t("dataSource"))}</dt>`,
+      `<dd>${escapeHtml(historicalDataSourceText(person))}</dd>`,
+    ];
+    if (person.roddenRating) {
+      rows.push(
+        `<dt>${escapeHtml(t("dataRodden"))}</dt>`,
+        `<dd>${escapeHtml(person.roddenRating)}</dd>`,
+      );
+    }
+    if (person.timeSource) {
+      rows.push(
+        `<dt>${escapeHtml(t("dataTimeSource"))}</dt>`,
+        `<dd>${escapeHtml(localizedValue(person.timeSource))}</dd>`,
+      );
+    }
+    return rows.join("");
+  }
+
   function renderHistoricalPeople() {
     const people = [...HISTORICAL_PEOPLE].sort((a, b) => a.name.localeCompare(b.name, state.lang === "es" ? "es" : "en"));
     $("#peopleGrid").innerHTML = people.map((person) => `
@@ -3321,6 +3370,7 @@
             <dd>${escapeHtml(formatCity(person.place))}</dd>
             <dt>${escapeHtml(t("dataSex"))}</dt>
             <dd>${escapeHtml(t(person.sex))}</dd>
+            ${historicalQualityRows(person)}
           </dl>
           <button type="button" data-person-id="${escapeHtml(person.id)}">${escapeHtml(t("useExample"))}</button>
         </div>
@@ -3886,10 +3936,16 @@
     return parts.join(" · ");
   }
 
-  function overcomingLabel(aKey, bKey, aLon, bLon) {
+  function superiorPlanet(aKey, bKey, aLon, bLon) {
     const distance = (signOf(bLon) - signOf(aLon) + 12) % 12;
-    if ([2, 3, 4].includes(distance)) return t("overcoming", { planet: planetName(aKey) });
-    if ([8, 9, 10].includes(distance)) return t("overcoming", { planet: planetName(bKey) });
+    if ([2, 3, 4].includes(distance)) return aKey;
+    if ([8, 9, 10].includes(distance)) return bKey;
+    return "";
+  }
+
+  function overcomingLabel(aKey, bKey, aLon, bLon) {
+    const superior = superiorPlanet(aKey, bKey, aLon, bLon);
+    if (superior) return t("overcoming", { planet: planetName(superior) });
     return "";
   }
 
@@ -3925,9 +3981,11 @@
   function computeMoonCondition(chart) {
     const elongation = zodiacalDistance(chart.positions.sun.lon, chart.positions.moon.lon);
     const moon = chart.positions.moon;
+    const moonSignRemaining = 30 - degreeInSign(moon.lon);
     const contacts = [];
     let lastSeparation = null;
     let nextApplication = null;
+    let nextApplicationBySign = null;
     let hasApplyingWithinOrb = false;
     VISIBLE_KEYS.filter((key) => key !== "moon" && key !== "sun").forEach((key) => {
       const planet = chart.positions[key];
@@ -3937,6 +3995,10 @@
         .map((candidate) => ({ ...candidate, planet: key }));
       nextCandidates.forEach((candidate) => {
         if (!nextApplication || candidate.days < nextApplication.days) nextApplication = candidate;
+        if (candidate.moonTravel <= moonSignRemaining + 0.0001
+          && (!nextApplicationBySign || candidate.days < nextApplicationBySign.days)) {
+          nextApplicationBySign = candidate;
+        }
       });
       previousCandidates.forEach((candidate) => {
         if (!lastSeparation || candidate.days > lastSeparation.days) lastSeparation = candidate;
@@ -3965,7 +4027,10 @@
       contacts,
       lastSeparation,
       nextApplication,
+      nextApplicationBySign,
       voidOfCourse: !nextApplication,
+      voidOfCourseBySign: !nextApplicationBySign,
+      moonSignRemaining,
       hasApplyingWithinOrb,
     };
   }
@@ -4007,8 +4072,8 @@
     if (!Number.isFinite(input.latitude) || !Number.isFinite(input.longitude)) throw new Error(t("missingCoords"));
     if (input.latitude < -66 || input.latitude > 66) {
       $("#formStatus").textContent = state.lang === "es"
-        ? "Las latitudes extremas pueden producir ángulos inestables en este motor aproximado."
-        : "Extreme latitudes can produce unstable angles in this approximate engine.";
+        ? "Las latitudes extremas vuelven muy sensibles los ángulos al horizonte. Revisa cartas críticas con especial cuidado."
+        : "Extreme latitudes make horizon angles highly sensitive. Review critical charts with special care.";
     }
 
     const time = jdFromForm(input);
@@ -4169,6 +4234,7 @@
         ${metric(t("moonLastSeparation"), lastSeparation, "", "applications")}
         ${metric(t("moonNextApplication"), nextApplication, "", "applications")}
         ${metric(t("moonVoc30"), chart.moon.voidOfCourse ? t("yesVoc") : t("notVoc"), "", "moonVoc")}
+        ${metric(t("moonVocSign"), chart.moon.voidOfCourseBySign ? t("yesVocSign") : t("notVocSign"), "", "moonVoc")}
         ${metric(t("moonNoApplyingWithinOrb"), chart.moon.hasApplyingWithinOrb ? t("no") : t("yes"), "", "moonVoc")}
       </div>
     `;
@@ -4444,23 +4510,48 @@
     return `This chart is best understood through ${plainHouseTopics(house)}. That focus is reinforced by several pieces, not by one isolated placement.`;
   }
 
-  function essentialEaseLevel(position) {
-    const groups = dignityGroups(position.dignities || []);
-    if (groups.major.length && !groups.weakness.length) return "highLevel";
-    if (groups.weakness.length && !groups.major.length) return "lowLevel";
+  function essentialEaseLevel(position, planet = "", chart = null) {
+    const strength = dignityStrength(planet, position, chart);
+    if (strength.strong && !strength.weak) return "highLevel";
+    if (strength.weak && !strength.strong) return "lowLevel";
     return "mediumLevel";
   }
 
-  function supportLevel(position, focuses, ascLordPosition) {
+  function triplicityRoleForPlanet(planet, position, chart) {
+    if (!planet || !position || !chart) return "";
+    const trip = TRIPLICITY[SIGNS[signOf(position.lon)].element];
+    const active = chart.isDay ? trip.day : trip.night;
+    const contrary = chart.isDay ? trip.night : trip.day;
+    if (planet === active) return "active";
+    if (planet === trip.coop) return "cooperating";
+    if (planet === contrary) return "contrary";
+    return "";
+  }
+
+  function dignityStrength(planet, position, chart) {
     const groups = dignityGroups(position.dignities || []);
-    if (isConnectedWithFocus(position, focuses, ascLordPosition) && groups.major.length) return "strongLevel";
+    const role = triplicityRoleForPlanet(planet, position, chart);
+    const strong = groups.major.some((item) => ["domicile", "exaltation"].includes(glossaryKeyForText(item))) || role === "active";
+    const medium = role === "cooperating" || groups.minor.length > 0;
+    return {
+      strong,
+      medium,
+      weak: groups.weakness.length > 0,
+      role,
+      groups,
+    };
+  }
+
+  function supportLevel(position, focuses, ascLordPosition, planet = "", chart = null) {
+    const strength = dignityStrength(planet, position, chart);
+    if (isConnectedWithFocus(position, focuses, ascLordPosition) && strength.strong) return "strongLevel";
     if (isConnectedWithFocus(position, focuses, ascLordPosition)) return "moderateLevel";
     return "secondaryLevel";
   }
 
-  function tensionLevel(position, focuses, ascLordPosition) {
-    const groups = dignityGroups(position.dignities || []);
-    if (isConnectedWithFocus(position, focuses, ascLordPosition) && groups.weakness.length) return "highLevel";
+  function tensionLevel(position, focuses, ascLordPosition, planet = "", chart = null) {
+    const strength = dignityStrength(planet, position, chart);
+    if (isConnectedWithFocus(position, focuses, ascLordPosition) && strength.weak) return "highLevel";
     if (isConnectedWithFocus(position, focuses, ascLordPosition)) return "mediumLevel";
     return "lowLevel";
   }
@@ -4471,36 +4562,50 @@
     return "lowLevel";
   }
 
-  function maleficMitigationReading(maleficPosition, beneficPosition) {
-    const groups = dignityGroups(maleficPosition.dignities || []);
-    const hasResources = groups.major.length > 0;
-    const hasWeakness = groups.weakness.length > 0;
-    const beneficContact = Boolean(signAspectType(signOf(maleficPosition.lon), signOf(beneficPosition.lon)));
+  function maleficMitigationReading(maleficPosition, beneficPosition, chart) {
+    const maleficKey = chart.maleficContrarySect;
+    const beneficKey = chart.beneficOfSect;
+    const maleficStrength = dignityStrength(maleficKey, maleficPosition, chart);
+    const beneficStrength = dignityStrength(beneficKey, beneficPosition, chart);
+    const beneficAspect = signAspectType(signOf(maleficPosition.lon), signOf(beneficPosition.lon));
+    const beneficContact = Boolean(beneficAspect);
+    const degree = degreeAspect(maleficPosition.lon, beneficPosition.lon, Math.max(3, chart.input.orb || 3));
+    const closeContact = degree && degree.delta <= 3;
+    const beneficSolar = solarPhaseState(beneficKey, chart);
+    const beneficObscured = ["combust", "underBeams"].includes(beneficSolar.category) && !beneficSolar.chariot;
+    const friendlyAspect = ["copresence", "sextile", "trine"].includes(beneficAspect);
+    const strongMitigation = beneficContact && !beneficObscured && (closeContact || friendlyAspect) && (beneficStrength.strong || beneficPosition.angularity === "angular");
+    const mediumMitigation = (beneficContact && !beneficObscured) || maleficStrength.strong || (maleficStrength.medium && beneficContact);
+    const weakMitigation = beneficContact || maleficStrength.medium;
     if (state.lang === "es") {
-      if (hasResources && beneficContact) {
-        return "Esta tensión está parcialmente compensada porque el planeta tiene recursos propios y además se conecta por signo con el planeta que más facilita.";
+      if (strongMitigation) {
+        return "La mitigación es fuerte: el benéfico de la secta puede intervenir de forma clara, por cercanía, aspecto favorable o fuerza propia.";
       }
-      if (hasResources) {
-        return "Esta tensión está parcialmente compensada porque el planeta tiene recursos propios en su condición esencial.";
+      if (mediumMitigation) {
+        return "La mitigación es media: hay apoyo real, pero no basta para borrar la presión; la lectura debe mantener ambas señales.";
       }
-      if (beneficContact) {
-        return "Esta tensión recibe cierta compensación porque se conecta por signo con el planeta que más facilita.";
+      if (weakMitigation) {
+        return beneficObscured
+          ? "La mitigación es débil o dudosa: hay contacto benéfico, pero el benéfico está oculto por el Sol sin protección clara."
+          : "La mitigación es débil: aparece algún recurso, pero de forma indirecta o poco dominante.";
       }
-      if (hasWeakness) {
+      if (maleficStrength.weak) {
         return "Al no verse claramente compensada, esta tensión puede sentirse más cruda o menos integrada.";
       }
       return "No aparece una mitigación fuerte, pero tampoco una debilidad mayor clara; conviene leerla con sus aspectos y casa.";
     }
-    if (hasResources && beneficContact) {
-      return "This tension is partly compensated because the planet has resources of its own and is also configured by sign with the planet that most facilitates.";
+    if (strongMitigation) {
+      return "Mitigation is strong: the benefic of sect can intervene clearly through closeness, a favorable aspect, or its own strength.";
     }
-    if (hasResources) {
-      return "This tension is partly compensated because the planet has resources of its own in essential condition.";
+    if (mediumMitigation) {
+      return "Mitigation is medium: real support is present, but it does not erase the pressure; keep both testimonies in the reading.";
     }
-    if (beneficContact) {
-      return "This tension receives some compensation because it is configured by sign with the planet that most facilitates.";
+    if (weakMitigation) {
+      return beneficObscured
+        ? "Mitigation is weak or uncertain: benefic contact exists, but the benefic is hidden by the Sun without clear protection."
+        : "Mitigation is weak: some resource appears, but indirectly or without dominance.";
     }
-    if (hasWeakness) {
+    if (maleficStrength.weak) {
       return "Without clear compensation, this tension can feel rawer or less integrated.";
     }
     return "No strong mitigation appears, but no clear major weakness appears either; read it through its aspects and house.";
@@ -4605,20 +4710,34 @@
     if (!signType) return "";
     const degree = degreeAspect(targetPos.lon, actorPos.lon, Math.max(3, chart.input.orb || 3));
     const acute = degree && degree.delta <= 3;
-    const actorOvercomes = overcomingLabel(actor, target, actorPos.lon, targetPos.lon);
+    const superior = superiorPlanet(actor, target, actorPos.lon, targetPos.lon);
+    const actorSuperior = superior === actor;
+    const targetSuperior = superior === target;
     const relation = t(signType);
     const targetName = planetLabel(target);
     const actorName = planetLabel(actor);
     if (state.lang === "es") {
       if (role === "support") {
-        return `${targetName} recibe testimonio de ${actorName} por ${relation}${acute ? " muy cerca de perfección" : " por signo"}; esto funciona como bonificación o apoyo.`;
+        const superiority = actorSuperior
+          ? " El apoyo llega desde posición superior."
+          : targetSuperior ? " El significador recibe apoyo sin perder posición superior." : "";
+        return `${targetName} recibe testimonio de ${actorName} por ${relation}${acute ? " muy cerca de perfección" : " por signo"}; esto funciona como bonificación o apoyo.${superiority}`;
       }
-      return `${targetName} recibe presión de ${actorName} por ${relation}${acute ? " muy cerca de perfección" : " por signo"}${actorOvercomes ? ", con dominio superior" : ""}; esto pesa como maltrato o exigencia.`;
+      const superiority = actorSuperior
+        ? ", y además lo domina por superioridad"
+        : targetSuperior ? ", aunque el significador queda en posición superior frente a esa presión" : "";
+      return `${targetName} recibe presión de ${actorName} por ${relation}${acute ? " muy cerca de perfección" : " por signo"}${superiority}; esto pesa como maltrato o exigencia.`;
     }
     if (role === "support") {
-      return `${targetName} receives testimony from ${actorName} by ${relation}${acute ? " very close to perfection" : " by sign"}; this acts as bonification or support.`;
+      const superiority = actorSuperior
+        ? " The support comes from a superior position."
+        : targetSuperior ? " The significator receives support while retaining the superior position." : "";
+      return `${targetName} receives testimony from ${actorName} by ${relation}${acute ? " very close to perfection" : " by sign"}; this acts as bonification or support.${superiority}`;
     }
-    return `${targetName} receives pressure from ${actorName} by ${relation}${acute ? " very close to perfection" : " by sign"}${actorOvercomes ? ", with superior overcoming" : ""}; this weighs as maltreatment or demand.`;
+    const superiority = actorSuperior
+      ? ", and also overcomes it from the superior position"
+      : targetSuperior ? ", though the significator holds the superior position against that pressure" : "";
+    return `${targetName} receives pressure from ${actorName} by ${relation}${acute ? " very close to perfection" : " by sign"}${superiority}; this weighs as maltreatment or demand.`;
   }
 
   function configurationsReading(chart, focuses, ascLordPosition) {
@@ -4647,8 +4766,8 @@
   function triplicityFoundationReading(chart) {
     const trip = sectTriplicityRulers(chart);
     const entries = [
-      [trip.primary, state.lang === "es" ? "principal" : "primary"],
-      [trip.secondary, state.lang === "es" ? "secundario" : "secondary"],
+      [trip.primary, state.lang === "es" ? "activo por secta" : "active by sect"],
+      [trip.secondary, state.lang === "es" ? "fuera de secta" : "out of sect"],
       [trip.cooperating, state.lang === "es" ? "cooperante" : "cooperating"],
     ];
     const houseWord = state.lang === "es" ? "casa" : "house";
@@ -4686,12 +4805,16 @@
   function moonJudgmentReading(chart) {
     const next = chart.moon.nextApplication;
     const last = chart.moon.lastSeparation;
+    const nextBySign = chart.moon.nextApplicationBySign;
     const nextText = next
       ? `${planetLabel(next.planet)} (${t(next.type)})`
       : (state.lang === "es" ? "ningún planeta en los próximos 30°" : "no planet in the next 30°");
     const lastText = last
       ? `${planetLabel(last.planet)} (${t(last.type)})`
       : (state.lang === "es" ? "ningún planeta en los últimos 30°" : "no planet in the last 30°");
+    const bySignText = nextBySign
+      ? `${planetLabel(nextBySign.planet)} (${t(nextBySign.type)})`
+      : (state.lang === "es" ? "ningún planeta antes de salir del signo" : "no planet before sign exit");
     const nextRole = next?.planet === chart.beneficOfSect
       ? "support"
       : next?.planet === chart.maleficContrarySect ? "tension" : "neutral";
@@ -4701,14 +4824,20 @@
         : nextRole === "tension"
           ? "El próximo contacto va hacia el maléfico contrario a la secta, así que la Luna transmite más exigencia o presión."
           : "El próximo contacto no recae sobre el benéfico de la secta ni sobre el maléfico contrario, por lo que se lee por la naturaleza del planeta implicado.";
-      return `La Luna está en fase ${chart.moon.phase}. Viene de ${lastText} y se dirige a ${nextText}. ${chart.moon.voidOfCourse ? "Bajo la definición helenística amplia está vacía de curso: la acción inmediata se dispersa o queda menos encaminada." : roleText} ${chart.moon.hasApplyingWithinOrb ? "Además hay aplicación cercana dentro de 12°, por lo que la señal lunar es más concreta." : "No hay aplicación cercana dentro de 12°, así que la señal lunar es más amplia que puntual."}`;
+      const signVocText = chart.moon.voidOfCourseBySign
+        ? "Antes de abandonar el signo tampoco perfecciona un contacto mayor."
+        : `Antes de abandonar el signo todavía perfecciona con ${bySignText}.`;
+      return `La Luna está en fase ${chart.moon.phase}. Viene de ${lastText} y se dirige a ${nextText}. ${chart.moon.voidOfCourse ? "Bajo la definición helenística amplia está vacía de curso: la acción inmediata se dispersa o queda menos encaminada." : roleText} ${signVocText} ${chart.moon.hasApplyingWithinOrb ? "Además hay aplicación cercana dentro de 12°, por lo que la señal lunar es más concreta." : "No hay aplicación cercana dentro de 12°, así que la señal lunar es más amplia que puntual."}`;
     }
     const roleText = nextRole === "support"
       ? "The next contact goes to the planet that most facilitates, softening the lunar transmission."
       : nextRole === "tension"
         ? "The next contact goes to the malefic contrary to sect, so the Moon transmits more demand or pressure."
         : "The next contact is neither to the benefic of sect nor to the malefic contrary to sect, so read it through the nature of the planet involved.";
-    return `The Moon is in ${chart.moon.phase} phase. It comes from ${lastText} and moves toward ${nextText}. ${chart.moon.voidOfCourse ? "Under the broad Hellenistic definition it is void of course: immediate action disperses or is less directed." : roleText} ${chart.moon.hasApplyingWithinOrb ? "There is also a close application within 12°, making the lunar signal more concrete." : "There is no close application within 12°, so the lunar signal is broader rather than punctual."}`;
+    const signVocText = chart.moon.voidOfCourseBySign
+      ? "Before leaving the sign it also perfects no major contact."
+      : `Before leaving the sign it still perfects with ${bySignText}.`;
+    return `The Moon is in ${chart.moon.phase} phase. It comes from ${lastText} and moves toward ${nextText}. ${chart.moon.voidOfCourse ? "Under the broad Hellenistic definition it is void of course: immediate action disperses or is less directed." : roleText} ${signVocText} ${chart.moon.hasApplyingWithinOrb ? "There is also a close application within 12°, making the lunar signal more concrete." : "There is no close application within 12°, so the lunar signal is broader rather than punctual."}`;
   }
 
   function visibleAngularPlanets(chart) {
@@ -4749,6 +4878,21 @@
     return houses.sort((a, b) => b.score - a.score || a.house - b.house);
   }
 
+  function publicProjectionReading(chart) {
+    const tenthSignIndex = (chart.ascSign + 9) % 12;
+    const tenthSign = SIGNS[tenthSignIndex];
+    const tenthRuler = tenthSign.ruler;
+    const tenthRulerPosition = chart.positions[tenthRuler];
+    const planetsInTenth = VISIBLE_KEYS.filter((key) => chart.positions[key]?.house === 10);
+    const tenthPlanetText = planetsInTenth.length
+      ? naturalList(planetsInTenth.map(planetLabel))
+      : (state.lang === "es" ? "ningún planeta visible" : "no visible planet");
+    if (state.lang === "es") {
+      return `La proyección pública se lee aparte de la dirección vital. El MC cae en casa ${chart.mcHouse}: ${plainHouseTopics(chart.mcHouse)}. La casa 10 está en ${signLabel(tenthSignIndex)} y su regente, ${planetLabel(tenthRuler)}, cae en casa ${tenthRulerPosition.house}: ${plainHouseTopics(tenthRulerPosition.house)}. En la casa 10 hay ${tenthPlanetText}; esto muestra qué actores se hacen más visibles en reputación, oficio, rango o acción pública.`;
+    }
+    return `Public projection is read separately from life direction. The MC falls in house ${chart.mcHouse}: ${plainHouseTopics(chart.mcHouse)}. The 10th house is in ${signLabel(tenthSignIndex)} and its ruler, ${planetLabel(tenthRuler)}, falls in house ${tenthRulerPosition.house}: ${plainHouseTopics(tenthRulerPosition.house)}. The 10th house contains ${tenthPlanetText}; this shows which actors become more visible in reputation, craft, rank, or public action.`;
+  }
+
   function interpretChart(chart) {
     const ascSign = SIGNS[chart.ascSign];
     const ascLord = ascSign.ruler;
@@ -4772,6 +4916,7 @@
     const configurations = configurationsReading(chart, focuses, ascLordPosition);
     const moonJudgment = moonJudgmentReading(chart);
     const foundations = triplicityFoundationReading(chart);
+    const publicProjection = publicProjectionReading(chart);
     const lotConditionTexts = [lotConditionReading(fortune, chart), lotConditionReading(spirit, chart)].filter(Boolean);
 
     const lead = focusLeadReading(focuses);
@@ -4788,8 +4933,8 @@
       : `In this ${sectContext}, ${planetLabel(benefic)} is the planet that most facilitates the chart (technically: benefic of sect). It is in house ${beneficPosition.house}: ${plainHouseTopics(beneficPosition.house)}. It shows where things tend to grow, find support, or open opportunities. ${connectionReading(beneficPosition, focuses, ascLordPosition, "support")}`;
 
     const tensions = state.lang === "es"
-      ? `${planetLabel(malefic)} es el planeta que más tensión puede introducir en esta carta (técnicamente: maléfico contrario a la secta). Está en casa ${maleficPosition.house}: ${plainHouseTopics(maleficPosition.house)}. No significa algo malo por sí mismo: señala dónde puede haber presión, conflicto, urgencia, desgaste o necesidad de manejar mejor la energía. ${connectionReading(maleficPosition, focuses, ascLordPosition, "tension")} ${maleficMitigationReading(maleficPosition, beneficPosition)}`
-      : `${planetLabel(malefic)} is the planet that can introduce the most tension in this chart (technically: malefic contrary to sect). It is in house ${maleficPosition.house}: ${plainHouseTopics(maleficPosition.house)}. This does not mean something bad by itself: it marks where there may be pressure, conflict, urgency, strain, or a need to handle energy more consciously. ${connectionReading(maleficPosition, focuses, ascLordPosition, "tension")} ${maleficMitigationReading(maleficPosition, beneficPosition)}`;
+      ? `${planetLabel(malefic)} es el planeta que más tensión puede introducir en esta carta (técnicamente: maléfico contrario a la secta). Está en casa ${maleficPosition.house}: ${plainHouseTopics(maleficPosition.house)}. No significa algo malo por sí mismo: señala dónde puede haber presión, conflicto, urgencia, desgaste o necesidad de manejar mejor la energía. ${connectionReading(maleficPosition, focuses, ascLordPosition, "tension")} ${maleficMitigationReading(maleficPosition, beneficPosition, chart)}`
+      : `${planetLabel(malefic)} is the planet that can introduce the most tension in this chart (technically: malefic contrary to sect). It is in house ${maleficPosition.house}: ${plainHouseTopics(maleficPosition.house)}. This does not mean something bad by itself: it marks where there may be pressure, conflict, urgency, strain, or a need to handle energy more consciously. ${connectionReading(maleficPosition, focuses, ascLordPosition, "tension")} ${maleficMitigationReading(maleficPosition, beneficPosition, chart)}`;
 
     const lotReading = fortune && spirit
       ? (state.lang === "es"
@@ -4824,6 +4969,9 @@
         house: chart.mcHouse,
         topics: houseTopics(chart.mcHouse),
       }),
+      state.lang === "es"
+        ? `Regente de casa 10: ${planetLabel(SIGNS[(chart.ascSign + 9) % 12].ruler)} en casa ${chart.positions[SIGNS[(chart.ascSign + 9) % 12].ruler].house}.`
+        : `10th-house ruler: ${planetLabel(SIGNS[(chart.ascSign + 9) % 12].ruler)} in house ${chart.positions[SIGNS[(chart.ascSign + 9) % 12].ruler].house}.`,
       t("evidenceAngularPlanets", {
         planets: angularPlanets.length ? naturalList(angularPlanets.map(planetLabel)) : capitalizeText(t("none")),
       }),
@@ -4850,6 +4998,9 @@
         ? `${t("mc")}: casa ${chart.mcHouse} -> proyección pública y acción visible.`
         : `${t("mc")}: house ${chart.mcHouse} -> public projection and visible action.`,
       state.lang === "es"
+        ? `Regente de casa 10: ${planetLabel(SIGNS[(chart.ascSign + 9) % 12].ruler)} en casa ${chart.positions[SIGNS[(chart.ascSign + 9) % 12].ruler].house} -> administración de la reputación y el oficio.`
+        : `10th-house ruler: ${planetLabel(SIGNS[(chart.ascSign + 9) % 12].ruler)} in house ${chart.positions[SIGNS[(chart.ascSign + 9) % 12].ruler].house} -> administration of reputation and craft.`,
+      state.lang === "es"
         ? `Planetas visibles angulares: ${angularPlanetsText} -> lo que más se nota.`
         : `Angular visible planets: ${angularPlanetsText} -> what stands out most.`,
     ];
@@ -4861,9 +5012,9 @@
 
     const qualities = [
       { label: t("prominenceLabel"), value: t(prominenceLevel(ascLordPosition)) },
-      { label: t("easeLabel"), value: t(essentialEaseLevel(ascLordPosition)) },
-      { label: t("tensionLabel"), value: t(tensionLevel(maleficPosition, focuses, ascLordPosition)) },
-      { label: t("supportLabel"), value: t(supportLevel(beneficPosition, focuses, ascLordPosition)) },
+      { label: t("easeLabel"), value: t(essentialEaseLevel(ascLordPosition, ascLord, chart)) },
+      { label: t("tensionLabel"), value: t(tensionLevel(maleficPosition, focuses, ascLordPosition, malefic, chart)) },
+      { label: t("supportLabel"), value: t(supportLevel(beneficPosition, focuses, ascLordPosition, benefic, chart)) },
     ];
 
     return {
@@ -4874,6 +5025,7 @@
       qualities,
       blocks: [
         { title: t("lifeDirectionTitle"), text: lifeDirection },
+        { title: t("publicProjectionTitle"), text: publicProjection },
         { title: t("visibilityTitle"), text: visibility },
         { title: t("resourcesTitle"), text: resources },
         { title: t("tensionsTitle"), text: tensions },

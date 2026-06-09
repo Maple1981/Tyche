@@ -28,6 +28,8 @@ Core derived data:
 - Lots: Fortune, Spirit, Eros, Necessity, Courage, Victory, Nemesis.
 - Solar phase states: morning/evening, under beams, combustion, cazimi.
 - Lunar condition: synodic phase, last separation, next application, Hellenistic 30-degree void-of-course, and a separate no-application-within-orb indicator.
+- Also show whether the Moon perfects a major contact before leaving its current sign, separately from the Hellenistic 30-degree void-of-course rule.
+- Superior/right-sided configurations must preserve direction: who overcomes whom matters for judgment.
 
 This app uses vendored Astronomy Engine for browser-side ephemerides, with the older compact formulas kept only as fallback. Make the approximate +/-1 arcminute limitation visible in the UI and documentation; do not present the results as professional ephemeris-grade.
 
@@ -89,3 +91,4 @@ The interface should feel mobile-first, calm, scholarly, and usable:
 - When using rated birth-data collections, prefer AA/A/B-level records and leave out C, DD, X, rectified, speculative, or time-unknown records unless the user explicitly approves them.
 - Prefer post-calendar-reform Gregorian examples. If adding a figure from a place or period using the Julian calendar, encode the calendar explicitly and make the display label unambiguous; never silently convert or mix Julian and Gregorian dates.
 - Historical example places should include coordinates and a deliberate time offset or IANA zone so charts do not depend on browser guesses.
+- Show source/rating metadata for historical examples when it has been audited. Never invent Rodden ratings or exact time-source notes.

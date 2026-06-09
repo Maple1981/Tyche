@@ -29,7 +29,7 @@ Modifying testimonies:
 - Configurations by sign between significators and benefics/malefics.
 - Degree closeness when the user enables degree aspects or when contact is within about three degrees.
 - Overcoming by superior configuration, especially from the malefic contrary to sect.
-- Lunar phase, last separation, next application, void-of-course by the broad 30-degree definition, and the separate close-application indicator.
+- Lunar phase, last separation, next application, void-of-course by the broad 30-degree definition, void-of-course before sign exit, and the separate close-application indicator.
 
 ## Solar Phase
 
@@ -53,8 +53,15 @@ For judgment:
 - Malefic testimony to a significator is treated as pressure or maltreatment.
 - A malefic contrary to sect carries sharper weight than the malefic of sect.
 - A benefic of sect carries cleaner support than the benefic contrary to sect.
-- Superior overcoming makes the active planet more dominant in the relationship.
+- Superior overcoming makes the active planet more dominant in the relationship. Keep the direction visible: benefic-over-significator, malefic-over-significator, and significator-over-benefic/malefic are different testimonies.
 - Close contact within about three degrees is more acute than a general sign-based relationship.
+
+Bonification and maltreatment should be graded rather than treated as binary:
+
+- Strong mitigation or support: benefic of sect, close or favorable testimony, no major solar concealment, and some strength by dignity or angularity.
+- Medium mitigation or support: a real benefic testimony is present, but the benefic is not especially dominant or the malefic testimony remains substantial.
+- Weak or doubtful mitigation: the benefic is present only indirectly, is hidden under the beams without chariot protection, or lacks enough strength to redirect the topic.
+- Strong maltreatment: malefic contrary to sect, close or superior testimony, and little compensating condition.
 
 ## Lots
 
@@ -76,8 +83,9 @@ The triplicity rulers of the sect light describe broad support and stability. Th
 
 Use them as background:
 
-- Primary and secondary rulers show the main foundation of support.
-- The cooperating ruler modifies both.
+- The active ruler by sect is the strongest triplicity testimony.
+- The ruler contrary to sect remains relevant but should not be scored as strongly as the active ruler.
+- The cooperating ruler modifies both and can stabilize or complicate the support.
 - Angularity shows prominence.
 - Essential condition shows resources or friction.
 - Solar concealment can hide or delay the support.
@@ -95,6 +103,7 @@ Use:
 - Last separation as the contact the Moon is moving away from.
 - Next application as the contact the Moon is moving toward.
 - Void-of-course by the broad 30-degree definition as a diffusion of immediate direction.
+- Void-of-course before sign exit as a separate indicator of whether the Moon completes a major contact before leaving its current sign.
 - The close-application indicator as a separate, more punctual signal.
 
 If the next application is to the benefic of sect, the lunar transmission is softened. If it is to the malefic contrary to sect, it carries more pressure.
