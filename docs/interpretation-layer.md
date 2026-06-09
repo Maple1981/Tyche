@@ -19,6 +19,10 @@ The default hierarchy is:
 5. Benefic of the sect and malefic contrary to sect.
 6. MC/IC as astronomical points within Whole Sign Houses.
 7. Fortune and Spirit, when selected.
+8. Solar phase and concealment of key planets.
+9. Configurations, bonification, maltreatment, and overcoming.
+10. Lunar condition and application/separation.
+11. Triplicity rulers of the sect light as background support.
 
 This order keeps the app from treating every placement as equally important.
 
@@ -31,6 +35,8 @@ A judgment should combine:
 `planet + house + sign + condition + angularity + sect + configurations + rulerships + lots`
 
 The house supplies the life topic. The planet supplies the actor or principle. The sign describes style and environment. Essential condition describes whether the planet has resources of its own or acts with friction. Angularity describes prominence, not automatic benefit.
+
+The detailed weighting rules live in `docs/judgment-matrix.md`. That matrix is the checklist for whether a calculated factor should enter the visible report, the evidence layer, or a future module.
 
 Prominence and ease must remain separate:
 

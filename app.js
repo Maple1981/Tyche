@@ -133,6 +133,10 @@
       lifeDirectionTitle: "Hacia dónde tira la carta",
       resourcesTitle: "Donde la carta facilita",
       tensionsTitle: "Donde la carta exige más",
+      visibilityTitle: "Visibilidad y ocultación",
+      configurationsTitle: "Relaciones entre planetas",
+      moonJudgmentTitle: "Condición lunar",
+      foundationsTitle: "Base de estabilidad",
       prominenceLabel: "Prominencia",
       easeLabel: "Facilidad",
       tensionLabel: "Tensión",
@@ -373,6 +377,10 @@
       lifeDirectionTitle: "Where the chart pulls",
       resourcesTitle: "Where the chart facilitates",
       tensionsTitle: "Where the chart asks more",
+      visibilityTitle: "Visibility and concealment",
+      configurationsTitle: "Relations between planets",
+      moonJudgmentTitle: "Lunar condition",
+      foundationsTitle: "Stability base",
       prominenceLabel: "Prominence",
       easeLabel: "Ease",
       tensionLabel: "Tension",
@@ -4498,6 +4506,211 @@
     return "No strong mitigation appears, but no clear major weakness appears either; read it through its aspects and house.";
   }
 
+  function sectTriplicityRulers(chart) {
+    const lightSign = SIGNS[signOf(chart.positions[chart.sectLight].lon)];
+    const trip = TRIPLICITY[lightSign.element];
+    return {
+      sign: lightSign,
+      primary: chart.isDay ? trip.day : trip.night,
+      secondary: chart.isDay ? trip.night : trip.day,
+      cooperating: trip.coop,
+    };
+  }
+
+  function hasSolarChariot(planet, position) {
+    if (!VISIBLE_KEYS.includes(planet) || planet === "sun" || planet === "moon") return false;
+    const signIndex = signOf(position.lon);
+    return SIGNS[signIndex].ruler === planet
+      || EXALTATIONS[planet] === signIndex
+      || boundLordFor(position.lon) === planet;
+  }
+
+  function solarPhaseState(planet, chart) {
+    if (planet === "sun" || planet === "moon" || !VISIBLE_KEYS.includes(planet)) {
+      return { category: "luminary", side: "", distance: null, chariot: false };
+    }
+    const position = chart.positions[planet];
+    const distance = angleDistance(position.lon, chart.positions.sun.lon);
+    const fromSun = zodiacalDistance(chart.positions.sun.lon, position.lon);
+    const side = fromSun > 180 ? "morning" : "evening";
+    let category = "visible";
+    if (distance <= 1) category = "cazimi";
+    else if (distance <= 8) category = "combust";
+    else if (distance <= 15) category = "underBeams";
+    return {
+      category,
+      side,
+      distance,
+      chariot: ["combust", "underBeams"].includes(category) && hasSolarChariot(planet, position),
+    };
+  }
+
+  function solarPhasePlainText(planet, chart) {
+    const stateInfo = solarPhaseState(planet, chart);
+    if (stateInfo.category === "luminary") return "";
+    const name = planetLabel(planet);
+    const sideText = stateInfo.side === "morning"
+      ? (state.lang === "es" ? "matutino/oriental" : "morning/oriental")
+      : (state.lang === "es" ? "vespertino/occidental" : "evening/occidental");
+    if (state.lang === "es") {
+      if (stateInfo.category === "cazimi") {
+        return `${name} está en el corazón del Sol: su significación se concentra y queda muy unida a visibilidad, autoridad o foco solar.`;
+      }
+      if (stateInfo.category === "combust") {
+        return `${name} está combusto: actúa con más presión, menor independencia y más ocultación. ${stateInfo.chariot ? "La condición se mitiga porque el planeta conserva recursos propios por signo o término." : "Conviene leer sus temas como menos visibles o más difíciles de expresar directamente."}`;
+      }
+      if (stateInfo.category === "underBeams") {
+        return `${name} está bajo los rayos: sus temas tienden a operar de forma menos visible, más interna o más privada. ${stateInfo.chariot ? "La ocultación queda mitigada por recursos propios del planeta." : "Esto reduce claridad pública, aunque no elimina su importancia."}`;
+      }
+      return `${name} es ${sideText}: tiende a manifestar sus temas de forma ${stateInfo.side === "morning" ? "más activa, temprana o exteriorizada" : "más receptiva, tardía o mediada por el contexto"}.`;
+    }
+    if (stateInfo.category === "cazimi") {
+      return `${name} is in the heart of the Sun: its signification is concentrated and tightly bound to visibility, authority, or solar focus.`;
+    }
+    if (stateInfo.category === "combust") {
+      return `${name} is combust: it acts under more pressure, with less independence and more concealment. ${stateInfo.chariot ? "This is mitigated because the planet keeps resources of its own by sign or bound." : "Read its topics as less visible or harder to express directly."}`;
+    }
+    if (stateInfo.category === "underBeams") {
+      return `${name} is under the beams: its topics tend to operate less visibly, more internally, or more privately. ${stateInfo.chariot ? "The concealment is mitigated by the planet's own resources." : "This reduces public clarity, though it does not erase importance."}`;
+    }
+    return `${name} is ${sideText}: it tends to manifest its topics in a ${stateInfo.side === "morning" ? "more active, earlier, or outward" : "more receptive, later, or context-mediated"} way.`;
+  }
+
+  function keyPlanetList(chart) {
+    const ascLord = SIGNS[chart.ascSign].ruler;
+    const trip = sectTriplicityRulers(chart);
+    const lots = ["fortune", "spirit"].map((key) => lotByKey(chart, key)?.lord).filter(Boolean);
+    return [...new Set([ascLord, chart.beneficOfSect, chart.maleficContrarySect, trip.primary, trip.secondary, trip.cooperating, ...lots])]
+      .filter((key) => VISIBLE_KEYS.includes(key));
+  }
+
+  function visibilityReading(chart) {
+    const priority = keyPlanetList(chart)
+      .map((key) => ({ key, stateInfo: solarPhaseState(key, chart) }))
+      .filter((item) => item.stateInfo.category !== "luminary");
+    const hidden = priority.filter((item) => ["cazimi", "combust", "underBeams"].includes(item.stateInfo.category));
+    const selected = (hidden.length ? hidden : priority.slice(0, 2)).slice(0, 3);
+    const sentences = selected.map((item) => solarPhasePlainText(item.key, chart)).filter(Boolean);
+    if (sentences.length) return sentences.join(" ");
+    return state.lang === "es"
+      ? "Los planetas clave no están bajo una ocultación solar fuerte; sus temas pueden leerse principalmente por casa, condición esencial, secta y configuraciones."
+      : "The key planets are not under strong solar concealment; read their topics mainly through house, essential condition, sect, and configurations.";
+  }
+
+  function planetRelationJudgment(target, actor, chart, role) {
+    if (target === actor) return "";
+    const targetPos = chart.positions[target];
+    const actorPos = chart.positions[actor];
+    const signType = signAspectType(signOf(targetPos.lon), signOf(actorPos.lon));
+    if (!signType) return "";
+    const degree = degreeAspect(targetPos.lon, actorPos.lon, Math.max(3, chart.input.orb || 3));
+    const acute = degree && degree.delta <= 3;
+    const actorOvercomes = overcomingLabel(actor, target, actorPos.lon, targetPos.lon);
+    const relation = t(signType);
+    const targetName = planetLabel(target);
+    const actorName = planetLabel(actor);
+    if (state.lang === "es") {
+      if (role === "support") {
+        return `${targetName} recibe testimonio de ${actorName} por ${relation}${acute ? " muy cerca de perfección" : " por signo"}; esto funciona como bonificación o apoyo.`;
+      }
+      return `${targetName} recibe presión de ${actorName} por ${relation}${acute ? " muy cerca de perfección" : " por signo"}${actorOvercomes ? ", con dominio superior" : ""}; esto pesa como maltrato o exigencia.`;
+    }
+    if (role === "support") {
+      return `${targetName} receives testimony from ${actorName} by ${relation}${acute ? " very close to perfection" : " by sign"}; this acts as bonification or support.`;
+    }
+    return `${targetName} receives pressure from ${actorName} by ${relation}${acute ? " very close to perfection" : " by sign"}${actorOvercomes ? ", with superior overcoming" : ""}; this weighs as maltreatment or demand.`;
+  }
+
+  function configurationsReading(chart, focuses, ascLordPosition) {
+    const ascLord = SIGNS[chart.ascSign].ruler;
+    const targets = [...new Set([ascLord, chart.sectLight, lotByKey(chart, "fortune")?.lord, lotByKey(chart, "spirit")?.lord])]
+      .filter(Boolean);
+    const judgments = [];
+    targets.forEach((target) => {
+      const support = planetRelationJudgment(target, chart.beneficOfSect, chart, "support");
+      const pressure = planetRelationJudgment(target, chart.maleficContrarySect, chart, "tension");
+      if (support) judgments.push(support);
+      if (pressure) judgments.push(pressure);
+    });
+    if (judgments.length) return [...new Set(judgments)].slice(0, 4).join(" ");
+    const angular = visibleAngularPlanets(chart).filter((key) => isConnectedWithFocus(chart.positions[key], focuses, ascLordPosition));
+    if (angular.length) {
+      return state.lang === "es"
+        ? `No destacan bonificaciones o maltratos fuertes sobre los significadores principales. La lectura descansa más en angularidad y foco por casas, especialmente ${naturalList(angular.map(planetLabel))}.`
+        : `No strong bonification or maltreatment stands out on the main significators. The reading rests more on angularity and house focus, especially ${naturalList(angular.map(planetLabel))}.`;
+    }
+    return state.lang === "es"
+      ? "No aparece una relación planetaria dominante sobre los significadores principales; por eso el juicio se apoya más en regencias, casas, secta y condición esencial."
+      : "No dominant planetary relation appears on the main significators; the judgment therefore leans more on rulerships, houses, sect, and essential condition.";
+  }
+
+  function triplicityFoundationReading(chart) {
+    const trip = sectTriplicityRulers(chart);
+    const entries = [
+      [trip.primary, state.lang === "es" ? "principal" : "primary"],
+      [trip.secondary, state.lang === "es" ? "secundario" : "secondary"],
+      [trip.cooperating, state.lang === "es" ? "cooperante" : "cooperating"],
+    ];
+    const houseWord = state.lang === "es" ? "casa" : "house";
+    const parts = entries.map(([key, role]) => {
+      const position = chart.positions[key];
+      return `${planetLabel(key)} (${role}) ${state.lang === "es" ? "en" : "in"} ${houseWord} ${position.house}, ${t(position.angularity)}, ${plainDignityText(position.dignities)}`;
+    });
+    if (state.lang === "es") {
+      return `La luminaria de la secta está en ${trip.sign.es}; sus regentes de triplicidad dan el fondo de apoyo de la carta: ${parts.join("; ")}. No sustituyen al regente del Ascendente, pero muestran si la vida cuenta con una base amplia, desigual o tardía de sostén.`;
+    }
+    return `The sect light is in ${trip.sign.en}; its triplicity rulers give the chart's background support: ${parts.join("; ")}. They do not replace the Ascendant lord, but they show whether life has a broad, uneven, or delayed base of stability.`;
+  }
+
+  function lotConditionReading(lot, chart) {
+    if (!lot) return "";
+    const lotSign = signOf(lot.lon);
+    const lordPosition = chart.positions[lot.lord];
+    const benefics = ["jupiter", "venus"].filter((key) => signAspectType(lotSign, signOf(chart.positions[key].lon)));
+    const malefics = ["mars", "saturn"].filter((key) => signAspectType(lotSign, signOf(chart.positions[key].lon)));
+    const solar = solarPhaseState(lot.lord, chart);
+    const solarConcern = ["combust", "underBeams"].includes(solar.category);
+    const placeTone = [6, 8, 12].includes(lot.house)
+      ? (state.lang === "es" ? "un lugar exigente" : "a demanding place")
+      : chart.positions[lot.lord]?.angularity === "angular"
+        ? (state.lang === "es" ? "una administración visible o activa" : "visible or active administration")
+        : (state.lang === "es" ? "una administración más indirecta" : "more indirect administration");
+    const support = benefics.length ? naturalList(benefics.map(planetLabel)) : (state.lang === "es" ? "ningún benéfico claro" : "no clear benefic");
+    const pressure = malefics.length ? naturalList(malefics.map(planetLabel)) : (state.lang === "es" ? "ningún maléfico claro" : "no clear malefic");
+    if (state.lang === "es") {
+      return `${lotName(lot.key)} cae en casa ${lot.house}; su señor es ${planetLabel(lot.lord)} en casa ${lordPosition.house}, ${t(lordPosition.angularity)}, con ${plainDignityText(lordPosition.dignities)}. Esto da ${placeTone}. Recibe testimonio de ${support} y presión de ${pressure}.${solarConcern ? ` El señor del lote está ${solar.category === "combust" ? "combusto" : "bajo los rayos"}, así que parte del tema puede operar de forma menos visible.` : ""}`;
+    }
+    return `${lotName(lot.key)} falls in house ${lot.house}; its lord is ${planetLabel(lot.lord)} in house ${lordPosition.house}, ${t(lordPosition.angularity)}, with ${plainDignityText(lordPosition.dignities)}. This gives ${placeTone}. It receives testimony from ${support} and pressure from ${pressure}.${solarConcern ? ` The lot lord is ${solar.category === "combust" ? "combust" : "under the beams"}, so part of the topic may operate less visibly.` : ""}`;
+  }
+
+  function moonJudgmentReading(chart) {
+    const next = chart.moon.nextApplication;
+    const last = chart.moon.lastSeparation;
+    const nextText = next
+      ? `${planetLabel(next.planet)} (${t(next.type)})`
+      : (state.lang === "es" ? "ningún planeta en los próximos 30°" : "no planet in the next 30°");
+    const lastText = last
+      ? `${planetLabel(last.planet)} (${t(last.type)})`
+      : (state.lang === "es" ? "ningún planeta en los últimos 30°" : "no planet in the last 30°");
+    const nextRole = next?.planet === chart.beneficOfSect
+      ? "support"
+      : next?.planet === chart.maleficContrarySect ? "tension" : "neutral";
+    if (state.lang === "es") {
+      const roleText = nextRole === "support"
+        ? "El próximo contacto va hacia el planeta que más facilita, lo que suaviza la transmisión lunar."
+        : nextRole === "tension"
+          ? "El próximo contacto va hacia el maléfico contrario a la secta, así que la Luna transmite más exigencia o presión."
+          : "El próximo contacto no recae sobre el benéfico de la secta ni sobre el maléfico contrario, por lo que se lee por la naturaleza del planeta implicado.";
+      return `La Luna está en fase ${chart.moon.phase}. Viene de ${lastText} y se dirige a ${nextText}. ${chart.moon.voidOfCourse ? "Bajo la definición helenística amplia está vacía de curso: la acción inmediata se dispersa o queda menos encaminada." : roleText} ${chart.moon.hasApplyingWithinOrb ? "Además hay aplicación cercana dentro de 12°, por lo que la señal lunar es más concreta." : "No hay aplicación cercana dentro de 12°, así que la señal lunar es más amplia que puntual."}`;
+    }
+    const roleText = nextRole === "support"
+      ? "The next contact goes to the planet that most facilitates, softening the lunar transmission."
+      : nextRole === "tension"
+        ? "The next contact goes to the malefic contrary to sect, so the Moon transmits more demand or pressure."
+        : "The next contact is neither to the benefic of sect nor to the malefic contrary to sect, so read it through the nature of the planet involved.";
+    return `The Moon is in ${chart.moon.phase} phase. It comes from ${lastText} and moves toward ${nextText}. ${chart.moon.voidOfCourse ? "Under the broad Hellenistic definition it is void of course: immediate action disperses or is less directed." : roleText} ${chart.moon.hasApplyingWithinOrb ? "There is also a close application within 12°, making the lunar signal more concrete." : "There is no close application within 12°, so the lunar signal is broader rather than punctual."}`;
+  }
+
   function visibleAngularPlanets(chart) {
     return VISIBLE_KEYS.filter((key) => chart.positions[key]?.angularity === "angular");
   }
@@ -4519,12 +4732,20 @@
       target.reasons.push(reason);
     };
     const ascLord = SIGNS[chart.ascSign].ruler;
+    const trip = sectTriplicityRulers(chart);
     add(chart.positions[ascLord]?.house, 5, `${t("ascLordTitle")}: ${planetLabel(ascLord)}`);
     add(chart.positions[chart.sectLight]?.house, 2, `${t("sectLight")}: ${planetLabel(chart.sectLight)}`);
     add(chart.mcHouse, 2, t("mc"));
     visibleAngularPlanets(chart).forEach((key) => add(chart.positions[key].house, 1.5, `${planetLabel(key)} ${t("angular")}`));
     add(lotByKey(chart, "fortune")?.house, 1.25, t("fortune"));
     add(lotByKey(chart, "spirit")?.house, 1.25, t("spirit"));
+    add(chart.positions[trip.primary]?.house, 1.15, `${t("sectLight")} ${planetLabel(trip.primary)}`);
+    add(chart.positions[trip.secondary]?.house, 0.85, `${t("sectLight")} ${planetLabel(trip.secondary)}`);
+    add(chart.positions[trip.cooperating]?.house, 0.6, `${t("sectLight")} ${planetLabel(trip.cooperating)}`);
+    ["fortune", "spirit"].forEach((key) => {
+      const lot = lotByKey(chart, key);
+      add(chart.positions[lot?.lord]?.house, 0.75, `${lot ? lotName(key) : key} ${t("tableRuler")}`);
+    });
     return houses.sort((a, b) => b.score - a.score || a.house - b.house);
   }
 
@@ -4547,6 +4768,11 @@
     const sectContext = sectLabel.toLocaleLowerCase(state.lang === "es" ? "es-ES" : "en");
     const sectDescription = state.lang === "es" ? `una ${sectContext}` : `a ${sectContext}`;
     const secondaryFocuses = focuses.slice(1);
+    const visibility = visibilityReading(chart);
+    const configurations = configurationsReading(chart, focuses, ascLordPosition);
+    const moonJudgment = moonJudgmentReading(chart);
+    const foundations = triplicityFoundationReading(chart);
+    const lotConditionTexts = [lotConditionReading(fortune, chart), lotConditionReading(spirit, chart)].filter(Boolean);
 
     const lead = focusLeadReading(focuses);
     const summary = state.lang === "es"
@@ -4567,8 +4793,8 @@
 
     const lotReading = fortune && spirit
       ? (state.lang === "es"
-        ? `Fortuna habla de lo que llega: cuerpo, circunstancias, entorno y sucesos que no dependen del todo de la voluntad. En esta carta cae en casa ${fortune.house}: ${plainHouseTopics(fortune.house)}. Espíritu habla de lo que la persona intenta dirigir: decisiones, intención, propósito y acción consciente. Aquí cae en casa ${spirit.house}: ${plainHouseTopics(spirit.house)}. Compararlos ayuda a distinguir entre lo que la vida trae y lo que la persona intenta construir.`
-        : `Fortune speaks of what arrives: body, circumstances, surroundings, and events that do not fully depend on the will. In this chart it falls in house ${fortune.house}: ${plainHouseTopics(fortune.house)}. Spirit speaks of what the person tries to direct: decisions, intention, purpose, and conscious action. Here it falls in house ${spirit.house}: ${plainHouseTopics(spirit.house)}. Comparing them helps separate what life brings from what the person tries to build.`)
+        ? `Fortuna habla de lo que llega: cuerpo, circunstancias, entorno y sucesos que no dependen del todo de la voluntad. Espíritu habla de lo que la persona intenta dirigir: decisiones, intención, propósito y acción consciente. ${lotConditionTexts.join(" ")}`
+        : `Fortune speaks of what arrives: body, circumstances, surroundings, and events that do not fully depend on the will. Spirit speaks of what the person tries to direct: decisions, intention, purpose, and conscious action. ${lotConditionTexts.join(" ")}`)
       : (state.lang === "es"
         ? `La lectura de lotes queda limitada porque Fortuna y Espíritu no están seleccionados a la vez.`
         : `The lot reading is limited because Fortune and Spirit are not both selected.`);
@@ -4604,6 +4830,15 @@
       fortune && spirit
         ? t("evidenceLots", { fortuneHouse: fortune.house, spiritHouse: spirit.house })
         : t("evidenceNoLot"),
+      state.lang === "es"
+        ? `Fase solar aplicada a planetas clave: ${keyPlanetList(chart).map((key) => `${planetLabel(key)}: ${chart.positions[key].phase || "luminaria"}`).join("; ")}.`
+        : `Solar phase applied to key planets: ${keyPlanetList(chart).map((key) => `${planetLabel(key)}: ${chart.positions[key].phase || "luminary"}`).join("; ")}.`,
+      state.lang === "es"
+        ? `Luna: fase ${chart.moon.phase}; próximo contacto ${chart.moon.nextApplication ? lunarContactLabel(chart.moon.nextApplication) : "ninguno en 30°"}; vacía de curso: ${chart.moon.voidOfCourse ? t("yes") : t("no")}.`
+        : `Moon: ${chart.moon.phase} phase; next contact ${chart.moon.nextApplication ? lunarContactLabel(chart.moon.nextApplication) : "none within 30°"}; void of course: ${chart.moon.voidOfCourse ? t("yes") : t("no")}.`,
+      state.lang === "es"
+        ? `Triplicidad de la luminaria de la secta: ${naturalList([sectTriplicityRulers(chart).primary, sectTriplicityRulers(chart).secondary, sectTriplicityRulers(chart).cooperating].map(planetLabel))}.`
+        : `Sect-light triplicity rulers: ${naturalList([sectTriplicityRulers(chart).primary, sectTriplicityRulers(chart).secondary, sectTriplicityRulers(chart).cooperating].map(planetLabel))}.`,
     ];
 
     const angularPlanetsText = angularPlanets.length ? naturalList(angularPlanets.map(planetLabel)) : capitalizeText(t("none"));
@@ -4639,8 +4874,12 @@
       qualities,
       blocks: [
         { title: t("lifeDirectionTitle"), text: lifeDirection },
+        { title: t("visibilityTitle"), text: visibility },
         { title: t("resourcesTitle"), text: resources },
         { title: t("tensionsTitle"), text: tensions },
+        { title: t("configurationsTitle"), text: configurations },
+        { title: t("moonJudgmentTitle"), text: moonJudgment },
+        { title: t("foundationsTitle"), text: foundations },
         { title: t("lots"), text: lotReading },
       ],
       evidence,

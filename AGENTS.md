@@ -60,6 +60,7 @@ Interpretation output:
 - Show the technical evidence behind the reading so the user can see why Tyche reached that judgment.
 - Treat angularity as prominence, not automatic ease or benefit.
 - Use cautious educational language: describe tendencies, pressures, supports, and dominant topics; do not state fatalistic certainties.
+- Keep `docs/judgment-matrix.md` aligned with the interpretation code. Solar phase, configurations, lot lords, lunar condition, and triplicity rulers should enter the judgment when their underlying data is calculated.
 
 ## UI Direction
 
