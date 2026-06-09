@@ -63,6 +63,8 @@ Bonification and maltreatment should be graded rather than treated as binary:
 - Weak or doubtful mitigation: the benefic is present only indirectly, is hidden under the beams without chariot protection, or lacks enough strength to redirect the topic.
 - Strong maltreatment: malefic contrary to sect, close or superior testimony, and little compensating condition.
 
+When configuration judgments are printed, include the intensity level in the sentence. The user should be able to see whether a relationship is strong, medium, or weak without reverse-engineering it from the table.
+
 ## Lots
 
 Fortune and Spirit are not read only by house.
@@ -86,6 +88,7 @@ Use them as background:
 - The active ruler by sect is the strongest triplicity testimony.
 - The ruler contrary to sect remains relevant but should not be scored as strongly as the active ruler.
 - The cooperating ruler modifies both and can stabilize or complicate the support.
+- Tables and evidence should label triplicity by role when possible: active by sect, out of sect, or cooperating.
 - Angularity shows prominence.
 - Essential condition shows resources or friction.
 - Solar concealment can hide or delay the support.
@@ -105,6 +108,8 @@ Use:
 - Void-of-course by the broad 30-degree definition as a diffusion of immediate direction.
 - Void-of-course before sign exit as a separate indicator of whether the Moon completes a major contact before leaving its current sign.
 - The close-application indicator as a separate, more punctual signal.
+
+Both void-of-course criteria should appear in the evidence layer, not only in the lunar panel.
 
 If the next application is to the benefic of sect, the lunar transmission is softened. If it is to the malefic contrary to sect, it carries more pressure.
 

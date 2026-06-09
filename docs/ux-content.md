@@ -40,6 +40,8 @@ After calculation, show the result in this order:
 8. Configurations/aspects.
 9. Notes on astronomical precision.
 
+The calculated chart view should include a visible limits section, not only footer text. It should state educational scope, approximate planetary precision, angle sensitivity to time/place/zone, and the fact that place search and historical images may contact external services.
+
 The Hour-Marker lord panel should answer:
 
 - Which planet rules the Ascendant sign?

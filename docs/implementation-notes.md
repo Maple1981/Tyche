@@ -56,3 +56,5 @@ Prefer Gregorian examples from periods and jurisdictions after calendar reform. 
 Each historical example should carry coordinates and a deliberate time offset or IANA time zone so selecting it produces a reproducible chart.
 
 Each visible person card may display a source line and, when audited, a birth-data rating or time-source note. Do not invent or infer ratings. If a rating or exact time source has not been checked, leave the rating field empty rather than implying documentary certainty.
+
+If a historical example has not yet been individually audited for Rodden rating or time-source wording, the UI should say so explicitly. A visible pending-audit note is preferable to silent omission or a guessed rating.

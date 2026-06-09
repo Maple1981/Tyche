@@ -96,6 +96,9 @@
       dataSource: "Fuente",
       dataRodden: "Rodden",
       dataTimeSource: "Hora",
+      dataSourceGeneral: "Wikipedia / Astro-Databank",
+      dataRoddenPending: "Rating individual pendiente de auditoría",
+      dataTimeSourcePrepared: "Hora exacta usada por Tyche; revisar fuente individual antes de investigación crítica",
       footerWarning: "Motor astronómico pensado para uso educativo. La información proporcionada es solo orientativa.",
     footerPrivacy: "La carta se calcula localmente en tu navegador. No guardamos tus cartas ni usamos cookies. Solo se conserva en este dispositivo la preferencia de idioma y tema. La búsqueda de lugares consulta Open-Meteo para obtener coordenadas. Las imágenes del archivo histórico se cargan desde Wikimedia Commons. El posicionamiento de planetas utiliza una librería local.",
       footerAuthors: "Autores: Maple81 y Hélène de Troie, 2026.",
@@ -135,6 +138,10 @@
       hierarchyTitle: "Base de lectura",
       lifeDirectionTitle: "Hacia dónde tira la carta",
       publicProjectionTitle: "Proyección pública",
+      limitsTitle: "Límites",
+      limitsEducational: "Uso educativo: la lectura no sustituye efemérides profesionales ni una investigación de rectificación.",
+      limitsPrecision: "Precisión planetaria aproximada ±1′; Ascendente, MC y casas dependen mucho de hora, coordenadas y zona usada.",
+      limitsPrivacy: "La carta se calcula localmente; la búsqueda de lugar y las imágenes históricas sí consultan servicios externos.",
       resourcesTitle: "Donde la carta facilita",
       tensionsTitle: "Donde la carta exige más",
       visibilityTitle: "Visibilidad y ocultación",
@@ -228,6 +235,9 @@
       triplicityDay: "triplicidad diurna",
       triplicityNight: "triplicidad nocturna",
       triplicityCoop: "triplicidad cooperante",
+      triplicityActive: "activa por secta",
+      triplicityOutOfSect: "fuera de secta",
+      triplicityCooperatingRole: "cooperante",
       bound: "término de {planet}",
       decan: "decanato de {planet}",
       underBeams: "bajo los rayos",
@@ -347,6 +357,9 @@
       dataSource: "Source",
       dataRodden: "Rodden",
       dataTimeSource: "Time",
+      dataSourceGeneral: "Wikipedia / Astro-Databank",
+      dataRoddenPending: "Individual rating pending audit",
+      dataTimeSourcePrepared: "Exact time used by Tyche; review the individual source before critical research",
       footerWarning: "Astronomical engine intended for educational use. The information provided may not be reliable.",
     footerPrivacy: "The chart is calculated locally in your browser. We do not store your charts or use cookies. Only language and theme preferences are kept on this device. Place search consults Open-Meteo to obtain coordinates. Historical archive images load from Wikimedia Commons. Planet positions use a local library.",
       footerAuthors: "Authors: Maple81 and Hélène de Troie, 2026.",
@@ -386,6 +399,10 @@
       hierarchyTitle: "Reading basis",
       lifeDirectionTitle: "Where the chart pulls",
       publicProjectionTitle: "Public projection",
+      limitsTitle: "Limits",
+      limitsEducational: "Educational use: the reading does not replace professional ephemerides or rectification research.",
+      limitsPrecision: "Approximate planetary accuracy ±1′; Ascendant, MC, and houses depend strongly on time, coordinates, and zone used.",
+      limitsPrivacy: "The chart is calculated locally; place search and historical images do contact external services.",
       resourcesTitle: "Where the chart facilitates",
       tensionsTitle: "Where the chart asks more",
       visibilityTitle: "Visibility and concealment",
@@ -479,6 +496,9 @@
       triplicityDay: "day triplicity",
       triplicityNight: "night triplicity",
       triplicityCoop: "cooperating triplicity",
+      triplicityActive: "active by sect",
+      triplicityOutOfSect: "out of sect",
+      triplicityCooperatingRole: "cooperating",
       bound: "{planet} bound",
       decan: "{planet} decan",
       underBeams: "under the beams",
@@ -2866,8 +2886,29 @@
     return matchers.find(([, needles]) => needles.some((needle) => normalized.includes(needle)))?.[0] || "";
   }
 
-  function glossaryList(items) {
-    return items.map((item) => glossaryMaybe(capitalizeText(item), glossaryKeyForText(item), "capitalize-first")).join(", ");
+  function triplicityRoleForDignityLabel(item, chart) {
+    if (!chart || glossaryKeyForText(item) !== "triplicity") return "";
+    const normalized = normalizeText(item);
+    if (normalized.includes(normalizeText(t("triplicityDay")))) {
+      return chart.isDay ? "triplicityActive" : "triplicityOutOfSect";
+    }
+    if (normalized.includes(normalizeText(t("triplicityNight")))) {
+      return chart.isDay ? "triplicityOutOfSect" : "triplicityActive";
+    }
+    if (normalized.includes(normalizeText(t("triplicityCoop")))) {
+      return "triplicityCooperatingRole";
+    }
+    return "";
+  }
+
+  function dignityDisplayLabel(item, chart = null) {
+    const role = triplicityRoleForDignityLabel(item, chart);
+    const label = capitalizeText(item);
+    return role ? `${label} (${t(role)})` : label;
+  }
+
+  function glossaryList(items, chart = null) {
+    return items.map((item) => glossaryMaybe(dignityDisplayLabel(item, chart), glossaryKeyForText(item), "capitalize-first")).join(", ");
   }
 
   function dignityGroups(items) {
@@ -2881,8 +2922,8 @@
     return groups;
   }
 
-  function dignityGroupText(items) {
-    return items.length ? glossaryList(items) : glossaryMaybe(capitalizeText(t("none")), "", "capitalize-first");
+  function dignityGroupText(items, chart = null) {
+    return items.length ? glossaryList(items, chart) : glossaryMaybe(capitalizeText(t("none")), "", "capitalize-first");
   }
 
   function glossaryParts(value) {
@@ -3323,27 +3364,20 @@
   }
 
   function historicalDataSourceText(person) {
-    return localizedValue(person.dataSource)
-      || (state.lang === "es" ? "Wikipedia / Astro-Databank" : "Wikipedia / Astro-Databank");
+    return localizedValue(person.dataSource) || t("dataSourceGeneral");
   }
 
   function historicalQualityRows(person) {
+    const roddenText = person.roddenRating || t("dataRoddenPending");
+    const timeText = localizedValue(person.timeSource) || t("dataTimeSourcePrepared");
     const rows = [
       `<dt>${escapeHtml(t("dataSource"))}</dt>`,
       `<dd>${escapeHtml(historicalDataSourceText(person))}</dd>`,
+      `<dt>${escapeHtml(t("dataRodden"))}</dt>`,
+      `<dd>${escapeHtml(roddenText)}</dd>`,
+      `<dt>${escapeHtml(t("dataTimeSource"))}</dt>`,
+      `<dd>${escapeHtml(timeText)}</dd>`,
     ];
-    if (person.roddenRating) {
-      rows.push(
-        `<dt>${escapeHtml(t("dataRodden"))}</dt>`,
-        `<dd>${escapeHtml(person.roddenRating)}</dd>`,
-      );
-    }
-    if (person.timeSource) {
-      rows.push(
-        `<dt>${escapeHtml(t("dataTimeSource"))}</dt>`,
-        `<dd>${escapeHtml(localizedValue(person.timeSource))}</dd>`,
-      );
-    }
     return rows.join("");
   }
 
@@ -4176,6 +4210,7 @@
     const precisionNote = state.lang === "es"
       ? `${glossaryTerm("Cálculo astronómico", "ephemeris")} local: Astronomy Engine. Precisión aproximada ±1′. Para rectificaciones, cartas críticas o investigación profesional, conviene contrastar con efemérides especializadas.`
       : `Local ${glossaryTerm("astronomical calculation", "ephemeris")}: Astronomy Engine. Approximate accuracy ±1′. For rectification, critical charts, or professional research, compare with specialized ephemerides.`;
+    const limits = [t("limitsEducational"), t("limitsPrecision"), t("limitsPrivacy")];
     const html = `
       <h3>${glossaryTerm(t("sect"), "sect")}</h3>
       <div class="metric-grid">
@@ -4192,6 +4227,12 @@
       </div>
       <p class="text-note">${mcNote}</p>
       <p class="text-note">${precisionNote}</p>
+      <section class="limits-panel" aria-label="${escapeHtml(t("limitsTitle"))}">
+        <h4>${escapeHtml(t("limitsTitle"))}</h4>
+        <ul>
+          ${limits.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+        </ul>
+      </section>
     `;
     $("#coreSummary").innerHTML = html;
   }
@@ -4212,9 +4253,9 @@
         angularity: t(p.angularity),
       }))}</p>
       <div class="condition-list">
-        <p><strong>${glossaryTerm(t("dignityMajor"), "essentialCondition")}:</strong> ${dignityGroupText(groups.major)}.</p>
-        <p><strong>${glossaryTerm(t("dignityMinor"), "essentialCondition")}:</strong> ${dignityGroupText(groups.minor)}.</p>
-        <p><strong>${glossaryTerm(t("weaknesses"), "essentialCondition")}:</strong> ${dignityGroupText(groups.weakness)}.</p>
+        <p><strong>${glossaryTerm(t("dignityMajor"), "essentialCondition")}:</strong> ${dignityGroupText(groups.major, chart)}.</p>
+        <p><strong>${glossaryTerm(t("dignityMinor"), "essentialCondition")}:</strong> ${dignityGroupText(groups.minor, chart)}.</p>
+        <p><strong>${glossaryTerm(t("weaknesses"), "essentialCondition")}:</strong> ${dignityGroupText(groups.weakness, chart)}.</p>
       </div>
     `;
   }
@@ -4277,12 +4318,13 @@
     return state.lang === "es" ? `${rest} y ${last}` : `${rest} and ${last}`;
   }
 
-  function plainDignityText(items) {
+  function plainDignityText(items, chart = null) {
     const groups = dignityGroups(items || []);
     const parts = [];
-    if (groups.major.length) parts.push(`${t("dignityMajor")}: ${capitalizeList(groups.major)}`);
-    if (groups.minor.length) parts.push(`${t("dignityMinor")}: ${capitalizeList(groups.minor)}`);
-    if (groups.weakness.length) parts.push(`${t("weaknesses")}: ${capitalizeList(groups.weakness)}`);
+    const list = (values) => values.map((item) => dignityDisplayLabel(item, chart)).join(", ");
+    if (groups.major.length) parts.push(`${t("dignityMajor")}: ${list(groups.major)}`);
+    if (groups.minor.length) parts.push(`${t("dignityMinor")}: ${list(groups.minor)}`);
+    if (groups.weakness.length) parts.push(`${t("weaknesses")}: ${list(groups.weakness)}`);
     return parts.length ? parts.join("; ") : capitalizeText(t("noMajorDignity"));
   }
 
@@ -4403,11 +4445,11 @@
     return meanings[state.lang]?.[key] || planetName(key);
   }
 
-  function essentialConditionReading(position) {
+  function essentialConditionReading(position, chart = null) {
     const groups = dignityGroups(position.dignities || []);
-    const major = groups.major.map(capitalizeText);
-    const minor = groups.minor.map(capitalizeText);
-    const weakness = groups.weakness.map(capitalizeText);
+    const major = groups.major.map((item) => dignityDisplayLabel(item, chart));
+    const minor = groups.minor.map((item) => dignityDisplayLabel(item, chart));
+    const weakness = groups.weakness.map((item) => dignityDisplayLabel(item, chart));
     if (state.lang === "es") {
       if (major.length && weakness.length) {
         return `Tiene recursos propios (${major.join(", ")}), pero también una dificultad de fondo (${weakness.join(", ")}).`;
@@ -4702,6 +4744,26 @@
       : "The key planets are not under strong solar concealment; read their topics mainly through house, essential condition, sect, and configurations.";
   }
 
+  function relationIntensity(actor, target, chart, role, signType, degree, actorSuperior, targetSuperior) {
+    const actorPos = chart.positions[actor];
+    const actorStrength = dignityStrength(actor, actorPos, chart);
+    const actorSolar = solarPhaseState(actor, chart);
+    const actorObscured = ["combust", "underBeams"].includes(actorSolar.category) && !actorSolar.chariot;
+    const acute = degree && degree.delta <= 3;
+    const friendly = ["copresence", "sextile", "trine"].includes(signType);
+    const harsh = ["copresence", "square", "opposition"].includes(signType);
+
+    if (role === "support") {
+      if (!actorObscured && (acute || actorSuperior || friendly) && (actorStrength.strong || actorPos.angularity === "angular")) return "strongLevel";
+      if (!actorObscured && (friendly || acute || actorStrength.medium || actorPos.angularity === "succedent")) return "mediumLevel";
+      return "lowLevel";
+    }
+
+    if ((acute || actorSuperior || harsh) && !targetSuperior && (actorStrength.strong || actorPos.angularity === "angular")) return "highLevel";
+    if (actorSuperior || acute || harsh || actorStrength.medium) return "mediumLevel";
+    return "lowLevel";
+  }
+
   function planetRelationJudgment(target, actor, chart, role) {
     if (target === actor) return "";
     const targetPos = chart.positions[target];
@@ -4716,28 +4778,29 @@
     const relation = t(signType);
     const targetName = planetLabel(target);
     const actorName = planetLabel(actor);
+    const intensity = relationIntensity(actor, target, chart, role, signType, degree, actorSuperior, targetSuperior);
     if (state.lang === "es") {
       if (role === "support") {
         const superiority = actorSuperior
           ? " El apoyo llega desde posición superior."
           : targetSuperior ? " El significador recibe apoyo sin perder posición superior." : "";
-        return `${targetName} recibe testimonio de ${actorName} por ${relation}${acute ? " muy cerca de perfección" : " por signo"}; esto funciona como bonificación o apoyo.${superiority}`;
+        return `${targetName} recibe testimonio de ${actorName} por ${relation}${acute ? " muy cerca de perfección" : " por signo"}; esto funciona como bonificación o apoyo de intensidad ${t(intensity)}.${superiority}`;
       }
       const superiority = actorSuperior
         ? ", y además lo domina por superioridad"
         : targetSuperior ? ", aunque el significador queda en posición superior frente a esa presión" : "";
-      return `${targetName} recibe presión de ${actorName} por ${relation}${acute ? " muy cerca de perfección" : " por signo"}${superiority}; esto pesa como maltrato o exigencia.`;
+      return `${targetName} recibe presión de ${actorName} por ${relation}${acute ? " muy cerca de perfección" : " por signo"}${superiority}; esto pesa como maltrato o exigencia de intensidad ${t(intensity)}.`;
     }
     if (role === "support") {
       const superiority = actorSuperior
         ? " The support comes from a superior position."
         : targetSuperior ? " The significator receives support while retaining the superior position." : "";
-      return `${targetName} receives testimony from ${actorName} by ${relation}${acute ? " very close to perfection" : " by sign"}; this acts as bonification or support.${superiority}`;
+      return `${targetName} receives testimony from ${actorName} by ${relation}${acute ? " very close to perfection" : " by sign"}; this acts as ${t(intensity)} bonification or support.${superiority}`;
     }
     const superiority = actorSuperior
       ? ", and also overcomes it from the superior position"
       : targetSuperior ? ", though the significator holds the superior position against that pressure" : "";
-    return `${targetName} receives pressure from ${actorName} by ${relation}${acute ? " very close to perfection" : " by sign"}${superiority}; this weighs as maltreatment or demand.`;
+    return `${targetName} receives pressure from ${actorName} by ${relation}${acute ? " very close to perfection" : " by sign"}${superiority}; this weighs as ${t(intensity)} maltreatment or demand.`;
   }
 
   function configurationsReading(chart, focuses, ascLordPosition) {
@@ -4773,7 +4836,7 @@
     const houseWord = state.lang === "es" ? "casa" : "house";
     const parts = entries.map(([key, role]) => {
       const position = chart.positions[key];
-      return `${planetLabel(key)} (${role}) ${state.lang === "es" ? "en" : "in"} ${houseWord} ${position.house}, ${t(position.angularity)}, ${plainDignityText(position.dignities)}`;
+      return `${planetLabel(key)} (${role}) ${state.lang === "es" ? "en" : "in"} ${houseWord} ${position.house}, ${t(position.angularity)}, ${plainDignityText(position.dignities, chart)}`;
     });
     if (state.lang === "es") {
       return `La luminaria de la secta está en ${trip.sign.es}; sus regentes de triplicidad dan el fondo de apoyo de la carta: ${parts.join("; ")}. No sustituyen al regente del Ascendente, pero muestran si la vida cuenta con una base amplia, desigual o tardía de sostén.`;
@@ -4797,9 +4860,9 @@
     const support = benefics.length ? naturalList(benefics.map(planetLabel)) : (state.lang === "es" ? "ningún benéfico claro" : "no clear benefic");
     const pressure = malefics.length ? naturalList(malefics.map(planetLabel)) : (state.lang === "es" ? "ningún maléfico claro" : "no clear malefic");
     if (state.lang === "es") {
-      return `${lotName(lot.key)} cae en casa ${lot.house}; su señor es ${planetLabel(lot.lord)} en casa ${lordPosition.house}, ${t(lordPosition.angularity)}, con ${plainDignityText(lordPosition.dignities)}. Esto da ${placeTone}. Recibe testimonio de ${support} y presión de ${pressure}.${solarConcern ? ` El señor del lote está ${solar.category === "combust" ? "combusto" : "bajo los rayos"}, así que parte del tema puede operar de forma menos visible.` : ""}`;
+      return `${lotName(lot.key)} cae en casa ${lot.house}; su señor es ${planetLabel(lot.lord)} en casa ${lordPosition.house}, ${t(lordPosition.angularity)}, con ${plainDignityText(lordPosition.dignities, chart)}. Esto da ${placeTone}. Recibe testimonio de ${support} y presión de ${pressure}.${solarConcern ? ` El señor del lote está ${solar.category === "combust" ? "combusto" : "bajo los rayos"}, así que parte del tema puede operar de forma menos visible.` : ""}`;
     }
-    return `${lotName(lot.key)} falls in house ${lot.house}; its lord is ${planetLabel(lot.lord)} in house ${lordPosition.house}, ${t(lordPosition.angularity)}, with ${plainDignityText(lordPosition.dignities)}. This gives ${placeTone}. It receives testimony from ${support} and pressure from ${pressure}.${solarConcern ? ` The lot lord is ${solar.category === "combust" ? "combust" : "under the beams"}, so part of the topic may operate less visibly.` : ""}`;
+    return `${lotName(lot.key)} falls in house ${lot.house}; its lord is ${planetLabel(lot.lord)} in house ${lordPosition.house}, ${t(lordPosition.angularity)}, with ${plainDignityText(lordPosition.dignities, chart)}. This gives ${placeTone}. It receives testimony from ${support} and pressure from ${pressure}.${solarConcern ? ` The lot lord is ${solar.category === "combust" ? "combust" : "under the beams"}, so part of the topic may operate less visibly.` : ""}`;
   }
 
   function moonJudgmentReading(chart) {
@@ -4925,8 +4988,8 @@
       : `The chart puts a great deal of weight on house ${dominant.house}: ${plainHouseTopics(dominant.house)}. ${secondaryFocuses.length ? `It is also worth reading ${naturalList(secondaryFocuses.map((focus) => `house ${focus.house}`))}, because they complete the general pattern.` : ""} The guiding thread remains ${planetLabel(ascLord)}, lord of the Ascendant / Hour-Marker, placed in house ${ascLordPosition.house}; this is why the reading begins from life direction rather than from an isolated placement.`;
 
     const lifeDirection = state.lang === "es"
-      ? `El Ascendente está en ${signLabel(chart.ascSign)}, por lo que ${planetLabel(ascLord)} lleva la dirección general de la carta. ${planetLabel(ascLord)} habla de ${planetPlainMeaning(ascLord)}. Al caer en ${signLabel(signOf(ascLordPosition.lon))}, casa ${ascLordPosition.house}, esas capacidades se vinculan con ${plainHouseTopics(ascLordPosition.house)}. ${signStyleReading(ascLordSign)} Al estar en una casa ${t(ascLordPosition.angularity)}, este tema se muestra ${angularityReading(ascLordPosition.angularity)}. ${essentialConditionReading(ascLordPosition)}`
-      : `The Ascendant / Hour-Marker is in ${signLabel(chart.ascSign)}, so ${planetLabel(ascLord)} carries the chart's general direction. ${planetLabel(ascLord)} speaks of ${planetPlainMeaning(ascLord)}. Placed in ${signLabel(signOf(ascLordPosition.lon))}, house ${ascLordPosition.house}, those capacities connect with ${plainHouseTopics(ascLordPosition.house)}. ${signStyleReading(ascLordSign)} Being in a ${t(ascLordPosition.angularity)} house, this topic shows itself ${angularityReading(ascLordPosition.angularity)}. ${essentialConditionReading(ascLordPosition)}`;
+      ? `El Ascendente está en ${signLabel(chart.ascSign)}, por lo que ${planetLabel(ascLord)} lleva la dirección general de la carta. ${planetLabel(ascLord)} habla de ${planetPlainMeaning(ascLord)}. Al caer en ${signLabel(signOf(ascLordPosition.lon))}, casa ${ascLordPosition.house}, esas capacidades se vinculan con ${plainHouseTopics(ascLordPosition.house)}. ${signStyleReading(ascLordSign)} Al estar en una casa ${t(ascLordPosition.angularity)}, este tema se muestra ${angularityReading(ascLordPosition.angularity)}. ${essentialConditionReading(ascLordPosition, chart)}`
+      : `The Ascendant / Hour-Marker is in ${signLabel(chart.ascSign)}, so ${planetLabel(ascLord)} carries the chart's general direction. ${planetLabel(ascLord)} speaks of ${planetPlainMeaning(ascLord)}. Placed in ${signLabel(signOf(ascLordPosition.lon))}, house ${ascLordPosition.house}, those capacities connect with ${plainHouseTopics(ascLordPosition.house)}. ${signStyleReading(ascLordSign)} Being in a ${t(ascLordPosition.angularity)} house, this topic shows itself ${angularityReading(ascLordPosition.angularity)}. ${essentialConditionReading(ascLordPosition, chart)}`;
 
     const resources = state.lang === "es"
       ? `En esta ${sectContext}, ${planetLabel(benefic)} es el planeta que más facilita (técnicamente: benéfico de la secta). Está en casa ${beneficPosition.house}: ${plainHouseTopics(beneficPosition.house)}. Muestra dónde las cosas tienden a crecer, encontrar apoyo o abrir oportunidades. ${connectionReading(beneficPosition, focuses, ascLordPosition, "support")}`
@@ -4957,7 +5020,7 @@
         weight: angularityWeight(ascLordPosition.angularity),
       }),
       t("evidenceAscLordCondition", {
-        condition: plainDignityText(ascLordPosition.dignities),
+        condition: plainDignityText(ascLordPosition.dignities, chart),
       }),
       t("evidenceSect", {
         sect: sectDescription,
@@ -4982,8 +5045,8 @@
         ? `Fase solar aplicada a planetas clave: ${keyPlanetList(chart).map((key) => `${planetLabel(key)}: ${chart.positions[key].phase || "luminaria"}`).join("; ")}.`
         : `Solar phase applied to key planets: ${keyPlanetList(chart).map((key) => `${planetLabel(key)}: ${chart.positions[key].phase || "luminary"}`).join("; ")}.`,
       state.lang === "es"
-        ? `Luna: fase ${chart.moon.phase}; próximo contacto ${chart.moon.nextApplication ? lunarContactLabel(chart.moon.nextApplication) : "ninguno en 30°"}; vacía de curso: ${chart.moon.voidOfCourse ? t("yes") : t("no")}.`
-        : `Moon: ${chart.moon.phase} phase; next contact ${chart.moon.nextApplication ? lunarContactLabel(chart.moon.nextApplication) : "none within 30°"}; void of course: ${chart.moon.voidOfCourse ? t("yes") : t("no")}.`,
+        ? `Luna: fase ${chart.moon.phase}; próximo contacto ${chart.moon.nextApplication ? lunarContactLabel(chart.moon.nextApplication) : "ninguno en 30°"}; vacía de curso por 30°: ${chart.moon.voidOfCourse ? t("yes") : t("no")}; vacía antes de salir del signo: ${chart.moon.voidOfCourseBySign ? t("yes") : t("no")}.`
+        : `Moon: ${chart.moon.phase} phase; next contact ${chart.moon.nextApplication ? lunarContactLabel(chart.moon.nextApplication) : "none within 30°"}; void of course by 30°: ${chart.moon.voidOfCourse ? t("yes") : t("no")}; void before sign exit: ${chart.moon.voidOfCourseBySign ? t("yes") : t("no")}.`,
       state.lang === "es"
         ? `Triplicidad de la luminaria de la secta: ${naturalList([sectTriplicityRulers(chart).primary, sectTriplicityRulers(chart).secondary, sectTriplicityRulers(chart).cooperating].map(planetLabel))}.`
         : `Sect-light triplicity rulers: ${naturalList([sectTriplicityRulers(chart).primary, sectTriplicityRulers(chart).secondary, sectTriplicityRulers(chart).cooperating].map(planetLabel))}.`,
@@ -5107,7 +5170,7 @@
     ];
     const rows = chart.planetKeys.map((key) => {
       const p = chart.positions[key];
-      const condition = p.dignities?.length ? glossaryList(p.dignities) : "—";
+      const condition = p.dignities?.length ? glossaryList(p.dignities, chart) : "—";
       return [
         `<span class="glyph">${PLANETS[key].symbol}</span> ${escapeHtml(planetName(key))}`,
         escapeHtml(formatDegree(p.lon)),

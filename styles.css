@@ -1002,6 +1002,31 @@ td {
   text-align: center;
 }
 
+.limits-panel {
+  margin-top: 14px;
+  border-top: 1px dotted color-mix(in srgb, var(--blue) 42%, var(--line));
+  padding-top: 10px;
+}
+
+.limits-panel h4 {
+  margin: 0 0 6px;
+  color: var(--blue-deep);
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0;
+}
+
+.limits-panel ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.limits-panel li + li {
+  margin-top: 4px;
+}
+
 .site-footer {
   max-width: 1180px;
   margin: 0 auto;

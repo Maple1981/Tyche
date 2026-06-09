@@ -30,6 +30,7 @@ Core derived data:
 - Lunar condition: synodic phase, last separation, next application, Hellenistic 30-degree void-of-course, and a separate no-application-within-orb indicator.
 - Also show whether the Moon perfects a major contact before leaving its current sign, separately from the Hellenistic 30-degree void-of-course rule.
 - Superior/right-sided configurations must preserve direction: who overcomes whom matters for judgment.
+- Triplicity dignities should be labeled by role when shown: active by sect, out of sect, or cooperating.
 
 This app uses vendored Astronomy Engine for browser-side ephemerides, with the older compact formulas kept only as fallback. Make the approximate +/-1 arcminute limitation visible in the UI and documentation; do not present the results as professional ephemeris-grade.
 
@@ -63,6 +64,7 @@ Interpretation output:
 - Treat angularity as prominence, not automatic ease or benefit.
 - Use cautious educational language: describe tendencies, pressures, supports, and dominant topics; do not state fatalistic certainties.
 - Keep `docs/judgment-matrix.md` aligned with the interpretation code. Solar phase, configurations, lot lords, lunar condition, and triplicity rulers should enter the judgment when their underlying data is calculated.
+- Evidence should include both lunar void-of-course criteria when both are calculated.
 
 ## UI Direction
 
@@ -74,6 +76,7 @@ The interface should feel mobile-first, calm, scholarly, and usable:
 - Standard zodiac and planetary glyphs.
 - Day/night theme toggle.
 - English/Spanish language toggle.
+- Visible limits section in the calculated chart, covering educational scope, approximate precision, angle sensitivity, and external services used for place search/images.
 - First-screen form fields: birth date, birth time, birthplace, and advanced options button.
 - Advanced options: optional sex metadata, zodiac, house system, orb, lots, terms system, modern planets, strict vs mixed mode.
 
