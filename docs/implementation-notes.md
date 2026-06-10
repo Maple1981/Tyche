@@ -57,13 +57,15 @@ The historical figure modal should only include public figures whose birth date,
 
 When using rated birth-data collections, prefer AA/A/B-level records. Leave out C, DD, X, rectified, speculative, or time-unknown records unless the user explicitly approves them.
 
+The current historical archive is externally audited as of 2026-06-10. Keep the enforceable per-person audit metadata in `HISTORICAL_AUDIT_ROWS`, not as scattered prose. A new character must update both `HISTORICAL_PEOPLE` and `HISTORICAL_AUDIT_ROWS`; the static contract test should fail if those lists drift apart.
+
 Prefer Gregorian examples from periods and jurisdictions after calendar reform. If a future example uses a Julian-calendar birth date, the entry must store that calendar explicitly and its visible label must make the calendar clear. Do not silently convert between Julian and Gregorian dates.
 
 Each historical example should carry coordinates and a deliberate time offset or IANA time zone so selecting it produces a reproducible chart.
 
 Each visible person card may display a source line and, when audited, a birth-data rating or time-source note. Do not invent or infer ratings. If a rating or exact time source has not been checked, leave the rating field empty rather than implying documentary certainty.
 
-If a historical example has not yet been individually audited for Rodden rating or time-source wording, the UI should say so explicitly. A visible pending-audit note is preferable to silent omission or a guessed rating.
+If a future historical example has not yet been individually audited for Rodden rating or time-source wording, the UI should say so explicitly and the character should not be merged into the public archive unless that pending status was deliberately approved. A visible pending-audit note is preferable to silent omission or a guessed rating.
 
 The person card itself should also show a visible pending-audit badge when source, rating, or time-source metadata is missing, so audited and non-audited examples are not visually indistinguishable.
 

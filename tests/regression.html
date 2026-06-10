@@ -189,7 +189,8 @@
         const historicalAudit = testApi.historicalAuditRecords();
         assert("Los ejemplos historicos tienen auditoria normalizada", historicalAudit.length > 0 && historicalAudit.every((item) => item.auditStatus && item.timeConfidence && item.zoneReliability));
         assert("Los ejemplos historicos separan fuente natal y referencia interpretativa", historicalAudit.every((item) => "hasNatalSource" in item && "hasInterpretiveReference" in item));
-        assert("Los ejemplos sin auditoria explicita no se promocionan a auditados", historicalAudit.some((item) => item.auditStatus === "pending"));
+        assert("La auditoria externa actual cubre todos los personajes historicos", historicalAudit.every((item) => item.auditStatus === "audited" && item.hasNatalSource && item.hasRating && item.externalAuditDate));
+        assert("Las fechas fuente con calendario delicado son trazables", historicalAudit.some((item) => item.sourceDateLabel));
 
         const sectChart = { ...chart, sunAltitude: 0.2 };
         const sectWarnings = testApi.boundaryWarnings(sectChart);

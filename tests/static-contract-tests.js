@@ -24,8 +24,12 @@ function sectionBetween(source, start, end) {
   return source.slice(startIndex, endIndex);
 }
 
-const historicalBlock = sectionBetween(app, "const HISTORICAL_PEOPLE = [", "\n  ];\n\n  const SIGN_KEYS");
+const historicalBlock = sectionBetween(app, "const HISTORICAL_PEOPLE = [", "\n  ];\n\n  // Every current historical example");
 const personCount = (historicalBlock.match(/\n    \{\n      id:/g) || []).length;
+const historicalIds = [...historicalBlock.matchAll(/id: "([^"]+)"/g)].map((match) => match[1]);
+const auditRowsBlock = sectionBetween(app, "const HISTORICAL_AUDIT_ROWS = Object.freeze([", "\n  ]);\n\n  const HISTORICAL_AUDIT");
+const auditIds = [...auditRowsBlock.matchAll(/id: "([^"]+)"/g)].map((match) => match[1]);
+const completeAuditRows = [...auditRowsBlock.matchAll(/\{ id: "[^"]+", rating: "(AA|A|B)", source: "[^"]+", url: "https:\/\/www\.astro\.com\/astro-databank\/[^"]+", zoneReliability: "(iana|manual|lmt|historical|unknown)"/g)];
 const glossaryKeys = [...index.matchAll(/data-glossary="([^"]+)"/g)].map((match) => match[1]);
 const uniqueGlossaryKeys = [...new Set(glossaryKeys)];
 
@@ -48,19 +52,23 @@ assert("MC/IC warnings carry boundarySideCode", app.includes("boundarySideCode")
 assert("Score items carry reasonCode", app.includes("reasonCode: reasonCode || category"));
 
 assert("Historical archive has substantial example coverage", personCount >= 35);
+assert("Historical archive is fully externally audited", personCount === auditIds.length && historicalIds.every((id) => auditIds.includes(id)));
+assert("Historical audit rows include required external-source fields", completeAuditRows.length === auditIds.length);
 assert("Historical time confidence is normalized", app.includes("function historicalTimeConfidence"));
 assert("Historical zone reliability is normalized", app.includes("function historicalZoneReliability"));
 assert("Historical natal source is separated from interpretive references", app.includes("function historicalNatalSource") && app.includes("function historicalInterpretiveReferences"));
 assert("Historical audited status is explicit-only", !app.includes("person.roddenRating && person.dataSource && person.timeSource"));
 const personAuditStatusBlock = sectionBetween(app, "function personAuditStatus(person)", "function historicalTimeConfidence");
 assert("Audit status uses normalized natal source", personAuditStatusBlock.includes("historicalNatalSource(person)"));
+assert("Audit status uses external audit metadata", personAuditStatusBlock.includes("audit.auditStatus"));
 assert("Interpretive references do not drive audit status", !personAuditStatusBlock.includes("brennanReference") && !personAuditStatusBlock.includes("interpretiveReferences"));
-assert("Historical audit records expose source separation", app.includes("hasNatalSource") && app.includes("hasInterpretiveReference"));
+assert("Historical audit records expose source separation", app.includes("hasNatalSource") && app.includes("hasInterpretiveReference") && app.includes("externalAuditDate"));
 
 assert("Judgment codebook documents reasonCode", read("docs/judgment-codebook.md").includes("Score Reason Codes"));
 assert("Judgment factor matrix exists", read("docs/judgment-factor-matrix.md").includes("Judgment Factor Matrix"));
 assert("Precision limits doc exists", read("docs/precision-limits.md").includes("Precision and Reliability Limits"));
 assert("Historical audit doc exists", read("docs/historical-data-audit.md").includes("Normalized Reliability"));
+assert("Historical character audit doc prepares future additions", read("docs/historical-character-audit.md").includes("Future Addition Checklist"));
 assert("Glossary coverage doc exists", read("docs/glossary-coverage.md").includes("Required Coverage"));
 assert("Future techniques roadmap exists", read("docs/future-techniques-roadmap.md").includes("Future Techniques Roadmap"));
 assert("Glossary coverage has human audit checklist", read("docs/glossary-coverage.md").includes("Human Audit Checklist"));

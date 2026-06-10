@@ -2,6 +2,8 @@
 
 This file records the current reliability policy for the historical example archive. It deliberately avoids inventing individual ratings or exact source notes.
 
+The external audit for the current archive was closed on 2026-06-10. The per-person checklist is recorded in `docs/historical-character-audit.md`; the app stores the enforceable metadata in `HISTORICAL_AUDIT_ROWS`.
+
 ## Current Data Policy
 
 Every historical example must have:
@@ -21,12 +23,12 @@ Natal-data source and interpretive-reference source are separate. A chart can be
 
 ## Normalized Reliability
 
-When a person has no explicit `auditStatus`, Tyche derives display grouping only as:
+When a person has no explicit `auditStatus` through either direct person metadata or `HISTORICAL_AUDIT_ROWS`, Tyche derives display grouping only as:
 
 - `partial` if source/rating/time-source metadata exists but is incomplete.
 - `pending` if no individual audit metadata exists.
 
-It does not infer `audited` from ordinary strings. Explicit `auditStatus: "audited"` is required.
+It does not infer `audited` from ordinary strings. Explicit audited metadata is required. For the current archive, `HISTORICAL_AUDIT_ROWS` supplies `auditStatus: "audited"` through normalized metadata; future additions must add an audit row before the static contract test passes.
 
 When a person has no explicit `timeConfidence`, Tyche treats the time as `reported` rather than `exact`. This reflects that the app has a clock time but has not necessarily reviewed the individual source.
 
@@ -62,13 +64,22 @@ interpretiveReferences: [{
 
 Do not use C, DD, X, rectified, speculative, or time-unknown records unless explicitly approved.
 
+For the current implementation, prefer adding future per-person birth-data audit metadata to `HISTORICAL_AUDIT_ROWS` rather than duplicating source fields inside the character object. Each row must include:
+
+```js
+{ id: "person-id", rating: "AA" | "A" | "B", source: "source class", url: "https://...", zoneReliability: "iana" | "manual" | "lmt" | "historical" | "unknown" }
+```
+
+Use optional `sourceDateLabel` only when the source date and the stored chart date need clarification, especially for Julian/Gregorian equivalence.
+
 ## Current Archive Status
 
-The current archive should be treated as an example archive with normalized caution:
+The current archive is closed as an externally audited example archive with normalized caution:
 
-- Records without explicit individual metadata are pending individual audit.
+- Every current character has an individual `HISTORICAL_AUDIT_ROWS` entry with a rated external natal-data source, source URL, time-confidence classification, zone-reliability classification, and audit date.
+- New records without an audit row are not allowed to pass the static contract test.
 - Manual offsets are retained for reproducibility but do not prove civil-time certainty.
 - Julian-calendar examples must keep both the calendar flag and visible label clear.
-- No person should be described as audited unless `auditStatus: "audited"` is explicitly present.
+- No person should be described as audited unless audited metadata is explicitly present through the character object or `HISTORICAL_AUDIT_ROWS`.
 
 This keeps the modal useful while avoiding false certainty.

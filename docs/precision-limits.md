@@ -47,10 +47,13 @@ BCE dates are blocked until a dedicated CE/BCE control exists. This avoids silen
 
 ## Historical Examples
 
-Historical examples are public example charts. Unless a record carries explicit audited metadata, Tyche treats it as pending or partial:
+Historical examples are public example charts. The current archive is externally audited as of 2026-06-10, but that does not make the charts professional rectifications or guarantee every historical civil-time detail beyond the stored source classification.
+
+Unless a future record carries explicit audited metadata, Tyche treats it as pending or partial:
 
 - Missing individual source/rating metadata should never be silently upgraded.
 - A reported clock time is not the same as an audited exact time.
 - A manual offset should be treated as historical-example data unless an IANA zone is present.
+- A rated natal-data source should remain separate from any secondary interpretive source that discusses the chart.
 
 Reliability can widen boundary warnings, especially near sect or angle changes.

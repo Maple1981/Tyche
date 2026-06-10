@@ -114,6 +114,7 @@
       dataPlace: "Lugar",
       dataSex: "Sexo",
       dataSource: "Fuente",
+      dataSourceDate: "Fecha en fuente",
       dataRodden: "Rodden",
       dataTimeSource: "Hora",
       dataSourceGeneral: "Fuente pendiente de auditoría individual",
@@ -471,6 +472,7 @@
       dataPlace: "Place",
       dataSex: "Sex",
       dataSource: "Source",
+      dataSourceDate: "Source date",
       dataRodden: "Rodden",
       dataTimeSource: "Time",
       dataSourceGeneral: "Individual source pending audit",
@@ -2260,7 +2262,7 @@
       wikipedia: "https://en.wikipedia.org/wiki/George_Lucas",
       sex: "male",
       date: "1944-05-14",
-      time: "05:42",
+      time: "05:40",
       calendar: "gregorian",
       manualOffset: "-07:00",
       place: {
@@ -2272,7 +2274,7 @@
         tz: "",
         countryNames: { es: "Estados Unidos", en: "United States" },
       },
-      birthLabel: { es: "14 mayo 1944, 05:42", en: "14 May 1944, 05:42" },
+      birthLabel: { es: "14 mayo 1944, 05:40", en: "14 May 1944, 05:40" },
       image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/George_Lucas_by_Gage_Skidmore.jpg/330px-George_Lucas_by_Gage_Skidmore.jpg",
       imageAlt: { es: "Fotografía de George Lucas", en: "Photograph of George Lucas" },
     },
@@ -2851,6 +2853,74 @@
       imageAlt: { es: "Fotografía de Winston Churchill", en: "Photograph of Winston Churchill" },
     },
   ];
+
+  // Every current historical example must have one row here; static tests enforce full coverage.
+  const HISTORICAL_AUDIT_ROWS = Object.freeze([
+    { id: "ada-lovelace", rating: "B", source: "Bio/autobiography", url: "https://www.astro.com/astro-databank/Lovelace,_Ada", zoneReliability: "lmt" },
+    { id: "alan-turing", rating: "A", source: "From memory", url: "https://www.astro.com/astro-databank/Turing,_Alan", zoneReliability: "historical" },
+    { id: "albert-einstein", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Einstein,_Albert", zoneReliability: "lmt" },
+    { id: "amelia-earhart", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Earhart,_Amelia", zoneReliability: "historical" },
+    { id: "al-gore", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Gore,_Al", zoneReliability: "historical" },
+    { id: "amanda-knox", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Knox,_Amanda", zoneReliability: "historical" },
+    { id: "arnold-schwarzenegger", rating: "A", source: "From memory", url: "https://www.astro.com/astro-databank/Schwarzenegger,_Arnold", zoneReliability: "historical" },
+    { id: "barack-obama", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Obama,_Barack", zoneReliability: "historical" },
+    { id: "bill-clinton", rating: "A", source: "From memory", url: "https://www.astro.com/astro-databank/Clinton,_Bill", zoneReliability: "historical" },
+    { id: "carl-sagan", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Sagan,_Carl", zoneReliability: "historical" },
+    { id: "elvis-presley", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Presley,_Elvis", zoneReliability: "historical" },
+    { id: "ernest-hemingway", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Hemingway,_Ernest", zoneReliability: "historical" },
+    { id: "frank-lloyd-wright", rating: "A", source: "From memory", url: "https://www.astro.com/astro-databank/Wright,_Frank_Lloyd", zoneReliability: "lmt" },
+    { id: "pablo-picasso", rating: "AA", source: "Quoted BC/BR", url: "https://www.astro.com/astro-databank/Picasso,_Pablo", zoneReliability: "lmt" },
+    { id: "frida-kahlo", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Kahlo,_Frida", zoneReliability: "lmt" },
+    { id: "gabriel-garcia-marquez", rating: "B", source: "Bio/autobiography", url: "https://www.astro.com/astro-databank/Garc%C3%ADa_M%C3%A1rquez,_Gabriel", zoneReliability: "historical" },
+    { id: "george-lucas", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Lucas,_George", zoneReliability: "historical" },
+    { id: "george-w-bush", rating: "AA", source: "Quoted BC/BR", url: "https://www.astro.com/astro-databank/Bush,_George_W.", zoneReliability: "historical" },
+    { id: "hans-christian-andersen", rating: "AA", source: "Quoted BC/BR", url: "https://www.astro.com/astro-databank/Andersen,_Hans_Christian", zoneReliability: "lmt" },
+    { id: "henri-matisse", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Matisse,_Henri", zoneReliability: "lmt" },
+    { id: "herman-melville", rating: "AA", source: "Quoted BC/BR", url: "https://www.astro.com/astro-databank/Melville,_Herman", zoneReliability: "lmt" },
+    { id: "igor-stravinsky", rating: "AA", source: "Quoted BC/BR", url: "https://www.astro.com/astro-databank/Stravinsky,_Igor", zoneReliability: "historical", sourceDateLabel: { es: "17 junio 1882 gregoriano / 5 junio 1882 juliano", en: "17 June 1882 Gregorian / 5 June 1882 Julian" } },
+    { id: "jorge-luis-borges", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Borges,_Jorge_Luis", zoneReliability: "historical" },
+    { id: "julio-cortazar", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Cort%C3%A1zar,_Julio", zoneReliability: "historical" },
+    { id: "jonathan-brandis", rating: "A", source: "From memory", url: "https://www.astro.com/astro-databank/Brandis,_Jonathan", zoneReliability: "historical" },
+    { id: "kurt-cobain", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Cobain,_Kurt", zoneReliability: "historical" },
+    { id: "le-corbusier", rating: "AA", source: "Quoted BC/BR", url: "https://www.astro.com/astro-databank/Le_Corbusier", zoneReliability: "historical" },
+    { id: "lisa-marie-presley", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Presley,_Lisa_Marie", zoneReliability: "historical" },
+    { id: "m-c-escher", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Escher,_M._C.", zoneReliability: "historical" },
+    { id: "marilyn-monroe", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Monroe,_Marilyn", zoneReliability: "historical" },
+    { id: "michael-j-fox", rating: "A", source: "From memory", url: "https://www.astro.com/astro-databank/Fox,_Michael_J.", zoneReliability: "historical" },
+    { id: "patrick-swayze", rating: "A", source: "From memory", url: "https://www.astro.com/astro-databank/Swayze,_Patrick", zoneReliability: "historical" },
+    { id: "robert-downey-jr", rating: "A", source: "From memory", url: "https://www.astro.com/astro-databank/Downey,_Robert_Jr.", zoneReliability: "historical" },
+    { id: "salvador-dali", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Dali,_Salvador", zoneReliability: "historical" },
+    { id: "simone-de-beauvoir", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Beauvoir,_Simone_de", zoneReliability: "historical" },
+    { id: "rene-magritte", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Magritte,_Ren%C3%A9", zoneReliability: "historical" },
+    { id: "sigmund-freud", rating: "AA", source: "Quoted BC/BR", url: "https://www.astro.com/astro-databank/Freud,_Sigmund", zoneReliability: "historical" },
+    { id: "steve-wozniak", rating: "AA", source: "Quoted BC/BR", url: "https://www.astro.com/astro-databank/Wozniak,_Steve", zoneReliability: "historical" },
+    { id: "vanessa-williams", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Williams,_Vanessa", zoneReliability: "historical" },
+    { id: "whitney-houston", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Houston,_Whitney", zoneReliability: "historical" },
+    { id: "victoria", rating: "AA", source: "Quoted BC/BR", url: "https://www.astro.com/astro-databank/Victoria,_Queen_of_the_United_Kingdom", zoneReliability: "lmt" },
+    { id: "vincent-van-gogh", rating: "AA", source: "BC/BR in hand", url: "https://www.astro.com/astro-databank/Van_Gogh,_Vincent", zoneReliability: "lmt" },
+    { id: "winston-churchill", rating: "A", source: "From memory", url: "https://www.astro.com/astro-databank/Churchill,_Winston", zoneReliability: "historical" },
+  ]);
+
+  const HISTORICAL_AUDIT = Object.freeze(Object.fromEntries(HISTORICAL_AUDIT_ROWS.map((row) => {
+    const sourceLabel = `Astro-Databank (${row.source}, Rodden ${row.rating})`;
+    return [row.id, {
+      auditStatus: "audited",
+      timeConfidence: row.rating === "AA" ? "exact" : "reported",
+      zoneReliability: row.zoneReliability,
+      externalAuditDate: "2026-06-10",
+      sourceDateLabel: row.sourceDateLabel || "",
+      natalDataSource: {
+        label: { es: sourceLabel, en: sourceLabel },
+        url: row.url,
+        type: "rated-database",
+        roddenRating: row.rating,
+        timeSource: {
+          es: `Source Notes de Astro-Databank; ${row.source}, Rodden ${row.rating}.`,
+          en: `Astro-Databank Source Notes; ${row.source}, Rodden ${row.rating}.`,
+        },
+      },
+    }];
+  })));
 
   const SIGN_KEYS = [
     "aries",
@@ -3662,8 +3732,13 @@
     return value[state.lang] || value.es || value.en || "";
   }
 
+  function historicalAuditMetadata(person) {
+    return HISTORICAL_AUDIT[person.id] || {};
+  }
+
   function historicalNatalSource(person) {
-    const structured = person.natalDataSource || {};
+    const audit = historicalAuditMetadata(person);
+    const structured = person.natalDataSource || audit.natalDataSource || {};
     return {
       label: localizedValue(structured.label) || localizedValue(person.dataSource),
       url: structured.url || person.sourceUrl || "",
@@ -3698,18 +3773,33 @@
     return historicalNatalSource(person).label || t("dataSourceGeneral");
   }
 
+  function historicalDataSourceHtml(person) {
+    const natalSource = historicalNatalSource(person);
+    const label = natalSource.label || t("dataSourceGeneral");
+    if (!natalSource.url) return escapeHtml(label);
+    return `<a href="${escapeHtml(natalSource.url)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`;
+  }
+
   function historicalQualityRows(person) {
     const natalSource = historicalNatalSource(person);
+    const audit = historicalAuditMetadata(person);
     const roddenText = natalSource.rating || t("dataRoddenPending");
     const timeText = natalSource.timeSource || t("dataTimeSourcePrepared");
+    const sourceDate = localizedValue(audit.sourceDateLabel);
     const rows = [
       `<dt>${escapeHtml(t("natalDataSource"))}</dt>`,
-      `<dd>${escapeHtml(historicalDataSourceText(person))}</dd>`,
+      `<dd>${historicalDataSourceHtml(person)}</dd>`,
       `<dt>${escapeHtml(t("dataRodden"))}</dt>`,
       `<dd>${escapeHtml(roddenText)}</dd>`,
       `<dt>${escapeHtml(t("dataTimeSource"))}</dt>`,
       `<dd>${escapeHtml(timeText)}</dd>`,
     ];
+    if (sourceDate) {
+      rows.push(
+        `<dt>${escapeHtml(t("dataSourceDate"))}</dt>`,
+        `<dd>${escapeHtml(sourceDate)}</dd>`,
+      );
+    }
     const interpretiveReferences = historicalInterpretiveReferences(person);
     if (interpretiveReferences.length) {
       rows.push(
@@ -3721,19 +3811,24 @@
   }
 
   function personAuditStatus(person) {
-    if (person.auditStatus) return person.auditStatus;
+    const audit = historicalAuditMetadata(person);
+    if (person.auditStatus || audit.auditStatus) return person.auditStatus || audit.auditStatus;
     const natalSource = historicalNatalSource(person);
     if (natalSource.rating || natalSource.label || natalSource.timeSource || natalSource.url || person.timeConfidence) return "partial";
     return "pending";
   }
 
   function historicalTimeConfidence(person) {
+    const audit = historicalAuditMetadata(person);
     if (TIME_CONFIDENCE_VALUES.includes(person.timeConfidence)) return person.timeConfidence;
+    if (TIME_CONFIDENCE_VALUES.includes(audit.timeConfidence)) return audit.timeConfidence;
     return person.time ? "reported" : "uncertain";
   }
 
   function historicalZoneReliability(person) {
+    const audit = historicalAuditMetadata(person);
     if (ZONE_RELIABILITY_VALUES.includes(person.zoneReliability)) return person.zoneReliability;
+    if (ZONE_RELIABILITY_VALUES.includes(audit.zoneReliability)) return audit.zoneReliability;
     if (person.place?.tz) return "iana";
     if (person.manualOffset) return "historical";
     return "unknown";
@@ -3742,6 +3837,7 @@
   function historicalAuditRecord(person) {
     const natalSource = historicalNatalSource(person);
     const interpretiveReferences = historicalInterpretiveReferences(person);
+    const audit = historicalAuditMetadata(person);
     return {
       id: person.id,
       name: person.name,
@@ -3756,6 +3852,8 @@
       hasRating: Boolean(natalSource.rating),
       hasInterpretiveReference: interpretiveReferences.length > 0,
       interpretiveReferenceCount: interpretiveReferences.length,
+      externalAuditDate: audit.externalAuditDate || "",
+      sourceDateLabel: localizedValue(audit.sourceDateLabel),
     };
   }
 

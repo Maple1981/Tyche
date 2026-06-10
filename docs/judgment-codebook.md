@@ -65,4 +65,9 @@ Modern planets must not appear in base Hellenistic score reason codes.
 - `historical`
 - `unknown`
 
+Historical audit records may also expose:
+
+- `externalAuditDate`: date when the character's external natal-data source was reviewed.
+- `sourceDateLabel`: optional human label when the external source date and the stored chart date need calendar clarification.
+
 Sect sensitivity should rely on these reliability codes, not on whether the chart belongs to a named historical figure.
