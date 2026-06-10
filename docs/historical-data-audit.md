@@ -17,6 +17,8 @@ Every historical example must have:
 
 The presence of date, time, place, and image is not enough to call a record audited.
 
+Natal-data source and interpretive-reference source are separate. A chart can be discussed in a secondary interpretive context without that context becoming the source for its birth time. Audit status must use natal metadata only: natal source label/URL, source type, rating, time-source wording, time confidence, and zone reliability.
+
 ## Normalized Reliability
 
 When a person has no explicit `auditStatus`, Tyche derives display grouping only as:
@@ -42,6 +44,20 @@ sourceType: "birth-record" | "biography" | "rated-database" | "secondary-referen
 sourceUrl: "https://...",
 roddenRating: "AA" | "A" | "B",
 timeSource: { es: "...", en: "..." },
+natalDataSource: {
+  label: { es: "...", en: "..." },
+  url: "https://...",
+  type: "birth-record" | "biography" | "rated-database" | "secondary-reference" | "unknown",
+  roddenRating: "AA" | "A" | "B",
+  timeSource: { es: "...", en: "..." },
+},
+interpretiveReferences: [{
+  label: { es: "...", en: "..." },
+  type: "book" | "podcast" | "course" | "article" | "other",
+  role: "central-example" | "brief-example" | "technical-mention" | "comparative-note",
+  technique: "sect" | "ascendant-lord" | "lots" | "annual-profections" | "zodiacal-releasing" | "other",
+  url: "https://...",
+}],
 ```
 
 Do not use C, DD, X, rectified, speculative, or time-unknown records unless explicitly approved.

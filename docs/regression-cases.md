@@ -4,7 +4,9 @@ This file records technical scenarios that should remain stable when Tyche's cal
 
 `tests/regression.html` is the first browser-executable smoke test page. It does not replace the full checklist below, but it verifies important regressions without a build step: principal lots remain auditable when hidden from the visible lot table, modern planets shown in traditional mode trigger an immediate warning, own bound differs from foreign-bound administration, bound-only reception does not reduce strong malefic pressure, lot testimony items preserve direct lord and sect-role metadata, modern planets do not alter the base focus score, score items expose stable reason codes separate from translated prose, sect/MC/IC boundary notices are emitted with stable codes, sensitive-sect widening depends on time reliability, lunar fallback calculation crosses 0 Aries correctly, and Fortune/Spirit swap correctly when sect is reversed.
 
-`tests/static-contract-tests.js` is the no-browser contract check. It validates static invariants that are easy to break during refactors: vendor script order, exposed `TycheTest` helpers, BCE/calendar documentation, historical reliability normalization, glossary key coverage, score/boundary code documentation, and the presence of the factor/precision/codebook docs.
+`tests/static-contract-tests.js` is the no-browser contract check. It validates static invariants that are easy to break during refactors: vendor script order, exposed `TycheTest` helpers, BCE/calendar documentation, historical reliability normalization, natal-source and interpretive-reference separation, glossary key coverage, score/boundary code documentation, and the presence of the factor/precision/codebook docs.
+
+`tests/browser-regression-runner.js` is an optional local browser runner for the smoke page. It starts a temporary local HTTP server and uses Playwright plus an installed Edge/Chrome executable. The app still has no build step and no runtime dependency on Playwright.
 
 Regression tests should prefer stable hooks over visible prose:
 
@@ -56,6 +58,7 @@ Regression tests should prefer stable hooks over visible prose:
 
 - The Moon's next application should be refined by iterative search when possible, with the linear speed estimate used only as fallback.
 - Future browser tests should include lunar edge cases where iterative search changes the result: retrograde planet application, crossing 0 Aries, perfection after sign exit but within 30 degrees, no perfection within 30 degrees despite a misleading linear estimate, and competing candidates where the earliest real perfection wins.
+- The current smoke test covers the linear fallback for crossing 0 Aries, retrograde application, ordered future candidates, and no contact when relative speed is zero.
 - Void-of-course by the 30-degree Hellenistic rule and void before sign exit must remain separate outputs in the lunar panel and evidence layer.
 - The close no-application-within-orb indicator must remain separate from both void-of-course criteria.
 

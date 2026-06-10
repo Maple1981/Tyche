@@ -28,3 +28,13 @@ The glossary should cover:
 - `Lugar/Casa` or `Lugares/Casas` should remain visible where space allows.
 - Difficult terms such as illness, death, enemies, and loss may appear in technical evidence; the plain reading should contextualize them rather than erase them.
 - Glossary text should explain Tyche's implemented convention when traditions vary.
+
+## Human Audit Checklist
+
+Automated tests only verify that every `data-glossary` key used in HTML has an entry. A content pass should also check:
+
+- The first sentence defines the term plainly.
+- The second sentence, when present, states Tyche's implemented convention or limitation.
+- The Spanish text does not leave avoidable English technical labels except deliberate dual labels such as `Whole Sign Houses`.
+- The English and Spanish entries carry the same doctrine even when they are not literal translations.
+- The entry explains the concept; it does not argue the full judgment. Evidence belongs in the interpretation layer.

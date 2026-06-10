@@ -34,7 +34,7 @@ This matrix aligns calculated data, visible output, and judgment weighting. It i
 
 ## Recognized But Not Weighted
 
-These remain outside the base judgment until implemented as named modules with visible evidence:
+These remain outside the base judgment until implemented as named modules with visible evidence. Implementation boundaries live in `docs/future-techniques-roadmap.md`:
 
 - Master of the Nativity.
 - Spear-bearing.

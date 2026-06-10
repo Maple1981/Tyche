@@ -380,7 +380,7 @@
       chariotMitigationBy: "protección tipo carro por {condition}",
       noChariot: "sin carro",
       natalDataSource: "Fuente de datos natales",
-      brennanReference: "Referencia Brennan",
+      brennanReference: "Referencia interpretativa",
       manualOffsetSource: "diferencia UTC manual",
       historicalOffsetSource: "datos históricos del personaje",
       lmtOffsetSource: "LMT por longitud del lugar",
@@ -737,7 +737,7 @@
       chariotMitigationBy: "chariot-like protection by {condition}",
       noChariot: "no chariot",
       natalDataSource: "Natal data source",
-      brennanReference: "Brennan reference",
+      brennanReference: "Interpretive reference",
       manualOffsetSource: "manual UTC offset",
       historicalOffsetSource: "historical figure data",
       lmtOffsetSource: "LMT by birthplace longitude",
@@ -3662,13 +3662,46 @@
     return value[state.lang] || value.es || value.en || "";
   }
 
+  function historicalNatalSource(person) {
+    const structured = person.natalDataSource || {};
+    return {
+      label: localizedValue(structured.label) || localizedValue(person.dataSource),
+      url: structured.url || person.sourceUrl || "",
+      type: structured.type || person.sourceType || "",
+      rating: structured.roddenRating || person.roddenRating || "",
+      timeSource: localizedValue(structured.timeSource) || localizedValue(person.timeSource),
+    };
+  }
+
+  function historicalInterpretiveReferences(person) {
+    const structured = Array.isArray(person.interpretiveReferences) ? person.interpretiveReferences : [];
+    const legacy = localizedValue(person.brennanReference);
+    return [
+      ...structured.map((reference) => ({
+        label: localizedValue(reference.label),
+        type: reference.type || "",
+        role: reference.role || "",
+        technique: reference.technique || "",
+        url: reference.url || "",
+      })),
+      ...(legacy ? [{
+        label: legacy,
+        type: "secondary-reference",
+        role: "interpretive-example",
+        technique: "",
+        url: "",
+      }] : []),
+    ].filter((reference) => reference.label);
+  }
+
   function historicalDataSourceText(person) {
-    return localizedValue(person.dataSource) || t("dataSourceGeneral");
+    return historicalNatalSource(person).label || t("dataSourceGeneral");
   }
 
   function historicalQualityRows(person) {
-    const roddenText = person.roddenRating || t("dataRoddenPending");
-    const timeText = localizedValue(person.timeSource) || t("dataTimeSourcePrepared");
+    const natalSource = historicalNatalSource(person);
+    const roddenText = natalSource.rating || t("dataRoddenPending");
+    const timeText = natalSource.timeSource || t("dataTimeSourcePrepared");
     const rows = [
       `<dt>${escapeHtml(t("natalDataSource"))}</dt>`,
       `<dd>${escapeHtml(historicalDataSourceText(person))}</dd>`,
@@ -3677,11 +3710,11 @@
       `<dt>${escapeHtml(t("dataTimeSource"))}</dt>`,
       `<dd>${escapeHtml(timeText)}</dd>`,
     ];
-    const brennanReference = localizedValue(person.brennanReference);
-    if (brennanReference) {
+    const interpretiveReferences = historicalInterpretiveReferences(person);
+    if (interpretiveReferences.length) {
       rows.push(
         `<dt>${escapeHtml(t("brennanReference"))}</dt>`,
-        `<dd>${escapeHtml(brennanReference)}</dd>`
+        `<dd>${escapeHtml(interpretiveReferences.map((reference) => reference.label).join("; "))}</dd>`
       );
     }
     return rows.join("");
@@ -3689,7 +3722,8 @@
 
   function personAuditStatus(person) {
     if (person.auditStatus) return person.auditStatus;
-    if (person.roddenRating || person.dataSource || person.timeSource || person.timeConfidence || person.sourceUrl) return "partial";
+    const natalSource = historicalNatalSource(person);
+    if (natalSource.rating || natalSource.label || natalSource.timeSource || natalSource.url || person.timeConfidence) return "partial";
     return "pending";
   }
 
@@ -3706,6 +3740,8 @@
   }
 
   function historicalAuditRecord(person) {
+    const natalSource = historicalNatalSource(person);
+    const interpretiveReferences = historicalInterpretiveReferences(person);
     return {
       id: person.id,
       name: person.name,
@@ -3715,8 +3751,11 @@
       calendar: person.calendar || "gregorian",
       hasIanaZone: Boolean(person.place?.tz),
       hasManualOffset: Boolean(person.manualOffset),
-      hasIndividualSource: Boolean(person.dataSource || person.sourceUrl),
-      hasRating: Boolean(person.roddenRating),
+      hasIndividualSource: Boolean(natalSource.label || natalSource.url),
+      hasNatalSource: Boolean(natalSource.label || natalSource.url),
+      hasRating: Boolean(natalSource.rating),
+      hasInterpretiveReference: interpretiveReferences.length > 0,
+      interpretiveReferenceCount: interpretiveReferences.length,
     };
   }
 
@@ -4412,7 +4451,7 @@
         }
       });
     });
-    return candidates;
+    return candidates.sort((a, b) => direction > 0 ? a.days - b.days : b.days - a.days);
   }
 
   function lunarAspectCandidates(moon, planet, direction = 1, maxMoonTravel = 30, chart = null, planetKey = "") {

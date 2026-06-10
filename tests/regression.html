@@ -44,12 +44,26 @@
     <script>
       const results = document.querySelector("#results");
       const frame = document.querySelector("#appFrame");
+      let resultCount = 0;
+      let failureCount = 0;
 
       function record(label, passed) {
         const item = document.createElement("li");
         item.className = passed ? "pass" : "fail";
         item.textContent = `${passed ? "PASS" : "FAIL"}: ${label}`;
         results.append(item);
+        resultCount += 1;
+        if (!passed) failureCount += 1;
+      }
+
+      function finish() {
+        window.__TYCHE_REGRESSION_DONE__ = {
+          resultCount,
+          failureCount,
+        };
+        window.dispatchEvent(new CustomEvent("tyche:regression-complete", {
+          detail: window.__TYCHE_REGRESSION_DONE__,
+        }));
       }
 
       function waitFor(predicate, label, timeout = 4000) {
@@ -146,6 +160,14 @@
         const chart = testApi.calculateChart({ selectedLots: [] });
         assert("Fortuna y Espiritu se calculan internamente aunque selectedLots este vacio", testApi.lotByKey(chart, "fortune") && testApi.lotByKey(chart, "spirit"));
 
+        let yearZeroRejected = false;
+        try {
+          testApi.calculateChart({ date: "0000-01-01" });
+        } catch {
+          yearZeroRejected = true;
+        }
+        assert("El formulario bloquea ano cero y fechas BCE ambiguas", yearZeroRejected);
+
         const beneficLot = {
           key: "fortune",
           lord: chart.beneficOfSect,
@@ -166,6 +188,7 @@
 
         const historicalAudit = testApi.historicalAuditRecords();
         assert("Los ejemplos historicos tienen auditoria normalizada", historicalAudit.length > 0 && historicalAudit.every((item) => item.auditStatus && item.timeConfidence && item.zoneReliability));
+        assert("Los ejemplos historicos separan fuente natal y referencia interpretativa", historicalAudit.every((item) => "hasNatalSource" in item && "hasInterpretiveReference" in item));
         assert("Los ejemplos sin auditoria explicita no se promocionan a auditados", historicalAudit.some((item) => item.auditStatus === "pending"));
 
         const sectChart = { ...chart, sunAltitude: 0.2 };
@@ -194,6 +217,30 @@
           30,
         ).find((candidate) => candidate.type === "conjunction");
         assert("Metodo lunar lineal cruza 0 Aries sin perder conjuncion", lunarCrossing && lunarCrossing.moonTravel < 3);
+
+        const retrogradeLunarContact = testApi.linearLunarAspectCandidates(
+          { lon: 10, speed: 13 },
+          { lon: 72, speed: -1 },
+          1,
+          30,
+        ).find((candidate) => candidate.type === "sextile");
+        assert("Metodo lunar lineal detecta aplicacion a planeta retrogrado", retrogradeLunarContact && retrogradeLunarContact.days > 0 && retrogradeLunarContact.moonTravel < 3);
+
+        const orderedLunarContacts = testApi.linearLunarAspectCandidates(
+          { lon: 10, speed: 13 },
+          { lon: 75, speed: 0 },
+          1,
+          90,
+        );
+        assert("Metodo lunar lineal ordena candidatos por perfeccion futura", orderedLunarContacts.length > 1 && orderedLunarContacts.every((candidate, index, list) => index === 0 || candidate.days >= list[index - 1].days));
+
+        const noRelativeMoonContact = testApi.linearLunarAspectCandidates(
+          { lon: 10, speed: 13 },
+          { lon: 70, speed: 13 },
+          1,
+          30,
+        );
+        assert("Metodo lunar lineal descarta contactos sin velocidad relativa", noRelativeMoonContact.length === 0);
 
         const mcNextChart = { ...chart, angles: { ...chart.angles, mc: 29.7, ic: 209.7 } };
         const mcNext = testApi.boundaryWarnings(mcNextChart).find((warning) => warning.key === "mc-sign-boundary");
@@ -237,7 +284,9 @@
       }
 
       frame.addEventListener("load", () => {
-        run().catch((error) => record(error.message || String(error), false));
+        run()
+          .catch((error) => record(error.message || String(error), false))
+          .finally(finish);
       });
     </script>
   </body>

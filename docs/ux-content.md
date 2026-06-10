@@ -79,7 +79,13 @@ Use paired labels such as `Lugares/Casas` when a UI element needs both tradition
 
 ## Historical Archive Metadata
 
-Keep natal-data source and interpretive-reference source separate. A future structured historical data model should split any interpretive reference into:
+Keep natal-data source and interpretive-reference source separate. The historical data model treats natal metadata as the only basis for audit status:
+
+- Natal-data source: source label, URL when audited, source type, rating, and time-source wording.
+- Reliability metadata: `auditStatus`, `timeConfidence`, and `zoneReliability`.
+- Interpretive references: secondary notes that a chart was discussed as an example.
+
+Interpretive references should remain structured separately by:
 
 - Type: book, podcast, course, article, or other.
 - Role: central example, brief example, technical mention, or comparative note.

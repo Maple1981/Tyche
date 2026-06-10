@@ -109,6 +109,7 @@ The interface should feel mobile-first, calm, scholarly, and usable:
 - Keep `window.TycheTest` frozen, limited to regression mode, and broad enough to test calculation and judgment helpers without scraping rendered copy.
 - Version `window.TycheTest` with `schemaVersion` whenever its exposed helper names or result shapes become test dependencies.
 - Render boundary notices with stable unique keys/codes such as `sect-boundary`, `mc-sign-boundary`, `lot-boundary:fortune`, and `planet-bound-boundary:mars`.
+- `tests/browser-regression-runner.js` is an optional local smoke runner. It may use Playwright and an installed browser for verification, but Tyche itself must not gain a build step or runtime dependency from it.
 - Hard rule: do not run `git push`, publish, deploy, or update GitHub Pages unless the user explicitly asks for that exact action in the current turn.
 
 ## Historical Examples
@@ -124,4 +125,4 @@ The interface should feel mobile-first, calm, scholarly, and usable:
 - Accepted `timeConfidence` values are `exact`, `rounded-to-minute`, `rounded-to-5-min`, `rounded-to-15-min`, `rounded-to-hour`, `reported`, and `uncertain`. Accepted `zoneReliability` values are `iana`, `manual`, `lmt`, `historical`, and `unknown`.
 - Do not infer `audited` status from the mere presence of source/rating/time strings; require explicit `auditStatus: "audited"`.
 - Keep the natal-data source separate from any note that a chart was discussed in a secondary interpretive source. Do not imply that an example discussion is the source of the birth time unless verified.
-- If interpretive references are structured later, keep fields such as type, role, and technique separate from natal data source, time source, and rating.
+- Prefer `natalDataSource` for audited birth-time metadata and `interpretiveReferences` for secondary chart discussions. Keep interpretive reference fields such as type, role, and technique separate from natal data source, time source, and rating.
