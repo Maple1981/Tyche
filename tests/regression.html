@@ -146,6 +146,28 @@
         const chart = testApi.calculateChart({ selectedLots: [] });
         assert("Fortuna y Espiritu se calculan internamente aunque selectedLots este vacio", testApi.lotByKey(chart, "fortune") && testApi.lotByKey(chart, "spirit"));
 
+        const beneficLot = {
+          key: "fortune",
+          lord: chart.beneficOfSect,
+          lon: chart.positions[chart.beneficOfSect].lon,
+          house: chart.positions[chart.beneficOfSect].house,
+        };
+        const beneficLotItems = testApi.lotTestimonyItems(beneficLot, ["jupiter", "venus"], chart, "support");
+        assert("El testimonio de lotes conserva rol de benefico de secta y senor directo", beneficLotItems.some((item) => item.key === chart.beneficOfSect && item.lotLord === chart.beneficOfSect && item.isBeneficOfSect && item.roleText));
+
+        const contraryLot = {
+          key: "spirit",
+          lord: chart.maleficContrarySect,
+          lon: chart.positions[chart.maleficContrarySect].lon,
+          house: chart.positions[chart.maleficContrarySect].house,
+        };
+        const contraryLotItems = testApi.lotTestimonyItems(contraryLot, ["mars", "saturn"], chart, "tension");
+        assert("El testimonio de lotes conserva rol de malefico contrario y nivel bruto", contraryLotItems.some((item) => item.key === chart.maleficContrarySect && item.lotLord === chart.maleficContrarySect && item.rawLevel && item.level && item.roleText));
+
+        const historicalAudit = testApi.historicalAuditRecords();
+        assert("Los ejemplos historicos tienen auditoria normalizada", historicalAudit.length > 0 && historicalAudit.every((item) => item.auditStatus && item.timeConfidence && item.zoneReliability));
+        assert("Los ejemplos sin auditoria explicita no se promocionan a auditados", historicalAudit.some((item) => item.auditStatus === "pending"));
+
         const sectChart = { ...chart, sunAltitude: 0.2 };
         const sectWarnings = testApi.boundaryWarnings(sectChart);
         assert("Sol cerca del horizonte produce aviso de secta", sectWarnings.some((warning) => warning.key === "sect-boundary"));
@@ -164,6 +186,14 @@
         const fortuneDay = testApi.lotSnapshotForSect("fortune", chart, true);
         const spiritNight = testApi.lotSnapshotForSect("spirit", chart, false);
         assert("Fortuna diurna coincide con Espiritu nocturno al invertir secta", testApi.angleDistance(fortuneDay.lon, spiritNight.lon) < 0.000001);
+
+        const lunarCrossing = testApi.linearLunarAspectCandidates(
+          { lon: 359, speed: 13 },
+          { lon: 1, speed: 0 },
+          1,
+          30,
+        ).find((candidate) => candidate.type === "conjunction");
+        assert("Metodo lunar lineal cruza 0 Aries sin perder conjuncion", lunarCrossing && lunarCrossing.moonTravel < 3);
 
         const mcNextChart = { ...chart, angles: { ...chart.angles, mc: 29.7, ic: 209.7 } };
         const mcNext = testApi.boundaryWarnings(mcNextChart).find((warning) => warning.key === "mc-sign-boundary");
@@ -192,6 +222,7 @@
             reasonCode: item.reasonCode,
           })),
         })));
+        assert("El score mantiene codigos estables separados de la prosa", testApi.scoreChartTopics(strictChart).every((focus) => focus.scoreItems.every((item) => item.reasonCode && item.reasonCode !== item.reason)));
         assert("Modernos mostrados no alteran el score helenistico base", scoreSignature(strictChart) === scoreSignature(modernChart));
         const modernScoreText = JSON.stringify(testApi.scoreChartTopics(modernChart));
         assert("Score helenistico no contiene Urano", !modernScoreText.includes("uranus"));

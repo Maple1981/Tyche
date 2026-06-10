@@ -2,7 +2,9 @@
 
 This file records technical scenarios that should remain stable when Tyche's calculation or judgment layer changes.
 
-`tests/regression.html` is the first browser-executable smoke test page. It does not replace the full checklist below, but it verifies important regressions without a build step: principal lots remain auditable when hidden from the visible lot table, modern planets shown in traditional mode trigger an immediate warning, own bound differs from foreign-bound administration, bound-only reception does not reduce strong malefic pressure, modern planets do not alter the base focus score, sect/MC boundary notices are emitted with stable codes, sensitive-sect widening depends on time reliability, and Fortune/Spirit swap correctly when sect is reversed.
+`tests/regression.html` is the first browser-executable smoke test page. It does not replace the full checklist below, but it verifies important regressions without a build step: principal lots remain auditable when hidden from the visible lot table, modern planets shown in traditional mode trigger an immediate warning, own bound differs from foreign-bound administration, bound-only reception does not reduce strong malefic pressure, lot testimony items preserve direct lord and sect-role metadata, modern planets do not alter the base focus score, score items expose stable reason codes separate from translated prose, sect/MC/IC boundary notices are emitted with stable codes, sensitive-sect widening depends on time reliability, lunar fallback calculation crosses 0 Aries correctly, and Fortune/Spirit swap correctly when sect is reversed.
+
+`tests/static-contract-tests.js` is the no-browser contract check. It validates static invariants that are easy to break during refactors: vendor script order, exposed `TycheTest` helpers, BCE/calendar documentation, historical reliability normalization, glossary key coverage, score/boundary code documentation, and the presence of the factor/precision/codebook docs.
 
 Regression tests should prefer stable hooks over visible prose:
 
@@ -14,6 +16,7 @@ Regression tests should prefer stable hooks over visible prose:
 - Avoid asserting translated copy unless the test is specifically about content.
 - Wait for `window.__TYCHE_READY__` or the `tyche:chart-rendered` event rather than using fixed sleeps.
 - Tests that submit charts should race `tyche:chart-rendered` against `tyche:chart-error`, so validation failures are reported rather than timing out.
+- Static tests should read source contracts, not execute the app or duplicate domain formulas.
 
 ## Boundary Audits
 

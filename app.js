@@ -28,6 +28,7 @@
     selectedPersonName: "",
     selectedPersonAuditStatus: "",
     selectedPersonTimeConfidence: "",
+    selectedPersonZoneReliability: "",
     selectedZoneSource: "",
     placeSuggestions: [],
     placeSearchTimer: 0,
@@ -3651,6 +3652,7 @@
     state.selectedPersonName = "";
     state.selectedPersonAuditStatus = "";
     state.selectedPersonTimeConfidence = "";
+    state.selectedPersonZoneReliability = "";
     state.selectedZoneSource = "";
   }
 
@@ -3689,6 +3691,37 @@
     if (person.auditStatus) return person.auditStatus;
     if (person.roddenRating || person.dataSource || person.timeSource || person.timeConfidence || person.sourceUrl) return "partial";
     return "pending";
+  }
+
+  function historicalTimeConfidence(person) {
+    if (TIME_CONFIDENCE_VALUES.includes(person.timeConfidence)) return person.timeConfidence;
+    return person.time ? "reported" : "uncertain";
+  }
+
+  function historicalZoneReliability(person) {
+    if (ZONE_RELIABILITY_VALUES.includes(person.zoneReliability)) return person.zoneReliability;
+    if (person.place?.tz) return "iana";
+    if (person.manualOffset) return "historical";
+    return "unknown";
+  }
+
+  function historicalAuditRecord(person) {
+    return {
+      id: person.id,
+      name: person.name,
+      auditStatus: personAuditStatus(person),
+      timeConfidence: historicalTimeConfidence(person),
+      zoneReliability: historicalZoneReliability(person),
+      calendar: person.calendar || "gregorian",
+      hasIanaZone: Boolean(person.place?.tz),
+      hasManualOffset: Boolean(person.manualOffset),
+      hasIndividualSource: Boolean(person.dataSource || person.sourceUrl),
+      hasRating: Boolean(person.roddenRating),
+    };
+  }
+
+  function historicalAuditRecords() {
+    return HISTORICAL_PEOPLE.map(historicalAuditRecord);
   }
 
   function hasAuditedNatalData(person) {
@@ -3767,7 +3800,8 @@
     state.selectedCity = person.place;
     state.selectedPersonName = person.name;
     state.selectedPersonAuditStatus = personAuditStatus(person);
-    state.selectedPersonTimeConfidence = person.timeConfidence || "";
+    state.selectedPersonTimeConfidence = historicalTimeConfidence(person);
+    state.selectedPersonZoneReliability = historicalZoneReliability(person);
     state.selectedZoneSource = t("historicalOffsetSource");
     state.activeCityKey = cityKey(person.place);
     $("#birthDate").value = person.date;
@@ -4359,9 +4393,7 @@
       });
   }
 
-  function lunarAspectCandidates(moon, planet, direction = 1, maxMoonTravel = 30, chart = null, planetKey = "") {
-    const iterative = lunarAspectCandidatesIterative(planetKey, direction, maxMoonTravel, chart);
-    if (iterative?.length) return iterative;
+  function linearLunarAspectCandidates(moon, planet, direction = 1, maxMoonTravel = 30) {
     const initialDelta = norm360(planet.lon - moon.lon);
     const relativeSpeed = planet.speed - moon.speed;
     if (Math.abs(relativeSpeed) < 0.0001 || Math.abs(moon.speed) < 0.0001) return [];
@@ -4381,6 +4413,12 @@
       });
     });
     return candidates;
+  }
+
+  function lunarAspectCandidates(moon, planet, direction = 1, maxMoonTravel = 30, chart = null, planetKey = "") {
+    const iterative = lunarAspectCandidatesIterative(planetKey, direction, maxMoonTravel, chart);
+    if (iterative?.length) return iterative;
+    return linearLunarAspectCandidates(moon, planet, direction, maxMoonTravel);
   }
 
   function lunarContactLabel(contact, motionKey = "") {
@@ -4731,7 +4769,7 @@
     const latitude = latField !== "" ? Number(latField) : city?.lat;
     const longitude = lonField !== "" ? Number(lonField) : city?.lon;
     const timeZone = $("#timeZone").value.trim() || city?.tz || "";
-    const zoneReliability = timeZone ? "iana" : state.selectedZoneSource ? "historical" : "manual";
+    const zoneReliability = state.selectedPersonZoneReliability || (timeZone ? "iana" : state.selectedZoneSource ? "historical" : "manual");
     const techniqueMode = $("#techniqueMode").value;
     const includeModern = $("#includeModern").checked || techniqueMode === "mixed";
     const selectedLots = $$('input[name="lots"]:checked').map((item) => item.value);
@@ -6977,6 +7015,7 @@
       sectBoundaryThresholdInfo,
       sectSensitivityState,
       timeContextSensitivity,
+      historicalAuditRecords,
       lotSnapshotForSect,
       renderBoundaryAudit,
       dignityFor,
@@ -7001,6 +7040,8 @@
       houseFromSign,
       boundLordFor,
       solarPhaseState,
+      linearLunarAspectCandidates,
+      lunarAspectCandidatesIterative,
       lunarAspectCandidates,
       VISIBLE_KEYS: [...VISIBLE_KEYS],
     });
