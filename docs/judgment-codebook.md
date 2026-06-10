@@ -4,7 +4,7 @@ This file records stable internal codes used for tests, audit trails, and docume
 
 ## Test API
 
-- `TycheTest.schemaVersion`: current regression helper schema. Increment when exposed helper names or result shapes change.
+- `TycheTest.schemaVersion`: current regression helper schema. Current value: `2`. Increment when exposed helper names or result shapes change.
 - `TycheTest` is installed only when the URL contains `?test=regression`.
 
 ## Boundary Codes
@@ -50,13 +50,13 @@ Modern planets must not appear in base Hellenistic score reason codes.
 
 `timeConfidence`:
 
-- `exact`
-- `rounded-to-minute`
-- `rounded-to-5-min`
-- `rounded-to-15-min`
-- `rounded-to-hour`
-- `reported`
-- `uncertain`
+- `exact`: documentary or audited exact clock time; does not widen the sect threshold by itself.
+- `rounded-to-minute`: minute-level clock time that may still be rounded or copied from a secondary presentation.
+- `rounded-to-5-min`: rounded to a five-minute mark.
+- `rounded-to-15-min`: rounded to a quarter-hour mark.
+- `rounded-to-hour`: rounded to the hour.
+- `reported`: exact-looking time from memory, biography, or otherwise non-documentary report; useful, but treated as sensitive near the horizon.
+- `uncertain`: insufficient confidence for time-sensitive judgment.
 
 `zoneReliability`:
 

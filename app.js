@@ -7,7 +7,7 @@
   const GEOCODING_ENDPOINT = "https://geocoding-api.open-meteo.com/v1/search";
   const PLACE_SEARCH_DELAY = 260;
   const PLACE_RESULT_LIMIT = 8;
-  const TYCHE_TEST_SCHEMA_VERSION = 1;
+  const TYCHE_TEST_SCHEMA_VERSION = 2;
   const TIME_CONFIDENCE_VALUES = Object.freeze([
     "exact",
     "rounded-to-minute",
@@ -196,6 +196,9 @@
       mainLotsAuditTitle: "Lotes principales usados en juicio",
       lotTableDisplayNote: "La tabla de lotes muestra solo los lotes seleccionados.",
       scoreBreakdownCaution: "Estos puntos no son una medida absoluta: solo ordenan testimonios tradicionales para explicar por qué Tyche prioriza ciertos Lugares/Casas.",
+      evidenceFocusSection: "Focos y score",
+      evidenceLotsSection: "Lotes principales",
+      evidenceGeneralSection: "Condiciones y avisos",
       highLevel: "alta",
       mediumLevel: "media",
       lowLevel: "baja",
@@ -250,8 +253,11 @@
       sensitiveManualOffset: "diferencia UTC manual o histórica",
       sensitiveNoIana: "sin zona IANA clara",
       alternateSectLotsTitle: "Lotes alternativos si cambia la secta",
+      alternateSectRolesTitle: "Roles alternativos si cambia la secta",
       lotUsedByTyche: "Usado por Tyche",
       lotIfSectReversed: "Si la secta se invierte",
+      sectRolesUsedByTyche: "Roles usados por Tyche",
+      sectRolesIfReversed: "Roles si se invierte la secta",
       dayFormulaLabel: "fórmula diurna",
       nightFormulaLabel: "fórmula nocturna",
       lotAuditPosition: "Posición",
@@ -554,6 +560,9 @@
       mainLotsAuditTitle: "Principal lots used in judgment",
       lotTableDisplayNote: "The lot table displays only the selected lots.",
       scoreBreakdownCaution: "These points are not an absolute measure: they only organize traditional testimonies to explain why Tyche prioritizes certain Places/Houses.",
+      evidenceFocusSection: "Focuses and score",
+      evidenceLotsSection: "Principal lots",
+      evidenceGeneralSection: "Conditions and notices",
       highLevel: "high",
       mediumLevel: "medium",
       lowLevel: "low",
@@ -608,8 +617,11 @@
       sensitiveManualOffset: "manual or historical UTC offset",
       sensitiveNoIana: "no clear IANA zone",
       alternateSectLotsTitle: "Alternative lots if sect changes",
+      alternateSectRolesTitle: "Alternative roles if sect changes",
       lotUsedByTyche: "Used by Tyche",
       lotIfSectReversed: "If sect reverses",
+      sectRolesUsedByTyche: "Roles used by Tyche",
+      sectRolesIfReversed: "Roles if sect reverses",
       dayFormulaLabel: "day formula",
       nightFormulaLabel: "night formula",
       lotAuditPosition: "Position",
@@ -3813,8 +3825,6 @@
   function personAuditStatus(person) {
     const audit = historicalAuditMetadata(person);
     if (person.auditStatus || audit.auditStatus) return person.auditStatus || audit.auditStatus;
-    const natalSource = historicalNatalSource(person);
-    if (natalSource.rating || natalSource.label || natalSource.timeSource || natalSource.url || person.timeConfidence) return "partial";
     return "pending";
   }
 
@@ -4807,8 +4817,28 @@
     return `${formatDegree(snapshot.lon)} · ${t("tableHouse")} ${snapshot.house} · ${snapshot.formulaLabel}: ${snapshot.formula}`;
   }
 
+  function sectRoleSnapshot(isDay) {
+    return {
+      sectLight: isDay ? "sun" : "moon",
+      beneficOfSect: isDay ? "jupiter" : "venus",
+      maleficOfSect: isDay ? "saturn" : "mars",
+      maleficContrarySect: isDay ? "mars" : "saturn",
+    };
+  }
+
+  function sectRoleSnapshotText(snapshot) {
+    return [
+      `${t("sectLight")}: ${planetLabel(snapshot.sectLight)}`,
+      `${t("beneficSect")}: ${planetLabel(snapshot.beneficOfSect)}`,
+      `${t("maleficSect")}: ${planetLabel(snapshot.maleficOfSect)}`,
+      `${t("maleficContrarySect")}: ${planetLabel(snapshot.maleficContrarySect)}`,
+    ].join(" · ");
+  }
+
   function renderAlternateSectLots(chart) {
     if (sectSensitivityState(chart) === "stable") return "";
+    const currentRoles = sectRoleSnapshot(chart.isDay);
+    const alternateRoles = sectRoleSnapshot(!chart.isDay);
     const rows = ["fortune", "spirit"].map((key) => {
       const current = lotSnapshotForSect(key, chart, chart.isDay);
       const alternate = lotSnapshotForSect(key, chart, !chart.isDay);
@@ -4823,6 +4853,10 @@
     return `
       <section class="alternate-sect-lots" data-test="alternate-sect-lots">
         <h4>${escapeHtml(t("alternateSectLotsTitle"))}</h4>
+        <div class="alternate-sect-roles" data-test="alternate-sect-roles">
+          <p><b>${escapeHtml(t("sectRolesUsedByTyche"))}</b>: ${escapeHtml(sectRoleSnapshotText(currentRoles))}</p>
+          <p><b>${escapeHtml(t("sectRolesIfReversed"))}</b>: ${escapeHtml(sectRoleSnapshotText(alternateRoles))}</p>
+        </div>
         <ul>${rows}</ul>
       </section>
     `;
@@ -6663,24 +6697,30 @@
           : solarPhaseTableText(lot.lord, chart);
         const beneficTestimony = lotTestimonyText(lotTestimonyItems(lot, ["jupiter", "venus"], chart, "support"), "support", lot);
         const maleficPressure = lotTestimonyText(lotTestimonyItems(lot, ["mars", "saturn"], chart, "tension"), "tension", lot);
-        const lordText = [
-          planetLabel(lot.lord),
-          `${t("tableHouse")} ${lord?.house || "—"}`,
-          lord?.angularity ? t(lord.angularity) : "—",
-          plainDignityText(lord?.dignities || [], chart),
-          lordSolar,
-        ].filter(Boolean).join(" · ");
+        const lordLabel = planetLabel(lot.lord);
         return `
           <li data-test="main-lot-${escapeHtml(lot.key)}">
             <strong>${escapeHtml(lotName(lot.key))}</strong>
-            <div class="lot-audit-lines">
-              <p><b>${escapeHtml(t("lotAuditPosition"))}</b>: ${escapeHtml(formatDegree(lot.lon))} · ${escapeHtml(t("tableHouse"))} ${escapeHtml(String(lot.house))}</p>
-              <p><b>${escapeHtml(t("lotAuditLord"))}</b>: ${escapeHtml(lordText)}</p>
-              <p><b>${escapeHtml(t("lotAuditLordRole"))}</b>: ${escapeHtml(lotLordRoleText(lot, chart))}</p>
-              <p><b>${escapeHtml(t("lotAuditFormula"))}</b>: ${escapeHtml(lotFormulaText(lot.key, chart.isDay))}</p>
-              <p><b>${escapeHtml(t("lotAuditTestimonies"))}</b>: ${escapeHtml(beneficTestimony)}</p>
-              <p><b>${escapeHtml(t("lotAuditPressures"))}</b>: ${escapeHtml(maleficPressure)}</p>
-            </div>
+            <dl class="lot-audit-lines">
+              <dt>${escapeHtml(t("lotAuditPosition"))}</dt>
+              <dd>${escapeHtml(formatDegree(lot.lon))} · ${escapeHtml(t("tableHouse"))} ${escapeHtml(String(lot.house))}</dd>
+              <dt>${escapeHtml(t("lotAuditLord"))}</dt>
+              <dd>${escapeHtml(lordLabel)} · ${escapeHtml(t("tableHouse"))} ${escapeHtml(String(lord?.house || "—"))}</dd>
+              <dt>${escapeHtml(t("lotAuditLordRole"))}</dt>
+              <dd class="lot-audit-role">${escapeHtml(lotLordRoleText(lot, chart))}</dd>
+              <dt>${escapeHtml(t("lotAuditLordCondition"))}</dt>
+              <dd>${escapeHtml(plainDignityText(lord?.dignities || [], chart))}</dd>
+              <dt>${escapeHtml(t("lotAuditLordAngularity"))}</dt>
+              <dd>${escapeHtml(lord?.angularity ? t(lord.angularity) : "—")}</dd>
+              <dt>${escapeHtml(t("lotAuditLordSolarPhase"))}</dt>
+              <dd>${escapeHtml(lordSolar)}</dd>
+              <dt>${escapeHtml(t("lotAuditFormula"))}</dt>
+              <dd>${escapeHtml(lotFormulaText(lot.key, chart.isDay))}</dd>
+              <dt>${escapeHtml(t("lotAuditBeneficTestimony"))}</dt>
+              <dd>${escapeHtml(beneficTestimony)}</dd>
+              <dt>${escapeHtml(t("lotAuditMaleficPressure"))}</dt>
+              <dd>${escapeHtml(maleficPressure)}</dd>
+            </dl>
           </li>
         `;
       });
@@ -6744,11 +6784,20 @@
       </div>
       <details class="interpretation-evidence">
         <summary>${escapeHtml(t("interpretationEvidence"))}</summary>
-        ${renderScoreBreakdown(interpretation.scoreBreakdown)}
-        ${renderMainLotsAudit(chart)}
-        <ol>
-          ${interpretation.evidence.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
-        </ol>
+        <section class="evidence-section" data-test="evidence-score">
+          <h5>${escapeHtml(t("evidenceFocusSection"))}</h5>
+          ${renderScoreBreakdown(interpretation.scoreBreakdown)}
+        </section>
+        <section class="evidence-section" data-test="evidence-main-lots">
+          <h5>${escapeHtml(t("evidenceLotsSection"))}</h5>
+          ${renderMainLotsAudit(chart)}
+        </section>
+        <section class="evidence-section" data-test="evidence-general">
+          <h5>${escapeHtml(t("evidenceGeneralSection"))}</h5>
+          <ol>
+            ${interpretation.evidence.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+          </ol>
+        </section>
       </details>
       <p class="text-note interpretation-timing"><strong>${escapeHtml(t("interpretationTimingNote"))}:</strong> ${escapeHtml(t("interpretationTimingText"))}</p>
     `;
@@ -7214,6 +7263,7 @@
       historicalAuditRecords,
       lotSnapshotForSect,
       renderBoundaryAudit,
+      renderAlternateSectLots,
       dignityFor,
       dignityGroups,
       receptionBetween,

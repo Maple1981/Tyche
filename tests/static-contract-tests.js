@@ -34,8 +34,9 @@ const glossaryKeys = [...index.matchAll(/data-glossary="([^"]+)"/g)].map((match)
 const uniqueGlossaryKeys = [...new Set(glossaryKeys)];
 
 assert("index loads Astronomy Engine before app.js", index.indexOf("assets/vendor/astronomy.browser.min.js") < index.indexOf("app.js"));
-assert("TycheTest schema version exists", app.includes("const TYCHE_TEST_SCHEMA_VERSION = 1"));
+assert("TycheTest schema version exists", app.includes("const TYCHE_TEST_SCHEMA_VERSION = 2"));
 assert("TycheTest exposes schemaVersion", app.includes("schemaVersion: TYCHE_TEST_SCHEMA_VERSION"));
+assert("TycheTest exposes alternate sect renderer", app.includes("renderAlternateSectLots"));
 assert("TycheTest exposes historical audit records", app.includes("historicalAuditRecords"));
 assert("TycheTest exposes angular distance helper", app.includes("angleDistance"));
 assert("TycheTest exposes linear lunar helper", app.includes("linearLunarAspectCandidates"));
@@ -53,6 +54,7 @@ assert("Score items carry reasonCode", app.includes("reasonCode: reasonCode || c
 assert("10th-house ruler contributes a public focus signal", app.includes("tenth-ruler:"));
 assert("Focus evidence uses house rulers", app.includes("function focusRulerEvidence") && app.includes("An empty house remains active through its ruler"));
 assert("Mercury solar phase qualifier is explicit", app.includes("function mercuryPhaseQualifier") && app.includes("common and variable nature"));
+assert("Technical evidence sections have stable hooks", app.includes('data-test="evidence-score"') && app.includes('data-test="evidence-main-lots"') && app.includes('data-test="evidence-general"'));
 
 assert("Historical archive has substantial example coverage", personCount >= 35);
 assert("Historical archive is fully externally audited", personCount === auditIds.length && historicalIds.every((id) => auditIds.includes(id)));
@@ -62,12 +64,14 @@ assert("Historical zone reliability is normalized", app.includes("function histo
 assert("Historical natal source is separated from interpretive references", app.includes("function historicalNatalSource") && app.includes("function historicalInterpretiveReferences"));
 assert("Historical audited status is explicit-only", !app.includes("person.roddenRating && person.dataSource && person.timeSource"));
 const personAuditStatusBlock = sectionBetween(app, "function personAuditStatus(person)", "function historicalTimeConfidence");
-assert("Audit status uses normalized natal source", personAuditStatusBlock.includes("historicalNatalSource(person)"));
+assert("Audit status does not infer status from normalized natal source", !personAuditStatusBlock.includes("historicalNatalSource(person)"));
 assert("Audit status uses external audit metadata", personAuditStatusBlock.includes("audit.auditStatus"));
+assert("Missing explicit historical audit status stays pending", personAuditStatusBlock.includes('return "pending"') && !personAuditStatusBlock.includes('return "partial"'));
 assert("Interpretive references do not drive audit status", !personAuditStatusBlock.includes("brennanReference") && !personAuditStatusBlock.includes("interpretiveReferences"));
 assert("Historical audit records expose source separation", app.includes("hasNatalSource") && app.includes("hasInterpretiveReference") && app.includes("externalAuditDate"));
 
 assert("Judgment codebook documents reasonCode", read("docs/judgment-codebook.md").includes("Score Reason Codes"));
+assert("Judgment codebook documents timeConfidence meanings", read("docs/judgment-codebook.md").includes("reported") && read("docs/judgment-codebook.md").includes("sensitive near the horizon"));
 assert("Judgment factor matrix exists", read("docs/judgment-factor-matrix.md").includes("Judgment Factor Matrix"));
 assert("Transcript-derived interpretation refinements are documented", read("docs/public-transcript-synthesis.md").includes("10th-place ruler") && read("docs/judgment-factor-matrix.md").includes("Mercury morning/evening phase"));
 assert("Precision limits doc exists", read("docs/precision-limits.md").includes("Precision and Reliability Limits"));

@@ -168,7 +168,7 @@ Fortune and Spirit are principal judgment lots. Tyche calculates them internally
 
 The standard rule reverses the luminaries by day and night. A small number of near-horizon charts may be discussed with a diurnal lot calculation when the Sun is just below the Ascendant and the example is explicitly framed that way. Tyche should not silently switch formulas for ordinary charts; if that exception is ever implemented, it should be visible as a technical option or a clearly labeled historical-example override.
 
-When sect is liminal or sensitive, Tyche should show the Fortune and Spirit positions used by the current technical sect and the alternate positions that would result if sect were reversed. In many charts this effectively swaps the two principal lots, so the difference belongs near the main technical summary rather than only in a generic warning.
+When sect is liminal or sensitive, Tyche should show the sect roles and the Fortune/Spirit positions used by the current technical sect, plus the alternate roles and lot positions that would result if sect were reversed. The role change affects sect light, benefic of sect, malefic of sect, malefic contrary to sect, Fortune/Spirit formulas, triplicity emphasis, and judgment confidence.
 
 If a benefic or malefic is itself the domicile lord of Fortune or Spirit, that direct administration should be surfaced separately from ordinary testimony by configuration. For example, "Jupiter administers Fortune and is the benefic of sect" is a stronger structural statement than a generic benefic contact.
 

@@ -2,7 +2,7 @@
 
 This file records technical scenarios that should remain stable when Tyche's calculation or judgment layer changes.
 
-`tests/regression.html` is the first browser-executable smoke test page. It does not replace the full checklist below, but it verifies important regressions without a build step: principal lots remain auditable when hidden from the visible lot table, modern planets shown in traditional mode trigger an immediate warning, own bound differs from foreign-bound administration, bound-only reception does not reduce strong malefic pressure, lot testimony items preserve direct lord and sect-role metadata, the 10th-place ruler contributes a stable public-focus reason code, focus evidence shows house rulers rather than treating empty places as inactive, modern planets do not alter the base focus score, score items expose stable reason codes separate from translated prose, sect/MC/IC boundary notices are emitted with stable codes, sensitive-sect widening depends on time reliability, lunar fallback calculation crosses 0 Aries correctly, Fortune/Spirit swap correctly when sect is reversed, and every current historical example exposes audited natal-source metadata.
+`tests/regression.html` is the first browser-executable smoke test page. It does not replace the full checklist below, but it verifies important regressions without a build step: principal lots remain auditable when hidden from the visible lot table, modern planets shown in traditional mode trigger an immediate warning, own bound differs from foreign-bound administration, bound-only reception does not reduce strong malefic pressure, lot testimony items preserve direct lord and sect-role metadata, the 10th-place ruler contributes a stable public-focus reason code, focus evidence shows house rulers rather than treating empty places as inactive, modern planets do not alter the base focus score, score items expose stable reason codes separate from translated prose, sect/MC/IC boundary notices are emitted with stable codes, sensitive-sect widening depends on time reliability, sensitive sect shows alternate benefic/malefic roles as well as alternate lots, lunar fallback calculation crosses 0 Aries correctly, iterative lunar search emits refined contacts for a complete chart, Fortune/Spirit swap correctly when sect is reversed, and every current historical example exposes audited natal-source metadata.
 
 `tests/static-contract-tests.js` is the no-browser contract check. It validates static invariants that are easy to break during refactors: vendor script order, exposed `TycheTest` helpers, BCE/calendar documentation, historical reliability normalization, complete `HISTORICAL_PEOPLE` to `HISTORICAL_AUDIT_ROWS` coverage, natal-source and interpretive-reference separation, glossary key coverage, score/boundary code documentation, and the presence of the factor/precision/codebook docs.
 
@@ -18,6 +18,7 @@ Regression tests should prefer stable hooks over visible prose:
 - Avoid asserting translated copy unless the test is specifically about content.
 - Wait for `window.__TYCHE_READY__` or the `tyche:chart-rendered` event rather than using fixed sleeps.
 - Tests that submit charts should race `tyche:chart-rendered` against `tyche:chart-error`, so validation failures are reported rather than timing out.
+- `TycheTest.calculateChart()` throws direct exceptions for calculation-layer tests; form submission catches errors and emits `tyche:chart-error`.
 - Static tests should read source contracts, not execute the app or duplicate domain formulas.
 
 ## Boundary Audits
@@ -58,7 +59,7 @@ Regression tests should prefer stable hooks over visible prose:
 
 - The Moon's next application should be refined by iterative search when possible, with the linear speed estimate used only as fallback.
 - Future browser tests should include lunar edge cases where iterative search changes the result: retrograde planet application, crossing 0 Aries, perfection after sign exit but within 30 degrees, no perfection within 30 degrees despite a misleading linear estimate, and competing candidates where the earliest real perfection wins.
-- The current smoke test covers the linear fallback for crossing 0 Aries, retrograde application, ordered future candidates, and no contact when relative speed is zero.
+- The current smoke test covers the linear fallback for crossing 0 Aries, retrograde application, ordered future candidates, perfection after sign exit but within 30 degrees, no contact when relative speed is zero, and at least one iterative contact from a complete calculated chart.
 - Void-of-course by the 30-degree Hellenistic rule and void before sign exit must remain separate outputs in the lunar panel and evidence layer.
 - The close no-application-within-orb indicator must remain separate from both void-of-course criteria.
 

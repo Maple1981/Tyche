@@ -23,14 +23,13 @@ Natal-data source and interpretive-reference source are separate. A chart can be
 
 ## Normalized Reliability
 
-When a person has no explicit `auditStatus` through either direct person metadata or `HISTORICAL_AUDIT_ROWS`, Tyche derives display grouping only as:
+When a person has no explicit `auditStatus` through either direct person metadata or `HISTORICAL_AUDIT_ROWS`, Tyche treats the record as:
 
-- `partial` if source/rating/time-source metadata exists but is incomplete.
-- `pending` if no individual audit metadata exists.
+- `pending`.
 
-It does not infer `audited` from ordinary strings. Explicit audited metadata is required. For the current archive, `HISTORICAL_AUDIT_ROWS` supplies `auditStatus: "audited"` through normalized metadata; future additions must add an audit row before the static contract test passes.
+It does not infer `partial` or `audited` from ordinary source strings. Explicit audited or partial metadata is required. For the current archive, `HISTORICAL_AUDIT_ROWS` supplies `auditStatus: "audited"` through normalized metadata; future additions must add an audit row before the static contract test passes.
 
-When a person has no explicit `timeConfidence`, Tyche treats the time as `reported` rather than `exact`. This reflects that the app has a clock time but has not necessarily reviewed the individual source.
+When a person has no explicit `timeConfidence`, Tyche treats the time as `reported` rather than `exact`. This reflects that the app has a clock time but has not necessarily reviewed the individual source. `reported` is deliberately conservative near the horizon; only `exact` avoids widening the sect-sensitivity threshold by itself.
 
 When a person has no IANA zone but has a manual offset, Tyche treats the zone as `historical`. This makes sect-boundary warnings more cautious.
 

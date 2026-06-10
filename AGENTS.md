@@ -36,7 +36,7 @@ Core derived data:
 - Boundary audits should include the Sun near the horizon for sect sensitivity, MC/IC near sign changes, Ascendant near sign changes, lot sign/house boundaries, and visible planets near Egyptian-bound boundaries.
 - When a widened sect boundary threshold is used for historical/manual/Julian/uncertain time contexts, show the threshold and reason; do not hide it inside generic warning text.
 - Separate sect states clearly: liminal within 1 degree of the horizon, sensitive between 1 and about 2.5 degrees only when time context justifies the widened threshold, and stable outside those thresholds.
-- If sect is liminal or sensitive, show Fortune and Spirit as calculated by the current technical sect and also their alternate positions if sect were reversed.
+- If sect is liminal or sensitive, show current and alternate sect roles (sect light, benefic/malefic of sect, malefic contrary to sect) and Fortune/Spirit positions if sect were reversed.
 - Fortune and Spirit are always calculated internally for judgment even when the lot table hides them; lot checkboxes control display, not whether the principal lots exist for interpretation.
 
 This app uses vendored Astronomy Engine for browser-side ephemerides, with the older compact formulas kept only as fallback. Make the approximate +/-1 arcminute limitation visible in the UI and documentation; do not present the results as professional ephemeris-grade.

@@ -1059,6 +1059,23 @@ td {
   margin-top: 6px;
 }
 
+.evidence-section {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  border-top: 1px dotted color-mix(in srgb, var(--blue) 36%, var(--line));
+  padding-top: 10px;
+}
+
+.evidence-section > h5 {
+  margin: 0;
+  color: var(--blue-deep);
+  font-size: 0.86rem;
+  font-variant: small-caps;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0;
+}
+
 .score-breakdown {
   display: grid;
   gap: 9px;
@@ -1135,6 +1152,11 @@ td {
   color: var(--muted);
 }
 
+.main-lots-audit ul {
+  padding-left: 0;
+  list-style: none;
+}
+
 .main-lots-audit h5 {
   margin: 0;
   color: var(--blue-deep);
@@ -1146,7 +1168,11 @@ td {
 
 .main-lots-audit li {
   display: grid;
-  gap: 2px;
+  gap: 7px;
+  border: 1px solid color-mix(in srgb, var(--blue) 24%, var(--line));
+  border-radius: 6px;
+  padding: 9px 10px;
+  background: color-mix(in srgb, var(--paper) 84%, transparent);
 }
 
 .main-lots-audit p {
@@ -1156,16 +1182,30 @@ td {
 
 .lot-audit-lines {
   display: grid;
-  gap: 3px;
+  grid-template-columns: minmax(8.5rem, 0.7fr) minmax(0, 1.6fr);
+  gap: 5px 10px;
   margin-top: 4px;
   color: var(--ink);
 }
 
-.lot-audit-lines b {
+.lot-audit-lines dt {
   color: var(--blue-deep);
+  font-size: 0.78rem;
+  font-weight: 700;
   font-variant: small-caps;
   font-variant-caps: all-small-caps;
   letter-spacing: 0;
+}
+
+.lot-audit-lines dd {
+  margin: 0;
+  min-width: 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.lot-audit-role {
+  font-weight: 700;
 }
 
 .alternate-sect-lots {
@@ -1183,6 +1223,23 @@ td {
   font-variant: small-caps;
   font-variant-caps: all-small-caps;
   letter-spacing: 0;
+}
+
+.alternate-sect-roles {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 8px;
+  color: var(--ink);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.alternate-sect-roles p {
+  margin: 0;
+}
+
+.alternate-sect-roles b {
+  color: var(--blue-deep);
 }
 
 .alternate-sect-lots ul {
@@ -1636,6 +1693,14 @@ body.night .person-card button {
   .person-card img {
     width: 78px;
     height: 98px;
+  }
+
+  .lot-audit-lines {
+    grid-template-columns: 1fr;
+  }
+
+  .lot-audit-lines dt {
+    margin-top: 4px;
   }
 
   .chart-wheel {

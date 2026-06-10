@@ -114,7 +114,7 @@
         const $$ = (selector) => Array.from(doc.querySelectorAll(selector));
         const testApi = win.TycheTest;
         assert("TycheTest queda congelado en modo regresion", Object.isFrozen(testApi));
-        assert("TycheTest expone version de esquema esperada", testApi.schemaVersion === 1);
+        assert("TycheTest expone version de esquema esperada", testApi.schemaVersion === 2);
 
         $("#birthDate").value = "1980-01-01";
         $("#birthTime").value = "12:00";
@@ -133,6 +133,7 @@
         await chartRendered;
 
         assert("Fortuna y Espiritu siguen auditables aunque se oculten en la tabla", $("[data-test='main-lots-audit']") && $("[data-test='main-lot-fortune']") && $("[data-test='main-lot-spirit']"));
+        assert("La base tecnica queda subdividida en score, lotes y evidencias", $("[data-test='evidence-score']") && $("[data-test='evidence-main-lots']") && $("[data-test='evidence-general']"));
 
         $("#techniqueMode").value = "strict";
         $("#includeModern").checked = true;
@@ -210,6 +211,8 @@
         };
         assert("Secta entre 1 y 2,5 grados solo es sensible con contexto temporal sensible", testApi.sectSensitivityState(sensitiveSectChart) === "sensitive");
         assert("Contexto IANA exacto no amplia secta fuera de 1 grado", testApi.sectSensitivityState({ ...chart, sunAltitude: 1.8 }) === "stable");
+        const alternateSectHtml = testApi.renderAlternateSectLots(sensitiveSectChart);
+        assert("Secta sensible muestra roles alternativos de benefico y malefico", alternateSectHtml.includes('data-test="alternate-sect-roles"') && alternateSectHtml.includes("Saturno") && alternateSectHtml.includes("Marte"));
 
         const fortuneDay = testApi.lotSnapshotForSect("fortune", chart, true);
         const spiritNight = testApi.lotSnapshotForSect("spirit", chart, false);
@@ -246,6 +249,19 @@
           30,
         );
         assert("Metodo lunar lineal descarta contactos sin velocidad relativa", noRelativeMoonContact.length === 0);
+
+        const afterSignExitContact = testApi.linearLunarAspectCandidates(
+          { lon: 29, speed: 13 },
+          { lon: 91, speed: 0 },
+          1,
+          30,
+        ).find((candidate) => candidate.type === "sextile");
+        assert("Metodo lunar distingue perfeccion tras salir del signo pero dentro de 30 grados", afterSignExitContact && afterSignExitContact.moonTravel > 1 && afterSignExitContact.moonTravel < 30);
+
+        const iterativeContact = testApi.VISIBLE_KEYS
+          .filter((key) => key !== "moon" && key !== "sun")
+          .flatMap((key) => testApi.lunarAspectCandidates(chart.positions.moon, chart.positions[key], 1, 30, chart, key));
+        assert("Metodo lunar iterativo produce contactos refinados cuando hay carta completa", iterativeContact.some((candidate) => candidate.method === "iterative"));
 
         const mcNextChart = { ...chart, angles: { ...chart.angles, mc: 29.7, ic: 209.7 } };
         const mcNext = testApi.boundaryWarnings(mcNextChart).find((warning) => warning.key === "mc-sign-boundary");
