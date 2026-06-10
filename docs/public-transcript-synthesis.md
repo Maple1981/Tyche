@@ -21,6 +21,7 @@ The priority transcripts support these implementation changes:
 - Add reception as a named mitigation layer when configured planets receive one another by dignity. Reception can soften a malefic testimony or strengthen a benefic testimony, but it should remain visible in the evidence.
 - Treat copresence as intensified cohabitation rather than a fixed benefic or malefic aspect; its value comes from the planets involved and their condition.
 - Keep solar phase as a visibility/autonomy modifier: under beams, combustion, and in the heart should modify a planet's testimony without erasing house, dignity, or sect.
+- Reduce the availability of benefic support when the benefic is combust or under the beams without chariot protection.
 - Show exact solar distance for under-the-beams, combust, and in-the-heart states, and show chariot mitigation when relevant.
 - Treat Fortune and Spirit as principal lots whose lords must be read, not just their house positions.
 - Show individual lot formulas in the lots table, because lot traditions can vary and the selected formula should be auditable.
@@ -98,6 +99,8 @@ Increase pressure when:
 - There is little compensating dignity, reception, or benefic support.
 
 Reception is a distinct mitigating factor. Tyche now implements a basic visible reception layer for configured main significators, because a difficult planet acting in a sign ruled by the significator, or a significator receiving the planet that pressures it, changes the quality of the contact. Future refinements can add applying/separating status, mutual reception emphasis, and more granular handling of debilitated receiving planets.
+
+Do not treat every broad benefic contact as medium mitigation. Wide contact, hard configuration without reception, cadency, weakness, or solar concealment can keep the mitigation weak or doubtful.
 
 ## Essential Condition
 

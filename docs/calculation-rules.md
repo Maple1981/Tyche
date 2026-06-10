@@ -74,6 +74,13 @@ Evaluate each traditional planet by essential dignities and weaknesses:
 
 Domicile, exaltation, triplicity, bound, and decan are dignities. Detriment and fall are essential weaknesses and should not be described as dignities.
 
+For weighting, do not collapse all dignity into one strength score:
+
+- Domicile and exaltation are major resources.
+- Active triplicity by sect is real support, but it is not equivalent to domicile or exaltation.
+- Out-of-sect and cooperating triplicity remain relevant but lower priority.
+- Bounds and decans are minor dignities.
+
 Triplicity is not weighted as a single undifferentiated dignity. The ruler active by sect is the strongest triplicity testimony, the contrary/out-of-sect ruler is secondary, and the cooperating ruler modifies the support of both.
 
 Triplicity rulers:
@@ -118,6 +125,8 @@ Use sign-based configurations as the strict default:
 Copresence is a cohabitation testimony rather than an automatically benefic or malefic relationship. It can intensify support or pressure depending on the planets involved, sect, essential condition, reception, degree closeness, and solar visibility.
 
 Degree-based aspects are optional and use configurable orbs. A planet can be configured by sign but not perfected by degree.
+
+The natal judgment should continue to use sign-based configuration as the traditional frame even when the user asks the tables to show degree-based aspects. Degree closeness acts as a precision/perfection layer rather than replacing sign-based judgment.
 
 Right-sided/superior configurations matter. In sextiles, squares, and trines, the planet earlier in zodiacal order by the relevant configured interval overcomes the planet later in zodiacal order. The superior square, or being upon the tenth, deserves special emphasis. The direction must remain explicit: a benefic or malefic overcoming a significator is not judged the same as a significator retaining the superior position against that benefic or malefic.
 

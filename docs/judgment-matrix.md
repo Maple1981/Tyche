@@ -62,11 +62,13 @@ For judgment:
 Bonification and maltreatment should be graded rather than treated as binary:
 
 - Strong mitigation or support: benefic of sect, close or favorable testimony, no major solar concealment, and some strength by dignity or angularity.
-- Medium mitigation or support: a real benefic testimony is present, but the benefic is not especially dominant or the malefic testimony remains substantial.
+- Medium mitigation or support: a real benefic testimony is present with some weight, such as favorable configuration, reception, succedent/angular placement, minor dignity, or closeness, but the benefic is not especially dominant or the malefic testimony remains substantial.
 - Weak or doubtful mitigation: the benefic is present only indirectly, is hidden under the beams without chariot protection, or lacks enough strength to redirect the topic.
 - Strong maltreatment: malefic contrary to sect, close or superior testimony, and little compensating condition.
 
 When configuration judgments are printed, include the intensity level in the sentence. The user should be able to see whether a relationship is strong, medium, or weak without reverse-engineering it from the table.
+
+A broad sign-based benefic contact should not automatically become medium mitigation. If the benefic is cadent, weakened, hard-configured without reception, or under solar concealment without chariot protection, keep the mitigation weak or doubtful.
 
 ## Lots
 
@@ -92,6 +94,7 @@ Use them as background:
 - The ruler contrary to sect remains relevant but should not be scored as strongly as the active ruler.
 - The cooperating ruler modifies both and can stabilize or complicate the support.
 - Tables and evidence should label triplicity by role when possible: active by sect, out of sect, or cooperating.
+- Active triplicity is not a major dignity equivalent to domicile or exaltation in the scoring layer. It is a real stabilizing support, but should not alone upgrade a planet to the highest essential-strength tier.
 - Angularity shows prominence.
 - Essential condition shows resources or friction.
 - Solar concealment can hide or delay the support.

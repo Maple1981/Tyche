@@ -57,11 +57,13 @@ The detailed weighting rules live in `docs/judgment-matrix.md`. That matrix is t
 Prominence and ease must remain separate:
 
 - Angular means strong, visible, active, or dominant.
-- Domicile, exaltation, and triplicity indicate resources.
+- Domicile and exaltation indicate major resources.
+- Triplicity indicates support and stability, with the active ruler by sect strongest within that layer, but it should not be treated as equal to domicile or exaltation.
 - Detriment and fall indicate friction.
 - The benefic of sect tends to show help or cohesion.
 - The malefic contrary to sect needs special attention as a sharper source of pressure.
 - Reception can mitigate pressure or strengthen help when configured planets receive one another by dignity.
+- A benefic of sect that is combust or under the beams without chariot protection still supports, but its support should be described as less visible or less directly available.
 
 In the plain-language layer, translate technical roles:
 

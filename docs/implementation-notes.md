@@ -66,3 +66,5 @@ Each visible person card may display a source line and, when audited, a birth-da
 If a historical example has not yet been individually audited for Rodden rating or time-source wording, the UI should say so explicitly. A visible pending-audit note is preferable to silent omission or a guessed rating.
 
 Keep natal-data provenance separate from interpretive-reference provenance. `dataSource` should identify the source of the birth data, while an optional Brennan/source-reference field may record whether the chart was treated in a secondary interpretive source. Do not imply that a chart example source is the source of the recorded birth time unless that has been checked directly.
+
+If a historical example lacks an audited individual source label, the fallback should say that the source is pending individual audit. Do not use a generic combined source label in a way that implies the person's exact birth time has already been verified against every named source.
