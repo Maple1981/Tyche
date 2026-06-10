@@ -25,7 +25,7 @@ Strong testimonies:
 Modifying testimonies:
 
 - Solar phase of key planets: morning/evening, under the beams, combustion, and in the heart.
-- Chariot mitigation: a planet under the beams or combust is less hindered when it has its own domicile, exaltation, or bound.
+- Chariot mitigation: a planet under the beams or combust is less hindered when it has its own domicile, exaltation, or bound. Domicile/exaltation carry the cleaner chariot label; own bound should be described as chariot-like protection.
 - Exact solar distance should be visible for under-the-beams, combust, and in-the-heart states so the user can audit the threshold.
 - Configurations by sign between significators and benefics/malefics.
 - Degree closeness when the user enables degree aspects or when contact is within about three degrees.
@@ -43,7 +43,17 @@ For non-luminary visible planets:
 - Morning/oriental planets tend toward earlier, more active, or more outward expression.
 - Evening/occidental planets tend toward later, more receptive, or more context-mediated expression.
 
-Solar phase modifies the planet's testimony. It does not erase angularity, dignity, sect, or house placement.
+This is zodiacal solar phase, not a full observational heliacal-visibility model. Solar phase modifies the planet's testimony. It does not erase angularity, dignity, sect, or house placement.
+
+## Essential Condition Scoring
+
+Do not treat "bound lord of the degree" or "decan lord of the degree" as automatic dignity for the planet placed there. Separate:
+
+- Own resources: domicile, exaltation, active triplicity, own bound, own decan.
+- Contextual testimony: out-of-sect triplicity, cooperating triplicity.
+- Degree administration: another planet ruling the bound or decan of the occupied degree.
+
+Only own bound and own decan count as minor dignity in scoring. Degree administration remains visible in tables and evidence, but it does not by itself upgrade ease, mitigation, or benefic support.
 
 ## Configurations
 
@@ -62,7 +72,7 @@ For judgment:
 Bonification and maltreatment should be graded rather than treated as binary:
 
 - Strong mitigation or support: benefic of sect, close or favorable testimony, no major solar concealment, and some strength by dignity or angularity.
-- Medium mitigation or support: a real benefic testimony is present with some weight, such as favorable configuration, reception, succedent/angular placement, minor dignity, or closeness, but the benefic is not especially dominant or the malefic testimony remains substantial.
+- Medium mitigation or support: a real benefic testimony is present with some weight, such as favorable configuration, reception, succedent/angular placement, own minor dignity, or closeness, but the benefic is not especially dominant or the malefic testimony remains substantial.
 - Weak or doubtful mitigation: the benefic is present only indirectly, is hidden under the beams without chariot protection, or lacks enough strength to redirect the topic.
 - Strong maltreatment: malefic contrary to sect, close or superior testimony, and little compensating condition.
 
@@ -142,7 +152,7 @@ Tyche uses reception by dignity broadly. Domicile reception is the principal for
 
 In the interpretation layer, reception lowers the intensity of malefic pressure when relevant and can raise the intensity of benefic support. It must appear in the evidence so the user can see why the testimony was softened or strengthened.
 
-Mutual reception should be labeled when both planets have dignity in the other planet's position. It is a reciprocal channel stronger than one-way reception, but it should still be judged by the dignity level involved and by the condition of both planets.
+Mutual reception should be labeled when both planets have dignity in the other planet's position. Judge the mutual reception by the weaker side of the exchange: strong when both sides are strong or one is strong and the other medium; medium when bound or active triplicity carries the exchange; weak when it is only out-of-sect or cooperating triplicity. Weak mutual reception creates a reciprocal channel, but does not by itself neutralize pressure.
 
 Future refinements may distinguish applying/separating reception, degree closeness, and reception through a planet that is itself badly obscured or unable to act.
 
@@ -152,7 +162,9 @@ Boundary notices warn about sensitivity without changing the judgment by themsel
 
 - Ascendant near sign change can change the rising sign, all whole-sign houses, and the Ascendant lord.
 - Lots near sign change can shift lot house and lot lord with small changes in time or coordinates.
-- Planets near Egyptian bound changes can alter minor dignity and reception-by-bound testimony.
+- Planets near Egyptian bound changes can alter degree administration, own minor dignity if applicable, and reception-by-bound testimony.
+
+When possible, boundary notices should include consequence and action: what may change, and whether the user should verify time, coordinates, source, or rectification.
 
 These notices belong in the evidence/audit layer. They should not become fatalistic text in the plain-language interpretation.
 

@@ -59,6 +59,7 @@ Prominence and ease must remain separate:
 - Angular means strong, visible, active, or dominant.
 - Domicile and exaltation indicate major resources.
 - Triplicity indicates support and stability, with the active ruler by sect strongest within that layer, but it should not be treated as equal to domicile or exaltation.
+- Own bound and own decan may count as minor dignity. A bound or decan ruled by another planet is degree administration, not automatic support for the planet placed there.
 - Detriment and fall indicate friction.
 - The benefic of sect tends to show help or cohesion.
 - The malefic contrary to sect needs special attention as a sharper source of pressure.
@@ -75,7 +76,9 @@ In the plain-language layer, translate technical roles:
 
 The plain-language layer may add context for difficult houses, but it should not censor the traditional topics. Technical surfaces can retain words such as illness, death, enemies, loss, and confinement when those are the relevant house topics.
 
-For houses 6, 8, and 12, the first-focus reading should show both layers when those houses dominate: traditional topics first, then practical reading language. For example, house 8 may keep "death, fear, inactivity, and resources of others" as the technical layer, then explain practical expressions such as crisis, losses, debt, dependence on others' resources, or confrontation with limits.
+For houses 6, 8, and 12, important readings should show both layers: traditional topics first, then practical reading language. This applies when those houses are a main focus, the house of the Ascendant lord, the house of the malefic contrary to sect, the house of Fortune or Spirit, or the house of the lord of Fortune or Spirit. For example, house 8 may keep "death, fear, inactivity, and resources of others" as the technical layer, then explain practical expressions such as crisis, losses, debt, dependence on others' resources, or confrontation with limits.
+
+Do not frame difficult-house emphasis as a closed fate. The better caution is technical: it should not be read as literal prediction by itself because it depends on the place ruler, condition, configurations, sect, and timing activation.
 
 When space allows, UI labels can use paired terms such as `Lugares/Casas` and `Lugar/Casa` so the traditional vocabulary remains visible while the interface stays readable.
 
@@ -88,6 +91,8 @@ The UI should expose three levels:
 3. Technical evidence.
 
 The evidence list is not decoration. It is the audit trail that shows why Tyche has produced a judgment. It can be collapsed by default, but it must remain easy to open. If the evidence is weak or missing, the text should say so plainly instead of pretending certainty.
+
+When topical focus is scored, the evidence layer should show the score breakdown for the main houses: total points and the testimonies that produced them. This is an audit aid, not a fatalistic measurement.
 
 The reading may also show compact qualitative indicators, such as prominence, ease, support, and tension. These are reading aids, not absolute scores.
 

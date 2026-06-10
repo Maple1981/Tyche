@@ -287,7 +287,8 @@ h1 {
   line-height: 1.35;
 }
 
-.aspect-mode-note {
+.aspect-mode-note,
+.orb-note {
   grid-column: 1 / -1;
   margin: -4px 0 2px;
 }
@@ -1223,6 +1224,23 @@ td {
   align-items: center;
   gap: 6px;
   font-size: 1rem;
+}
+
+.person-audit-badge {
+  width: fit-content;
+  margin: 0 0 0.6rem;
+  padding: 0.18rem 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--pearl);
+  color: var(--muted);
+  font-size: 0.73rem;
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+}
+
+body.night .person-audit-badge {
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .person-wiki {

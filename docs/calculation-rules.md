@@ -20,7 +20,9 @@ Use UTC for astronomical calculations. Convert local civil time to UTC through:
 
 When a manual offset is used, label it as manual or as historical example data. Do not imply that an old local mean time or historical offset came from IANA data.
 
-Default zodiac is tropical. A sidereal option may be present only as an advanced setting and should be labeled as outside the strict default.
+Default zodiac is tropical. A sidereal option may be present only as an advanced setting and should be labeled as approximate and outside the strict tropical default.
+
+Julian-calendar support is a basic date conversion. For ancient or premodern charts, the app must warn that local calendar practice, local mean time, historical offset, and the time source need separate verification.
 
 ## Angles
 
@@ -81,7 +83,8 @@ For weighting, do not collapse all dignity into one strength score:
 - Domicile and exaltation are major resources.
 - Active triplicity by sect is real support, but it is not equivalent to domicile or exaltation.
 - Out-of-sect and cooperating triplicity remain relevant but lower priority.
-- Bounds and decans are minor dignities.
+- Bounds and decans are minor dignities only when the planet occupies its own bound or decan.
+- If the bound lord or decan lord is another planet, show it as degree administration, not as automatic support for the planet placed there.
 
 Triplicity is not weighted as a single undifferentiated dignity. The ruler active by sect is the strongest triplicity testimony, the contrary/out-of-sect ruler is secondary, and the cooperating ruler modifies the support of both.
 
@@ -140,7 +143,7 @@ Reception should be calculated only when two planets are configured. A planet re
 
 Tyche uses "reception by dignity" in this broad technical sense. Domicile reception remains the principal form, with exaltation also treated as strong.
 
-When both configured planets receive one another by dignity, label it as mutual reception. This is a reciprocal channel, not an automatic cancellation of pressure.
+When both configured planets receive one another by dignity, label it as mutual reception. Grade it by the dignity involved: strong when both sides are strong or one side is strong and the other medium; medium when term or active triplicity carries one or both sides; weak when the exchange is only out-of-sect/cooperating triplicity. It is a reciprocal channel, not an automatic cancellation of pressure.
 
 Reception mitigates pressure when a malefic testimony is received by the significator, or when the malefic receives the significator in a way that gives the contact a formal channel. It can also strengthen benefic support. It should be shown as its own testimony instead of being hidden inside a generic aspect score.
 
@@ -170,7 +173,7 @@ For each lot, show sign, degree, whole sign house, domicile lord, lord's house, 
 
 ## Solar Phase
 
-For each non-luminary planet:
+For each non-luminary planet, calculate zodiacal solar phase:
 
 - Morning/oriental if earlier than the Sun in zodiacal order and outside the solar beams.
 - Evening/occidental if later than the Sun in zodiacal order and outside the solar beams.
@@ -180,7 +183,9 @@ For each non-luminary planet:
 
 For strict mode, use "in the heart" for the 1-degree condition and show "cazimi" as a familiar parenthetical label. Tyche intentionally uses this broader 1-degree convention; some narrower traditions use about 17 arcminutes, so the UI must describe the convention rather than imply universality.
 
-When a planet is under the beams, combust, or in the heart, show the exact distance from the Sun in the planet table. For under-the-beams and combust states, also show whether chariot mitigation is present by domicile, exaltation, or bound.
+This is not observational heliacal visibility. Tyche applies traditional zodiacal thresholds; real visibility would also depend on latitude, brightness, ecliptic latitude, horizon, weather, and atmospheric conditions.
+
+When a planet is under the beams, combust, or in the heart, show the exact distance from the Sun in the planet table. For under-the-beams and combust states, also show whether chariot mitigation is present by domicile, exaltation, or own bound. Use a softer "chariot-like protection" label for own bound; reserve unqualified "in its chariot" for domicile or exaltation.
 
 ## Annual Profections Boundary
 
@@ -193,6 +198,7 @@ Calculate:
 - Lunar phase angle from Sun to Moon.
 - Named phase.
 - Last separating major contact and next applying major contact to the visible planets, using conjunction for bodily contact and sextile, square, trine, and opposition for the other major relationships.
+- Refine lunar applications/separations by recalculating positions over the interval and bisecting the perfection time when possible; the linear speed estimate is only a fallback.
 - Void-of-course by the broader Hellenistic 30-degree definition: the Moon is void when no major contact perfects within the next 30 degrees of lunar motion.
 - Void-of-course by sign exit: show separately whether the Moon perfects a major contact before leaving its current sign.
 - A separate modern/orb-style indicator for whether there is no applying contact within the displayed lunar orb. Do not collapse this into the Hellenistic void-of-course judgment.

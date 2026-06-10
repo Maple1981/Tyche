@@ -31,6 +31,7 @@ Core derived data:
 - Also show whether the Moon perfects a major contact before leaving its current sign, separately from the Hellenistic 30-degree void-of-course rule.
 - Superior/right-sided configurations must preserve direction: who overcomes whom matters for judgment.
 - Triplicity dignities should be labeled by role when shown: active by sect, out of sect, or cooperating.
+- Bounds and decans should distinguish own minor dignity from another planet's administration of the degree.
 
 This app uses vendored Astronomy Engine for browser-side ephemerides, with the older compact formulas kept only as fallback. Make the approximate +/-1 arcminute limitation visible in the UI and documentation; do not present the results as professional ephemeris-grade.
 
@@ -68,8 +69,9 @@ Interpretation output:
 - Keep `docs/judgment-matrix.md` aligned with the interpretation code. Solar phase, configurations, lot lords, lunar condition, and triplicity rulers should enter the judgment when their underlying data is calculated.
 - Evidence should include both lunar void-of-course criteria when both are calculated.
 - Do not score active triplicity as equivalent to domicile or exaltation. It is real support, but major essential strength should remain domicile/exaltation.
+- Do not count every bound/decan label as minor dignity. Only own bound or own decan is minor dignity for the planet; another planet ruling the bound/decan is degree administration and should not automatically improve ease or mitigation.
 - Label broad reception by dignity by strength: domicile/exaltation strong, bound or active triplicity medium, out-of-sect/cooperating triplicity weak.
-- Label mutual reception when both planets receive one another; treat it as reciprocal channel, not as automatic cancellation of pressure.
+- Label mutual reception when both planets receive one another; grade it by the dignity actually involved and treat it as reciprocal channel, not as automatic cancellation of pressure.
 
 ## UI Direction
 

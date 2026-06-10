@@ -134,11 +134,11 @@
                   </select>
                 </label>
                 <label class="field">
-                  <span data-i18n="aspectMode" data-glossary="aspects">Aspectos</span>
+                  <span data-i18n="aspectMode" data-glossary="aspects">Tabla de configuraciones</span>
                   <select id="aspectMode">
                     <option value="sign" data-i18n="bySign">Por signo</option>
                     <option value="both" data-i18n="signAndDegree">Signo + grado</option>
-                    <option value="degree" data-i18n="byDegree">Por grado</option>
+                    <option value="degree" data-i18n="byDegree">Solo grado</option>
                   </select>
                 </label>
                 <p class="field-note aspect-mode-note" data-i18n="aspectModeNote">La lectura natal usa configuraciones por signo; el grado añade cercanía y perfección en tablas y evidencia.</p>
@@ -146,6 +146,7 @@
                   <span data-i18n="orb" data-glossary="orb">Orbe</span>
                   <input id="orb" type="number" min="0" max="15" step="0.5" value="3">
                 </label>
+                <p class="field-note orb-note" data-i18n="orbNote">El orbe afecta a contactos por grado, cercanía y aplicación cercana; no elimina las configuraciones por signo usadas en el juicio.</p>
                 <label class="field">
                   <span data-i18n="terms" data-glossary="bounds">Términos / límites</span>
                   <select id="termsSystem">
@@ -228,7 +229,7 @@
         <p data-i18n="footerWarning">Motor astronómico pensado para uso educativo. La información proporcionada es solo orientativa.</p>
         <p data-i18n="footerPrivacy">La carta se calcula localmente en tu navegador. No guardamos tus cartas ni usamos cookies. Solo se conserva en este dispositivo la preferencia de idioma y tema. La búsqueda de lugares consulta Open-Meteo para obtener coordenadas. Las imágenes del archivo histórico se cargan desde Wikimedia Commons. El posicionamiento de planetas utiliza una librería local.</p>
         <p><span data-i18n="footerAuthors">Autores: Maple81 y Hélène de Troie, 2026.</span> <a href="https://github.com/Maple1981/Tyche" target="_blank" rel="noreferrer" data-i18n="githubLink">Ver repositorio GitHub</a></p>
-        <p class="attribution-line" data-i18n-html="footerAttributions">Atribuciones generales: imágenes de <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; datos de personajes históricos de <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a> y <a href="https://www.astro.com/astro-databank/" target="_blank" rel="noreferrer">Astro-Databank</a>; búsqueda de localización mediante <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>; efemérides locales mediante <a href="https://github.com/cosinekitty/astronomy" target="_blank" rel="noreferrer">Astronomy Engine</a> MIT, precisión aprox. ±1′, en ejecución local, sin enviar datos a terceros.</p>
+        <p class="attribution-line" data-i18n-html="footerAttributions">Atribuciones generales: algunas imágenes proceden de <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; algunas referencias biográficas o natales pueden proceder de <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a> y <a href="https://www.astro.com/astro-databank/" target="_blank" rel="noreferrer">Astro-Databank</a>. La fuente individual y el rating se muestran, o se marcan como pendientes de auditoría. Búsqueda de localización mediante <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>; efemérides locales mediante <a href="https://github.com/cosinekitty/astronomy" target="_blank" rel="noreferrer">Astronomy Engine</a> MIT, precisión aprox. ±1′, en ejecución local, sin enviar datos a terceros.</p>
       </footer>
     </div>
 
