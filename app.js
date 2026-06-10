@@ -7,6 +7,17 @@
   const GEOCODING_ENDPOINT = "https://geocoding-api.open-meteo.com/v1/search";
   const PLACE_SEARCH_DELAY = 260;
   const PLACE_RESULT_LIMIT = 8;
+  const TYCHE_TEST_SCHEMA_VERSION = 1;
+  const TIME_CONFIDENCE_VALUES = Object.freeze([
+    "exact",
+    "rounded-to-minute",
+    "rounded-to-5-min",
+    "rounded-to-15-min",
+    "rounded-to-hour",
+    "reported",
+    "uncertain",
+  ]);
+  const ZONE_RELIABILITY_VALUES = Object.freeze(["iana", "manual", "lmt", "historical", "unknown"]);
 
   const state = {
     lang: localStorage.getItem("tyche-lang") || "es",
@@ -243,6 +254,7 @@
       nightFormulaLabel: "fórmula nocturna",
       lotAuditPosition: "Posición",
       lotAuditLord: "Señor",
+      lotAuditLordRole: "Rol del señor",
       lotAuditFormula: "Fórmula",
       lotAuditTestimonies: "Testimonios",
       lotAuditPressures: "Presiones",
@@ -253,6 +265,7 @@
       lotAuditBeneficTestimony: "Testimonio benéfico",
       lotAuditMaleficPressure: "Presión maléfica",
       negotiatedSupport: "apoyo negociado",
+      regulatedBeneficFriction: "testimonio benéfico con fricción regulada",
       regulatedPressure: "presión regulada",
       solarThresholds: "Umbrales solares",
       solarThresholdValues: "Bajo rayos 15° · combustión 8° · en el corazón 1°",
@@ -598,6 +611,7 @@
       nightFormulaLabel: "night formula",
       lotAuditPosition: "Position",
       lotAuditLord: "Lord",
+      lotAuditLordRole: "Lord role",
       lotAuditFormula: "Formula",
       lotAuditTestimonies: "Testimonies",
       lotAuditPressures: "Pressures",
@@ -608,6 +622,7 @@
       lotAuditBeneficTestimony: "Benefic testimony",
       lotAuditMaleficPressure: "Malefic pressure",
       negotiatedSupport: "negotiated support",
+      regulatedBeneficFriction: "benefic testimony with regulated friction",
       regulatedPressure: "regulated pressure",
       solarThresholds: "Solar thresholds",
       solarThresholdValues: "Under beams 15° · combustion 8° · in the heart 1°",
@@ -3672,7 +3687,6 @@
 
   function personAuditStatus(person) {
     if (person.auditStatus) return person.auditStatus;
-    if (person.roddenRating && person.dataSource && person.timeSource) return "audited";
     if (person.roddenRating || person.dataSource || person.timeSource || person.timeConfidence || person.sourceUrl) return "partial";
     return "pending";
   }
@@ -3805,7 +3819,7 @@
   }
 
   function parseDate(value) {
-    const match = /^(-?\d{1,6})-(\d{2})-(\d{2})$/.exec(value);
+    const match = /^(\d{1,6})-(\d{2})-(\d{2})$/.exec(value);
     if (!match) return null;
     return { y: Number(match[1]), m: Number(match[2]), d: Number(match[3]) };
   }
@@ -5690,22 +5704,41 @@
     return "";
   }
 
+  function lotLordRoleText(lot, chart) {
+    if (!lot) return "";
+    const role = lotPlanetRoleText(lot.lord, chart);
+    if (!role) {
+      return state.lang === "es"
+        ? `${planetLabel(lot.lord)} administra ${lotName(lot.key)} como señor del signo del lote.`
+        : `${planetLabel(lot.lord)} administers ${lotName(lot.key)} as lord of the lot's sign.`;
+    }
+    return state.lang === "es"
+      ? `${planetLabel(lot.lord)} administra ${lotName(lot.key)} y es ${role}.`
+      : `${planetLabel(lot.lord)} administers ${lotName(lot.key)} and is the ${role}.`;
+  }
+
+  function lotTensionRawLevel(key, chart, signType, degree, planetSuperior) {
+    const position = chart.positions[key];
+    const acute = degree && degree.delta <= 3;
+    const harsh = ["copresence", "square", "opposition"].includes(signType);
+    return key === chart.maleficContrarySect && (acute || planetSuperior || position.angularity === "angular")
+      ? "highLevel"
+      : (key === chart.maleficOfSect || planetSuperior || acute || harsh || position.angularity === "angular") ? "mediumLevel" : "lowLevel";
+  }
+
   function lotTestimonyLevel(lot, key, chart, role, signType, degree, planetSuperior, reception = null) {
     const position = chart.positions[key];
     const solar = solarPhaseState(key, chart);
     const obscured = ["combust", "underBeams"].includes(solar.category) && !solar.chariot;
     const acute = degree && degree.delta <= 3;
     const friendly = ["copresence", "sextile", "trine"].includes(signType);
-    const harsh = ["copresence", "square", "opposition"].includes(signType);
     if (role === "support") {
       if (reception?.effectiveScore >= 3 && !obscured && ["square", "opposition"].includes(signType)) return "mediumLevel";
       if (key === chart.beneficOfSect && !obscured && (acute || planetSuperior || position.angularity === "angular")) return "strongLevel";
       if (!obscured && (friendly || acute || ["angular", "succedent"].includes(position.angularity))) return "mediumLevel";
       return "lowLevel";
     }
-    const baseLevel = key === chart.maleficContrarySect && (acute || planetSuperior || position.angularity === "angular")
-      ? "highLevel"
-      : (key === chart.maleficOfSect || planetSuperior || acute || harsh || position.angularity === "angular") ? "mediumLevel" : "lowLevel";
+    const baseLevel = lotTensionRawLevel(key, chart, signType, degree, planetSuperior);
     return adjustIntensityForReception(baseLevel, "tension", reception);
   }
 
@@ -5735,6 +5768,8 @@
           solarText,
           reception,
           roleText: lotPlanetRoleText(key, chart),
+          isBeneficOfSect: key === chart.beneficOfSect,
+          rawLevel: role === "tension" ? lotTensionRawLevel(key, chart, signType, degree, planetSuperior) : "",
           angularity: position.angularity,
           house: position.house,
           level: lotTestimonyLevel(lot, key, chart, role, signType, degree, planetSuperior, reception),
@@ -5746,6 +5781,9 @@
   function lotTestimonyNature(item, role) {
     if (role === "support") {
       if (["square", "opposition"].includes(item.signType) && item.reception?.effectiveScore >= 3) return t("negotiatedSupport");
+      if (["square", "opposition"].includes(item.signType)
+        && item.reception?.effectiveScore >= 2
+        && (item.isBeneficOfSect || item.angularity === "angular" || item.degree?.delta <= 3)) return t("regulatedBeneficFriction");
       if (["trine", "sextile"].includes(item.signType)) return state.lang === "es" ? "apoyo fluido" : "flowing support";
       if (["square", "opposition"].includes(item.signType)) return state.lang === "es" ? "testimonio benéfico con fricción" : "benefic testimony with friction";
       return state.lang === "es" ? "apoyo por copresencia" : "support by copresence";
@@ -5772,8 +5810,13 @@
           ? `${planetLabel(item.key)} testimonia a ${lotLabel} y está en recepción con ${lordLabel}, señor de ${lotLabel}: ${receptionStrengthLabel(item.reception)}`
           : `${planetLabel(item.key)} testifies to ${lotLabel} and is in reception with ${lordLabel}, lord of ${lotLabel}: ${receptionStrengthLabel(item.reception)}`)
         : "";
+      const intensityText = role === "tension" && item.rawLevel && item.rawLevel !== item.level
+        ? (state.lang === "es"
+          ? `intensidad bruta ${t(item.rawLevel)}, regulada a ${t(item.level)}`
+          : `raw intensity ${t(item.rawLevel)}, regulated to ${t(item.level)}`)
+        : `${state.lang === "es" ? "intensidad" : "intensity"} ${t(item.level)}`;
       const details = [
-        `${planetLabel(item.key)} (${t(item.signType)}, ${state.lang === "es" ? "intensidad" : "intensity"} ${t(item.level)})`,
+        `${planetLabel(item.key)} (${t(item.signType)}, ${intensityText})`,
         lotTestimonyNature(item, role),
         item.roleText,
         receptionText,
@@ -5900,15 +5943,25 @@
   function timeContextSensitivity(input) {
     const reasons = [];
     const auditedStatus = ["audited", "partial", "pending"].includes(input.auditStatus);
+    const timeConfidence = normalizedTimeConfidence(input.timeConfidence || "");
+    const zoneReliability = normalizedZoneReliability(input.zoneReliability || (input.timeZone ? "iana" : "unknown"));
     if (input.calendar === "julian") reasons.push("sensitiveJulian");
     if (input.auditStatus === "pending") reasons.push("sensitiveAuditPending");
-    if ((input.timeConfidence && input.timeConfidence !== "exact")
-      || (!input.timeConfidence && auditedStatus && input.auditStatus !== "audited")) {
+    if ((timeConfidence && timeConfidence !== "exact")
+      || (!timeConfidence && auditedStatus && input.auditStatus !== "audited")) {
       reasons.push("sensitiveTimeConfidence");
     }
-    if (input.zoneReliability && input.zoneReliability !== "iana") reasons.push("sensitiveManualOffset");
+    if (zoneReliability !== "iana") reasons.push("sensitiveManualOffset");
     if (!input.timeZone) reasons.push("sensitiveNoIana");
     return [...new Set(reasons)];
+  }
+
+  function normalizedTimeConfidence(value) {
+    return TIME_CONFIDENCE_VALUES.includes(value) ? value : "";
+  }
+
+  function normalizedZoneReliability(value) {
+    return ZONE_RELIABILITY_VALUES.includes(value) ? value : "unknown";
   }
 
   function sensitivityReasonLabels(reasonCodes) {
@@ -5927,7 +5980,17 @@
 
   function boundaryWarnings(chart) {
     const warnings = [];
-    const notice = (key, type, distance, changes, action, extra = {}) => ({ key, code: key, type, distance, changes, action, ...extra });
+    const notice = (key, type, distance, changes, action, extra = {}) => ({
+      key,
+      code: key,
+      type,
+      distance,
+      changes,
+      changeCodes: [],
+      action,
+      actionCode: "",
+      ...extra,
+    });
     const sunHorizonDistance = Math.abs(chart.sunAltitude);
     const sectThreshold = sectBoundaryThresholdInfo(chart);
     if (sunHorizonDistance <= sectThreshold.threshold) {
@@ -5941,7 +6004,13 @@
         state.lang === "es"
           ? "verificar hora, coordenadas, zona usada y posible rectificación"
           : "verify time, coordinates, zone used, and possible rectification",
-        { threshold: sectThreshold.threshold, sensitiveThreshold: sectThreshold.sensitive, thresholdReasonCodes: sectThreshold.reasons }
+        {
+          threshold: sectThreshold.threshold,
+          sensitiveThreshold: sectThreshold.sensitive,
+          thresholdReasonCodes: sectThreshold.reasons,
+          changeCodes: ["sect", "sect-light", "benefic-malefic-of-sect", "contrary-malefic", "fortune-spirit-formulas", "general-judgment"],
+          actionCode: "verify-time-coordinates-zone-rectification",
+        }
       ));
     }
     const ascDistance = distanceToSignBoundary(chart.angles.asc);
@@ -5953,7 +6022,11 @@
         state.lang === "es"
           ? ["regente del Ascendente", "casas por signos enteros", "lotes", "focos principales"]
           : ["Ascendant lord", "whole-sign houses", "lots", "main focuses"],
-        state.lang === "es" ? "revisar hora, fuente o rectificación" : "review time, source, or rectification"
+        state.lang === "es" ? "revisar hora, fuente o rectificación" : "review time, source, or rectification",
+        {
+          changeCodes: ["ascendant-lord", "whole-sign-houses", "lots", "main-focuses"],
+          actionCode: "review-time-source-rectification",
+        }
       ));
     }
     [
@@ -5970,6 +6043,7 @@
         const boundarySide = degree < 1
           ? (state.lang === "es" ? "límite anterior" : "previous boundary")
           : (state.lang === "es" ? "límite siguiente" : "next boundary");
+        const boundarySideCode = degree < 1 ? "previous" : "next";
         const shiftText = state.lang === "es"
           ? `${angle.label} a ${formatAngle(distance)} del ${boundarySide}; actual: ${signLabel(currentSign)}, casa ${currentHouse}; posible por pequeña variación: ${signLabel(possibleSign)}, casa ${possibleHouse}`
           : `${angle.label} within ${formatAngle(distance)} of the ${boundarySide}; current: ${signLabel(currentSign)}, house ${currentHouse}; possible with a small variation: ${signLabel(possibleSign)}, house ${possibleHouse}`;
@@ -5982,7 +6056,16 @@
             : [`${angle.label} whole-sign house`, "chart projection/foundation", "secondary focuses", shiftText],
           state.lang === "es"
             ? "verificar hora, coordenadas y zona usada"
-            : "verify time, coordinates, and zone used"
+            : "verify time, coordinates, and zone used",
+          {
+            boundarySideCode,
+            currentSign,
+            possibleSign,
+            currentHouse,
+            possibleHouse,
+            changeCodes: [`${angle.key}-whole-sign-house`, "chart-projection-foundation", "secondary-focuses"],
+            actionCode: "verify-time-coordinates-zone",
+          }
         ));
       }
     });
@@ -5996,7 +6079,12 @@
           state.lang === "es"
             ? ["casa del lote", "señor del lote", "lectura del tema"]
             : ["lot house", "lot lord", "topic reading"],
-          state.lang === "es" ? "revisar hora y coordenadas" : "review time and coordinates"
+          state.lang === "es" ? "revisar hora y coordenadas" : "review time and coordinates",
+          {
+            lotKey: lot.key,
+            changeCodes: ["lot-house", "lot-lord", "topic-reading"],
+            actionCode: "review-time-coordinates",
+          }
         ));
       }
     });
@@ -6013,7 +6101,12 @@
             : ["degree administration", "own minor dignity if applicable", "reception by bound"],
           state.lang === "es"
             ? "revisar minutos de hora y precisión planetaria"
-            : "review birth-time minutes and planetary precision"
+            : "review birth-time minutes and planetary precision",
+          {
+            planetKey: key,
+            changeCodes: ["degree-administration", "own-minor-dignity", "bound-reception"],
+            actionCode: "review-birth-time-minutes-planetary-precision",
+          }
         ));
       }
     });
@@ -6066,30 +6159,30 @@
       reasons: [],
       scoreItems: [],
     }));
-    const add = (house, points, reason, category = "scoreCategoryLifeAxis") => {
+    const add = (house, points, reason, category = "scoreCategoryLifeAxis", reasonCode = "") => {
       if (!house) return;
       const target = houses[house - 1];
       target.score += points;
       target.reasons.push(reason);
-      target.scoreItems.push({ points, reason, category });
+      target.scoreItems.push({ points, reason, category, reasonCode: reasonCode || category });
     };
     const ascLord = SIGNS[chart.ascSign].ruler;
     const trip = sectTriplicityRulers(chart);
-    add(chart.positions[ascLord]?.house, 5, `${t("ascLordTitle")}: ${planetLabel(ascLord)}`, "scoreCategoryLifeAxis");
-    add(chart.positions[chart.sectLight]?.house, 2, `${t("sectLight")}: ${planetLabel(chart.sectLight)}`, "scoreCategorySect");
-    add(chart.mcHouse, 2, t("mc"), "scoreCategoryPublic");
-    visibleAngularPlanets(chart).forEach((key) => add(chart.positions[key].house, 1.5, `${planetLabel(key)} ${t("angular")}`, "scoreCategoryAngular"));
+    add(chart.positions[ascLord]?.house, 5, `${t("ascLordTitle")}: ${planetLabel(ascLord)}`, "scoreCategoryLifeAxis", `asc-lord:${ascLord}`);
+    add(chart.positions[chart.sectLight]?.house, 2, `${t("sectLight")}: ${planetLabel(chart.sectLight)}`, "scoreCategorySect", `sect-light:${chart.sectLight}`);
+    add(chart.mcHouse, 2, t("mc"), "scoreCategoryPublic", "mc-house");
+    visibleAngularPlanets(chart).forEach((key) => add(chart.positions[key].house, 1.5, `${planetLabel(key)} ${t("angular")}`, "scoreCategoryAngular", `angular-planet:${key}`));
     visiblePlanetsNearAngles(chart).forEach((item) => {
-      add(chart.positions[item.key].house, 0.75, `${planetLabel(item.key)} ${state.lang === "es" ? "cerca de" : "near"} ${angleDisplayName(item.angleKey)}`, "scoreCategoryAngular");
+      add(chart.positions[item.key].house, 0.75, `${planetLabel(item.key)} ${state.lang === "es" ? "cerca de" : "near"} ${angleDisplayName(item.angleKey)}`, "scoreCategoryAngular", `near-angle:${item.key}:${item.angleKey}`);
     });
-    add(lotByKey(chart, "fortune")?.house, 1.25, t("fortune"), "scoreCategoryLots");
-    add(lotByKey(chart, "spirit")?.house, 1.25, t("spirit"), "scoreCategoryLots");
-    add(chart.positions[trip.primary]?.house, 1.0, `${t("sectLight")} ${planetLabel(trip.primary)} · ${t("scoreCategoryTriplicity")}`, "scoreCategoryTriplicity");
-    add(chart.positions[trip.secondary]?.house, 0.6, `${t("sectLight")} ${planetLabel(trip.secondary)} · ${t("scoreCategoryTriplicity")}`, "scoreCategoryTriplicity");
-    add(chart.positions[trip.cooperating]?.house, 0.4, `${t("sectLight")} ${planetLabel(trip.cooperating)} · ${t("scoreCategoryTriplicity")}`, "scoreCategoryTriplicity");
+    add(lotByKey(chart, "fortune")?.house, 1.25, t("fortune"), "scoreCategoryLots", "lot:fortune");
+    add(lotByKey(chart, "spirit")?.house, 1.25, t("spirit"), "scoreCategoryLots", "lot:spirit");
+    add(chart.positions[trip.primary]?.house, 1.0, `${t("sectLight")} ${planetLabel(trip.primary)} · ${t("scoreCategoryTriplicity")}`, "scoreCategoryTriplicity", `triplicity:active:${trip.primary}`);
+    add(chart.positions[trip.secondary]?.house, 0.6, `${t("sectLight")} ${planetLabel(trip.secondary)} · ${t("scoreCategoryTriplicity")}`, "scoreCategoryTriplicity", `triplicity:out-of-sect:${trip.secondary}`);
+    add(chart.positions[trip.cooperating]?.house, 0.4, `${t("sectLight")} ${planetLabel(trip.cooperating)} · ${t("scoreCategoryTriplicity")}`, "scoreCategoryTriplicity", `triplicity:cooperating:${trip.cooperating}`);
     ["fortune", "spirit"].forEach((key) => {
       const lot = lotByKey(chart, key);
-      add(chart.positions[lot?.lord]?.house, 0.75, `${lot ? lotName(key) : key} ${t("tableRuler")}`, "scoreCategoryLots");
+      add(chart.positions[lot?.lord]?.house, 0.75, `${lot ? lotName(key) : key} ${t("tableRuler")}`, "scoreCategoryLots", `lot-lord:${key}:${lot?.lord || "none"}`);
     });
     return houses.sort((a, b) => b.score - a.score || a.house - b.house);
   }
@@ -6277,11 +6370,17 @@
         acc[item.category] = (acc[item.category] || 0) + item.points;
         return acc;
       }, {});
-      const dominant = Object.entries(totals).sort((a, b) => b[1] - a[1])[0]?.[0] || "scoreCategoryLifeAxis";
-      if (dominant === "scoreCategoryLifeAxis") return t("focusTypeVital");
-      if (dominant === "scoreCategoryPublic" || dominant === "scoreCategoryAngular") return t("focusTypePublic");
-      if (dominant === "scoreCategoryLots") return t("focusTypeCircumstantial");
-      return t("focusTypeSupport");
+      const total = Object.values(totals).reduce((sum, value) => sum + value, 0);
+      const labels = Object.entries(totals)
+        .filter(([, value]) => !total || value / total >= 0.3)
+        .sort((a, b) => b[1] - a[1])
+        .map(([category]) => {
+          if (category === "scoreCategoryLifeAxis") return t("focusTypeVital");
+          if (category === "scoreCategoryPublic" || category === "scoreCategoryAngular") return t("focusTypePublic");
+          if (category === "scoreCategoryLots") return t("focusTypeCircumstantial");
+          return t("focusTypeSupport");
+        });
+      return naturalList([...new Set(labels)]);
     };
     const groupedItems = (items) => {
       const order = ["scoreCategoryLifeAxis", "scoreCategoryPublic", "scoreCategoryAngular", "scoreCategoryLots", "scoreCategoryTriplicity", "scoreCategorySect"];
@@ -6343,6 +6442,7 @@
             <div class="lot-audit-lines">
               <p><b>${escapeHtml(t("lotAuditPosition"))}</b>: ${escapeHtml(formatDegree(lot.lon))} · ${escapeHtml(t("tableHouse"))} ${escapeHtml(String(lot.house))}</p>
               <p><b>${escapeHtml(t("lotAuditLord"))}</b>: ${escapeHtml(lordText)}</p>
+              <p><b>${escapeHtml(t("lotAuditLordRole"))}</b>: ${escapeHtml(lotLordRoleText(lot, chart))}</p>
               <p><b>${escapeHtml(t("lotAuditFormula"))}</b>: ${escapeHtml(lotFormulaText(lot.key, chart.isDay))}</p>
               <p><b>${escapeHtml(t("lotAuditTestimonies"))}</b>: ${escapeHtml(beneficTestimony)}</p>
               <p><b>${escapeHtml(t("lotAuditPressures"))}</b>: ${escapeHtml(maleficPressure)}</p>
@@ -6869,6 +6969,7 @@
       selectedLots: [],
     };
     window.TycheTest = Object.freeze({
+      schemaVersion: TYCHE_TEST_SCHEMA_VERSION,
       calculateChart(overrides = {}) {
         return computeChart({ ...defaultInput, ...overrides });
       },
@@ -6893,6 +6994,8 @@
       computeMoonCondition,
       scoreChartTopics,
       lotByKey,
+      lotFormulaText,
+      angleDistance,
       signOf,
       degreeInSign,
       houseFromSign,

@@ -19,7 +19,7 @@ The default hierarchy is:
 5. Benefic of the sect and malefic contrary to sect.
 6. MC/IC as astronomical points within Whole Sign Houses.
 7. Visible planets close to exact angles as an additional prominence flag.
-8. Fortune and Spirit, when selected.
+8. Fortune and Spirit always enter the base judgment; the lot selector only controls which lots appear in the visible lot table.
 9. Solar phase and concealment of key planets.
 10. Configurations, bonification, maltreatment, overcoming, and reception.
 11. Lunar condition and application/separation.

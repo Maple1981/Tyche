@@ -44,6 +44,14 @@ The calculated chart view should include a visible limits section, not only foot
 
 Advanced options that move away from the default model should warn immediately, not only after calculation. This applies to Julian calendar, approximate sidereal zodiac, and modern planets shown as an unweighted layer in traditional mode.
 
+Keep three output layers visually distinct:
+
+- Reading: plain-language synthesis and topical emphasis.
+- Evidence: technical reasons behind the reading, including scores, lot testimony, reception, and lunar condition.
+- Audit: calculation sensitivity, boundary warnings, precision limits, external services, and data reliability.
+
+Do not make boundary warnings or dense lot audits look like narrative interpretation paragraphs. They are technical controls for trust and traceability.
+
 The Hour-Marker lord panel should answer:
 
 - Which planet rules the Ascendant sign?

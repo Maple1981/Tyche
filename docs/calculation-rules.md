@@ -49,6 +49,8 @@ Boundary notices are audit flags, not reinterpretations. Show them when:
 
 Show the boundary audit in technical data, and repeat the detailed notices in the interpretation evidence when any notices exist. Each notice should name the boundary type, distance, what may change, and what the user should verify. Boundary notices need stable unique keys such as `sect-boundary`, `mc-sign-boundary`, `lot-boundary:fortune`, and `planet-bound-boundary:mars`, plus rendered `data-code` hooks for tests.
 
+The warning object should keep structural codes alongside translated text: `changeCodes`, `actionCode`, threshold reason codes, and for MC/IC sign boundaries the current sign/house, possible adjacent sign/house, and whether the boundary is previous or next. Rendering may translate those codes, but tests should prefer the stable fields.
+
 ## Sect
 
 Sect is determined by the Sun's altitude:
@@ -167,6 +169,8 @@ Fortune and Spirit are principal judgment lots. Tyche calculates them internally
 The standard rule reverses the luminaries by day and night. A small number of near-horizon charts may be discussed with a diurnal lot calculation when the Sun is just below the Ascendant and the example is explicitly framed that way. Tyche should not silently switch formulas for ordinary charts; if that exception is ever implemented, it should be visible as a technical option or a clearly labeled historical-example override.
 
 When sect is liminal or sensitive, Tyche should show the Fortune and Spirit positions used by the current technical sect and the alternate positions that would result if sect were reversed. In many charts this effectively swaps the two principal lots, so the difference belongs near the main technical summary rather than only in a generic warning.
+
+If a benefic or malefic is itself the domicile lord of Fortune or Spirit, that direct administration should be surfaced separately from ordinary testimony by configuration. For example, "Jupiter administers Fortune and is the benefic of sect" is a stronger structural statement than a generic benefic contact.
 
 Eros and Necessity use the older Fortune/Spirit-based tradition:
 

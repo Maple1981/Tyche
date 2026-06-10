@@ -100,6 +100,7 @@
         const $$ = (selector) => Array.from(doc.querySelectorAll(selector));
         const testApi = win.TycheTest;
         assert("TycheTest queda congelado en modo regresion", Object.isFrozen(testApi));
+        assert("TycheTest expone version de esquema esperada", testApi.schemaVersion === 1);
 
         $("#birthDate").value = "1980-01-01";
         $("#birthTime").value = "12:00";
@@ -125,9 +126,11 @@
         await waitFor(() => $("[data-test='modern-strict-warning']:not([hidden])"), "modern strict warning");
         assert("Modernos visibles en modo tradicional muestran aviso inmediato", $("[data-test='modern-strict-warning']:not([hidden])"));
 
+        // 2 Aries = termino de Jupiter en los terminos egipcios.
         const ownBound = testApi.dignityGroups(testApi.dignityFor("jupiter", 2, true));
         assert("Planeta en termino propio cuenta como dignidad menor propia", ownBound.minor.length > 0);
 
+        // 2 Aries sigue siendo termino de Jupiter, no de Saturno.
         const foreignBound = testApi.dignityGroups(testApi.dignityFor("saturn", 2, true));
         assert("Planeta en termino ajeno queda como administracion, no apoyo propio", foreignBound.administration.length > 0 && foreignBound.minor.length === 0);
 
@@ -147,6 +150,8 @@
         const sectWarnings = testApi.boundaryWarnings(sectChart);
         assert("Sol cerca del horizonte produce aviso de secta", sectWarnings.some((warning) => warning.key === "sect-boundary"));
         assert("El aviso de secta expone data-code estable", testApi.renderBoundaryAudit(sectWarnings).includes('data-code="sect-boundary"'));
+        assert("El render de auditoria de frontera tiene anclaje estable", testApi.renderBoundaryAudit(sectWarnings).includes('data-test="boundary-audit"'));
+        assert("El aviso de secta tiene codigos estructurados", sectWarnings.some((warning) => warning.key === "sect-boundary" && warning.changeCodes.includes("fortune-spirit-formulas") && warning.actionCode === "verify-time-coordinates-zone-rectification"));
 
         const sensitiveSectChart = {
           ...chart,
@@ -158,10 +163,23 @@
 
         const fortuneDay = testApi.lotSnapshotForSect("fortune", chart, true);
         const spiritNight = testApi.lotSnapshotForSect("spirit", chart, false);
-        assert("Fortuna diurna coincide con Espiritu nocturno al invertir secta", Math.abs(fortuneDay.lon - spiritNight.lon) < 0.000001);
+        assert("Fortuna diurna coincide con Espiritu nocturno al invertir secta", testApi.angleDistance(fortuneDay.lon, spiritNight.lon) < 0.000001);
 
-        const mcChart = { ...chart, angles: { ...chart.angles, mc: 29.7, ic: 209.7 } };
-        assert("MC cerca de frontera produce aviso propio", testApi.boundaryWarnings(mcChart).some((warning) => warning.key === "mc-sign-boundary"));
+        const mcNextChart = { ...chart, angles: { ...chart.angles, mc: 29.7, ic: 209.7 } };
+        const mcNext = testApi.boundaryWarnings(mcNextChart).find((warning) => warning.key === "mc-sign-boundary");
+        assert("MC cerca de limite siguiente produce aviso propio", mcNext && mcNext.boundarySideCode === "next" && mcNext.currentSign === 0 && mcNext.possibleSign === 1);
+
+        const mcPreviousChart = { ...chart, angles: { ...chart.angles, mc: 0.3, ic: 180.3 } };
+        const mcPrevious = testApi.boundaryWarnings(mcPreviousChart).find((warning) => warning.key === "mc-sign-boundary");
+        assert("MC cerca de limite anterior produce signo posible anterior", mcPrevious && mcPrevious.boundarySideCode === "previous" && mcPrevious.currentSign === 0 && mcPrevious.possibleSign === 11);
+
+        const icNextChart = { ...chart, angles: { ...chart.angles, mc: 44, ic: 29.7 } };
+        const icNext = testApi.boundaryWarnings(icNextChart).find((warning) => warning.key === "ic-sign-boundary");
+        assert("IC cerca de limite siguiente produce aviso propio", icNext && icNext.boundarySideCode === "next" && icNext.currentSign === 0 && icNext.possibleSign === 1);
+
+        const icPreviousChart = { ...chart, angles: { ...chart.angles, mc: 44, ic: 0.3 } };
+        const icPrevious = testApi.boundaryWarnings(icPreviousChart).find((warning) => warning.key === "ic-sign-boundary");
+        assert("IC cerca de limite anterior produce signo posible anterior", icPrevious && icPrevious.boundarySideCode === "previous" && icPrevious.currentSign === 0 && icPrevious.possibleSign === 11);
 
         const strictChart = testApi.calculateChart({ includeModern: false });
         const modernChart = testApi.calculateChart({ includeModern: true });
@@ -171,12 +189,20 @@
           items: focus.scoreItems.map((item) => ({
             points: Number(item.points.toFixed(4)),
             category: item.category,
-            reason: item.reason,
+            reasonCode: item.reasonCode,
           })),
         })));
         assert("Modernos mostrados no alteran el score helenistico base", scoreSignature(strictChart) === scoreSignature(modernChart));
+        const modernScoreText = JSON.stringify(testApi.scoreChartTopics(modernChart));
+        assert("Score helenistico no contiene Urano", !modernScoreText.includes("uranus"));
+        assert("Score helenistico no contiene Neptuno", !modernScoreText.includes("neptune"));
+        assert("Score helenistico no contiene Pluton", !modernScoreText.includes("pluto"));
+        assert("Las formulas de lotes principales no usan planetas modernos", !["uranus", "neptune", "pluto"].some((key) => (
+          testApi.lotFormulaText("fortune", true).toLowerCase().includes(key)
+          || testApi.lotFormulaText("spirit", false).toLowerCase().includes(key)
+        )));
 
-        assert("La auditoria de frontera tiene anclaje estable", Boolean($("[data-test='boundary-audit']")) || sectWarnings.some((warning) => warning.key === "sect-boundary"));
+        assert("La API emite aviso de secta", sectWarnings.some((warning) => warning.key === "sect-boundary"));
       }
 
       frame.addEventListener("load", () => {

@@ -107,6 +107,7 @@ The interface should feel mobile-first, calm, scholarly, and usable:
 - Keep the public transcript source map in `docs/public-transcript-synthesis.md`, and treat the priority episode list there as the first review layer for interpretation changes.
 - Browser regression tests should use stable `data-test` hooks and the `window.TycheTest` API exposed only in `?test=regression` mode, not translated prose.
 - Keep `window.TycheTest` frozen, limited to regression mode, and broad enough to test calculation and judgment helpers without scraping rendered copy.
+- Version `window.TycheTest` with `schemaVersion` whenever its exposed helper names or result shapes become test dependencies.
 - Render boundary notices with stable unique keys/codes such as `sect-boundary`, `mc-sign-boundary`, `lot-boundary:fortune`, and `planet-bound-boundary:mars`.
 - Hard rule: do not run `git push`, publish, deploy, or update GitHub Pages unless the user explicitly asks for that exact action in the current turn.
 
@@ -119,6 +120,8 @@ The interface should feel mobile-first, calm, scholarly, and usable:
 - Show source/rating metadata for historical examples when it has been audited. Never invent Rodden ratings or exact time-source notes.
 - Prefer explicit `auditStatus`, `timeConfidence`, `sourceType`, and `sourceUrl` metadata over inferring reliability from whether three text fields exist.
 - Use `auditStatus` narrowly: `audited` means individual time source plus reliable rating/equivalent plus clear zone/offset; `partial` means useful but incomplete review, rounded time, missing rating/source detail, or inferred zone; `pending` means no individual audit yet.
-- For sect boundary widening, rely on time reliability rather than name presence: non-exact or missing historical `timeConfidence`, non-IANA/manual/historical zone reliability, Julian calendar, or pending audit can widen the threshold. A partial example with explicit exact time and IANA zone should not be widened merely because it is historical.
+- For sect boundary widening, rely on time reliability rather than name presence: non-exact or missing historical `timeConfidence`, non-IANA/manual/historical/lmt/unknown zone reliability, Julian calendar, or pending audit can widen the threshold. A partial example with explicit exact time and IANA zone should not be widened merely because it is historical.
+- Accepted `timeConfidence` values are `exact`, `rounded-to-minute`, `rounded-to-5-min`, `rounded-to-15-min`, `rounded-to-hour`, `reported`, and `uncertain`. Accepted `zoneReliability` values are `iana`, `manual`, `lmt`, `historical`, and `unknown`.
+- Do not infer `audited` status from the mere presence of source/rating/time strings; require explicit `auditStatus: "audited"`.
 - Keep the natal-data source separate from any note that a chart was discussed in a secondary interpretive source. Do not imply that an example discussion is the source of the birth time unless verified.
 - If interpretive references are structured later, keep fields such as type, role, and technique separate from natal data source, time source, and rating.

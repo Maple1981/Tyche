@@ -9,6 +9,7 @@ Regression tests should prefer stable hooks over visible prose:
 - Use `data-test` attributes for rendered UI checks.
 - Use `window.TycheTest` only in `?test=regression` mode for calculation-layer checks.
 - Keep `window.TycheTest` frozen and expose only stable calculation or judgment helpers needed by tests.
+- Assert `window.TycheTest.schemaVersion` before relying on helper names or result shapes.
 - Treat objects returned by `window.TycheTest` as disposable test results. Do not mutate them and then reuse them as if they were internal app state.
 - Avoid asserting translated copy unless the test is specifically about content.
 - Wait for `window.__TYCHE_READY__` or the `tyche:chart-rendered` event rather than using fixed sleeps.
@@ -25,6 +26,8 @@ Regression tests should prefer stable hooks over visible prose:
 - MC or IC within 1 degree of a sign boundary: the audit must warn that the whole-sign place receiving public-projection or foundation testimony can change.
 - Visible planet within 30 arcminutes of an Egyptian-bound boundary: the audit must warn that degree administration, own minor dignity if applicable, and reception by bound can change.
 - Boundary warnings should use unique keys/codes such as `asc-sign-boundary`, `mc-sign-boundary`, `lot-boundary:fortune`, and `planet-bound-boundary:mars`; rendered warning cards should expose `data-test="boundary-warning"` and `data-code`.
+- MC and IC boundary tests should cover both previous-boundary and next-boundary cases, using structured fields rather than translated prose.
+- Inverted Fortune/Spirit tests should compare angular distance, not raw subtraction across 0 Aries.
 
 ## Principal Lots
 
@@ -44,6 +47,7 @@ Regression tests should prefer stable hooks over visible prose:
 - Benefic testimony to a lot by square/opposition with strong reception to the lot lord should be labeled as negotiated support rather than simple friction.
 - Reception language around lots should say that the testifying planet is in reception with the lord of the lot, not that the lot itself receives.
 - Mutual reception involving malefic pressure should be described as giving the pressure form, continuity, or reciprocal dependence rather than automatically turning it into help.
+- Lot-audit tests should cover direct lord roles, such as a principal lot administered by the benefic of sect or by the malefic contrary to sect.
 
 ## Lunar Condition
 
@@ -56,3 +60,5 @@ Regression tests should prefer stable hooks over visible prose:
 
 - When modern planets are enabled, the technical audit must show that they are displayed.
 - The technical audit must also state that modern planets are not weighted in the base Hellenistic judgment.
+- Regression score comparisons should use stable `reasonCode` fields rather than translated or editable human prose.
+- Modern planets may appear in display data when enabled, but base score items, lot formulas, traditional regencies, and judgment focus signals must not contain Uranus, Neptune, or Pluto.
