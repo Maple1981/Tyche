@@ -125,7 +125,7 @@
       ic: "IC",
       timezoneUsed: "Zona usada",
       julianDay: "Día juliano",
-      technicalTitle: "Datos técnicos",
+      technicalTitle: "Auditoría de carta",
       interpretationTitle: "Lectura natal",
       interpretationLeadTitle: "En una frase",
       interpretationSummary: "Lo más importante",
@@ -179,6 +179,13 @@
       ephemerisEngine: "Efemérides",
       boundaryAudit: "Auditoría de frontera",
       noBoundaryNotices: "Sin avisos",
+      aspectTableMode: "Aspectos en tablas",
+      judgmentFrame: "Marco del juicio",
+      judgmentFrameSign: "Configuraciones por signo; el grado matiza cercanía/perfección",
+      solarThresholds: "Umbrales solares",
+      solarThresholdValues: "Bajo rayos 15° · combustión 8° · en el corazón 1°",
+      moonVoidDefinitions: "Luna vacía",
+      moonVoidDefinitionsValues: "30° helenística · salida de signo · sin aplicación cercana 12°",
       astronomyEngine: "Astronomy Engine local",
       fallbackEngine: "Motor aproximado de respaldo",
       ascLordTitle: "Regente del Ascendente",
@@ -396,7 +403,7 @@
       ic: "IC",
       timezoneUsed: "Zone used",
       julianDay: "Julian day",
-      technicalTitle: "Technical data",
+      technicalTitle: "Chart audit",
       interpretationTitle: "Natal reading",
       interpretationLeadTitle: "In one sentence",
       interpretationSummary: "Most important",
@@ -450,6 +457,13 @@
       ephemerisEngine: "Ephemerides",
       boundaryAudit: "Boundary audit",
       noBoundaryNotices: "No notices",
+      aspectTableMode: "Table aspects",
+      judgmentFrame: "Judgment frame",
+      judgmentFrameSign: "Sign-based configurations; degree refines closeness/perfection",
+      solarThresholds: "Solar thresholds",
+      solarThresholdValues: "Under beams 15° · combustion 8° · in the heart 1°",
+      moonVoidDefinitions: "Void Moon",
+      moonVoidDefinitionsValues: "Hellenistic 30° · sign exit · no close application within 12°",
       astronomyEngine: "Local Astronomy Engine",
       fallbackEngine: "Approximate fallback engine",
       ascLordTitle: "Ascendant / Hour-Marker Lord",
@@ -1091,6 +1105,7 @@
         body: [
           "<p>Mitigación que aparece cuando dos planetas configurados se reciben por dignidad: domicilio, exaltación, triplicidad o término.</p>",
           "<p>Tyche usa recepción por dignidad en sentido amplio: fuerte por domicilio o exaltación; media por término o triplicidad activa; débil por triplicidad fuera de secta o cooperante. La recepción domiciliar sigue siendo la forma principal.</p>",
+          "<p>Cuando ambos planetas tienen autoridad sobre la posición del otro, Tyche lo señala como recepción mutua: un canal recíproco más fuerte que una recepción unilateral.</p>",
           "<p>En un contacto difícil, la recepción da al planeta presionado o al planeta que presiona un canal formal para manejar la relación; no borra la tensión, pero puede moderarla.</p>",
         ],
       },
@@ -1645,6 +1660,7 @@
         body: [
           "<p>A mitigation that appears when two configured planets receive one another by dignity: domicile, exaltation, triplicity, or bound.</p>",
           "<p>Tyche uses reception by dignity in a broad sense: strong by domicile or exaltation; medium by bound or active triplicity; weak by out-of-sect or cooperating triplicity. Domicile reception remains the principal form.</p>",
+          "<p>When both planets have authority over the other's position, Tyche marks it as mutual reception: a reciprocal channel stronger than one-way reception.</p>",
           "<p>In a difficult contact, reception gives the pressured planet or the pressuring planet a formal channel for handling the relationship; it does not erase tension, but it can moderate it.</p>",
         ],
       },
@@ -4100,6 +4116,7 @@
       actorReceivesTarget,
       strongest,
       hasReception: strongest > 0,
+      isMutual: Boolean(targetReceivesActor.kinds.length && actorReceivesTarget.kinds.length),
     };
   }
 
@@ -4138,13 +4155,15 @@
     const phrase = receptionPhrase(target, actor, reception);
     const strength = receptionStrengthLabel(reception);
     if (state.lang === "es") {
+      const noun = reception.isMutual ? "recepción mutua" : "recepción";
       return role === "support"
-        ? ` Hay recepción ${strength} (${phrase}), lo que refuerza el canal de ayuda.`
-        : ` Hay recepción ${strength} (${phrase}), así que la presión queda mitigada y actúa con más canal que crudeza.`;
+        ? ` Hay ${noun} ${strength} (${phrase}), lo que refuerza el canal de ayuda.`
+        : ` Hay ${noun} ${strength} (${phrase}), así que la presión queda mitigada y actúa con más canal que crudeza.`;
     }
+    const noun = reception.isMutual ? "mutual reception" : "reception";
     return role === "support"
-      ? ` There is ${strength} reception (${phrase}), strengthening the channel of help.`
-      : ` There is ${strength} reception (${phrase}), so the pressure is mitigated and has more channel than rawness.`;
+      ? ` There is ${strength} ${noun} (${phrase}), strengthening the channel of help.`
+      : ` There is ${strength} ${noun} (${phrase}), so the pressure is mitigated and has more channel than rawness.`;
   }
 
   function lotLongitude(key, chart) {
@@ -4465,6 +4484,9 @@
   function renderTechnicalPanel(chart) {
     const engine = chart.ephemerisEngine === "astronomy" ? t("astronomyEngine") : t("fallbackEngine");
     const boundary = boundaryWarnings(chart);
+    const aspectModeLabel = chart.input.aspectMode === "both"
+      ? t("signAndDegree")
+      : chart.input.aspectMode === "degree" ? t("byDegree") : t("bySign");
     $("#technicalPanel").innerHTML = `
       <details>
         <summary>${escapeHtml(t("technicalTitle"))}</summary>
@@ -4476,7 +4498,11 @@
           ${metric(t("calendar"), t(chart.input.calendar))}
           ${metric(t("zodiac"), t(chart.input.zodiac), "", "zodiac")}
           ${metric(t("houses"), t("wholeSign"), "", "wholeSign")}
+          ${metric(t("aspectTableMode"), aspectModeLabel, "", "aspects")}
+          ${metric(t("judgmentFrame"), t("judgmentFrameSign"), "", "aspects")}
           ${metric(t("ephemerisEngine"), engine, "", "ephemeris")}
+          ${metric(t("solarThresholds"), t("solarThresholdValues"), "", "solarPhase")}
+          ${metric(t("moonVoidDefinitions"), t("moonVoidDefinitionsValues"), "", "moonVoc")}
           ${metric(t("boundaryAudit"), boundary.length ? boundary.join(" ") : t("noBoundaryNotices"))}
         </div>
       </details>
@@ -4725,7 +4751,7 @@
         return `La carta pone énfasis en recursos: ${plainHouseTopics(2)}. No habla solo de dinero, sino de herramientas, valor y medios concretos para sostener la vida.`;
       }
       if (house === 6 || house === 8 || house === 12) {
-        return `Una parte importante de la carta se concentra en temas exigentes de casa ${house}: ${plainHouseTopics(house)}. Esto no describe un destino cerrado, sino áreas donde la vida pide más elaboración y manejo consciente.`;
+        return `Una parte importante de la carta se concentra en temas exigentes de casa ${house}. Tópicos tradicionales: ${houseTopics(house)}. En lectura práctica: ${plainHouseTopics(house)}. Esto no describe un destino cerrado, sino áreas donde la vida pide más elaboración y manejo consciente.`;
       }
       if (house === 7) {
         return `La carta se entiende muy bien desde la relación con otros: ${plainHouseTopics(7)}. No habla solo de pareja, sino también de interlocutores, audiencias, acuerdos y confrontación.`;
@@ -4739,7 +4765,7 @@
       return `The chart emphasizes resources: ${plainHouseTopics(2)}. This is not only money, but tools, value, and concrete means for sustaining life.`;
     }
     if (house === 6 || house === 8 || house === 12) {
-      return `A major part of the chart gathers around demanding house ${house} themes: ${plainHouseTopics(house)}. This is not a closed fate, but an area that asks for more elaboration and conscious handling.`;
+      return `A major part of the chart gathers around demanding house ${house} themes. Traditional topics: ${houseTopics(house)}. In practical reading: ${plainHouseTopics(house)}. This is not a closed fate, but an area that asks for more elaboration and conscious handling.`;
     }
     if (house === 7) {
       return `The chart is strongly understood through relation with others: ${plainHouseTopics(7)}. This is not only partnership, but interlocutors, audiences, agreements, and confrontation.`;
@@ -5106,8 +5132,8 @@
         const phrase = receptionPhrase(target, actor, reception);
         const strength = receptionStrengthLabel(reception);
         items.push(state.lang === "es"
-          ? `Recepción ${strength} (${role === "support" ? "apoyo" : "mitigación"}): ${phrase}.`
-          : `${capitalizeText(strength)} reception (${role === "support" ? "support" : "mitigation"}): ${phrase}.`);
+          ? `${reception.isMutual ? "Recepción mutua" : "Recepción"} ${strength} (${role === "support" ? "apoyo" : "mitigación"}): ${phrase}.`
+          : `${capitalizeText(strength)} ${reception.isMutual ? "mutual reception" : "reception"} (${role === "support" ? "support" : "mitigation"}): ${phrase}.`);
       });
     });
     return [...new Set(items)].slice(0, 4);

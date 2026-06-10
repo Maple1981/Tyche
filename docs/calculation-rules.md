@@ -140,6 +140,8 @@ Reception should be calculated only when two planets are configured. A planet re
 
 Tyche uses "reception by dignity" in this broad technical sense. Domicile reception remains the principal form, with exaltation also treated as strong.
 
+When both configured planets receive one another by dignity, label it as mutual reception. This is a reciprocal channel, not an automatic cancellation of pressure.
+
 Reception mitigates pressure when a malefic testimony is received by the significator, or when the malefic receives the significator in a way that gives the contact a formal channel. It can also strengthen benefic support. It should be shown as its own testimony instead of being hidden inside a generic aspect score.
 
 ## Lots

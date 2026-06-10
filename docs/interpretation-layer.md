@@ -75,6 +75,8 @@ In the plain-language layer, translate technical roles:
 
 The plain-language layer may add context for difficult houses, but it should not censor the traditional topics. Technical surfaces can retain words such as illness, death, enemies, loss, and confinement when those are the relevant house topics.
 
+For houses 6, 8, and 12, the first-focus reading should show both layers when those houses dominate: traditional topics first, then practical reading language. For example, house 8 may keep "death, fear, inactivity, and resources of others" as the technical layer, then explain practical expressions such as crisis, losses, debt, dependence on others' resources, or confrontation with limits.
+
 When space allows, UI labels can use paired terms such as `Lugares/Casas` and `Lugar/Casa` so the traditional vocabulary remains visible while the interface stays readable.
 
 ## Output Structure

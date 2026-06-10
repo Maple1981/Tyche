@@ -142,7 +142,9 @@ Tyche uses reception by dignity broadly. Domicile reception is the principal for
 
 In the interpretation layer, reception lowers the intensity of malefic pressure when relevant and can raise the intensity of benefic support. It must appear in the evidence so the user can see why the testimony was softened or strengthened.
 
-Future refinements may distinguish applying/separating reception, mutual reception, degree closeness, and reception through a planet that is itself badly obscured or unable to act.
+Mutual reception should be labeled when both planets have dignity in the other planet's position. It is a reciprocal channel stronger than one-way reception, but it should still be judged by the dignity level involved and by the condition of both planets.
+
+Future refinements may distinguish applying/separating reception, degree closeness, and reception through a planet that is itself badly obscured or unable to act.
 
 ## Boundary Notices
 

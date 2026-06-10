@@ -69,6 +69,7 @@ Interpretation output:
 - Evidence should include both lunar void-of-course criteria when both are calculated.
 - Do not score active triplicity as equivalent to domicile or exaltation. It is real support, but major essential strength should remain domicile/exaltation.
 - Label broad reception by dignity by strength: domicile/exaltation strong, bound or active triplicity medium, out-of-sect/cooperating triplicity weak.
+- Label mutual reception when both planets receive one another; treat it as reciprocal channel, not as automatic cancellation of pressure.
 
 ## UI Direction
 
