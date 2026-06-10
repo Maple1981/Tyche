@@ -90,9 +90,12 @@ For each selected lot:
 - Read the domicile lord of the lot.
 - Read the house, angularity, essential condition, and solar phase of the lord.
 - Note benefic and malefic testimony to the lot by sign.
+- Grade that testimony by planet role in sect, angularity, solar phase, sign relationship, degree closeness, and superior/right-sided position.
 - Treat the lord as the administrator of the lot's topic.
 
 Fortune indicates body, circumstance, environment, and what arrives with less deliberate control. Spirit indicates intention, decision, purpose, and directed action.
+
+Fortune and Spirit are always part of the base judgment even if hidden from the visible lot table. Additional lots should not displace the two principal lots.
 
 ## Triplicity Rulers
 
@@ -150,9 +153,9 @@ Reception is counted when two planets are configured and one has dignity where t
 
 Tyche uses reception by dignity broadly. Domicile reception is the principal form; exaltation is also strong, while bound and triplicity forms should be labeled as medium or weak so the evidence does not overstate them.
 
-In the interpretation layer, reception lowers the intensity of malefic pressure when relevant and can raise the intensity of benefic support. It must appear in the evidence so the user can see why the testimony was softened or strengthened.
+In the interpretation layer, reception lowers the intensity of malefic pressure when relevant and can raise the intensity of benefic support. It must appear in the evidence so the user can see why the testimony was softened or strengthened. Reception by bound alone should not reduce a strong malefic pressure judgment; it creates a technical channel or administration but is not domicile/exaltation-level mitigation.
 
-Mutual reception should be labeled when both planets have dignity in the other planet's position. Judge the mutual reception by the weaker side of the exchange: strong when both sides are strong or one is strong and the other medium; medium when bound or active triplicity carries the exchange; weak when it is only out-of-sect or cooperating triplicity. Weak mutual reception creates a reciprocal channel, but does not by itself neutralize pressure.
+Mutual reception should be labeled when both planets have dignity in the other planet's position. Judge the mutual reception by the weaker side of the exchange: strong when both sides are strong or one is strong and the other medium; medium when bound or active triplicity carries the exchange; weak when it is only out-of-sect or cooperating triplicity. Weak mutual reception creates a reciprocal channel, but does not by itself neutralize pressure. Mutual reception involving malefic pressure can formalize, contain, or structure the pressure without automatically turning it into ease or help.
 
 Future refinements may distinguish applying/separating reception, degree closeness, and reception through a planet that is itself badly obscured or unable to act.
 
@@ -161,6 +164,8 @@ Future refinements may distinguish applying/separating reception, degree closene
 Boundary notices warn about sensitivity without changing the judgment by themselves:
 
 - Ascendant near sign change can change the rising sign, all whole-sign houses, and the Ascendant lord.
+- Sun near the horizon can change sect, sect light, benefic/malefic of sect, malefic contrary to sect, Fortune/Spirit formulas, and the weighting of the judgment.
+- MC or IC near sign change can change the whole-sign place that receives public-projection or foundation testimony.
 - Lots near sign change can shift lot house and lot lord with small changes in time or coordinates.
 - Planets near Egyptian bound changes can alter degree administration, own minor dignity if applicable, and reception-by-bound testimony.
 

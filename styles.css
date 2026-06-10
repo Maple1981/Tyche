@@ -287,6 +287,13 @@ h1 {
   line-height: 1.35;
 }
 
+.option-warning {
+  grid-column: 1 / -1;
+  margin: -2px 0 2px;
+  border-left: 3px solid var(--blue);
+  padding-left: 9px;
+}
+
 .aspect-mode-note,
 .orb-note {
   grid-column: 1 / -1;
@@ -1003,6 +1010,42 @@ td {
   margin-top: 6px;
 }
 
+.score-breakdown {
+  display: grid;
+  gap: 9px;
+  margin-top: 10px;
+  color: var(--muted);
+}
+
+.score-breakdown-title {
+  margin: 0;
+  color: var(--blue-deep);
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-variant: small-caps;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0;
+}
+
+.score-breakdown-item {
+  border-top: 1px dotted color-mix(in srgb, var(--blue) 42%, var(--line));
+  padding-top: 8px;
+}
+
+.score-breakdown-item h5 {
+  margin: 0 0 5px;
+  color: var(--ink);
+  font-size: 0.9rem;
+}
+
+.score-breakdown-item ul {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding-left: 1.1rem;
+  line-height: 1.45;
+}
+
 .interpretation-timing {
   margin: 0;
 }
@@ -1198,6 +1241,16 @@ td {
   border: 2px solid var(--surface);
   border-radius: 999px;
   background: var(--blue);
+}
+
+.people-group-title {
+  grid-column: 1 / -1;
+  margin: 6px 0 0;
+  color: var(--blue-deep);
+  font-size: 0.98rem;
+  font-variant: small-caps;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0;
 }
 
 .person-card {

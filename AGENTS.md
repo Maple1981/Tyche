@@ -32,6 +32,8 @@ Core derived data:
 - Superior/right-sided configurations must preserve direction: who overcomes whom matters for judgment.
 - Triplicity dignities should be labeled by role when shown: active by sect, out of sect, or cooperating.
 - Bounds and decans should distinguish own minor dignity from another planet's administration of the degree.
+- Boundary audits should include the Sun near the horizon for sect sensitivity, MC/IC near sign changes, Ascendant near sign changes, lot sign/house boundaries, and visible planets near Egyptian-bound boundaries.
+- Fortune and Spirit are always calculated internally for judgment even when the lot table hides them; lot checkboxes control display, not whether the principal lots exist for interpretation.
 
 This app uses vendored Astronomy Engine for browser-side ephemerides, with the older compact formulas kept only as fallback. Make the approximate +/-1 arcminute limitation visible in the UI and documentation; do not present the results as professional ephemeris-grade.
 
@@ -68,10 +70,12 @@ Interpretation output:
 - Use cautious educational language: describe tendencies, pressures, supports, and dominant topics; do not state fatalistic certainties.
 - Keep `docs/judgment-matrix.md` aligned with the interpretation code. Solar phase, configurations, lot lords, lunar condition, and triplicity rulers should enter the judgment when their underlying data is calculated.
 - Evidence should include both lunar void-of-course criteria when both are calculated.
+- Use a consistent double layer for difficult places: the visible reading may add contextual caution, while technical evidence may preserve the traditional topics plainly.
 - Do not score active triplicity as equivalent to domicile or exaltation. It is real support, but major essential strength should remain domicile/exaltation.
 - Do not count every bound/decan label as minor dignity. Only own bound or own decan is minor dignity for the planet; another planet ruling the bound/decan is degree administration and should not automatically improve ease or mitigation.
 - Label broad reception by dignity by strength: domicile/exaltation strong, bound or active triplicity medium, out-of-sect/cooperating triplicity weak.
 - Label mutual reception when both planets receive one another; grade it by the dignity actually involved and treat it as reciprocal channel, not as automatic cancellation of pressure.
+- Do not let reception by bound alone reduce strong malefic pressure. It is a technical channel or administration, not the same as domicile/exaltation-level mitigation.
 
 ## UI Direction
 
@@ -105,3 +109,4 @@ The interface should feel mobile-first, calm, scholarly, and usable:
 - Historical example places should include coordinates and a deliberate time offset or IANA zone so charts do not depend on browser guesses.
 - Show source/rating metadata for historical examples when it has been audited. Never invent Rodden ratings or exact time-source notes.
 - Keep the natal-data source separate from any note that a chart was discussed in a secondary interpretive source. Do not imply that an example discussion is the source of the birth time unless verified.
+- If interpretive references are structured later, keep fields such as type, role, and technique separate from natal data source, time source, and rating.

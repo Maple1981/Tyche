@@ -60,7 +60,36 @@ The interpretation panel should read like a clear human explanation first. Use t
 
 Do not erase traditional difficult topics from technical tables or glossary entries. In the plain reading, contextualize them so they do not sound like a fatalistic sentence.
 
+Use a consistent double layer:
+
+- Visible reading: when a difficult place such as 6, 8, or 12 is central, include both the traditional topics and a contextual caution.
+- Technical evidence: preserve the traditional topics plainly so the user can audit the doctrine behind the reading.
+
 Use paired labels such as `Lugares/Casas` when a UI element needs both traditional vocabulary and immediate clarity.
+
+## Historical Archive Metadata
+
+Keep natal-data source and interpretive-reference source separate. A future structured historical data model should split any interpretive reference into:
+
+- Type: book, podcast, course, article, or other.
+- Role: central example, brief example, technical mention, or comparative note.
+- Technique: sect, Ascendant lord, lots, annual profections, zodiacal releasing, or another named method.
+
+Do not imply that an interpretive example is the source for the birth time unless the natal data source explicitly says so.
+
+## Future Topic Readings
+
+The current interpretation is a general natal reading. Topic-specific readings should be added as a separate module before prediction/timing modules become too prominent. Suggested topics:
+
+- Life direction.
+- Profession and reputation.
+- Relationships.
+- Resources.
+- Body, illness, and strain.
+- Parents, home, and foundations.
+- Travel, religion, astrology, and study.
+
+Each topic should use its own significators and evidence rather than recycling the general focus score as if it answered every question.
 
 Examples of preferred language:
 

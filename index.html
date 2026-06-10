@@ -120,6 +120,7 @@
                     <option value="julian" data-i18n="julian">Juliano</option>
                   </select>
                 </label>
+                <p id="calendarWarning" class="field-note option-warning" data-i18n="julianInlineWarning" hidden>Aviso: la conversión juliana es básica. Verifica calendario local, hora civil y fuente temporal antes de investigación crítica.</p>
                 <label class="field">
                   <span data-i18n="zodiac" data-glossary="zodiac">Zodíaco</span>
                   <select id="zodiac">
@@ -127,6 +128,7 @@
                     <option value="sidereal" data-i18n="sidereal">Sideral aproximado</option>
                   </select>
                 </label>
+                <p id="zodiacWarning" class="field-note option-warning" data-i18n="siderealInlineWarning" hidden>Aviso: el zodíaco sideral es aproximado y queda fuera del marco tropical base de Tyche.</p>
                 <label class="field">
                   <span data-i18n="houses" data-glossary="wholeSign">Casas</span>
                   <select id="houses">
@@ -164,6 +166,7 @@
                   <input id="includeModern" type="checkbox">
                   <span data-i18n="includeModern" data-glossary="modernPlanets">Incluir Urano, Neptuno y Plutón</span>
                 </label>
+                <p id="techniqueWarning" class="field-note option-warning" data-i18n="mixedInlineWarning" hidden>Aviso: los planetas modernos se muestran como capa adicional; el juicio helenístico base no los pondera.</p>
                 <fieldset class="lot-fieldset">
                   <legend data-i18n="lots" data-glossary="lots">Lotes</legend>
                   <label><input type="checkbox" name="lots" value="fortune" checked> <span data-i18n="fortune" data-glossary="lotFortune">Fortuna</span></label>
@@ -229,7 +232,7 @@
         <p data-i18n="footerWarning">Motor astronómico pensado para uso educativo. La información proporcionada es solo orientativa.</p>
         <p data-i18n="footerPrivacy">La carta se calcula localmente en tu navegador. No guardamos tus cartas ni usamos cookies. Solo se conserva en este dispositivo la preferencia de idioma y tema. La búsqueda de lugares consulta Open-Meteo para obtener coordenadas. Las imágenes del archivo histórico se cargan desde Wikimedia Commons. El posicionamiento de planetas utiliza una librería local.</p>
         <p><span data-i18n="footerAuthors">Autores: Maple81 y Hélène de Troie, 2026.</span> <a href="https://github.com/Maple1981/Tyche" target="_blank" rel="noreferrer" data-i18n="githubLink">Ver repositorio GitHub</a></p>
-        <p class="attribution-line" data-i18n-html="footerAttributions">Atribuciones generales: algunas imágenes proceden de <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; algunas referencias biográficas o natales pueden proceder de <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a> y <a href="https://www.astro.com/astro-databank/" target="_blank" rel="noreferrer">Astro-Databank</a>. La fuente individual y el rating se muestran, o se marcan como pendientes de auditoría. Búsqueda de localización mediante <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>; efemérides locales mediante <a href="https://github.com/cosinekitty/astronomy" target="_blank" rel="noreferrer">Astronomy Engine</a> MIT, precisión aprox. ±1′, en ejecución local, sin enviar datos a terceros.</p>
+        <p class="attribution-line" data-i18n-html="footerAttributions">Atribuciones generales: algunas imágenes proceden de <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons</a>; algunas referencias biográficas o natales pueden proceder de <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">Wikipedia</a> y <a href="https://www.astro.com/astro-databank/" target="_blank" rel="noreferrer">Astro-Databank</a>. La fuente individual y el rating se muestran cuando han sido auditados; si no, se marcan como pendientes de auditoría. Búsqueda de localización mediante <a href="https://open-meteo.com/en/docs/geocoding-api" target="_blank" rel="noreferrer">Open-Meteo Geocoding API</a>; efemérides locales mediante <a href="https://github.com/cosinekitty/astronomy" target="_blank" rel="noreferrer">Astronomy Engine</a> MIT, precisión aprox. ±1′, en ejecución local, sin enviar datos a terceros.</p>
       </footer>
     </div>
 

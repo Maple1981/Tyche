@@ -41,11 +41,13 @@ As a secondary prominence flag, mark visible planets within about 5 degrees of t
 
 Boundary notices are audit flags, not reinterpretations. Show them when:
 
+- The Sun is within 1 degree of the horizon. This is a sect boundary: sect light, benefic/malefic of sect, malefic contrary to sect, Fortune/Spirit formulas, and judgment weighting can change.
 - The Ascendant is within 1 degree of a sign change.
-- A selected lot is within 1 degree of a sign/whole-sign-house change.
+- The MC or IC is within 1 degree of a sign change. This can change the whole-sign place that receives public-projection or foundation testimony.
+- A calculated lot that enters display or judgment is within 1 degree of a sign/whole-sign-house change.
 - A visible planet is within 30 arcminutes of an Egyptian bound change.
 
-Show the boundary audit in technical data, and repeat the detailed notices in the interpretation evidence when any notices exist.
+Show the boundary audit in technical data, and repeat the detailed notices in the interpretation evidence when any notices exist. Each notice should name the boundary type, distance, what may change, and what the user should verify.
 
 ## Sect
 
@@ -155,6 +157,8 @@ Principal lots:
 
 - Fortune: day Asc + Moon - Sun; night Asc + Sun - Moon.
 - Spirit: day Asc + Sun - Moon; night Asc + Moon - Sun.
+
+Fortune and Spirit are principal judgment lots. Tyche calculates them internally even when the user hides them from the visible lot table. The checkbox selector controls display, not whether Fortune and Spirit exist for the interpretation layer.
 
 The standard rule reverses the luminaries by day and night. A small number of near-horizon charts may be discussed with a diurnal lot calculation when the Sun is just below the Ascendant and the example is explicitly framed that way. Tyche should not silently switch formulas for ordinary charts; if that exception is ever implemented, it should be visible as a technical option or a clearly labeled historical-example override.
 
