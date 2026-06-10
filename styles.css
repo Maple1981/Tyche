@@ -1061,6 +1061,13 @@ td {
   letter-spacing: 0;
 }
 
+.score-breakdown-caution {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
 .score-breakdown-item {
   border-top: 1px dotted color-mix(in srgb, var(--blue) 42%, var(--line));
   padding-top: 8px;
@@ -1118,6 +1125,23 @@ td {
 .main-lots-audit li {
   display: grid;
   gap: 2px;
+}
+
+.main-lots-audit dl {
+  display: grid;
+  grid-template-columns: minmax(120px, max-content) minmax(0, 1fr);
+  gap: 3px 10px;
+  margin: 4px 0 0;
+}
+
+.main-lots-audit dt {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.main-lots-audit dd {
+  margin: 0;
+  color: var(--ink);
 }
 
 .main-lots-audit p {

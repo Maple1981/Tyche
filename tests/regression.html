@@ -52,16 +52,40 @@
         results.append(item);
       }
 
-      function wait(ms) {
-        return new Promise((resolve) => window.setTimeout(resolve, ms));
+      function waitFor(predicate, label, timeout = 4000) {
+        const started = performance.now();
+        return new Promise((resolve, reject) => {
+          const tick = () => {
+            try {
+              if (predicate()) {
+                resolve(true);
+                return;
+              }
+            } catch {
+              // Retry until timeout.
+            }
+            if (performance.now() - started > timeout) {
+              reject(new Error(`Timed out waiting for ${label}`));
+              return;
+            }
+            window.setTimeout(tick, 40);
+          };
+          tick();
+        });
+      }
+
+      function assert(label, condition) {
+        record(label, Boolean(condition));
       }
 
       async function run() {
-        await wait(500);
         const doc = frame.contentDocument;
         const win = frame.contentWindow;
+        await waitFor(() => win.__TYCHE_READY__ && win.TycheTest, "Tyche test API");
+
         const $ = (selector) => doc.querySelector(selector);
         const $$ = (selector) => Array.from(doc.querySelectorAll(selector));
+        const testApi = win.TycheTest;
 
         $("#birthDate").value = "1980-01-01";
         $("#birthTime").value = "12:00";
@@ -75,18 +99,43 @@
           item.checked = false;
         });
 
+        const chartRendered = new Promise((resolve) => {
+          win.addEventListener("tyche:chart-rendered", resolve, { once: true });
+        });
         $("#chart-form").dispatchEvent(new win.Event("submit", { bubbles: true, cancelable: true }));
-        await wait(250);
+        await chartRendered;
 
-        const evidenceText = $("#interpretationPanel")?.textContent || "";
-        record("Fortuna y Espiritu siguen auditables aunque se oculten en la tabla", /Fortuna/.test(evidenceText) && /Esp[ií]ritu/.test(evidenceText) && /Lotes principales/.test(evidenceText));
+        assert("Fortuna y Espiritu siguen auditables aunque se oculten en la tabla", $("[data-test='main-lots-audit']") && $("[data-test='main-lot-fortune']") && $("[data-test='main-lot-spirit']"));
 
         $("#techniqueMode").value = "strict";
         $("#includeModern").checked = true;
         $("#includeModern").dispatchEvent(new win.Event("change", { bubbles: true }));
-        await wait(50);
-        const warning = $("#techniqueWarning");
-        record("Modernos visibles en modo tradicional muestran aviso inmediato", warning && !warning.hidden && /tradicional/i.test(warning.textContent));
+        await waitFor(() => $("[data-test='modern-strict-warning']:not([hidden])"), "modern strict warning");
+        assert("Modernos visibles en modo tradicional muestran aviso inmediato", $("[data-test='modern-strict-warning']:not([hidden])"));
+
+        const ownBound = testApi.dignityGroups(testApi.dignityFor("jupiter", 2, true));
+        assert("Planeta en termino propio cuenta como dignidad menor propia", ownBound.minor.length > 0);
+
+        const foreignBound = testApi.dignityGroups(testApi.dignityFor("saturn", 2, true));
+        assert("Planeta en termino ajeno queda como administracion, no apoyo propio", foreignBound.administration.length > 0 && foreignBound.minor.length === 0);
+
+        const boundOnlyReception = {
+          hasReception: true,
+          strongest: 2,
+          effectiveScore: 2,
+          targetReceivesActor: { kinds: ["bound"] },
+          actorReceivesTarget: { kinds: [] },
+        };
+        assert("Recepcion solo por termino no rebaja presion fuerte", testApi.adjustIntensityForReception("highLevel", "tension", boundOnlyReception) === "highLevel");
+
+        const chart = testApi.calculateChart({ selectedLots: [] });
+        assert("Fortuna y Espiritu se calculan internamente aunque selectedLots este vacio", testApi.lotByKey(chart, "fortune") && testApi.lotByKey(chart, "spirit"));
+
+        const sectChart = { ...chart, sunAltitude: 0.2 };
+        assert("Sol cerca del horizonte produce aviso de secta", testApi.boundaryWarnings(sectChart).some((warning) => warning.key === "sect"));
+
+        const mcChart = { ...chart, angles: { ...chart.angles, mc: 29.7, ic: 209.7 } };
+        assert("MC cerca de frontera produce aviso propio", testApi.boundaryWarnings(mcChart).some((warning) => warning.key === "mc"));
       }
 
       frame.addEventListener("load", () => {

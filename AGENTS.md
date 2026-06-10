@@ -34,6 +34,7 @@ Core derived data:
 - Triplicity dignities should be labeled by role when shown: active by sect, out of sect, or cooperating.
 - Bounds and decans should distinguish own minor dignity from another planet's administration of the degree.
 - Boundary audits should include the Sun near the horizon for sect sensitivity, MC/IC near sign changes, Ascendant near sign changes, lot sign/house boundaries, and visible planets near Egyptian-bound boundaries.
+- When a widened sect boundary threshold is used for historical/manual/Julian/uncertain time contexts, show the threshold and reason; do not hide it inside generic warning text.
 - Fortune and Spirit are always calculated internally for judgment even when the lot table hides them; lot checkboxes control display, not whether the principal lots exist for interpretation.
 
 This app uses vendored Astronomy Engine for browser-side ephemerides, with the older compact formulas kept only as fallback. Make the approximate +/-1 arcminute limitation visible in the UI and documentation; do not present the results as professional ephemeris-grade.
@@ -101,6 +102,7 @@ The interface should feel mobile-first, calm, scholarly, and usable:
 - Do not mention external source names in doctrine notes, except for explicitly requested technical dependency documentation, licenses, and footer attributions.
 - Podcast/transcript material may be used only as paraphrased synthesis and source URLs. Never commit transcript dumps, long verbatim excerpts, OCR, or attachment-derived scratch files.
 - Keep the public transcript source map in `docs/public-transcript-synthesis.md`, and treat the priority episode list there as the first review layer for interpretation changes.
+- Browser regression tests should use stable `data-test` hooks and the `window.TycheTest` API exposed only in `?test=regression` mode, not translated prose.
 - Hard rule: do not run `git push`, publish, deploy, or update GitHub Pages unless the user explicitly asks for that exact action in the current turn.
 
 ## Historical Examples
