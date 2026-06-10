@@ -8,6 +8,7 @@ This matrix aligns calculated data, visible output, and judgment weighting. It i
 | Ascendant ruler | Yes | Dedicated panel and reading | Yes, highest priority | House, sign, angularity, essential condition, solar phase when relevant |
 | Whole Sign Houses | Yes | House table and wheel | Yes | Houses supply topical frame; do not conflate signs with houses |
 | MC/IC | Yes | Core summary and technical notes | Yes, secondary/public-foundation layer | Whole-sign house of MC/IC, boundary warnings |
+| 10th-place ruler | Yes | Public projection and evidence | Yes, moderate public layer | Shows where reputation, craft, rank, and visible action are administered |
 | Sect | Yes | Core summary | Yes | Sect light, benefic/malefic of sect, contrary malefic, lot formulas |
 | Liminal/sensitive sect | Yes | Core summary and audit | Modifies confidence, not doctrine by itself | Shows alternate Fortune/Spirit positions when needed |
 | Seven visible planets | Yes | Planet table, wheel, reading | Yes | Traditional actors only in strict base layer |
@@ -16,6 +17,7 @@ This matrix aligns calculated data, visible output, and judgment weighting. It i
 | Angularity by whole sign | Yes | Planet table and evidence | Yes | Prominence, not automatic ease |
 | Exact angle proximity | Yes | Evidence/score | Yes, small testimony | Secondary prominence flag, separate from whole-sign angularity |
 | Solar phase | Yes | Planet table and reading | Yes for key significators | Under beams, combustion, in the heart, morning/evening, chariot mitigation |
+| Mercury morning/evening phase | Yes | Reading when Mercury is key | Qualifier only | Tilts Mercury's common nature more diurnal or nocturnal without changing sect |
 | Configurations by sign | Yes | Configuration table and reading | Yes | Main traditional relation layer |
 | Degree closeness | Yes | Configuration table/evidence | Modifier | Perfection/intensity, not replacement for sign-based relation |
 | Reception | Yes | Evidence and reading | Modifier | Formal channel for mitigation/support; bound-only does not erase strong pressure |

@@ -31,6 +31,8 @@ The visible summary should normally show the first three strongest topical focus
 
 Public projection should be its own plain-language block when interpretation is rendered. It should combine MC, the 10th whole-sign house, the ruler of the 10th house, and visible planets in the 10th. This block clarifies reputation, craft, rank, and action in public without replacing the Ascendant lord as the main life-direction thread.
 
+The 10th-place ruler may contribute a moderate public-focus score where it falls. This does not make public projection equal to the Ascendant lord; it simply shows where reputation, craft, rank, and visible action are administered.
+
 The public transcript synthesis in `docs/public-transcript-synthesis.md` supports this order as Tyche's current source map for practical delineation.
 
 ## Unit of Judgment
@@ -52,6 +54,8 @@ Rulers of places are one of the main ways Tyche should connect topics:
 
 This applies even when a place is empty. Do not treat empty places as inactive when their rulers are prominent.
 
+The evidence layer should name the rulers of the main scored focuses. If a focus has no visible planet inside it, state that the place still remains active through its ruler rather than implying absence.
+
 The detailed weighting rules live in `docs/judgment-matrix.md`. That matrix is the checklist for whether a calculated factor should enter the visible report, the evidence layer, or a future module.
 
 Prominence and ease must remain separate:
@@ -65,6 +69,7 @@ Prominence and ease must remain separate:
 - The malefic contrary to sect needs special attention as a sharper source of pressure.
 - Reception can mitigate pressure or strengthen help when configured planets receive one another by dignity.
 - A benefic of sect that is combust or under the beams without chariot protection still supports, but its support should be described as less visible or less directly available.
+- Mercury's morning/evening phase can qualify its common nature when Mercury is a key planet: more diurnal and outward when morning/oriental, more nocturnal and mediated when evening/occidental.
 
 In the plain-language layer, translate technical roles:
 

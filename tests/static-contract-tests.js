@@ -50,6 +50,9 @@ assert("Boundary warnings carry changeCodes", app.includes("changeCodes: []"));
 assert("Boundary warnings carry actionCode", app.includes("actionCode: \"\""));
 assert("MC/IC warnings carry boundarySideCode", app.includes("boundarySideCode"));
 assert("Score items carry reasonCode", app.includes("reasonCode: reasonCode || category"));
+assert("10th-house ruler contributes a public focus signal", app.includes("tenth-ruler:"));
+assert("Focus evidence uses house rulers", app.includes("function focusRulerEvidence") && app.includes("An empty house remains active through its ruler"));
+assert("Mercury solar phase qualifier is explicit", app.includes("function mercuryPhaseQualifier") && app.includes("common and variable nature"));
 
 assert("Historical archive has substantial example coverage", personCount >= 35);
 assert("Historical archive is fully externally audited", personCount === auditIds.length && historicalIds.every((id) => auditIds.includes(id)));
@@ -66,6 +69,7 @@ assert("Historical audit records expose source separation", app.includes("hasNat
 
 assert("Judgment codebook documents reasonCode", read("docs/judgment-codebook.md").includes("Score Reason Codes"));
 assert("Judgment factor matrix exists", read("docs/judgment-factor-matrix.md").includes("Judgment Factor Matrix"));
+assert("Transcript-derived interpretation refinements are documented", read("docs/public-transcript-synthesis.md").includes("10th-place ruler") && read("docs/judgment-factor-matrix.md").includes("Mercury morning/evening phase"));
 assert("Precision limits doc exists", read("docs/precision-limits.md").includes("Precision and Reliability Limits"));
 assert("Historical audit doc exists", read("docs/historical-data-audit.md").includes("Normalized Reliability"));
 assert("Historical character audit doc prepares future additions", read("docs/historical-character-audit.md").includes("Future Addition Checklist"));

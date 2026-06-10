@@ -19,6 +19,7 @@ Strong testimonies:
 
 - Angular visible planets.
 - MC and IC by whole sign house.
+- Ruler of the 10th whole-sign place as a moderate public-projection testimony.
 - Fortune, Spirit, their domicile lords, and the houses of those lords.
 - Triplicity rulers of the sect light as background support.
 
@@ -44,6 +45,7 @@ For non-luminary visible planets:
 - Under the beams indicates a hidden, internal, private, or less publicly legible operation.
 - Morning/oriental planets tend toward earlier, more active, or more outward expression.
 - Evening/occidental planets tend toward later, more receptive, or more context-mediated expression.
+- When Mercury is one of the key planets, morning/oriental phase inclines its common nature more diurnally, while evening/occidental phase inclines it more nocturnally. This is a qualifier, not a change of sect calculation.
 
 This is zodiacal solar phase, not a full observational heliacal-visibility model. Solar phase modifies the planet's testimony. It does not erase angularity, dignity, sect, or house placement.
 
@@ -165,6 +167,8 @@ Tyche uses reception by dignity broadly. Domicile reception is the principal for
 In the interpretation layer, reception lowers the intensity of malefic pressure when relevant and can raise the intensity of benefic support. It must appear in the evidence so the user can see why the testimony was softened or strengthened. Reception by bound alone should not reduce a strong malefic pressure judgment; it creates a technical channel or administration but is not domicile/exaltation-level mitigation.
 
 For malefic testimony to lots, keep the raw pressure visible when reception regulates it. A superior or close malefic contrary to sect may still be "raw high pressure" even if reception lowers the final displayed intensity; the evidence should say that the pressure is regulated rather than pretending the original pressure disappeared.
+
+When benefic mitigation arrives through a hard configuration but strong or medium reception is present, describe it as negotiated or regulated support rather than smooth help. The pressure remains part of the judgment, but it gains a formal channel.
 
 Mutual reception should be labeled when both planets have dignity in the other planet's position. Judge the mutual reception by the weaker side of the exchange: strong when both sides are strong or one is strong and the other medium; medium when bound or active triplicity carries the exchange; weak when it is only out-of-sect or cooperating triplicity. Weak mutual reception creates a reciprocal channel, but does not by itself neutralize pressure. Mutual reception involving malefic pressure can give the pressure form, continuity, or reciprocal dependence; it may channel the difficulty, but it also ties the significator more closely to the malefic.
 

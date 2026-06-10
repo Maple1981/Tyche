@@ -17,6 +17,8 @@ The priority transcripts support these implementation changes:
 - Treat close contact with exact angles as extra prominence. This does not replace Whole Sign House angularity; it marks a planet as especially visible when it is near the Ascendant, Descendant, MC, or IC degree.
 - Keep Whole Sign Houses as the default framework and keep MC/IC as movable astronomical points that can fall outside the 10th/4th whole-sign places.
 - Keep place topics traditional and do not derive them from Aries = house 1, Taurus = house 2, and so on.
+- In the focus score, let the ruler of the 10th place contribute a moderate public-projection testimony where it falls. This is secondary to the Ascendant lord and MC, but it reflects how the 10th-place ruler administers reputation, craft, rank, and visible action.
+- In the evidence layer, list the rulers of the main focuses so an empty place is not treated as inactive merely because no visible planet is inside it.
 - Grade bonification and maltreatment by strength, closeness, sect, solar visibility, and superior/right-sided configuration instead of using a binary good/bad aspect label.
 - Add reception as a named mitigation layer when configured planets receive one another by dignity. Reception can soften a malefic testimony or strengthen a benefic testimony, but it should remain visible in the evidence.
 - Treat copresence as intensified cohabitation rather than a fixed benefic or malefic aspect; its value comes from the planets involved and their condition.
@@ -77,6 +79,7 @@ Sect remains one of the primary switches:
 - Day chart: Sun is the sect light, Jupiter is the benefic of sect, Saturn is the malefic of sect, Mars is the malefic contrary to sect.
 - Night chart: Moon is the sect light, Venus is the benefic of sect, Mars is the malefic of sect, Saturn is the malefic contrary to sect.
 - Mercury is judged more diurnal when morning/oriental and more nocturnal when evening/occidental.
+- When Mercury is a key planet in the reading, surface that morning/evening condition in plain language without turning Mercury into a fixed benefic or malefic.
 
 Sect modifies benefic/malefic condition, triplicity rulers, and lot formulas. It should appear early in both calculation and interpretation.
 

@@ -5383,8 +5383,36 @@
       : `House ${focus.house}: ${houseReadingTopics(focus.house, "double")}`;
   }
 
+  function wholeSignHouseSign(chart, house) {
+    return (chart.ascSign + house - 1) % 12;
+  }
+
+  function wholeSignHouseRuler(chart, house) {
+    return SIGNS[wholeSignHouseSign(chart, house)].ruler;
+  }
+
   function focusTextList(focuses) {
     return focuses.map(focusLabel).join("; ");
+  }
+
+  function focusRulerEvidence(focuses, chart) {
+    if (!focuses?.length) return "";
+    const entries = focuses.slice(0, 3).map((focus) => {
+      const ruler = wholeSignHouseRuler(chart, focus.house);
+      const position = chart.positions[ruler];
+      const planetsInside = VISIBLE_KEYS.filter((key) => chart.positions[key]?.house === focus.house);
+      const occupancy = planetsInside.length
+        ? (state.lang === "es"
+          ? `con planetas visibles: ${naturalList(planetsInside.map(planetLabel))}`
+          : `with visible planets: ${naturalList(planetsInside.map(planetLabel))}`)
+        : (state.lang === "es" ? "sin planetas visibles dentro" : "with no visible planets inside");
+      return state.lang === "es"
+        ? `casa ${focus.house}: regente ${planetLabel(ruler)} en casa ${position.house} (${occupancy})`
+        : `house ${focus.house}: ruler ${planetLabel(ruler)} in house ${position.house} (${occupancy})`;
+    });
+    return state.lang === "es"
+      ? `Regentes de focos: ${entries.join("; ")}. Una casa vacía sigue activa por su regente.`
+      : `Focus rulers: ${entries.join("; ")}. An empty house remains active through its ruler.`;
   }
 
   function focusReasonsText(focus) {
@@ -5570,6 +5598,7 @@
     const mediumReception = receptionScore >= 2;
     const favorableAspect = ["sextile", "trine"].includes(beneficAspect) || (beneficAspect === "copresence" && closeContact);
     const hardAspect = ["square", "opposition"].includes(beneficAspect);
+    const regulatedHardSupport = beneficContact && hardAspect && mediumReception;
     const beneficHasWeight = beneficStrength.strong || beneficPosition.angularity === "angular";
     const beneficHasSomeWeight = beneficHasWeight || beneficStrength.triplicityStrong || beneficStrength.ownMinor || beneficPosition.angularity === "succedent";
     const maleficHasOwnResources = maleficStrength.strong || maleficStrength.triplicityStrong || maleficStrength.ownMinor;
@@ -5583,9 +5612,14 @@
     const weakMitigation = beneficContact || maleficStrength.ownMinor || maleficStrength.triplicityStrong || mediumReception;
     if (state.lang === "es") {
       if (strongMitigation) {
-        return "La mitigación es fuerte: el benéfico de la secta puede intervenir de forma clara, por cercanía, aspecto favorable o fuerza propia.";
+        return regulatedHardSupport
+          ? "La mitigación es fuerte pero negociada: el contacto no es suave, pero la recepción da un canal formal para que el benéfico de la secta intervenga con claridad."
+          : "La mitigación es fuerte y directa: el benéfico de la secta puede intervenir de forma clara, por cercanía, aspecto favorable o fuerza propia.";
       }
       if (mediumMitigation) {
+        if (regulatedHardSupport) {
+          return "La mitigación es media y regulada: la presión no desaparece, pero la recepción convierte el contacto difícil en un canal manejable. La lectura debe mantener ambas señales.";
+        }
         return "La mitigación es media: la presión no desaparece, pero aparece algún canal de regulación, por apoyo benéfico, recepción o recursos propios del planeta. La lectura debe mantener ambas señales.";
       }
       if (weakMitigation) {
@@ -5599,9 +5633,14 @@
       return "No aparece una mitigación fuerte, pero tampoco una debilidad mayor clara; conviene leerla con sus aspectos y casa.";
     }
     if (strongMitigation) {
-      return "Mitigation is strong: the benefic of sect can intervene clearly through closeness, a favorable aspect, or its own strength.";
+      return regulatedHardSupport
+        ? "Mitigation is strong but negotiated: the contact is not smooth, but reception gives the benefic of sect a formal channel for clear intervention."
+        : "Mitigation is strong and direct: the benefic of sect can intervene clearly through closeness, a favorable aspect, or its own strength.";
     }
     if (mediumMitigation) {
+      if (regulatedHardSupport) {
+        return "Mitigation is medium and regulated: the pressure does not disappear, but reception turns the difficult contact into a manageable channel. Keep both testimonies in the reading.";
+      }
       return "Mitigation is medium: the pressure does not disappear, but some channel of regulation appears through benefic support, reception, or the planet's own resources. Keep both testimonies in the reading.";
     }
     if (weakMitigation) {
@@ -5680,35 +5719,46 @@
     return parts.join(" · ");
   }
 
+  function mercuryPhaseQualifier(planet, stateInfo) {
+    if (planet !== "mercury" || !stateInfo?.side) return "";
+    const quality = stateInfo.side === "morning"
+      ? (state.lang === "es" ? "diurna, activa y exteriorizada" : "diurnal, active, and outward")
+      : (state.lang === "es" ? "nocturna, receptiva y mediada" : "nocturnal, receptive, and mediated");
+    return state.lang === "es"
+      ? ` En Mercurio, esta fase inclina su naturaleza común y variable hacia una cualidad más ${quality}.`
+      : ` For Mercury, this phase tilts its common and variable nature toward a more ${quality} quality.`;
+  }
+
   function solarPhasePlainText(planet, chart) {
     const stateInfo = solarPhaseState(planet, chart);
     if (stateInfo.category === "luminary") return "";
     const name = planetLabel(planet);
+    const mercuryText = mercuryPhaseQualifier(planet, stateInfo);
     const sideText = stateInfo.side === "morning"
       ? (state.lang === "es" ? "matutino/oriental" : "morning/oriental")
       : (state.lang === "es" ? "vespertino/occidental" : "evening/occidental");
     if (state.lang === "es") {
       if (stateInfo.category === "cazimi") {
-        return `${name} está en el corazón del Sol: su significación se concentra y queda muy unida a visibilidad, autoridad o foco solar.`;
+        return `${name} está en el corazón del Sol: su significación se concentra y queda muy unida a visibilidad, autoridad o foco solar.${mercuryText}`;
       }
       if (stateInfo.category === "combust") {
-        return `${name} está combusto: actúa con más presión, menor independencia y más ocultación zodiacal. ${stateInfo.chariot ? "La condición se mitiga porque el planeta conserva recursos propios por signo o término." : "Conviene leer sus temas como menos legibles técnicamente o más difíciles de expresar directamente."}`;
+        return `${name} está combusto: actúa con más presión, menor independencia y más ocultación zodiacal. ${stateInfo.chariot ? "La condición se mitiga porque el planeta conserva recursos propios por signo o término." : "Conviene leer sus temas como menos legibles técnicamente o más difíciles de expresar directamente."}${mercuryText}`;
       }
       if (stateInfo.category === "underBeams") {
-        return `${name} está bajo los rayos: sus temas tienden a operar con menor legibilidad zodiacal, de forma más interna o más privada. ${stateInfo.chariot ? "La ocultación queda mitigada por recursos propios del planeta." : "Esto reduce claridad técnica o manifestación simbólica, aunque no elimina su importancia."}`;
+        return `${name} está bajo los rayos: sus temas tienden a operar con menor legibilidad zodiacal, de forma más interna o más privada. ${stateInfo.chariot ? "La ocultación queda mitigada por recursos propios del planeta." : "Esto reduce claridad técnica o manifestación simbólica, aunque no elimina su importancia."}${mercuryText}`;
       }
-      return `${name} es ${sideText}: tiende a manifestar sus temas de forma ${stateInfo.side === "morning" ? "más activa, temprana o exteriorizada" : "más receptiva, tardía o mediada por el contexto"}.`;
+      return `${name} es ${sideText}: tiende a manifestar sus temas de forma ${stateInfo.side === "morning" ? "más activa, temprana o exteriorizada" : "más receptiva, tardía o mediada por el contexto"}.${mercuryText}`;
     }
     if (stateInfo.category === "cazimi") {
-      return `${name} is in the heart of the Sun: its signification is concentrated and tightly bound to visibility, authority, or solar focus.`;
+      return `${name} is in the heart of the Sun: its signification is concentrated and tightly bound to visibility, authority, or solar focus.${mercuryText}`;
     }
     if (stateInfo.category === "combust") {
-      return `${name} is combust: it acts under more pressure, with less independence and more zodiacal concealment. ${stateInfo.chariot ? "This is mitigated because the planet keeps resources of its own by sign or bound." : "Read its topics as less technically legible or harder to express directly."}`;
+      return `${name} is combust: it acts under more pressure, with less independence and more zodiacal concealment. ${stateInfo.chariot ? "This is mitigated because the planet keeps resources of its own by sign or bound." : "Read its topics as less technically legible or harder to express directly."}${mercuryText}`;
     }
     if (stateInfo.category === "underBeams") {
-      return `${name} is under the beams: its topics tend to operate with lower zodiacal legibility, more internally, or more privately. ${stateInfo.chariot ? "The concealment is mitigated by the planet's own resources." : "This reduces technical clarity or symbolic manifestation, though it does not erase importance."}`;
+      return `${name} is under the beams: its topics tend to operate with lower zodiacal legibility, more internally, or more privately. ${stateInfo.chariot ? "The concealment is mitigated by the planet's own resources." : "This reduces technical clarity or symbolic manifestation, though it does not erase importance."}${mercuryText}`;
     }
-    return `${name} is ${sideText}: it tends to manifest its topics in a ${stateInfo.side === "morning" ? "more active, earlier, or outward" : "more receptive, later, or context-mediated"} way.`;
+    return `${name} is ${sideText}: it tends to manifest its topics in a ${stateInfo.side === "morning" ? "more active, earlier, or outward" : "more receptive, later, or context-mediated"} way.${mercuryText}`;
   }
 
   function keyPlanetList(chart) {
@@ -5724,7 +5774,11 @@
       .map((key) => ({ key, stateInfo: solarPhaseState(key, chart) }))
       .filter((item) => item.stateInfo.category !== "luminary");
     const hidden = priority.filter((item) => ["cazimi", "combust", "underBeams"].includes(item.stateInfo.category));
-    const selected = (hidden.length ? hidden : priority.slice(0, 2)).slice(0, 3);
+    let selected = (hidden.length ? hidden : priority.slice(0, 2)).slice(0, 3);
+    const mercury = priority.find((item) => item.key === "mercury");
+    if (mercury && !selected.some((item) => item.key === "mercury")) {
+      selected = [...selected.slice(0, 2), mercury].slice(0, 3);
+    }
     const sentences = selected.map((item) => solarPhasePlainText(item.key, chart)).filter(Boolean);
     if (sentences.length) return sentences.join(" ");
     return state.lang === "es"
@@ -6343,9 +6397,11 @@
     };
     const ascLord = SIGNS[chart.ascSign].ruler;
     const trip = sectTriplicityRulers(chart);
+    const tenthRuler = wholeSignHouseRuler(chart, 10);
     add(chart.positions[ascLord]?.house, 5, `${t("ascLordTitle")}: ${planetLabel(ascLord)}`, "scoreCategoryLifeAxis", `asc-lord:${ascLord}`);
     add(chart.positions[chart.sectLight]?.house, 2, `${t("sectLight")}: ${planetLabel(chart.sectLight)}`, "scoreCategorySect", `sect-light:${chart.sectLight}`);
     add(chart.mcHouse, 2, t("mc"), "scoreCategoryPublic", "mc-house");
+    add(chart.positions[tenthRuler]?.house, 1.0, state.lang === "es" ? `Regente de casa 10: ${planetLabel(tenthRuler)}` : `10th-house ruler: ${planetLabel(tenthRuler)}`, "scoreCategoryPublic", `tenth-ruler:${tenthRuler}`);
     visibleAngularPlanets(chart).forEach((key) => add(chart.positions[key].house, 1.5, `${planetLabel(key)} ${t("angular")}`, "scoreCategoryAngular", `angular-planet:${key}`));
     visiblePlanetsNearAngles(chart).forEach((item) => {
       add(chart.positions[item.key].house, 0.75, `${planetLabel(item.key)} ${state.lang === "es" ? "cerca de" : "near"} ${angleDisplayName(item.angleKey)}`, "scoreCategoryAngular", `near-angle:${item.key}:${item.angleKey}`);
@@ -6363,9 +6419,9 @@
   }
 
   function publicProjectionReading(chart) {
-    const tenthSignIndex = (chart.ascSign + 9) % 12;
+    const tenthSignIndex = wholeSignHouseSign(chart, 10);
     const tenthSign = SIGNS[tenthSignIndex];
-    const tenthRuler = tenthSign.ruler;
+    const tenthRuler = wholeSignHouseRuler(chart, 10);
     const tenthRulerPosition = chart.positions[tenthRuler];
     const planetsInTenth = VISIBLE_KEYS.filter((key) => chart.positions[key]?.house === 10);
     const tenthPlanetText = planetsInTenth.length
@@ -6382,6 +6438,8 @@
     const ascLord = ascSign.ruler;
     const ascLordPosition = chart.positions[ascLord];
     const ascLordSign = SIGNS[signOf(ascLordPosition.lon)];
+    const tenthRuler = wholeSignHouseRuler(chart, 10);
+    const tenthRulerPosition = chart.positions[tenthRuler];
     const focuses = scoreChartTopics(chart).filter((focus) => focus.score > 0).slice(0, 3);
     const dominant = focuses[0] || { house: ascLordPosition.house, score: 0, reasons: [] };
     const sectLight = chart.sectLight;
@@ -6436,6 +6494,7 @@
       t("evidenceFocuses", {
         focuses: focusTextList(focuses),
       }),
+      focusRulerEvidence(focuses, chart),
       t("evidenceAscLordHouse", {
         house: ascLordPosition.house,
         topics: houseTopics(ascLordPosition.house),
@@ -6458,8 +6517,8 @@
         topics: houseTopics(chart.mcHouse),
       }),
       state.lang === "es"
-        ? `Regente de casa 10: ${planetLabel(SIGNS[(chart.ascSign + 9) % 12].ruler)} en casa ${chart.positions[SIGNS[(chart.ascSign + 9) % 12].ruler].house}.`
-        : `10th-house ruler: ${planetLabel(SIGNS[(chart.ascSign + 9) % 12].ruler)} in house ${chart.positions[SIGNS[(chart.ascSign + 9) % 12].ruler].house}.`,
+        ? `Regente de casa 10: ${planetLabel(tenthRuler)} en casa ${tenthRulerPosition.house}.`
+        : `10th-house ruler: ${planetLabel(tenthRuler)} in house ${tenthRulerPosition.house}.`,
       t("evidenceAngularPlanets", {
         planets: angularPlanets.length ? naturalList(angularPlanets.map(planetLabel)) : capitalizeText(t("none")),
       }),
@@ -6494,8 +6553,8 @@
         ? `${t("mc")}: casa ${chart.mcHouse} -> proyección pública y acción visible.`
         : `${t("mc")}: house ${chart.mcHouse} -> public projection and visible action.`,
       state.lang === "es"
-        ? `Regente de casa 10: ${planetLabel(SIGNS[(chart.ascSign + 9) % 12].ruler)} en casa ${chart.positions[SIGNS[(chart.ascSign + 9) % 12].ruler].house} -> administración de la reputación y el oficio.`
-        : `10th-house ruler: ${planetLabel(SIGNS[(chart.ascSign + 9) % 12].ruler)} in house ${chart.positions[SIGNS[(chart.ascSign + 9) % 12].ruler].house} -> administration of reputation and craft.`,
+        ? `Regente de casa 10: ${planetLabel(tenthRuler)} en casa ${tenthRulerPosition.house} -> administración de la reputación y el oficio.`
+        : `10th-house ruler: ${planetLabel(tenthRuler)} in house ${tenthRulerPosition.house} -> administration of reputation and craft.`,
       state.lang === "es"
         ? `Planetas visibles angulares: ${angularPlanetsText} -> lo que más se nota.`
         : `Angular visible planets: ${angularPlanetsText} -> what stands out most.`,

@@ -29,6 +29,7 @@ Score items must carry both a human `reason` and a stable `reasonCode`.
 | `asc-lord:{planet}` | House of the Ascendant ruler. |
 | `sect-light:{planet}` | House of the sect light. |
 | `mc-house` | Whole-sign house containing the MC. |
+| `tenth-ruler:{planet}` | House of the 10th whole-sign place ruler. |
 | `angular-planet:{planet}` | Visible planet in an angular whole-sign house. |
 | `near-angle:{planet}:{angle}` | Visible planet close to Ascendant, Descendant, MC, or IC. |
 | `lot:fortune` / `lot:spirit` | Principal lot house. |

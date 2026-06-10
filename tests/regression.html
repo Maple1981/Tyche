@@ -159,6 +159,10 @@
 
         const chart = testApi.calculateChart({ selectedLots: [] });
         assert("Fortuna y Espiritu se calculan internamente aunque selectedLots este vacio", testApi.lotByKey(chart, "fortune") && testApi.lotByKey(chart, "spirit"));
+        const scoreItems = testApi.scoreChartTopics(chart).flatMap((focus) => focus.scoreItems || []);
+        assert("El regente de casa 10 pesa como testimonio publico moderado", scoreItems.some((item) => item.reasonCode && item.reasonCode.startsWith("tenth-ruler:")));
+        const interpretation = testApi.interpretChart(chart);
+        assert("La evidencia muestra regentes de focos y no solo planetas dentro", interpretation.evidence.some((item) => item.includes("Regentes de focos") && item.includes("regente")));
 
         let yearZeroRejected = false;
         try {
