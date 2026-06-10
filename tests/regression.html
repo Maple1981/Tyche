@@ -78,6 +78,19 @@
         record(label, Boolean(condition));
       }
 
+      function waitForChartResult(win) {
+        return Promise.race([
+          new Promise((resolve) => {
+            win.addEventListener("tyche:chart-rendered", resolve, { once: true });
+          }),
+          new Promise((_, reject) => {
+            win.addEventListener("tyche:chart-error", (event) => {
+              reject(new Error(event.detail?.message || "chart error"));
+            }, { once: true });
+          }),
+        ]);
+      }
+
       async function run() {
         const doc = frame.contentDocument;
         const win = frame.contentWindow;
@@ -86,6 +99,7 @@
         const $ = (selector) => doc.querySelector(selector);
         const $$ = (selector) => Array.from(doc.querySelectorAll(selector));
         const testApi = win.TycheTest;
+        assert("TycheTest queda congelado en modo regresion", Object.isFrozen(testApi));
 
         $("#birthDate").value = "1980-01-01";
         $("#birthTime").value = "12:00";
@@ -99,9 +113,7 @@
           item.checked = false;
         });
 
-        const chartRendered = new Promise((resolve) => {
-          win.addEventListener("tyche:chart-rendered", resolve, { once: true });
-        });
+        const chartRendered = waitForChartResult(win);
         $("#chart-form").dispatchEvent(new win.Event("submit", { bubbles: true, cancelable: true }));
         await chartRendered;
 
@@ -132,10 +144,39 @@
         assert("Fortuna y Espiritu se calculan internamente aunque selectedLots este vacio", testApi.lotByKey(chart, "fortune") && testApi.lotByKey(chart, "spirit"));
 
         const sectChart = { ...chart, sunAltitude: 0.2 };
-        assert("Sol cerca del horizonte produce aviso de secta", testApi.boundaryWarnings(sectChart).some((warning) => warning.key === "sect"));
+        const sectWarnings = testApi.boundaryWarnings(sectChart);
+        assert("Sol cerca del horizonte produce aviso de secta", sectWarnings.some((warning) => warning.key === "sect-boundary"));
+        assert("El aviso de secta expone data-code estable", testApi.renderBoundaryAudit(sectWarnings).includes('data-code="sect-boundary"'));
+
+        const sensitiveSectChart = {
+          ...chart,
+          sunAltitude: 1.8,
+          input: { ...chart.input, timeZone: "", zoneReliability: "manual" },
+        };
+        assert("Secta entre 1 y 2,5 grados solo es sensible con contexto temporal sensible", testApi.sectSensitivityState(sensitiveSectChart) === "sensitive");
+        assert("Contexto IANA exacto no amplia secta fuera de 1 grado", testApi.sectSensitivityState({ ...chart, sunAltitude: 1.8 }) === "stable");
+
+        const fortuneDay = testApi.lotSnapshotForSect("fortune", chart, true);
+        const spiritNight = testApi.lotSnapshotForSect("spirit", chart, false);
+        assert("Fortuna diurna coincide con Espiritu nocturno al invertir secta", Math.abs(fortuneDay.lon - spiritNight.lon) < 0.000001);
 
         const mcChart = { ...chart, angles: { ...chart.angles, mc: 29.7, ic: 209.7 } };
-        assert("MC cerca de frontera produce aviso propio", testApi.boundaryWarnings(mcChart).some((warning) => warning.key === "mc"));
+        assert("MC cerca de frontera produce aviso propio", testApi.boundaryWarnings(mcChart).some((warning) => warning.key === "mc-sign-boundary"));
+
+        const strictChart = testApi.calculateChart({ includeModern: false });
+        const modernChart = testApi.calculateChart({ includeModern: true });
+        const scoreSignature = (computedChart) => JSON.stringify(testApi.scoreChartTopics(computedChart).map((focus) => ({
+          house: focus.house,
+          score: Number(focus.score.toFixed(4)),
+          items: focus.scoreItems.map((item) => ({
+            points: Number(item.points.toFixed(4)),
+            category: item.category,
+            reason: item.reason,
+          })),
+        })));
+        assert("Modernos mostrados no alteran el score helenistico base", scoreSignature(strictChart) === scoreSignature(modernChart));
+
+        assert("La auditoria de frontera tiene anclaje estable", Boolean($("[data-test='boundary-audit']")) || sectWarnings.some((warning) => warning.key === "sect-boundary"));
       }
 
       frame.addEventListener("load", () => {

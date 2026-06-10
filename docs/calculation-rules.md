@@ -22,7 +22,7 @@ When a manual offset is used, label it as manual or as historical example data. 
 
 Default zodiac is tropical. A sidereal option may be present only as an advanced setting and should be labeled as approximate and outside the strict tropical default.
 
-Julian-calendar support is a basic date conversion. For ancient or premodern charts, the app must warn that local calendar practice, local mean time, historical offset, and the time source need separate verification.
+Julian-calendar support is a basic date conversion. For ancient or premodern charts, the app must warn that local calendar practice, local mean time, historical offset, and the time source need separate verification. BCE dates are blocked in the current form until a specific CE/BCE era control exists; otherwise year 0 and negative years are too easy to confuse with historical chronology.
 
 ## Angles
 
@@ -41,13 +41,13 @@ As a secondary prominence flag, mark visible planets within about 5 degrees of t
 
 Boundary notices are audit flags, not reinterpretations. Show them when:
 
-- The Sun is within 1 degree of the horizon. This is a sect boundary: sect light, benefic/malefic of sect, malefic contrary to sect, Fortune/Spirit formulas, and judgment weighting can change. If the chart depends on manual, historical, Julian, or otherwise context-sensitive time handling, Tyche may widen this warning threshold to about 2.5 degrees and must state why the wider threshold was applied.
+- The Sun is within 1 degree of the horizon. This is a liminal sect boundary: sect light, benefic/malefic of sect, malefic contrary to sect, Fortune/Spirit formulas, and judgment weighting can change. If the chart depends on manual, non-IANA, Julian, rounded, partial/pending, or otherwise context-sensitive time handling, Tyche may widen this warning threshold to about 2.5 degrees and must state why the wider threshold was applied. Between 1 and 2.5 degrees, the summary should say "sect sensitive" rather than sounding definitive.
 - The Ascendant is within 1 degree of a sign change.
 - The MC or IC is within 1 degree of a sign change. This can change the whole-sign place that receives public-projection or foundation testimony. When possible, show both the current sign/house and the adjacent possible sign/house.
 - A calculated lot that enters display or judgment is within 1 degree of a sign/whole-sign-house change.
 - A visible planet is within 30 arcminutes of an Egyptian bound change.
 
-Show the boundary audit in technical data, and repeat the detailed notices in the interpretation evidence when any notices exist. Each notice should name the boundary type, distance, what may change, and what the user should verify.
+Show the boundary audit in technical data, and repeat the detailed notices in the interpretation evidence when any notices exist. Each notice should name the boundary type, distance, what may change, and what the user should verify. Boundary notices need stable unique keys such as `sect-boundary`, `mc-sign-boundary`, `lot-boundary:fortune`, and `planet-bound-boundary:mars`, plus rendered `data-code` hooks for tests.
 
 ## Sect
 
@@ -57,6 +57,8 @@ Sect is determined by the Sun's altitude:
 - Sun below horizon: night chart.
 
 Tyche uses geometric solar altitude relative to the local horizon. It does not apply observational corrections such as atmospheric refraction.
+
+The exact horizon convention is explicit: if geometric solar altitude is exactly 0 degrees, Tyche treats the chart as technically diurnal. Any chart within 1 degree of the horizon should be labeled as liminal in the UI. If a widened threshold is active because of time-context sensitivity, charts between 1 and about 2.5 degrees should be labeled as sensitive in the summary and audit.
 
 Derived sect roles:
 
@@ -163,6 +165,8 @@ Principal lots:
 Fortune and Spirit are principal judgment lots. Tyche calculates them internally even when the user hides them from the visible lot table. The checkbox selector controls display, not whether Fortune and Spirit exist for the interpretation layer.
 
 The standard rule reverses the luminaries by day and night. A small number of near-horizon charts may be discussed with a diurnal lot calculation when the Sun is just below the Ascendant and the example is explicitly framed that way. Tyche should not silently switch formulas for ordinary charts; if that exception is ever implemented, it should be visible as a technical option or a clearly labeled historical-example override.
+
+When sect is liminal or sensitive, Tyche should show the Fortune and Spirit positions used by the current technical sect and the alternate positions that would result if sect were reversed. In many charts this effectively swaps the two principal lots, so the difference belongs near the main technical summary rather than only in a generic warning.
 
 Eros and Necessity use the older Fortune/Spirit-based tradition:
 

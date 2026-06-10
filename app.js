@@ -15,6 +15,8 @@
     activeCityKey: "",
     selectedCity: null,
     selectedPersonName: "",
+    selectedPersonAuditStatus: "",
+    selectedPersonTimeConfidence: "",
     selectedZoneSource: "",
     placeSuggestions: [],
     placeSearchTimer: 0,
@@ -77,6 +79,7 @@
       configurations: "Configuraciones",
       precisionNote: "Cálculo astronómico local: Astronomy Engine. Precisión aproximada ±1′. Para rectificaciones, cartas críticas o investigación profesional, conviene contrastar con efemérides especializadas.",
       missingDate: "Añade fecha y hora de nacimiento.",
+      invalidHistoricalYear: "Tyche aún no admite años BCE/a. C. en el formulario. Para evitar ambigüedades entre año histórico y año astronómico, usa solo años CE/d. C. por ahora.",
       missingPlace: "Elige una ciudad sugerida o introduce latitud, longitud y zona horaria.",
       missingCoords: "Faltan coordenadas válidas.",
       placeSearchShort: "Escribe al menos 2 letras.",
@@ -90,6 +93,7 @@
       peopleIntro: "Elige una carta de ejemplo con fecha, hora, lugar y sexo ya preparados.",
       peopleButton: "Personajes históricos",
       peopleAuditedTitle: "Datos auditados",
+      peoplePartialTitle: "Datos parcialmente auditados",
       peoplePendingTitle: "Pendientes de auditoría",
       close: "Cerrar",
       useExample: "Usar esta carta",
@@ -103,6 +107,7 @@
       dataSourceGeneral: "Fuente pendiente de auditoría individual",
       dataRoddenPending: "Rating individual pendiente de auditoría",
       dataAuditPendingBadge: "Datos natales no auditados individualmente",
+      dataAuditPartialBadge: "Datos natales parcialmente auditados",
       dataTimeSourcePrepared: "Hora exacta usada por Tyche; revisar fuente individual antes de investigación crítica",
       footerWarning: "Motor astronómico pensado para uso educativo. La información proporcionada es solo orientativa.",
     footerPrivacy: "La carta se calcula localmente en tu navegador. No guardamos tus cartas ni usamos cookies. Solo se conserva en este dispositivo la preferencia de idioma y tema. La búsqueda de lugares consulta Open-Meteo para obtener coordenadas. Las imágenes del archivo histórico se cargan desde Wikimedia Commons. El posicionamiento de planetas utiliza una librería local.",
@@ -130,6 +135,8 @@
       timezoneUsed: "Zona usada",
       julianDay: "Día juliano",
       technicalTitle: "Auditoría de carta",
+      technicalAstronomyTitle: "Cálculo astronómico",
+      technicalJudgmentTitle: "Criterios de juicio",
       interpretationTitle: "Lectura natal",
       interpretationLeadTitle: "En una frase",
       interpretationSummary: "Lo más importante",
@@ -168,6 +175,11 @@
       scoreCategoryAngular: "Angularidad",
       scoreCategoryLots: "Lotes",
       scoreCategoryTriplicity: "Triplicidad",
+      scoreFocusType: "Tipo de foco",
+      focusTypeVital: "vital",
+      focusTypePublic: "público",
+      focusTypeCircumstantial: "circunstancial",
+      focusTypeSupport: "de soporte",
       mainLotsAuditTitle: "Lotes principales usados en juicio",
       lotTableDisplayNote: "La tabla de lotes muestra solo los lotes seleccionados.",
       scoreBreakdownCaution: "Estos puntos no son una medida absoluta: solo ordenan testimonios tradicionales para explicar por qué Tyche prioriza ciertos Lugares/Casas.",
@@ -201,7 +213,7 @@
       zodiacBaseWarning: "Sideral aproximado · fuera del modo base tropical",
       calendarJulianWarning: "Conversión juliana básica · verificar calendario, zona local y fuente temporal",
       mixedModeWarning: "Modo mixto: modernos solo como datos adicionales; no entran en el juicio helenístico base",
-      julianInlineWarning: "Aviso: la conversión juliana es básica. Verifica calendario local, hora civil y fuente temporal antes de investigación crítica.",
+      julianInlineWarning: "Aviso: la conversión juliana es básica. Verifica calendario local, hora civil y fuente temporal antes de investigación crítica. Para fechas BCE, verifica la numeración del año: la astronomía usa año 0; la cronología histórica tradicional no.",
       siderealInlineWarning: "Aviso: el zodíaco sideral es aproximado y queda fuera del marco tropical base de Tyche.",
       mixedInlineWarning: "Aviso: los planetas modernos se muestran como capa adicional; el juicio helenístico base no los pondera.",
       modernStrictInlineWarning: "Aviso: estás en enfoque tradicional, pero mostrando modernos como capa no ponderada.",
@@ -210,17 +222,38 @@
       modernNotWeighted: "No; quedan fuera del juicio helenístico base",
       sectCalculation: "Cálculo de secta",
       sectCalculationValue: "Altitud solar geométrica {altitude}; sin refracción atmosférica",
+      sectLiminalDay: "Carta diurna, liminal",
+      sectLiminalNight: "Carta nocturna, liminal",
+      sectLiminalNote: "Secta técnicamente {sect}; tratar como sensible por Sol cerca del horizonte.",
+      sectSensitiveDay: "Carta diurna, sensible",
+      sectSensitiveNight: "Carta nocturna, sensible",
+      sectSensitiveNote: "Secta técnicamente {sect}; tratar las fórmulas y testimonios dependientes de secta como sensibles por contexto temporal.",
       boundaryThreshold: "Umbral aplicado",
       boundaryThresholdSensitive: "{threshold} por contexto temporal sensible: {reasons}",
       boundaryThresholdNormal: "{threshold} estándar",
       sensitiveJulian: "calendario juliano",
-      sensitiveHistoricalPerson: "personaje histórico",
+      sensitiveAuditPending: "datos natales pendientes de auditoría",
+      sensitiveTimeConfidence: "hora natal no exacta o redondeada",
       sensitiveManualOffset: "diferencia UTC manual o histórica",
       sensitiveNoIana: "sin zona IANA clara",
+      alternateSectLotsTitle: "Lotes alternativos si cambia la secta",
+      lotUsedByTyche: "Usado por Tyche",
+      lotIfSectReversed: "Si la secta se invierte",
+      dayFormulaLabel: "fórmula diurna",
+      nightFormulaLabel: "fórmula nocturna",
+      lotAuditPosition: "Posición",
+      lotAuditLord: "Señor",
+      lotAuditFormula: "Fórmula",
+      lotAuditTestimonies: "Testimonios",
+      lotAuditPressures: "Presiones",
       lotAuditDegree: "Grado",
       lotAuditLordCondition: "Condición del señor",
       lotAuditLordAngularity: "Angularidad del señor",
       lotAuditLordSolarPhase: "Fase solar zodiacal del señor",
+      lotAuditBeneficTestimony: "Testimonio benéfico",
+      lotAuditMaleficPressure: "Presión maléfica",
+      negotiatedSupport: "apoyo negociado",
+      regulatedPressure: "presión regulada",
       solarThresholds: "Umbrales solares",
       solarThresholdValues: "Bajo rayos 15° · combustión 8° · en el corazón 1°",
       moonVoidDefinitions: "Luna vacía",
@@ -401,6 +434,7 @@
       configurations: "Configurations",
       precisionNote: "Local astronomical calculation: Astronomy Engine. Approximate accuracy ±1′. For rectification, critical charts, or professional research, compare with specialized ephemerides.",
       missingDate: "Add birth date and time.",
+      invalidHistoricalYear: "Tyche does not yet support BCE years in the form. To avoid ambiguity between historical and astronomical year numbering, use CE years only for now.",
       missingPlace: "Choose a suggested city or enter latitude, longitude, and time zone.",
       missingCoords: "Valid coordinates are missing.",
       placeSearchShort: "Type at least 2 letters.",
@@ -414,6 +448,7 @@
       peopleIntro: "Choose an example chart with date, time, place, and sex already prepared.",
       peopleButton: "Historical figures",
       peopleAuditedTitle: "Audited data",
+      peoplePartialTitle: "Partially audited data",
       peoplePendingTitle: "Pending audit",
       close: "Close",
       useExample: "Use this chart",
@@ -427,6 +462,7 @@
       dataSourceGeneral: "Individual source pending audit",
       dataRoddenPending: "Individual rating pending audit",
       dataAuditPendingBadge: "Natal data not individually audited",
+      dataAuditPartialBadge: "Natal data partially audited",
       dataTimeSourcePrepared: "Exact time used by Tyche; review the individual source before critical research",
       footerWarning: "Astronomical engine intended for educational use. The information provided may not be reliable.",
     footerPrivacy: "The chart is calculated locally in your browser. We do not store your charts or use cookies. Only language and theme preferences are kept on this device. Place search consults Open-Meteo to obtain coordinates. Historical archive images load from Wikimedia Commons. Planet positions use a local library.",
@@ -454,6 +490,8 @@
       timezoneUsed: "Zone used",
       julianDay: "Julian day",
       technicalTitle: "Chart audit",
+      technicalAstronomyTitle: "Astronomical calculation",
+      technicalJudgmentTitle: "Judgment criteria",
       interpretationTitle: "Natal reading",
       interpretationLeadTitle: "In one sentence",
       interpretationSummary: "Most important",
@@ -492,6 +530,11 @@
       scoreCategoryAngular: "Angularity",
       scoreCategoryLots: "Lots",
       scoreCategoryTriplicity: "Triplicity",
+      scoreFocusType: "Focus type",
+      focusTypeVital: "vital",
+      focusTypePublic: "public",
+      focusTypeCircumstantial: "circumstantial",
+      focusTypeSupport: "supporting",
       mainLotsAuditTitle: "Principal lots used in judgment",
       lotTableDisplayNote: "The lot table displays only the selected lots.",
       scoreBreakdownCaution: "These points are not an absolute measure: they only organize traditional testimonies to explain why Tyche prioritizes certain Places/Houses.",
@@ -525,7 +568,7 @@
       zodiacBaseWarning: "Approximate sidereal · outside the tropical base mode",
       calendarJulianWarning: "Basic Julian conversion · verify calendar, local zone, and time source",
       mixedModeWarning: "Mixed mode: modern planets are additional data only; they do not enter the base Hellenistic judgment",
-      julianInlineWarning: "Notice: Julian conversion is basic. Verify local calendar, civil time, and time source before critical research.",
+      julianInlineWarning: "Notice: Julian conversion is basic. Verify local calendar, civil time, and time source before critical research. For BCE dates, verify year numbering: astronomy uses year 0; traditional historical chronology does not.",
       siderealInlineWarning: "Notice: the sidereal zodiac is approximate and outside Tyche's tropical base frame.",
       mixedInlineWarning: "Notice: modern planets are displayed as an additional layer; the base Hellenistic judgment does not weight them.",
       modernStrictInlineWarning: "Notice: you are in traditional mode, while showing modern planets as an unweighted layer.",
@@ -534,17 +577,38 @@
       modernNotWeighted: "No; outside the base Hellenistic judgment",
       sectCalculation: "Sect calculation",
       sectCalculationValue: "Geometric solar altitude {altitude}; no atmospheric refraction",
+      sectLiminalDay: "Day chart, liminal",
+      sectLiminalNight: "Night chart, liminal",
+      sectLiminalNote: "Technically {sect}; treat sect-dependent testimonies as sensitive because the Sun is near the horizon.",
+      sectSensitiveDay: "Day chart, sensitive",
+      sectSensitiveNight: "Night chart, sensitive",
+      sectSensitiveNote: "Technically {sect}; treat sect-dependent formulas and testimonies as sensitive because the time context is uncertain.",
       boundaryThreshold: "Applied threshold",
       boundaryThresholdSensitive: "{threshold} for sensitive time context: {reasons}",
       boundaryThresholdNormal: "{threshold} standard",
       sensitiveJulian: "Julian calendar",
-      sensitiveHistoricalPerson: "historical figure",
+      sensitiveAuditPending: "pending natal-data audit",
+      sensitiveTimeConfidence: "birth time not exact or rounded",
       sensitiveManualOffset: "manual or historical UTC offset",
       sensitiveNoIana: "no clear IANA zone",
+      alternateSectLotsTitle: "Alternative lots if sect changes",
+      lotUsedByTyche: "Used by Tyche",
+      lotIfSectReversed: "If sect reverses",
+      dayFormulaLabel: "day formula",
+      nightFormulaLabel: "night formula",
+      lotAuditPosition: "Position",
+      lotAuditLord: "Lord",
+      lotAuditFormula: "Formula",
+      lotAuditTestimonies: "Testimonies",
+      lotAuditPressures: "Pressures",
       lotAuditDegree: "Degree",
       lotAuditLordCondition: "Lord condition",
       lotAuditLordAngularity: "Lord angularity",
       lotAuditLordSolarPhase: "Lord zodiacal solar phase",
+      lotAuditBeneficTestimony: "Benefic testimony",
+      lotAuditMaleficPressure: "Malefic pressure",
+      negotiatedSupport: "negotiated support",
+      regulatedPressure: "regulated pressure",
       solarThresholds: "Solar thresholds",
       solarThresholdValues: "Under beams 15° · combustion 8° · in the heart 1°",
       moonVoidDefinitions: "Void Moon",
@@ -3332,6 +3396,29 @@
     return `<div class="metric"><b>${labelHtml}</b><span${classAttr}>${valueHtml}</span></div>`;
   }
 
+  function sectSensitivityState(chart) {
+    const distance = Math.abs(chart.sunAltitude);
+    const threshold = sectBoundaryThresholdInfo(chart);
+    if (distance <= 1) return "liminal";
+    if (threshold.sensitive && distance <= threshold.threshold) return "sensitive";
+    return "stable";
+  }
+
+  function chartSectLabel(chart) {
+    const stateKey = sectSensitivityState(chart);
+    if (stateKey === "liminal") return chart.isDay ? t("sectLiminalDay") : t("sectLiminalNight");
+    if (stateKey === "sensitive") return chart.isDay ? t("sectSensitiveDay") : t("sectSensitiveNight");
+    return chart.isDay ? t("dayChart") : t("nightChart");
+  }
+
+  function sectSensitivityNote(chart) {
+    const stateKey = sectSensitivityState(chart);
+    if (stateKey === "stable") return "";
+    const sect = chart.isDay ? t("dayChart") : t("nightChart");
+    const sectLower = sect.toLocaleLowerCase(state.lang === "es" ? "es-ES" : "en");
+    return t(stateKey === "liminal" ? "sectLiminalNote" : "sectSensitiveNote", { sect: sectLower });
+  }
+
   function badges(items) {
     if (!items.length) return "";
     return `<div class="badge-row">${items.map((item) => `<span class="badge">${glossaryMaybe(capitalizeText(item), glossaryKeyForText(item), "capitalize-first")}</span>`).join("")}</div>`;
@@ -3547,6 +3634,8 @@
 
   function clearHistoricalSelection() {
     state.selectedPersonName = "";
+    state.selectedPersonAuditStatus = "";
+    state.selectedPersonTimeConfidence = "";
     state.selectedZoneSource = "";
   }
 
@@ -3581,8 +3670,21 @@
     return rows.join("");
   }
 
+  function personAuditStatus(person) {
+    if (person.auditStatus) return person.auditStatus;
+    if (person.roddenRating && person.dataSource && person.timeSource) return "audited";
+    if (person.roddenRating || person.dataSource || person.timeSource || person.timeConfidence || person.sourceUrl) return "partial";
+    return "pending";
+  }
+
   function hasAuditedNatalData(person) {
-    return Boolean(person.roddenRating && person.dataSource && person.timeSource);
+    return personAuditStatus(person) === "audited";
+  }
+
+  function auditBadge(person) {
+    const status = personAuditStatus(person);
+    if (status === "audited") return "";
+    return `<p class="person-audit-badge">${escapeHtml(t(status === "partial" ? "dataAuditPartialBadge" : "dataAuditPendingBadge"))}</p>`;
   }
 
   function historicalPersonCard(person) {
@@ -3600,7 +3702,7 @@
               </svg>
             </a>
           </h3>
-          ${hasAuditedNatalData(person) ? "" : `<p class="person-audit-badge">${escapeHtml(t("dataAuditPendingBadge"))}</p>`}
+          ${auditBadge(person)}
           <dl>
             <dt>${escapeHtml(t("dataDate"))}</dt>
             <dd>${escapeHtml(person.birthLabel[state.lang] || person.birthLabel.es)}</dd>
@@ -3618,11 +3720,14 @@
 
   function renderHistoricalPeople() {
     const people = [...HISTORICAL_PEOPLE].sort((a, b) => a.name.localeCompare(b.name, state.lang === "es" ? "es" : "en"));
-    const audited = people.filter(hasAuditedNatalData);
-    const pending = people.filter((person) => !hasAuditedNatalData(person));
+    const audited = people.filter((person) => personAuditStatus(person) === "audited");
+    const partial = people.filter((person) => personAuditStatus(person) === "partial");
+    const pending = people.filter((person) => personAuditStatus(person) === "pending");
     $("#peopleGrid").innerHTML = [
       audited.length ? `<h3 class="people-group-title">${escapeHtml(t("peopleAuditedTitle"))}</h3>` : "",
       ...audited.map(historicalPersonCard),
+      partial.length ? `<h3 class="people-group-title">${escapeHtml(t("peoplePartialTitle"))}</h3>` : "",
+      ...partial.map(historicalPersonCard),
       pending.length ? `<h3 class="people-group-title">${escapeHtml(t("peoplePendingTitle"))}</h3>` : "",
       ...pending.map(historicalPersonCard),
     ].join("");
@@ -3647,6 +3752,8 @@
     if (!person) return;
     state.selectedCity = person.place;
     state.selectedPersonName = person.name;
+    state.selectedPersonAuditStatus = personAuditStatus(person);
+    state.selectedPersonTimeConfidence = person.timeConfidence || "";
     state.selectedZoneSource = t("historicalOffsetSource");
     state.activeCityKey = cityKey(person.place);
     $("#birthDate").value = person.date;
@@ -3780,6 +3887,7 @@
     const date = parseDate(input.date);
     const time = parseTime(input.time);
     if (!date || !time) throw new Error(t("missingDate"));
+    if (date.y <= 0) throw new Error(t("invalidHistoricalYear"));
 
     const manualOffset = parseOffset(input.manualOffset);
     if (manualOffset === null) throw new Error(t("invalidOffset"));
@@ -4434,7 +4542,7 @@
       return role === "support"
         ? ` Hay ${noun} ${strength} (${phrase}), lo que refuerza el canal de ayuda.${caution}`
         : reception.isMutual
-          ? ` Hay ${noun} ${strength} (${phrase}), lo que formaliza, contiene o estructura la presión sin convertirla automáticamente en ayuda.${caution}`
+          ? ` Hay ${noun} ${strength} (${phrase}); la presión no queda anulada, sino más integrada en el tema, con forma, continuidad o dependencia recíproca.${caution}`
           : ` Hay ${noun} ${strength} (${phrase}), así que la presión encuentra un canal de manejo, aunque no desaparece.${caution}`;
     }
     const noun = reception.isMutual ? "mutual reception" : "reception";
@@ -4446,7 +4554,7 @@
     return role === "support"
       ? ` There is ${strength} ${noun} (${phrase}), strengthening the channel of help.${caution}`
       : reception.isMutual
-        ? ` There is ${strength} ${noun} (${phrase}), which formalizes, contains, or structures the pressure without automatically turning it into help.${caution}`
+        ? ` There is ${strength} ${noun} (${phrase}); the pressure is not cancelled, but becomes more integrated into the topic, with form, continuity, or reciprocal dependence.${caution}`
         : ` There is ${strength} ${noun} (${phrase}), so the pressure has a channel for handling, though it does not disappear.${caution}`;
   }
 
@@ -4488,6 +4596,47 @@
       nemesis: isDay ? `${asc} + ${fortune} − ${planetName("saturn")}` : `${asc} + ${planetName("saturn")} − ${fortune}`,
     };
     return map[key] || "—";
+  }
+
+  function lotFormulaSectLabel(isDay) {
+    return isDay ? t("dayFormulaLabel") : t("nightFormulaLabel");
+  }
+
+  function lotSnapshotForSect(key, chart, isDay) {
+    const lon = lotLongitude(key, { positions: chart.positions, angles: chart.angles, isDay });
+    const sign = signOf(lon);
+    return {
+      key,
+      lon,
+      house: houseFromSign(sign, chart.ascSign),
+      formula: lotFormulaText(key, isDay),
+      formulaLabel: lotFormulaSectLabel(isDay),
+    };
+  }
+
+  function lotSnapshotText(snapshot) {
+    return `${formatDegree(snapshot.lon)} · ${t("tableHouse")} ${snapshot.house} · ${snapshot.formulaLabel}: ${snapshot.formula}`;
+  }
+
+  function renderAlternateSectLots(chart) {
+    if (sectSensitivityState(chart) === "stable") return "";
+    const rows = ["fortune", "spirit"].map((key) => {
+      const current = lotSnapshotForSect(key, chart, chart.isDay);
+      const alternate = lotSnapshotForSect(key, chart, !chart.isDay);
+      return `
+        <li>
+          <strong>${escapeHtml(lotName(key))}</strong>
+          <span>${escapeHtml(t("lotUsedByTyche"))}: ${escapeHtml(lotSnapshotText(current))}</span>
+          <span>${escapeHtml(t("lotIfSectReversed"))}: ${escapeHtml(lotSnapshotText(alternate))}</span>
+        </li>
+      `;
+    }).join("");
+    return `
+      <section class="alternate-sect-lots" data-test="alternate-sect-lots">
+        <h4>${escapeHtml(t("alternateSectLotsTitle"))}</h4>
+        <ul>${rows}</ul>
+      </section>
+    `;
   }
 
   function lotName(key) {
@@ -4578,6 +4727,8 @@
       time: $("#birthTime").value,
       place: city ? formatCity(city) : placeValue,
       personName: state.selectedPersonName,
+      auditStatus: state.selectedPersonAuditStatus,
+      timeConfidence: state.selectedPersonTimeConfidence,
       gender: $("#gender").value,
       city,
       latitude,
@@ -4710,7 +4861,7 @@
     const html = `
       <h3>${glossaryTerm(t("sect"), "sect")}</h3>
       <div class="metric-grid">
-        ${metric(t("chartType"), chart.isDay ? t("dayChart") : t("nightChart"), "", "sect")}
+        ${metric(t("chartType"), chartSectLabel(chart), "", "sect")}
         ${metric(t("sectLight"), `${PLANETS[chart.sectLight].symbol} ${planetName(chart.sectLight)}`, "", "sectLight")}
         ${metric(t("beneficSect"), `${PLANETS[chart.beneficOfSect].symbol} ${planetName(chart.beneficOfSect)}`, "", "beneficSect")}
         ${metric(t("maleficSect"), `${PLANETS[chart.maleficOfSect].symbol} ${planetName(chart.maleficOfSect)}`, "", "maleficSect")}
@@ -4721,6 +4872,8 @@
         ${metric(t("ic"), `${formatDegree(chart.angles.ic)} · ${t("tableHouse")} ${chart.icHouse}`, "", "ic")}
         ${metric(t("timezoneUsed"), chart.zoneLabel, "", "timezoneUsed")}
       </div>
+      ${sectSensitivityNote(chart) ? `<p class="text-note">${escapeHtml(sectSensitivityNote(chart))}</p>` : ""}
+      ${renderAlternateSectLots(chart)}
       <p class="text-note">${mcNote}</p>
       <p class="text-note">${precisionNote}</p>
       <section class="limits-panel" aria-label="${escapeHtml(t("limitsTitle"))}">
@@ -4794,25 +4947,33 @@
     $("#technicalPanel").innerHTML = `
       <details>
         <summary>${escapeHtml(t("technicalTitle"))}</summary>
-        <div class="technical-grid">
-          ${metric(t("localDateTime"), `${formatDateLabel(chart.input.date)} · ${chart.input.time || "—"}`)}
-          ${metric(t("utcDateTime"), formatUtcDateTime(chart.jd))}
-          ${metric(t("timezoneUsed"), chart.zoneLabel, "", "timezoneUsed")}
-          ${metric(t("coordinates"), `${formatDecimal(chart.input.latitude, 4)}, ${formatDecimal(chart.input.longitude, 4)}`)}
-          ${metric(t("calendar"), calendarLabel)}
-          ${metric(t("zodiac"), zodiacLabel, "", "zodiac")}
-          ${metric(t("houses"), t("wholeSign"), "", "wholeSign")}
-          ${metric(t("sectCalculation"), t("sectCalculationValue", { altitude: formatSignedAngle(chart.sunAltitude) }), "", "sect")}
-          ${metric(t("aspectTableMode"), aspectModeLabel, "", "aspects")}
-          ${metric(t("judgmentFrame"), t("judgmentFrameSign"), "", "aspects")}
-          ${metric(t("ephemerisEngine"), engine, "", "ephemeris")}
-          ${metric(t("solarThresholds"), t("solarThresholdValues"), "", "solarPhase")}
-          ${metric(t("moonVoidDefinitions"), t("moonVoidDefinitionsValues"), "", "moonVoc")}
-          ${metric(t("techniqueMode"), t(chart.input.techniqueMode === "mixed" ? "mixed" : "strict"), "", "technique")}
-          ${metric(t("modernDisplayed"), chart.input.includeModern ? t("yes") : t("no"), "", "modernPlanets")}
-          ${metric(t("modernWeightedBase"), t("modernNotWeighted"), "", "modernPlanets")}
-          ${renderBoundaryAudit(boundary)}
-        </div>
+        <section class="technical-section">
+          <h4>${escapeHtml(t("technicalAstronomyTitle"))}</h4>
+          <div class="technical-grid">
+            ${metric(t("localDateTime"), `${formatDateLabel(chart.input.date)} · ${chart.input.time || "—"}`)}
+            ${metric(t("utcDateTime"), formatUtcDateTime(chart.jd))}
+            ${metric(t("timezoneUsed"), chart.zoneLabel, "", "timezoneUsed")}
+            ${metric(t("coordinates"), `${formatDecimal(chart.input.latitude, 4)}, ${formatDecimal(chart.input.longitude, 4)}`)}
+            ${metric(t("calendar"), calendarLabel)}
+            ${metric(t("zodiac"), zodiacLabel, "", "zodiac")}
+            ${metric(t("sectCalculation"), t("sectCalculationValue", { altitude: formatSignedAngle(chart.sunAltitude) }), "", "sect")}
+            ${metric(t("ephemerisEngine"), engine, "", "ephemeris")}
+          </div>
+        </section>
+        <section class="technical-section">
+          <h4>${escapeHtml(t("technicalJudgmentTitle"))}</h4>
+          <div class="technical-grid">
+            ${metric(t("houses"), t("wholeSign"), "", "wholeSign")}
+            ${metric(t("aspectTableMode"), aspectModeLabel, "", "aspects")}
+            ${metric(t("judgmentFrame"), t("judgmentFrameSign"), "", "aspects")}
+            ${metric(t("solarThresholds"), t("solarThresholdValues"), "", "solarPhase")}
+            ${metric(t("moonVoidDefinitions"), t("moonVoidDefinitionsValues"), "", "moonVoc")}
+            ${metric(t("techniqueMode"), t(chart.input.techniqueMode === "mixed" ? "mixed" : "strict"), "", "technique")}
+            ${metric(t("modernDisplayed"), chart.input.includeModern ? t("yes") : t("no"), "", "modernPlanets")}
+            ${metric(t("modernWeightedBase"), t("modernNotWeighted"), "", "modernPlanets")}
+            ${renderBoundaryAudit(boundary)}
+          </div>
+        </section>
       </details>
     `;
   }
@@ -5529,7 +5690,7 @@
     return "";
   }
 
-  function lotTestimonyLevel(lot, key, chart, role, signType, degree, planetSuperior) {
+  function lotTestimonyLevel(lot, key, chart, role, signType, degree, planetSuperior, reception = null) {
     const position = chart.positions[key];
     const solar = solarPhaseState(key, chart);
     const obscured = ["combust", "underBeams"].includes(solar.category) && !solar.chariot;
@@ -5537,13 +5698,15 @@
     const friendly = ["copresence", "sextile", "trine"].includes(signType);
     const harsh = ["copresence", "square", "opposition"].includes(signType);
     if (role === "support") {
+      if (reception?.effectiveScore >= 3 && !obscured && ["square", "opposition"].includes(signType)) return "mediumLevel";
       if (key === chart.beneficOfSect && !obscured && (acute || planetSuperior || position.angularity === "angular")) return "strongLevel";
       if (!obscured && (friendly || acute || ["angular", "succedent"].includes(position.angularity))) return "mediumLevel";
       return "lowLevel";
     }
-    if (key === chart.maleficContrarySect && (acute || planetSuperior || position.angularity === "angular")) return "highLevel";
-    if (key === chart.maleficOfSect || planetSuperior || acute || harsh || position.angularity === "angular") return "mediumLevel";
-    return "lowLevel";
+    const baseLevel = key === chart.maleficContrarySect && (acute || planetSuperior || position.angularity === "angular")
+      ? "highLevel"
+      : (key === chart.maleficOfSect || planetSuperior || acute || harsh || position.angularity === "angular") ? "mediumLevel" : "lowLevel";
+    return adjustIntensityForReception(baseLevel, "tension", reception);
   }
 
   function lotTestimonyItems(lot, planetKeys, chart, role) {
@@ -5555,20 +5718,26 @@
         if (!signType) return null;
         const degree = degreeAspect(lot.lon, position.lon, Math.max(3, chart.input.orb || 3));
         const planetSuperior = superiorPlanet("lot", key, lot.lon, position.lon) === key;
+        const lordPosition = chart.positions[lot.lord];
+        const hasLordConfiguration = key !== lot.lord && signAspectType(signOf(position.lon), signOf(lordPosition.lon));
+        const reception = hasLordConfiguration ? receptionBetween(key, lot.lord, chart) : null;
         const solar = solarPhaseState(key, chart);
         const solarText = ["combust", "underBeams"].includes(solar.category)
           ? solarPhaseTableText(key, chart)
           : "";
         return {
+          lotKey: lot.key,
+          lotLord: lot.lord,
           key,
           signType,
           degree,
           planetSuperior,
           solarText,
+          reception,
           roleText: lotPlanetRoleText(key, chart),
           angularity: position.angularity,
           house: position.house,
-          level: lotTestimonyLevel(lot, key, chart, role, signType, degree, planetSuperior),
+          level: lotTestimonyLevel(lot, key, chart, role, signType, degree, planetSuperior, reception),
         };
       })
       .filter(Boolean);
@@ -5576,26 +5745,38 @@
 
   function lotTestimonyNature(item, role) {
     if (role === "support") {
+      if (["square", "opposition"].includes(item.signType) && item.reception?.effectiveScore >= 3) return t("negotiatedSupport");
       if (["trine", "sextile"].includes(item.signType)) return state.lang === "es" ? "apoyo fluido" : "flowing support";
       if (["square", "opposition"].includes(item.signType)) return state.lang === "es" ? "testimonio benéfico con fricción" : "benefic testimony with friction";
       return state.lang === "es" ? "apoyo por copresencia" : "support by copresence";
     }
+    if (item.reception?.hasReception) return t("regulatedPressure");
     if (["square", "opposition"].includes(item.signType)) return state.lang === "es" ? "presión directa" : "direct pressure";
     if (["trine", "sextile"].includes(item.signType)) return state.lang === "es" ? "presión configurada" : "configured pressure";
     return state.lang === "es" ? "presión por copresencia" : "pressure by copresence";
   }
 
-  function lotTestimonyText(items, role) {
+  function lotTestimonyText(items, role, lot = null) {
     if (!items.length) {
       return role === "support"
         ? (state.lang === "es" ? "ningún benéfico claro" : "no clear benefic")
         : (state.lang === "es" ? "ningún maléfico claro" : "no clear malefic");
     }
     return naturalList(items.map((item) => {
+      const lotKey = lot?.key || item.lotKey;
+      const lotLord = lot?.lord || item.lotLord;
+      const lotLabel = lotKey ? lotName(lotKey) : (state.lang === "es" ? "el lote" : "the lot");
+      const lordLabel = lotLord ? planetLabel(lotLord) : (state.lang === "es" ? "su señor" : "its lord");
+      const receptionText = item.reception?.hasReception
+        ? (state.lang === "es"
+          ? `${planetLabel(item.key)} testimonia a ${lotLabel} y está en recepción con ${lordLabel}, señor de ${lotLabel}: ${receptionStrengthLabel(item.reception)}`
+          : `${planetLabel(item.key)} testifies to ${lotLabel} and is in reception with ${lordLabel}, lord of ${lotLabel}: ${receptionStrengthLabel(item.reception)}`)
+        : "";
       const details = [
         `${planetLabel(item.key)} (${t(item.signType)}, ${state.lang === "es" ? "intensidad" : "intensity"} ${t(item.level)})`,
         lotTestimonyNature(item, role),
         item.roleText,
+        receptionText,
         state.lang === "es" ? `casa ${item.house} · ${t(item.angularity)}` : `house ${item.house} · ${t(item.angularity)}`,
         item.planetSuperior ? (state.lang === "es" ? "en posición superior" : "in superior position") : "",
         item.degree ? (state.lang === "es" ? `cercano por grado: ${formatAngle(item.degree.delta)}` : `degree-close: ${formatAngle(item.degree.delta)}`) : "",
@@ -5617,8 +5798,8 @@
       : chart.positions[lot.lord]?.angularity === "angular"
         ? (state.lang === "es" ? "una administración visible o activa" : "visible or active administration")
         : (state.lang === "es" ? "una administración más indirecta" : "more indirect administration");
-    const support = lotTestimonyText(beneficItems, "support");
-    const pressure = lotTestimonyText(maleficItems, "tension");
+    const support = lotTestimonyText(beneficItems, "support", lot);
+    const pressure = lotTestimonyText(maleficItems, "tension", lot);
     if (state.lang === "es") {
       return `${lotName(lot.key)} cae en casa ${lot.house}: ${houseReadingTopics(lot.house, "double")}; su señor es ${planetLabel(lot.lord)} en casa ${lordPosition.house}: ${houseReadingTopics(lordPosition.house, "double")}, ${t(lordPosition.angularity)}, con ${plainDignityText(lordPosition.dignities, chart)}. Esto da ${placeTone}. Recibe testimonio de ${support} y presión de ${pressure}.${solarConcern ? ` El señor del lote está ${solar.category === "combust" ? "combusto" : "bajo los rayos"}, así que parte del tema puede operar con menor legibilidad técnica.` : ""}`;
     }
@@ -5718,11 +5899,20 @@
 
   function timeContextSensitivity(input) {
     const reasons = [];
-    if (input.calendar === "julian") reasons.push(t("sensitiveJulian"));
-    if (input.personName) reasons.push(t("sensitiveHistoricalPerson"));
-    if (input.zoneReliability && input.zoneReliability !== "iana") reasons.push(t("sensitiveManualOffset"));
-    if (!input.timeZone) reasons.push(t("sensitiveNoIana"));
+    const auditedStatus = ["audited", "partial", "pending"].includes(input.auditStatus);
+    if (input.calendar === "julian") reasons.push("sensitiveJulian");
+    if (input.auditStatus === "pending") reasons.push("sensitiveAuditPending");
+    if ((input.timeConfidence && input.timeConfidence !== "exact")
+      || (!input.timeConfidence && auditedStatus && input.auditStatus !== "audited")) {
+      reasons.push("sensitiveTimeConfidence");
+    }
+    if (input.zoneReliability && input.zoneReliability !== "iana") reasons.push("sensitiveManualOffset");
+    if (!input.timeZone) reasons.push("sensitiveNoIana");
     return [...new Set(reasons)];
+  }
+
+  function sensitivityReasonLabels(reasonCodes) {
+    return (reasonCodes || []).map((code) => t(code));
   }
 
   function sectBoundaryThresholdInfo(chart) {
@@ -5737,12 +5927,12 @@
 
   function boundaryWarnings(chart) {
     const warnings = [];
-    const notice = (key, type, distance, changes, action, extra = {}) => ({ key, type, distance, changes, action, ...extra });
+    const notice = (key, type, distance, changes, action, extra = {}) => ({ key, code: key, type, distance, changes, action, ...extra });
     const sunHorizonDistance = Math.abs(chart.sunAltitude);
     const sectThreshold = sectBoundaryThresholdInfo(chart);
     if (sunHorizonDistance <= sectThreshold.threshold) {
       warnings.push(notice(
-        "sect",
+        "sect-boundary",
         state.lang === "es" ? "Secta cerca del horizonte" : "Sect near horizon",
         sunHorizonDistance,
         state.lang === "es"
@@ -5751,13 +5941,13 @@
         state.lang === "es"
           ? "verificar hora, coordenadas, zona usada y posible rectificación"
           : "verify time, coordinates, zone used, and possible rectification",
-        { threshold: sectThreshold.threshold, sensitiveThreshold: sectThreshold.sensitive, thresholdReasons: sectThreshold.reasons }
+        { threshold: sectThreshold.threshold, sensitiveThreshold: sectThreshold.sensitive, thresholdReasonCodes: sectThreshold.reasons }
       ));
     }
     const ascDistance = distanceToSignBoundary(chart.angles.asc);
     if (ascDistance <= 1) {
       warnings.push(notice(
-        "asc",
+        "asc-sign-boundary",
         state.lang === "es" ? "Ascendente cerca de cambio de signo" : "Ascendant near sign change",
         ascDistance,
         state.lang === "es"
@@ -5777,11 +5967,14 @@
         const possibleSign = degree < 1 ? (currentSign + 11) % 12 : (currentSign + 1) % 12;
         const currentHouse = houseFromSign(currentSign, chart.ascSign);
         const possibleHouse = houseFromSign(possibleSign, chart.ascSign);
+        const boundarySide = degree < 1
+          ? (state.lang === "es" ? "límite anterior" : "previous boundary")
+          : (state.lang === "es" ? "límite siguiente" : "next boundary");
         const shiftText = state.lang === "es"
-          ? `${angle.label} actual: ${signLabel(currentSign)}, casa ${currentHouse}; posible si cambia: ${signLabel(possibleSign)}, casa ${possibleHouse}`
-          : `Current ${angle.label}: ${signLabel(currentSign)}, house ${currentHouse}; possible if it changes: ${signLabel(possibleSign)}, house ${possibleHouse}`;
+          ? `${angle.label} a ${formatAngle(distance)} del ${boundarySide}; actual: ${signLabel(currentSign)}, casa ${currentHouse}; posible por pequeña variación: ${signLabel(possibleSign)}, casa ${possibleHouse}`
+          : `${angle.label} within ${formatAngle(distance)} of the ${boundarySide}; current: ${signLabel(currentSign)}, house ${currentHouse}; possible with a small variation: ${signLabel(possibleSign)}, house ${possibleHouse}`;
         warnings.push(notice(
-          angle.key,
+          `${angle.key}-sign-boundary`,
           state.lang === "es" ? `${angle.label} cerca de cambio de signo` : `${angle.label} near sign change`,
           distance,
           state.lang === "es"
@@ -5797,7 +5990,7 @@
       const distance = distanceToSignBoundary(lot.lon);
       if (distance <= 1) {
         warnings.push(notice(
-          `lot-${lot.key}`,
+          `lot-boundary:${lot.key}`,
           state.lang === "es" ? `${lotName(lot.key)} cerca de cambio de signo/casa` : `${lotName(lot.key)} near sign/house change`,
           distance,
           state.lang === "es"
@@ -5812,7 +6005,7 @@
       const distance = distanceToBoundBoundary(position.lon);
       if (distance <= 0.5) {
         warnings.push(notice(
-          `bound-${key}`,
+          `planet-bound-boundary:${key}`,
           state.lang === "es" ? `${planetLabel(key)} cerca de cambio de término` : `${planetLabel(key)} near bound change`,
           distance,
           state.lang === "es"
@@ -5831,7 +6024,7 @@
     if (!warning) return "";
     const thresholdText = Number.isFinite(warning.threshold)
       ? (warning.sensitiveThreshold
-        ? t("boundaryThresholdSensitive", { threshold: formatAngle(warning.threshold), reasons: warning.thresholdReasons.join(", ") })
+        ? t("boundaryThresholdSensitive", { threshold: formatAngle(warning.threshold), reasons: sensitivityReasonLabels(warning.thresholdReasonCodes).join(", ") })
         : t("boundaryThresholdNormal", { threshold: formatAngle(warning.threshold) }))
       : "";
     return state.lang === "es"
@@ -5842,15 +6035,15 @@
   function renderBoundaryAudit(warnings) {
     if (!warnings.length) return metric(t("boundaryAudit"), t("noBoundaryNotices"));
     return `
-      <section class="metric boundary-audit-list">
+      <section class="metric boundary-audit-list" data-test="boundary-audit">
         <b>${escapeHtml(t("boundaryAudit"))}</b>
         <div>
           ${warnings.map((warning) => `
-            <article data-test="boundary-${escapeHtml(warning.key)}-warning">
+            <article data-test="boundary-warning" data-code="${escapeHtml(warning.code)}" data-key="${escapeHtml(warning.key)}">
               <strong>${escapeHtml(warning.type)}</strong>
               <p>${escapeHtml(state.lang === "es" ? "Distancia" : "Distance")}: ${escapeHtml(formatAngle(warning.distance))}</p>
               ${Number.isFinite(warning.threshold) ? `<p>${escapeHtml(t("boundaryThreshold"))}: ${escapeHtml(warning.sensitiveThreshold
-                ? t("boundaryThresholdSensitive", { threshold: formatAngle(warning.threshold), reasons: warning.thresholdReasons.join(", ") })
+                ? t("boundaryThresholdSensitive", { threshold: formatAngle(warning.threshold), reasons: sensitivityReasonLabels(warning.thresholdReasonCodes).join(", ") })
                 : t("boundaryThresholdNormal", { threshold: formatAngle(warning.threshold) }))}</p>` : ""}
               <p>${escapeHtml(state.lang === "es" ? "Puede cambiar" : "May change")}:</p>
               <ul>${warning.changes.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
@@ -6079,6 +6272,17 @@
 
   function renderScoreBreakdown(focuses) {
     if (!focuses?.length) return "";
+    const focusType = (items = []) => {
+      const totals = items.reduce((acc, item) => {
+        acc[item.category] = (acc[item.category] || 0) + item.points;
+        return acc;
+      }, {});
+      const dominant = Object.entries(totals).sort((a, b) => b[1] - a[1])[0]?.[0] || "scoreCategoryLifeAxis";
+      if (dominant === "scoreCategoryLifeAxis") return t("focusTypeVital");
+      if (dominant === "scoreCategoryPublic" || dominant === "scoreCategoryAngular") return t("focusTypePublic");
+      if (dominant === "scoreCategoryLots") return t("focusTypeCircumstantial");
+      return t("focusTypeSupport");
+    };
     const groupedItems = (items) => {
       const order = ["scoreCategoryLifeAxis", "scoreCategoryPublic", "scoreCategoryAngular", "scoreCategoryLots", "scoreCategoryTriplicity", "scoreCategorySect"];
       const groups = new Map();
@@ -6107,6 +6311,7 @@
         ${focuses.map((focus) => `
           <section class="score-breakdown-item">
             <h5>${escapeHtml(focusLabel(focus))} · ${escapeHtml(t("scoreTotalLabel"))}: ${escapeHtml(scoreNumber(focus.score))} ${escapeHtml(t("scorePointsLabel"))}</h5>
+            <p class="score-focus-type">${escapeHtml(t("scoreFocusType"))}: ${escapeHtml(focusType(focus.scoreItems))}</p>
             ${groupedItems(focus.scoreItems)}
           </section>
         `).join("")}
@@ -6123,27 +6328,25 @@
         const lordSolar = solarPhaseState(lot.lord, chart).category === "luminary"
           ? (state.lang === "es" ? "luminaria" : "luminary")
           : solarPhaseTableText(lot.lord, chart);
+        const beneficTestimony = lotTestimonyText(lotTestimonyItems(lot, ["jupiter", "venus"], chart, "support"), "support", lot);
+        const maleficPressure = lotTestimonyText(lotTestimonyItems(lot, ["mars", "saturn"], chart, "tension"), "tension", lot);
+        const lordText = [
+          planetLabel(lot.lord),
+          `${t("tableHouse")} ${lord?.house || "—"}`,
+          lord?.angularity ? t(lord.angularity) : "—",
+          plainDignityText(lord?.dignities || [], chart),
+          lordSolar,
+        ].filter(Boolean).join(" · ");
         return `
           <li data-test="main-lot-${escapeHtml(lot.key)}">
             <strong>${escapeHtml(lotName(lot.key))}</strong>
-            <dl>
-              <dt>${escapeHtml(t("lotAuditDegree"))}</dt>
-              <dd>${escapeHtml(formatDegree(lot.lon))}</dd>
-              <dt>${escapeHtml(t("tableHouse"))}</dt>
-              <dd>${escapeHtml(String(lot.house))}</dd>
-              <dt>${escapeHtml(t("tableLord"))}</dt>
-              <dd>${escapeHtml(planetLabel(lot.lord))}</dd>
-              <dt>${escapeHtml(t("tableLordHouse"))}</dt>
-              <dd>${escapeHtml(String(lord?.house || "—"))}</dd>
-              <dt>${escapeHtml(t("lotAuditLordCondition"))}</dt>
-              <dd>${escapeHtml(plainDignityText(lord?.dignities || [], chart))}</dd>
-              <dt>${escapeHtml(t("lotAuditLordAngularity"))}</dt>
-              <dd>${escapeHtml(lord?.angularity ? t(lord.angularity) : "—")}</dd>
-              <dt>${escapeHtml(t("lotAuditLordSolarPhase"))}</dt>
-              <dd>${escapeHtml(lordSolar)}</dd>
-              <dt>${escapeHtml(t("tableFormula"))}</dt>
-              <dd>${escapeHtml(lotFormulaText(lot.key, chart.isDay))}</dd>
-            </dl>
+            <div class="lot-audit-lines">
+              <p><b>${escapeHtml(t("lotAuditPosition"))}</b>: ${escapeHtml(formatDegree(lot.lon))} · ${escapeHtml(t("tableHouse"))} ${escapeHtml(String(lot.house))}</p>
+              <p><b>${escapeHtml(t("lotAuditLord"))}</b>: ${escapeHtml(lordText)}</p>
+              <p><b>${escapeHtml(t("lotAuditFormula"))}</b>: ${escapeHtml(lotFormulaText(lot.key, chart.isDay))}</p>
+              <p><b>${escapeHtml(t("lotAuditTestimonies"))}</b>: ${escapeHtml(beneficTestimony)}</p>
+              <p><b>${escapeHtml(t("lotAuditPressures"))}</b>: ${escapeHtml(maleficPressure)}</p>
+            </div>
           </li>
         `;
       });
@@ -6634,6 +6837,9 @@
         calculateCurrentChart();
       } catch (error) {
         $("#formStatus").textContent = error.message || String(error);
+        window.dispatchEvent(new CustomEvent("tyche:chart-error", {
+          detail: { message: error.message || String(error) },
+        }));
       }
     });
   }
@@ -6662,17 +6868,29 @@
       includeModern: false,
       selectedLots: [],
     };
-    window.TycheTest = {
+    window.TycheTest = Object.freeze({
       calculateChart(overrides = {}) {
         return computeChart({ ...defaultInput, ...overrides });
       },
       boundaryWarnings,
       sectBoundaryThresholdInfo,
+      sectSensitivityState,
+      timeContextSensitivity,
+      lotSnapshotForSect,
+      renderBoundaryAudit,
       dignityFor,
       dignityGroups,
       receptionBetween,
       receptionByBoundOnly,
       adjustIntensityForReception,
+      interpretChart,
+      lotTestimonyItems,
+      lotTestimonyLevel,
+      lotConditionReading,
+      maleficMitigationReading,
+      planetRelationJudgment,
+      renderMainLotsAudit,
+      computeMoonCondition,
       scoreChartTopics,
       lotByKey,
       signOf,
@@ -6682,7 +6900,8 @@
       solarPhaseState,
       lunarAspectCandidates,
       VISIBLE_KEYS: [...VISIBLE_KEYS],
-    };
+    });
+    console.info("Tyche regression test API enabled.");
   }
 
   function init() {

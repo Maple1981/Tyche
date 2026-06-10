@@ -94,7 +94,9 @@ For each selected lot:
 - Note benefic and malefic testimony to the lot by sign.
 - Grade that testimony by planet role in sect, angularity, solar phase, sign relationship, degree closeness, and superior/right-sided position.
 - Distinguish benefic testimony by configuration quality: trine/sextile can be described as flowing support, while square/opposition should be described as benefic testimony with friction.
+- If a benefic testifies by square or opposition but has strong or mutual reception with the lord of the lot, describe the result as negotiated support. It is less smooth than a trine or sextile, but more constructive than an unreconciled hard testimony.
 - Treat the lord as the administrator of the lot's topic.
+- Do not say that a lot itself receives reception. The reception occurs between the planet testifying to the lot and the domicile lord that administers the lot.
 
 Fortune indicates body, circumstance, environment, and what arrives with less deliberate control. Spirit indicates intention, decision, purpose, and directed action.
 
@@ -160,7 +162,7 @@ Tyche uses reception by dignity broadly. Domicile reception is the principal for
 
 In the interpretation layer, reception lowers the intensity of malefic pressure when relevant and can raise the intensity of benefic support. It must appear in the evidence so the user can see why the testimony was softened or strengthened. Reception by bound alone should not reduce a strong malefic pressure judgment; it creates a technical channel or administration but is not domicile/exaltation-level mitigation.
 
-Mutual reception should be labeled when both planets have dignity in the other planet's position. Judge the mutual reception by the weaker side of the exchange: strong when both sides are strong or one is strong and the other medium; medium when bound or active triplicity carries the exchange; weak when it is only out-of-sect or cooperating triplicity. Weak mutual reception creates a reciprocal channel, but does not by itself neutralize pressure. Mutual reception involving malefic pressure can formalize, contain, or structure the pressure without automatically turning it into ease or help.
+Mutual reception should be labeled when both planets have dignity in the other planet's position. Judge the mutual reception by the weaker side of the exchange: strong when both sides are strong or one is strong and the other medium; medium when bound or active triplicity carries the exchange; weak when it is only out-of-sect or cooperating triplicity. Weak mutual reception creates a reciprocal channel, but does not by itself neutralize pressure. Mutual reception involving malefic pressure can give the pressure form, continuity, or reciprocal dependence; it may channel the difficulty, but it also ties the significator more closely to the malefic.
 
 Future refinements may distinguish applying/separating reception, degree closeness, and reception through a planet that is itself badly obscured or unable to act.
 

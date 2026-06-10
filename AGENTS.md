@@ -35,6 +35,8 @@ Core derived data:
 - Bounds and decans should distinguish own minor dignity from another planet's administration of the degree.
 - Boundary audits should include the Sun near the horizon for sect sensitivity, MC/IC near sign changes, Ascendant near sign changes, lot sign/house boundaries, and visible planets near Egyptian-bound boundaries.
 - When a widened sect boundary threshold is used for historical/manual/Julian/uncertain time contexts, show the threshold and reason; do not hide it inside generic warning text.
+- Separate sect states clearly: liminal within 1 degree of the horizon, sensitive between 1 and about 2.5 degrees only when time context justifies the widened threshold, and stable outside those thresholds.
+- If sect is liminal or sensitive, show Fortune and Spirit as calculated by the current technical sect and also their alternate positions if sect were reversed.
 - Fortune and Spirit are always calculated internally for judgment even when the lot table hides them; lot checkboxes control display, not whether the principal lots exist for interpretation.
 
 This app uses vendored Astronomy Engine for browser-side ephemerides, with the older compact formulas kept only as fallback. Make the approximate +/-1 arcminute limitation visible in the UI and documentation; do not present the results as professional ephemeris-grade.
@@ -74,6 +76,7 @@ Interpretation output:
 - Evidence should include both lunar void-of-course criteria when both are calculated.
 - Use a consistent double layer for difficult places: the visible reading may add contextual caution, while technical evidence may preserve the traditional topics plainly.
 - Do not score active triplicity as equivalent to domicile or exaltation. It is real support, but major essential strength should remain domicile/exaltation.
+- Keep `Condición esencial` / `Essential condition` limited to essential dignity and debility: domicile, exaltation, triplicity role, own bound/decan, degree administration, detriment, and fall. Do not fold angularity, solar phase, sect, reception, bonification, or maltreatment into that label.
 - Keep triplicity-ruler scoring as background support; it should not compete with the Ascendant lord, MC, angular visible planets, or principal lots.
 - Do not count every bound/decan label as minor dignity. Only own bound or own decan is minor dignity for the planet; another planet ruling the bound/decan is degree administration and should not automatically improve ease or mitigation.
 - Label broad reception by dignity by strength: domicile/exaltation strong, bound or active triplicity medium, out-of-sect/cooperating triplicity weak.
@@ -103,6 +106,8 @@ The interface should feel mobile-first, calm, scholarly, and usable:
 - Podcast/transcript material may be used only as paraphrased synthesis and source URLs. Never commit transcript dumps, long verbatim excerpts, OCR, or attachment-derived scratch files.
 - Keep the public transcript source map in `docs/public-transcript-synthesis.md`, and treat the priority episode list there as the first review layer for interpretation changes.
 - Browser regression tests should use stable `data-test` hooks and the `window.TycheTest` API exposed only in `?test=regression` mode, not translated prose.
+- Keep `window.TycheTest` frozen, limited to regression mode, and broad enough to test calculation and judgment helpers without scraping rendered copy.
+- Render boundary notices with stable unique keys/codes such as `sect-boundary`, `mc-sign-boundary`, `lot-boundary:fortune`, and `planet-bound-boundary:mars`.
 - Hard rule: do not run `git push`, publish, deploy, or update GitHub Pages unless the user explicitly asks for that exact action in the current turn.
 
 ## Historical Examples
@@ -112,5 +117,8 @@ The interface should feel mobile-first, calm, scholarly, and usable:
 - Prefer post-calendar-reform Gregorian examples. If adding a figure from a place or period using the Julian calendar, encode the calendar explicitly and make the display label unambiguous; never silently convert or mix Julian and Gregorian dates.
 - Historical example places should include coordinates and a deliberate time offset or IANA zone so charts do not depend on browser guesses.
 - Show source/rating metadata for historical examples when it has been audited. Never invent Rodden ratings or exact time-source notes.
+- Prefer explicit `auditStatus`, `timeConfidence`, `sourceType`, and `sourceUrl` metadata over inferring reliability from whether three text fields exist.
+- Use `auditStatus` narrowly: `audited` means individual time source plus reliable rating/equivalent plus clear zone/offset; `partial` means useful but incomplete review, rounded time, missing rating/source detail, or inferred zone; `pending` means no individual audit yet.
+- For sect boundary widening, rely on time reliability rather than name presence: non-exact or missing historical `timeConfidence`, non-IANA/manual/historical zone reliability, Julian calendar, or pending audit can widen the threshold. A partial example with explicit exact time and IANA zone should not be widened merely because it is historical.
 - Keep the natal-data source separate from any note that a chart was discussed in a secondary interpretive source. Do not imply that an example discussion is the source of the birth time unless verified.
 - If interpretive references are structured later, keep fields such as type, role, and technique separate from natal data source, time source, and rating.
