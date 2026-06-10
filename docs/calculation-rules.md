@@ -43,6 +43,8 @@ Boundary notices are audit flags, not reinterpretations. Show them when:
 - A selected lot is within 1 degree of a sign/whole-sign-house change.
 - A visible planet is within 30 arcminutes of an Egyptian bound change.
 
+Show the boundary audit in technical data, and repeat the detailed notices in the interpretation evidence when any notices exist.
+
 ## Sect
 
 Sect is determined by the Sun's altitude:
@@ -135,6 +137,8 @@ Reception should be calculated only when two planets are configured. A planet re
 - Strong reception: domicile or exaltation.
 - Medium reception: active-by-sect triplicity or bound.
 - Weak reception: out-of-sect triplicity or cooperating triplicity.
+
+Tyche uses "reception by dignity" in this broad technical sense. Domicile reception remains the principal form, with exaltation also treated as strong.
 
 Reception mitigates pressure when a malefic testimony is received by the significator, or when the malefic receives the significator in a way that gives the contact a formal channel. It can also strengthen benefic support. It should be shown as its own testimony instead of being hidden inside a generic aspect score.
 

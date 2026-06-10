@@ -52,6 +52,7 @@
       houses: "Casas",
       wholeSign: "Casas por signos enteros",
       aspectMode: "Aspectos",
+      aspectModeNote: "La lectura natal usa configuraciones por signo; el grado añade cercanía y perfección en tablas y evidencia.",
       bySign: "Por signo",
       signAndDegree: "Signo + grado",
       byDegree: "Por grado",
@@ -176,6 +177,8 @@
       utcDateTime: "UTC usado",
       coordinates: "Coordenadas",
       ephemerisEngine: "Efemérides",
+      boundaryAudit: "Auditoría de frontera",
+      noBoundaryNotices: "Sin avisos",
       astronomyEngine: "Astronomy Engine local",
       fallbackEngine: "Motor aproximado de respaldo",
       ascLordTitle: "Regente del Ascendente",
@@ -320,6 +323,7 @@
       houses: "Houses",
       wholeSign: "Whole Sign Houses",
       aspectMode: "Aspects",
+      aspectModeNote: "The natal reading uses sign-based configurations; degree adds closeness and perfection in tables and evidence.",
       bySign: "By sign",
       signAndDegree: "Sign + degree",
       byDegree: "By degree",
@@ -444,6 +448,8 @@
       utcDateTime: "UTC used",
       coordinates: "Coordinates",
       ephemerisEngine: "Ephemerides",
+      boundaryAudit: "Boundary audit",
+      noBoundaryNotices: "No notices",
       astronomyEngine: "Local Astronomy Engine",
       fallbackEngine: "Approximate fallback engine",
       ascLordTitle: "Ascendant / Hour-Marker Lord",
@@ -878,7 +884,7 @@
       noMajorDignity: {
         title: "Sin dignidad mayor",
         body: [
-          "<p>Indica que el planeta no está en domicilio, exaltación ni triplicidad propia. Puede seguir teniendo término o decanato, que son dignidades menores.</p>",
+          "<p>Indica que el planeta no está en domicilio ni exaltación. Puede seguir teniendo soporte por triplicidad, término o decanato, que se muestran por separado.</p>",
         ],
       },
       domicile: {
@@ -1084,6 +1090,7 @@
         title: "Recepción",
         body: [
           "<p>Mitigación que aparece cuando dos planetas configurados se reciben por dignidad: domicilio, exaltación, triplicidad o término.</p>",
+          "<p>Tyche usa recepción por dignidad en sentido amplio: fuerte por domicilio o exaltación; media por término o triplicidad activa; débil por triplicidad fuera de secta o cooperante. La recepción domiciliar sigue siendo la forma principal.</p>",
           "<p>En un contacto difícil, la recepción da al planeta presionado o al planeta que presiona un canal formal para manejar la relación; no borra la tensión, pero puede moderarla.</p>",
         ],
       },
@@ -1431,7 +1438,7 @@
       noMajorDignity: {
         title: "No major dignity",
         body: [
-          "<p>The planet is not in its own domicile, exaltation, or triplicity. It may still have a bound or decan, which are minor dignities.</p>",
+          "<p>The planet is not in domicile or exaltation. It may still have triplicity support, bound, or decan, shown separately.</p>",
         ],
       },
       domicile: {
@@ -1637,6 +1644,7 @@
         title: "Reception",
         body: [
           "<p>A mitigation that appears when two configured planets receive one another by dignity: domicile, exaltation, triplicity, or bound.</p>",
+          "<p>Tyche uses reception by dignity in a broad sense: strong by domicile or exaltation; medium by bound or active triplicity; weak by out-of-sect or cooperating triplicity. Domicile reception remains the principal form.</p>",
           "<p>In a difficult contact, reception gives the pressured planet or the pressuring planet a formal channel for handling the relationship; it does not erase tension, but it can moderate it.</p>",
         ],
       },
@@ -4045,6 +4053,19 @@
     return { strong: 3, medium: 2, weak: 1 }[rank] || 0;
   }
 
+  function receptionStrengthLabel(reception) {
+    if (!reception?.hasReception) return "";
+    if (reception.strongest >= 3) {
+      return state.lang === "es" ? "fuerte (domicilio/exaltación)" : "strong (domicile/exaltation)";
+    }
+    if (reception.strongest >= 2) {
+      return state.lang === "es" ? "media (término o triplicidad activa)" : "medium (bound or active triplicity)";
+    }
+    return state.lang === "es"
+      ? "débil (triplicidad fuera de secta o cooperante)"
+      : "weak (out-of-sect or cooperating triplicity)";
+  }
+
   function receptionAuthority(receiver, guestLon, chart) {
     if (!VISIBLE_KEYS.includes(receiver)) return { receiver, kinds: [], labels: [], rank: "" };
     const signIndex = signOf(guestLon);
@@ -4115,14 +4136,15 @@
   function receptionNote(target, actor, reception, role) {
     if (!reception?.hasReception) return "";
     const phrase = receptionPhrase(target, actor, reception);
+    const strength = receptionStrengthLabel(reception);
     if (state.lang === "es") {
       return role === "support"
-        ? ` Hay recepción (${phrase}), lo que refuerza el canal de ayuda.`
-        : ` Hay recepción (${phrase}), así que la presión queda mitigada y actúa con más canal que crudeza.`;
+        ? ` Hay recepción ${strength} (${phrase}), lo que refuerza el canal de ayuda.`
+        : ` Hay recepción ${strength} (${phrase}), así que la presión queda mitigada y actúa con más canal que crudeza.`;
     }
     return role === "support"
-      ? ` There is reception (${phrase}), strengthening the channel of help.`
-      : ` There is reception (${phrase}), so the pressure is mitigated and has more channel than rawness.`;
+      ? ` There is ${strength} reception (${phrase}), strengthening the channel of help.`
+      : ` There is ${strength} reception (${phrase}), so the pressure is mitigated and has more channel than rawness.`;
   }
 
   function lotLongitude(key, chart) {
@@ -4442,6 +4464,7 @@
 
   function renderTechnicalPanel(chart) {
     const engine = chart.ephemerisEngine === "astronomy" ? t("astronomyEngine") : t("fallbackEngine");
+    const boundary = boundaryWarnings(chart);
     $("#technicalPanel").innerHTML = `
       <details>
         <summary>${escapeHtml(t("technicalTitle"))}</summary>
@@ -4454,6 +4477,7 @@
           ${metric(t("zodiac"), t(chart.input.zodiac), "", "zodiac")}
           ${metric(t("houses"), t("wholeSign"), "", "wholeSign")}
           ${metric(t("ephemerisEngine"), engine, "", "ephemeris")}
+          ${metric(t("boundaryAudit"), boundary.length ? boundary.join(" ") : t("noBoundaryNotices"))}
         </div>
       </details>
     `;
@@ -4825,7 +4849,7 @@
         return "La mitigación es fuerte: el benéfico de la secta puede intervenir de forma clara, por cercanía, aspecto favorable o fuerza propia.";
       }
       if (mediumMitigation) {
-        return "La mitigación es media: hay apoyo real, pero no basta para borrar la presión; la lectura debe mantener ambas señales.";
+        return "La mitigación es media: la presión no desaparece, pero aparece algún canal de regulación, por apoyo benéfico, recepción o recursos propios del planeta. La lectura debe mantener ambas señales.";
       }
       if (weakMitigation) {
         return beneficObscured
@@ -4841,7 +4865,7 @@
       return "Mitigation is strong: the benefic of sect can intervene clearly through closeness, a favorable aspect, or its own strength.";
     }
     if (mediumMitigation) {
-      return "Mitigation is medium: real support is present, but it does not erase the pressure; keep both testimonies in the reading.";
+      return "Mitigation is medium: the pressure does not disappear, but some channel of regulation appears through benefic support, reception, or the planet's own resources. Keep both testimonies in the reading.";
     }
     if (weakMitigation) {
       return beneficObscured
@@ -5080,9 +5104,10 @@
         if (!reception.hasReception) return;
         const role = actor === chart.beneficOfSect ? "support" : "tension";
         const phrase = receptionPhrase(target, actor, reception);
+        const strength = receptionStrengthLabel(reception);
         items.push(state.lang === "es"
-          ? `Recepción (${role === "support" ? "apoyo" : "mitigación"}): ${phrase}.`
-          : `Reception (${role === "support" ? "support" : "mitigation"}): ${phrase}.`);
+          ? `Recepción ${strength} (${role === "support" ? "apoyo" : "mitigación"}): ${phrase}.`
+          : `${capitalizeText(strength)} reception (${role === "support" ? "support" : "mitigation"}): ${phrase}.`);
       });
     });
     return [...new Set(items)].slice(0, 4);
@@ -5328,8 +5353,8 @@
     const lotConditionTexts = [lotConditionReading(fortune, chart), lotConditionReading(spirit, chart)].filter(Boolean);
     const beneficSolarCaution = isSolarObscuredWithoutChariot(benefic, chart)
       ? (state.lang === "es"
-        ? `Su apoyo existe, pero está menos disponible de forma pública porque está ${solarPhaseTableText(benefic, chart)}.`
-        : `Its support exists, but is less publicly available because it is ${solarPhaseTableText(benefic, chart)}.`)
+        ? `Su apoyo existe, pero queda menos visible o menos autónomo porque está ${solarPhaseTableText(benefic, chart)}.`
+        : `Its support exists, but is less visible or less autonomous because it is ${solarPhaseTableText(benefic, chart)}.`)
       : "";
 
     const lead = focusLeadReading(focuses);

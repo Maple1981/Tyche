@@ -98,7 +98,7 @@ Increase pressure when:
 - The malefic dominates the significator rather than being dominated by it.
 - There is little compensating dignity, reception, or benefic support.
 
-Reception is a distinct mitigating factor. Tyche now implements a basic visible reception layer for configured main significators, because a difficult planet acting in a sign ruled by the significator, or a significator receiving the planet that pressures it, changes the quality of the contact. Future refinements can add applying/separating status, mutual reception emphasis, and more granular handling of debilitated receiving planets.
+Reception is a distinct mitigating factor. Tyche now implements a basic visible reception layer for configured main significators, because a difficult planet acting in a sign ruled by the significator, or a significator receiving the planet that pressures it, changes the quality of the contact. Tyche labels broad reception by dignity as strong, medium, or weak so domicile/exaltation are not conflated with bound or triplicity reception. Future refinements can add applying/separating status, mutual reception emphasis, and more granular handling of debilitated receiving planets.
 
 Do not treat every broad benefic contact as medium mitigation. Wide contact, hard configuration without reception, cadency, weakness, or solar concealment can keep the mitigation weak or doubtful.
 

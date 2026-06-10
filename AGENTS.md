@@ -68,6 +68,7 @@ Interpretation output:
 - Keep `docs/judgment-matrix.md` aligned with the interpretation code. Solar phase, configurations, lot lords, lunar condition, and triplicity rulers should enter the judgment when their underlying data is calculated.
 - Evidence should include both lunar void-of-course criteria when both are calculated.
 - Do not score active triplicity as equivalent to domicile or exaltation. It is real support, but major essential strength should remain domicile/exaltation.
+- Label broad reception by dignity by strength: domicile/exaltation strong, bound or active triplicity medium, out-of-sect/cooperating triplicity weak.
 
 ## UI Direction
 
