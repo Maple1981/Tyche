@@ -21,6 +21,7 @@ Core derived data:
 - Whole sign houses from the rising sign.
 - MC/IC sign and their whole sign house.
 - Sect by solar altitude: diurnal if the Sun is above the horizon, nocturnal if below.
+- Sect uses geometric solar altitude; do not imply atmospheric-refraction or heliacal-visibility correction.
 - Benefic/malefic of the sect: Jupiter/Saturn for day, Venus/Mars for night.
 - Also show the malefic contrary to sect: Mars in day charts and Saturn in night charts.
 - Essential condition: domicile, exaltation, triplicity, Egyptian bounds, decans, detriment, fall.
@@ -72,6 +73,7 @@ Interpretation output:
 - Evidence should include both lunar void-of-course criteria when both are calculated.
 - Use a consistent double layer for difficult places: the visible reading may add contextual caution, while technical evidence may preserve the traditional topics plainly.
 - Do not score active triplicity as equivalent to domicile or exaltation. It is real support, but major essential strength should remain domicile/exaltation.
+- Keep triplicity-ruler scoring as background support; it should not compete with the Ascendant lord, MC, angular visible planets, or principal lots.
 - Do not count every bound/decan label as minor dignity. Only own bound or own decan is minor dignity for the planet; another planet ruling the bound/decan is degree administration and should not automatically improve ease or mitigation.
 - Label broad reception by dignity by strength: domicile/exaltation strong, bound or active triplicity medium, out-of-sect/cooperating triplicity weak.
 - Label mutual reception when both planets receive one another; grade it by the dignity actually involved and treat it as reciprocal channel, not as automatic cancellation of pressure.

@@ -42,6 +42,8 @@ After calculation, show the result in this order:
 
 The calculated chart view should include a visible limits section, not only footer text. It should state educational scope, approximate planetary precision, angle sensitivity to time/place/zone, and the fact that place search and historical images may contact external services.
 
+Advanced options that move away from the default model should warn immediately, not only after calculation. This applies to Julian calendar, approximate sidereal zodiac, and modern planets shown as an unweighted layer in traditional mode.
+
 The Hour-Marker lord panel should answer:
 
 - Which planet rules the Ascendant sign?

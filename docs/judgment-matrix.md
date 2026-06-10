@@ -22,6 +22,8 @@ Strong testimonies:
 - Fortune, Spirit, their domicile lords, and the houses of those lords.
 - Triplicity rulers of the sect light as background support.
 
+In the focus score, triplicity rulers should remain background support. Current intended weights are lower than primary testimonies: active ruler 1.0, out-of-sect ruler 0.6, cooperating ruler 0.4.
+
 Modifying testimonies:
 
 - Solar phase of key planets: morning/evening, under the beams, combustion, and in the heart.
@@ -91,6 +93,7 @@ For each selected lot:
 - Read the house, angularity, essential condition, and solar phase of the lord.
 - Note benefic and malefic testimony to the lot by sign.
 - Grade that testimony by planet role in sect, angularity, solar phase, sign relationship, degree closeness, and superior/right-sided position.
+- Distinguish benefic testimony by configuration quality: trine/sextile can be described as flowing support, while square/opposition should be described as benefic testimony with friction.
 - Treat the lord as the administrator of the lot's topic.
 
 Fortune indicates body, circumstance, environment, and what arrives with less deliberate control. Spirit indicates intention, decision, purpose, and directed action.
@@ -131,6 +134,8 @@ Use:
 Both void-of-course criteria should appear in the evidence layer, not only in the lunar panel.
 
 If the next application is to the benefic of sect, the lunar transmission is softened. If it is to the malefic contrary to sect, it carries more pressure.
+
+When the lunar contact was found by iterative search, label it as such in the output. If the calculation falls back to the linear speed estimate, label it as an approximation.
 
 ## Reception
 

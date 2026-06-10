@@ -812,6 +812,40 @@ td {
   margin-top: 10px;
 }
 
+.boundary-audit-list {
+  grid-column: 1 / -1;
+}
+
+.boundary-audit-list > div {
+  display: grid;
+  gap: 8px;
+}
+
+.boundary-audit-list article {
+  display: grid;
+  gap: 4px;
+  border-top: 1px dotted color-mix(in srgb, var(--blue) 42%, var(--line));
+  padding-top: 8px;
+}
+
+.boundary-audit-list article:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.boundary-audit-list strong {
+  color: var(--ink);
+}
+
+.boundary-audit-list p {
+  margin: 0;
+}
+
+.boundary-audit-list ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
 .interpretation-panel {
   display: grid;
   gap: 16px;
@@ -1038,12 +1072,57 @@ td {
   font-size: 0.9rem;
 }
 
-.score-breakdown-item ul {
+.score-breakdown-group {
+  display: grid;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.score-breakdown-group p {
+  margin: 0;
+  color: var(--blue-deep);
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant: small-caps;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0;
+}
+
+.score-breakdown-group ul,
+.main-lots-audit ul {
   display: grid;
   gap: 4px;
   margin: 0;
   padding-left: 1.1rem;
   line-height: 1.45;
+}
+
+.main-lots-audit {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+  border-top: 1px dotted color-mix(in srgb, var(--blue) 42%, var(--line));
+  padding-top: 10px;
+  color: var(--muted);
+}
+
+.main-lots-audit h5 {
+  margin: 0;
+  color: var(--blue-deep);
+  font-size: 0.88rem;
+  font-variant: small-caps;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0;
+}
+
+.main-lots-audit li {
+  display: grid;
+  gap: 2px;
+}
+
+.main-lots-audit p {
+  margin: 0;
+  font-size: 0.82rem;
 }
 
 .interpretation-timing {

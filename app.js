@@ -154,7 +154,7 @@
       moonJudgmentTitle: "Condición lunar",
       foundationsTitle: "Base de estabilidad",
       prominenceLabel: "Prominencia",
-      easeLabel: "Condición operativa",
+      easeLabel: "Condición esencial",
       tensionLabel: "Tensión",
       supportLabel: "Apoyo",
       qualityTitle: "Indicadores de lectura",
@@ -162,6 +162,14 @@
       scoreBreakdownTitle: "Desglose de puntuación",
       scoreTotalLabel: "Total",
       scorePointsLabel: "puntos",
+      scoreCategoryLifeAxis: "Eje vital",
+      scoreCategorySect: "Secta",
+      scoreCategoryPublic: "Proyección pública",
+      scoreCategoryAngular: "Angularidad",
+      scoreCategoryLots: "Lotes",
+      scoreCategoryTriplicity: "Triplicidad",
+      mainLotsAuditTitle: "Lotes principales usados en juicio",
+      lotTableDisplayNote: "La tabla de lotes muestra solo los lotes seleccionados.",
       highLevel: "alta",
       mediumLevel: "media",
       lowLevel: "baja",
@@ -195,9 +203,12 @@
       julianInlineWarning: "Aviso: la conversión juliana es básica. Verifica calendario local, hora civil y fuente temporal antes de investigación crítica.",
       siderealInlineWarning: "Aviso: el zodíaco sideral es aproximado y queda fuera del marco tropical base de Tyche.",
       mixedInlineWarning: "Aviso: los planetas modernos se muestran como capa adicional; el juicio helenístico base no los pondera.",
+      modernStrictInlineWarning: "Aviso: estás en enfoque tradicional, pero mostrando modernos como capa no ponderada.",
       modernDisplayed: "Modernos mostrados",
       modernWeightedBase: "Modernos ponderados en juicio base",
       modernNotWeighted: "No; quedan fuera del juicio helenístico base",
+      sectCalculation: "Cálculo de secta",
+      sectCalculationValue: "Altitud solar geométrica {altitude}; sin refracción atmosférica",
       solarThresholds: "Umbrales solares",
       solarThresholdValues: "Bajo rayos 15° · combustión 8° · en el corazón 1°",
       moonVoidDefinitions: "Luna vacía",
@@ -220,6 +231,9 @@
       moonElongation: "Elongación Sol→Luna",
       moonLastSeparation: "Último contacto",
       moonNextApplication: "Próximo contacto",
+      moonCalculationMethod: "Método de contacto lunar",
+      lunarMethodIterative: "búsqueda iterativa",
+      lunarMethodFallback: "estimación lineal",
       moonNoSeparation: "Ninguna en los últimos 30°",
       moonNoApplication: "Ninguna en los próximos 30°",
       moonBeforeNew: "{degrees} antes de Luna nueva",
@@ -452,7 +466,7 @@
       moonJudgmentTitle: "Lunar condition",
       foundationsTitle: "Stability base",
       prominenceLabel: "Prominence",
-      easeLabel: "Operational condition",
+      easeLabel: "Essential condition",
       tensionLabel: "Tension",
       supportLabel: "Support",
       qualityTitle: "Reading indicators",
@@ -460,6 +474,14 @@
       scoreBreakdownTitle: "Score breakdown",
       scoreTotalLabel: "Total",
       scorePointsLabel: "points",
+      scoreCategoryLifeAxis: "Life axis",
+      scoreCategorySect: "Sect",
+      scoreCategoryPublic: "Public projection",
+      scoreCategoryAngular: "Angularity",
+      scoreCategoryLots: "Lots",
+      scoreCategoryTriplicity: "Triplicity",
+      mainLotsAuditTitle: "Principal lots used in judgment",
+      lotTableDisplayNote: "The lot table displays only the selected lots.",
       highLevel: "high",
       mediumLevel: "medium",
       lowLevel: "low",
@@ -493,9 +515,12 @@
       julianInlineWarning: "Notice: Julian conversion is basic. Verify local calendar, civil time, and time source before critical research.",
       siderealInlineWarning: "Notice: the sidereal zodiac is approximate and outside Tyche's tropical base frame.",
       mixedInlineWarning: "Notice: modern planets are displayed as an additional layer; the base Hellenistic judgment does not weight them.",
+      modernStrictInlineWarning: "Notice: you are in traditional mode, while showing modern planets as an unweighted layer.",
       modernDisplayed: "Modern planets shown",
       modernWeightedBase: "Modern planets weighted in base judgment",
       modernNotWeighted: "No; outside the base Hellenistic judgment",
+      sectCalculation: "Sect calculation",
+      sectCalculationValue: "Geometric solar altitude {altitude}; no atmospheric refraction",
       solarThresholds: "Solar thresholds",
       solarThresholdValues: "Under beams 15° · combustion 8° · in the heart 1°",
       moonVoidDefinitions: "Void Moon",
@@ -518,6 +543,9 @@
       moonElongation: "Sun→Moon elongation",
       moonLastSeparation: "Last contact",
       moonNextApplication: "Next contact",
+      moonCalculationMethod: "Lunar contact method",
+      lunarMethodIterative: "iterative search",
+      lunarMethodFallback: "linear estimate",
       moonNoSeparation: "None in the last 30°",
       moonNoApplication: "None in the next 30°",
       moonBeforeNew: "{degrees} before New Moon",
@@ -860,6 +888,7 @@
         body: [
           "<p>Condición diurna o nocturna de la carta. Se calcula por la posición del Sol respecto al horizonte local.</p>",
           "<p>Si el Sol está sobre el horizonte, la carta es diurna; si está bajo el horizonte, nocturna. Esto reorganiza la fuerza relativa de luminarias, benéficos y maléficos.</p>",
+          "<p>Tyche usa altitud solar geométrica. No aplica correcciones observacionales como refracción atmosférica.</p>",
         ],
       },
       sectLight: {
@@ -1432,6 +1461,7 @@
         body: [
           "<p>The day/night condition of the chart, calculated from the Sun's position relative to the local horizon.</p>",
           "<p>Sun above the horizon gives a day chart; Sun below gives a night chart. This reorganizes the relative condition of luminaries, benefics, and malefics.</p>",
+          "<p>Tyche uses geometric solar altitude. It does not apply observational corrections such as atmospheric refraction.</p>",
         ],
       },
       sectLight: {
@@ -3267,6 +3297,10 @@
     return `${degrees}°${String(minutes).padStart(2, "0")}′`;
   }
 
+  function formatSignedAngle(value) {
+    return `${value >= 0 ? "+" : "-"}${formatAngle(value)}`;
+  }
+
   function metric(label, value, valueClass = "", labelGlossary = "", valueGlossary = "") {
     const classAttr = valueClass ? ` class="${valueClass}"` : "";
     const labelHtml = labelGlossary ? glossaryTerm(label, labelGlossary) : escapeHtml(label);
@@ -4195,7 +4229,7 @@
           if (direction > 0 ? days <= 0.000001 : days >= -0.000001) continue;
           const moonTravel = Math.abs(moon.speed * days);
           if (moonTravel <= maxMoonTravel + 0.0001) {
-            candidates.push({ type, days, moonTravel });
+            candidates.push({ type, days, moonTravel, method: "fallback" });
           }
         }
       });
@@ -4211,6 +4245,7 @@
     ];
     if (motionKey) parts.push(t(motionKey));
     if (Number.isFinite(contact.moonTravel)) parts.push(formatAngle(contact.moonTravel));
+    if (contact.method) parts.push(t(contact.method === "iterative" ? "lunarMethodIterative" : "lunarMethodFallback"));
     return parts.join(" · ");
   }
 
@@ -4740,6 +4775,7 @@
           ${metric(t("calendar"), calendarLabel)}
           ${metric(t("zodiac"), zodiacLabel, "", "zodiac")}
           ${metric(t("houses"), t("wholeSign"), "", "wholeSign")}
+          ${metric(t("sectCalculation"), t("sectCalculationValue", { altitude: formatSignedAngle(chart.sunAltitude) }), "", "sect")}
           ${metric(t("aspectTableMode"), aspectModeLabel, "", "aspects")}
           ${metric(t("judgmentFrame"), t("judgmentFrameSign"), "", "aspects")}
           ${metric(t("ephemerisEngine"), engine, "", "ephemeris")}
@@ -4748,7 +4784,7 @@
           ${metric(t("techniqueMode"), t(chart.input.techniqueMode === "mixed" ? "mixed" : "strict"), "", "technique")}
           ${metric(t("modernDisplayed"), chart.input.includeModern ? t("yes") : t("no"), "", "modernPlanets")}
           ${metric(t("modernWeightedBase"), t("modernNotWeighted"), "", "modernPlanets")}
-          ${metric(t("boundaryAudit"), boundary.length ? boundary.join(" ") : t("noBoundaryNotices"))}
+          ${renderBoundaryAudit(boundary)}
         </div>
       </details>
     `;
@@ -5511,6 +5547,17 @@
       .filter(Boolean);
   }
 
+  function lotTestimonyNature(item, role) {
+    if (role === "support") {
+      if (["trine", "sextile"].includes(item.signType)) return state.lang === "es" ? "apoyo fluido" : "flowing support";
+      if (["square", "opposition"].includes(item.signType)) return state.lang === "es" ? "testimonio benéfico con fricción" : "benefic testimony with friction";
+      return state.lang === "es" ? "apoyo por copresencia" : "support by copresence";
+    }
+    if (["square", "opposition"].includes(item.signType)) return state.lang === "es" ? "presión directa" : "direct pressure";
+    if (["trine", "sextile"].includes(item.signType)) return state.lang === "es" ? "presión configurada" : "configured pressure";
+    return state.lang === "es" ? "presión por copresencia" : "pressure by copresence";
+  }
+
   function lotTestimonyText(items, role) {
     if (!items.length) {
       return role === "support"
@@ -5520,6 +5567,7 @@
     return naturalList(items.map((item) => {
       const details = [
         `${planetLabel(item.key)} (${t(item.signType)}, ${state.lang === "es" ? "intensidad" : "intensity"} ${t(item.level)})`,
+        lotTestimonyNature(item, role),
         item.roleText,
         state.lang === "es" ? `casa ${item.house} · ${t(item.angularity)}` : `house ${item.house} · ${t(item.angularity)}`,
         item.planetSuperior ? (state.lang === "es" ? "en posición superior" : "in superior position") : "",
@@ -5555,13 +5603,13 @@
     const last = chart.moon.lastSeparation;
     const nextBySign = chart.moon.nextApplicationBySign;
     const nextText = next
-      ? `${planetLabel(next.planet)} (${t(next.type)})`
+      ? lunarContactLabel(next, "applying")
       : (state.lang === "es" ? "ningún planeta en los próximos 30°" : "no planet in the next 30°");
     const lastText = last
-      ? `${planetLabel(last.planet)} (${t(last.type)})`
+      ? lunarContactLabel(last, "separating")
       : (state.lang === "es" ? "ningún planeta en los últimos 30°" : "no planet in the last 30°");
     const bySignText = nextBySign
-      ? `${planetLabel(nextBySign.planet)} (${t(nextBySign.type)})`
+      ? lunarContactLabel(nextBySign, "applying")
       : (state.lang === "es" ? "ningún planeta antes de salir del signo" : "no planet before sign exit");
     const nextRole = next?.planet === chart.beneficOfSect
       ? "support"
@@ -5641,19 +5689,22 @@
     return Math.min(...internalBoundaries.map((boundary) => Math.abs(degree - boundary)));
   }
 
+  function sectBoundaryThreshold(chart) {
+    const contextSensitive = Boolean(chart.input.zoneSource || chart.input.calendar === "julian" || !chart.input.timeZone || chart.input.personName);
+    return contextSensitive ? 2.5 : 1;
+  }
+
   function boundaryWarnings(chart) {
     const warnings = [];
-    const notice = (type, distance, changes, action) => state.lang === "es"
-      ? `Tipo: ${type}. Distancia: ${formatAngle(distance)}. Puede cambiar: ${changes}. Acción recomendada: ${action}.`
-      : `Type: ${type}. Distance: ${formatAngle(distance)}. May change: ${changes}. Recommended action: ${action}.`;
+    const notice = (type, distance, changes, action) => ({ type, distance, changes, action });
     const sunHorizonDistance = Math.abs(chart.sunAltitude);
-    if (sunHorizonDistance <= 1) {
+    if (sunHorizonDistance <= sectBoundaryThreshold(chart)) {
       warnings.push(notice(
         state.lang === "es" ? "Secta cerca del horizonte" : "Sect near horizon",
         sunHorizonDistance,
         state.lang === "es"
-          ? "secta, luminaria de la secta, benéfico/maléfico de la secta, maléfico contrario, fórmulas de Fortuna/Espíritu y juicio general"
-          : "sect, sect light, benefic/malefic of sect, contrary malefic, Fortune/Spirit formulas, and general judgment",
+          ? ["secta", "luminaria de la secta", "benéfico/maléfico de la secta", "maléfico contrario", "fórmulas de Fortuna/Espíritu", "juicio general"]
+          : ["sect", "sect light", "benefic/malefic of sect", "contrary malefic", "Fortune/Spirit formulas", "general judgment"],
         state.lang === "es"
           ? "verificar hora, coordenadas, zona usada y posible rectificación"
           : "verify time, coordinates, zone used, and possible rectification"
@@ -5665,8 +5716,8 @@
         state.lang === "es" ? "Ascendente cerca de cambio de signo" : "Ascendant near sign change",
         ascDistance,
         state.lang === "es"
-          ? "regente del Ascendente, casas por signos enteros, lotes y focos principales"
-          : "Ascendant lord, whole-sign houses, lots, and main focuses",
+          ? ["regente del Ascendente", "casas por signos enteros", "lotes", "focos principales"]
+          : ["Ascendant lord", "whole-sign houses", "lots", "main focuses"],
         state.lang === "es" ? "revisar hora, fuente o rectificación" : "review time, source, or rectification"
       ));
     }
@@ -5680,8 +5731,8 @@
           state.lang === "es" ? `${angle.label} cerca de cambio de signo` : `${angle.label} near sign change`,
           distance,
           state.lang === "es"
-            ? `casa por signos enteros del ${angle.label}, proyección/fundamento de la carta y focos secundarios`
-            : `${angle.label} whole-sign house, chart projection/foundation, and secondary focuses`,
+            ? [`casa por signos enteros del ${angle.label}`, "proyección/fundamento de la carta", "focos secundarios"]
+            : [`${angle.label} whole-sign house`, "chart projection/foundation", "secondary focuses"],
           state.lang === "es"
             ? "verificar hora, coordenadas y zona usada"
             : "verify time, coordinates, and zone used"
@@ -5695,8 +5746,8 @@
           state.lang === "es" ? `${lotName(lot.key)} cerca de cambio de signo/casa` : `${lotName(lot.key)} near sign/house change`,
           distance,
           state.lang === "es"
-            ? "casa del lote, señor del lote y lectura del tema"
-            : "lot house, lot lord, and topic reading",
+            ? ["casa del lote", "señor del lote", "lectura del tema"]
+            : ["lot house", "lot lord", "topic reading"],
           state.lang === "es" ? "revisar hora y coordenadas" : "review time and coordinates"
         ));
       }
@@ -5709,8 +5760,8 @@
           state.lang === "es" ? `${planetLabel(key)} cerca de cambio de término` : `${planetLabel(key)} near bound change`,
           distance,
           state.lang === "es"
-            ? "administración del grado, dignidad menor propia si procede y recepción por término"
-            : "degree administration, own minor dignity if applicable, and reception by bound",
+            ? ["administración del grado", "dignidad menor propia si procede", "recepción por término"]
+            : ["degree administration", "own minor dignity if applicable", "reception by bound"],
           state.lang === "es"
             ? "revisar minutos de hora y precisión planetaria"
             : "review birth-time minutes and planetary precision"
@@ -5718,6 +5769,33 @@
       }
     });
     return warnings;
+  }
+
+  function boundaryWarningText(warning) {
+    if (!warning) return "";
+    return state.lang === "es"
+      ? `Tipo: ${warning.type}. Distancia: ${formatAngle(warning.distance)}. Puede cambiar: ${warning.changes.join(", ")}. Acción recomendada: ${warning.action}.`
+      : `Type: ${warning.type}. Distance: ${formatAngle(warning.distance)}. May change: ${warning.changes.join(", ")}. Recommended action: ${warning.action}.`;
+  }
+
+  function renderBoundaryAudit(warnings) {
+    if (!warnings.length) return metric(t("boundaryAudit"), t("noBoundaryNotices"));
+    return `
+      <section class="metric boundary-audit-list">
+        <b>${escapeHtml(t("boundaryAudit"))}</b>
+        <div>
+          ${warnings.map((warning) => `
+            <article>
+              <strong>${escapeHtml(warning.type)}</strong>
+              <p>${escapeHtml(state.lang === "es" ? "Distancia" : "Distance")}: ${escapeHtml(formatAngle(warning.distance))}</p>
+              <p>${escapeHtml(state.lang === "es" ? "Puede cambiar" : "May change")}:</p>
+              <ul>${warning.changes.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+              <p>${escapeHtml(state.lang === "es" ? "Acción" : "Action")}: ${escapeHtml(warning.action)}</p>
+            </article>
+          `).join("")}
+        </div>
+      </section>
+    `;
   }
 
   function lotByKey(chart, key) {
@@ -5731,30 +5809,30 @@
       reasons: [],
       scoreItems: [],
     }));
-    const add = (house, points, reason) => {
+    const add = (house, points, reason, category = "scoreCategoryLifeAxis") => {
       if (!house) return;
       const target = houses[house - 1];
       target.score += points;
       target.reasons.push(reason);
-      target.scoreItems.push({ points, reason });
+      target.scoreItems.push({ points, reason, category });
     };
     const ascLord = SIGNS[chart.ascSign].ruler;
     const trip = sectTriplicityRulers(chart);
-    add(chart.positions[ascLord]?.house, 5, `${t("ascLordTitle")}: ${planetLabel(ascLord)}`);
-    add(chart.positions[chart.sectLight]?.house, 2, `${t("sectLight")}: ${planetLabel(chart.sectLight)}`);
-    add(chart.mcHouse, 2, t("mc"));
-    visibleAngularPlanets(chart).forEach((key) => add(chart.positions[key].house, 1.5, `${planetLabel(key)} ${t("angular")}`));
+    add(chart.positions[ascLord]?.house, 5, `${t("ascLordTitle")}: ${planetLabel(ascLord)}`, "scoreCategoryLifeAxis");
+    add(chart.positions[chart.sectLight]?.house, 2, `${t("sectLight")}: ${planetLabel(chart.sectLight)}`, "scoreCategorySect");
+    add(chart.mcHouse, 2, t("mc"), "scoreCategoryPublic");
+    visibleAngularPlanets(chart).forEach((key) => add(chart.positions[key].house, 1.5, `${planetLabel(key)} ${t("angular")}`, "scoreCategoryAngular"));
     visiblePlanetsNearAngles(chart).forEach((item) => {
-      add(chart.positions[item.key].house, 0.75, `${planetLabel(item.key)} ${state.lang === "es" ? "cerca de" : "near"} ${angleDisplayName(item.angleKey)}`);
+      add(chart.positions[item.key].house, 0.75, `${planetLabel(item.key)} ${state.lang === "es" ? "cerca de" : "near"} ${angleDisplayName(item.angleKey)}`, "scoreCategoryAngular");
     });
-    add(lotByKey(chart, "fortune")?.house, 1.25, t("fortune"));
-    add(lotByKey(chart, "spirit")?.house, 1.25, t("spirit"));
-    add(chart.positions[trip.primary]?.house, 1.15, `${t("sectLight")} ${planetLabel(trip.primary)}`);
-    add(chart.positions[trip.secondary]?.house, 0.85, `${t("sectLight")} ${planetLabel(trip.secondary)}`);
-    add(chart.positions[trip.cooperating]?.house, 0.6, `${t("sectLight")} ${planetLabel(trip.cooperating)}`);
+    add(lotByKey(chart, "fortune")?.house, 1.25, t("fortune"), "scoreCategoryLots");
+    add(lotByKey(chart, "spirit")?.house, 1.25, t("spirit"), "scoreCategoryLots");
+    add(chart.positions[trip.primary]?.house, 1.0, `${t("sectLight")} ${planetLabel(trip.primary)} · ${t("scoreCategoryTriplicity")}`, "scoreCategoryTriplicity");
+    add(chart.positions[trip.secondary]?.house, 0.6, `${t("sectLight")} ${planetLabel(trip.secondary)} · ${t("scoreCategoryTriplicity")}`, "scoreCategoryTriplicity");
+    add(chart.positions[trip.cooperating]?.house, 0.4, `${t("sectLight")} ${planetLabel(trip.cooperating)} · ${t("scoreCategoryTriplicity")}`, "scoreCategoryTriplicity");
     ["fortune", "spirit"].forEach((key) => {
       const lot = lotByKey(chart, key);
-      add(chart.positions[lot?.lord]?.house, 0.75, `${lot ? lotName(key) : key} ${t("tableRuler")}`);
+      add(chart.positions[lot?.lord]?.house, 0.75, `${lot ? lotName(key) : key} ${t("tableRuler")}`, "scoreCategoryLots");
     });
     return houses.sort((a, b) => b.score - a.score || a.house - b.house);
   }
@@ -5825,13 +5903,9 @@
       ? `${planetLabel(malefic)} es el planeta que más tensión puede introducir en esta carta (técnicamente: maléfico contrario a la secta). Está en casa ${maleficPosition.house}: ${houseReadingTopics(maleficPosition.house, "double")}. No es un juicio moral, pero sí un testimonio técnico de fricción: señala presión, conflicto, corte, desgaste, daño potencial o condiciones que exigen manejo. ${connectionReading(maleficPosition, focuses, ascLordPosition, "tension")} ${maleficMitigationReading(maleficPosition, beneficPosition, chart)}`
       : `${planetLabel(malefic)} is the planet that can introduce the most tension in this chart (technically: malefic contrary to sect). It is in house ${maleficPosition.house}: ${houseReadingTopics(maleficPosition.house, "double")}. This is not a moral judgment, but it is a technical testimony of friction: pressure, conflict, cutting, strain, potential damage, or conditions that require handling. ${connectionReading(maleficPosition, focuses, ascLordPosition, "tension")} ${maleficMitigationReading(maleficPosition, beneficPosition, chart)}`;
 
-    const lotReading = fortune && spirit
-      ? (state.lang === "es"
-        ? `Fortuna habla de lo que llega: cuerpo, circunstancias, entorno y sucesos que no dependen del todo de la voluntad. Espíritu habla de lo que la persona intenta dirigir: decisiones, intención, propósito y acción consciente. ${lotConditionTexts.join(" ")}`
-        : `Fortune speaks of what arrives: body, circumstances, surroundings, and events that do not fully depend on the will. Spirit speaks of what the person tries to direct: decisions, intention, purpose, and conscious action. ${lotConditionTexts.join(" ")}`)
-      : (state.lang === "es"
-        ? `La lectura de lotes queda limitada porque Fortuna y Espíritu no están seleccionados a la vez.`
-        : `The lot reading is limited because Fortune and Spirit are not both selected.`);
+    const lotReading = state.lang === "es"
+      ? `Fortuna habla de lo que llega: cuerpo, circunstancias, entorno y sucesos que no dependen del todo de la voluntad. Espíritu habla de lo que la persona intenta dirigir: decisiones, intención, propósito y acción consciente. ${lotConditionTexts.join(" ")}`
+      : `Fortune speaks of what arrives: body, circumstances, surroundings, and events that do not fully depend on the will. Spirit speaks of what the person tries to direct: decisions, intention, purpose, and conscious action. ${lotConditionTexts.join(" ")}`;
 
     const evidence = [
       t("evidenceFocuses", {
@@ -5871,8 +5945,8 @@
         ? "Recepción: no destaca entre los significadores principales configurados."
         : "Reception: none stands out among the configured main significators."]),
       ...(boundaryEvidence.length ? [state.lang === "es"
-        ? `Avisos de frontera: ${boundaryEvidence.join(" ")}`
-        : `Boundary notices: ${boundaryEvidence.join(" ")}`] : []),
+        ? `Avisos de frontera: ${boundaryEvidence.map(boundaryWarningText).join(" ")}`
+        : `Boundary notices: ${boundaryEvidence.map(boundaryWarningText).join(" ")}`] : []),
       t("evidenceLots", { fortuneHouse: fortune.house, spiritHouse: spirit.house }),
       t("evidenceLotsAlwaysWeighted"),
       state.lang === "es"
@@ -5941,20 +6015,60 @@
 
   function renderScoreBreakdown(focuses) {
     if (!focuses?.length) return "";
+    const groupedItems = (items) => {
+      const order = ["scoreCategoryLifeAxis", "scoreCategoryPublic", "scoreCategoryAngular", "scoreCategoryLots", "scoreCategoryTriplicity", "scoreCategorySect"];
+      const groups = new Map();
+      (items || []).forEach((item) => {
+        const key = item.category || "scoreCategoryLifeAxis";
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(item);
+      });
+      return order
+        .filter((key) => groups.has(key))
+        .map((key) => `
+          <div class="score-breakdown-group">
+            <p>${escapeHtml(t(key))}</p>
+            <ul>
+              ${groups.get(key).map((item) => `
+                <li><strong>+${escapeHtml(scoreNumber(item.points))}</strong> ${escapeHtml(item.reason)}</li>
+              `).join("")}
+            </ul>
+          </div>
+        `).join("");
+    };
     return `
       <div class="score-breakdown">
         <p class="score-breakdown-title">${escapeHtml(t("scoreBreakdownTitle"))}</p>
         ${focuses.map((focus) => `
           <section class="score-breakdown-item">
             <h5>${escapeHtml(focusLabel(focus))} · ${escapeHtml(t("scoreTotalLabel"))}: ${escapeHtml(scoreNumber(focus.score))} ${escapeHtml(t("scorePointsLabel"))}</h5>
-            <ul>
-              ${(focus.scoreItems || []).map((item) => `
-                <li><strong>+${escapeHtml(scoreNumber(item.points))}</strong> ${escapeHtml(item.reason)}</li>
-              `).join("")}
-            </ul>
+            ${groupedItems(focus.scoreItems)}
           </section>
         `).join("")}
       </div>
+    `;
+  }
+
+  function renderMainLotsAudit(chart) {
+    const rows = ["fortune", "spirit"]
+      .map((key) => lotByKey(chart, key))
+      .filter(Boolean)
+      .map((lot) => {
+        const lord = chart.positions[lot.lord];
+        return `
+          <li>
+            <strong>${escapeHtml(lotName(lot.key))}</strong>
+            <span>${escapeHtml(formatDegree(lot.lon))} · ${escapeHtml(t("tableHouse"))} ${escapeHtml(String(lot.house))} · ${escapeHtml(t("tableLord"))} ${escapeHtml(planetLabel(lot.lord))} ${escapeHtml(t("tableHouse"))} ${escapeHtml(String(lord?.house || "—"))} · ${escapeHtml(lotFormulaText(lot.key, chart.isDay))}</span>
+          </li>
+        `;
+      });
+    if (!rows.length) return "";
+    return `
+      <section class="main-lots-audit">
+        <h5>${escapeHtml(t("mainLotsAuditTitle"))}</h5>
+        <ul>${rows.join("")}</ul>
+        <p>${escapeHtml(t("lotTableDisplayNote"))}</p>
+      </section>
     `;
   }
 
@@ -6009,6 +6123,7 @@
       <details class="interpretation-evidence">
         <summary>${escapeHtml(t("interpretationEvidence"))}</summary>
         ${renderScoreBreakdown(interpretation.scoreBreakdown)}
+        ${renderMainLotsAudit(chart)}
         <ol>
           ${interpretation.evidence.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
         </ol>
@@ -6286,7 +6401,12 @@
     if (calendarWarning) calendarWarning.hidden = $("#calendar").value !== "julian";
     if (zodiacWarning) zodiacWarning.hidden = $("#zodiac").value !== "sidereal";
     if (techniqueWarning) {
-      techniqueWarning.hidden = $("#techniqueMode").value !== "mixed" && !$("#includeModern").checked;
+      const techniqueMode = $("#techniqueMode").value;
+      const includeModern = $("#includeModern").checked;
+      techniqueWarning.textContent = techniqueMode === "strict" && includeModern
+        ? t("modernStrictInlineWarning")
+        : t("mixedInlineWarning");
+      techniqueWarning.hidden = techniqueMode !== "mixed" && !includeModern;
     }
   }
 

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tyche regression smoke tests</title>
+    <style>
+      body {
+        margin: 0;
+        font: 16px/1.5 Georgia, serif;
+        color: #17233a;
+        background: #f7f8fa;
+      }
+
+      main {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      iframe {
+        width: 100%;
+        height: 520px;
+        border: 1px solid #c8d3e1;
+        background: #fff;
+      }
+
+      li.pass {
+        color: #0f6b3d;
+      }
+
+      li.fail {
+        color: #9f1d2d;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Tyche regression smoke tests</h1>
+      <ol id="results"></ol>
+      <iframe id="appFrame" src="../index.html?test=regression"></iframe>
+    </main>
+    <script>
+      const results = document.querySelector("#results");
+      const frame = document.querySelector("#appFrame");
+
+      function record(label, passed) {
+        const item = document.createElement("li");
+        item.className = passed ? "pass" : "fail";
+        item.textContent = `${passed ? "PASS" : "FAIL"}: ${label}`;
+        results.append(item);
+      }
+
+      function wait(ms) {
+        return new Promise((resolve) => window.setTimeout(resolve, ms));
+      }
+
+      async function run() {
+        await wait(500);
+        const doc = frame.contentDocument;
+        const win = frame.contentWindow;
+        const $ = (selector) => doc.querySelector(selector);
+        const $$ = (selector) => Array.from(doc.querySelectorAll(selector));
+
+        $("#birthDate").value = "1980-01-01";
+        $("#birthTime").value = "12:00";
+        $("#birthPlace").value = "Regression Test";
+        $("#latitude").value = "40.4168";
+        $("#longitude").value = "-3.7038";
+        $("#timeZone").value = "Europe/Madrid";
+        $("#manualOffset").value = "+01:00";
+
+        $$('input[name="lots"]').forEach((item) => {
+          item.checked = false;
+        });
+
+        $("#chart-form").dispatchEvent(new win.Event("submit", { bubbles: true, cancelable: true }));
+        await wait(250);
+
+        const evidenceText = $("#interpretationPanel")?.textContent || "";
+        record("Fortuna y Espiritu siguen auditables aunque se oculten en la tabla", /Fortuna/.test(evidenceText) && /Esp[ií]ritu/.test(evidenceText) && /Lotes principales/.test(evidenceText));
+
+        $("#techniqueMode").value = "strict";
+        $("#includeModern").checked = true;
+        $("#includeModern").dispatchEvent(new win.Event("change", { bubbles: true }));
+        await wait(50);
+        const warning = $("#techniqueWarning");
+        record("Modernos visibles en modo tradicional muestran aviso inmediato", warning && !warning.hidden && /tradicional/i.test(warning.textContent));
+      }
+
+      frame.addEventListener("load", () => {
+        run().catch((error) => record(error.message || String(error), false));
+      });
+    </script>
+  </body>
+</html>

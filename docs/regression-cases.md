@@ -2,9 +2,12 @@
 
 This file records technical scenarios that should remain stable when Tyche's calculation or judgment layer changes.
 
+`tests/regression.html` is the first browser-executable smoke test page. It does not replace the full checklist below, but it verifies two important regressions without a build step: principal lots remain auditable when hidden from the visible lot table, and modern planets shown in traditional mode trigger an immediate warning.
+
 ## Boundary Audits
 
 - Sun within 1 degree of the horizon: the audit must warn that sect, sect light, benefic/malefic of sect, malefic contrary to sect, Fortune/Spirit formulas, and the judgment can change.
+- Sun within about 2.5 degrees of the horizon in manual, historical, Julian, or otherwise context-sensitive time handling: the audit should also warn about sect sensitivity.
 - Ascendant within 1 degree of a sign boundary: the audit must warn that the Ascendant lord, whole-sign houses, lots, and main topical focuses can change.
 - MC or IC within 1 degree of a sign boundary: the audit must warn that the whole-sign place receiving public-projection or foundation testimony can change.
 - Visible planet within 30 arcminutes of an Egyptian-bound boundary: the audit must warn that degree administration, own minor dignity if applicable, and reception by bound can change.

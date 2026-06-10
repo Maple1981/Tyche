@@ -41,7 +41,7 @@ As a secondary prominence flag, mark visible planets within about 5 degrees of t
 
 Boundary notices are audit flags, not reinterpretations. Show them when:
 
-- The Sun is within 1 degree of the horizon. This is a sect boundary: sect light, benefic/malefic of sect, malefic contrary to sect, Fortune/Spirit formulas, and judgment weighting can change.
+- The Sun is within 1 degree of the horizon. This is a sect boundary: sect light, benefic/malefic of sect, malefic contrary to sect, Fortune/Spirit formulas, and judgment weighting can change. If the chart depends on manual, historical, Julian, or otherwise context-sensitive time handling, Tyche may widen this warning threshold to about 2.5 degrees.
 - The Ascendant is within 1 degree of a sign change.
 - The MC or IC is within 1 degree of a sign change. This can change the whole-sign place that receives public-projection or foundation testimony.
 - A calculated lot that enters display or judgment is within 1 degree of a sign/whole-sign-house change.
@@ -55,6 +55,8 @@ Sect is determined by the Sun's altitude:
 
 - Sun above horizon: day chart.
 - Sun below horizon: night chart.
+
+Tyche uses geometric solar altitude relative to the local horizon. It does not apply observational corrections such as atmospheric refraction.
 
 Derived sect roles:
 
