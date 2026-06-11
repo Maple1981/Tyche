@@ -6,7 +6,7 @@ This file records stable internal codes used for tests, audit trails, and docume
 
 - `TycheTest.schemaVersion`: current regression helper schema. Current value: `2`. Increment when exposed helper names or result shapes change.
 - `TycheTest` is installed only when the URL contains `?test=regression`.
-- `TycheTest.buildHash`: version string supplied through the `v` URL parameter. It is a cache-busting and audit-synchronization tag, not a self-computed Git hash.
+- `TycheTest.buildHash`: version string supplied through the `v` URL parameter. It is a cache-busting and audit-synchronization tag, not a self-computed Git hash. Regression checks may treat a short and long Git hash as matching when one is a prefix of the other.
 - `tests/regression.html?v=<tag>` passes the same tag to the app iframe, and `index.html?v=<tag>` passes it to CSS and JavaScript assets.
 
 ## Boundary Codes

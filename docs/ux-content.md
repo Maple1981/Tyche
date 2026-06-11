@@ -93,6 +93,10 @@ Interpretive references should remain structured separately by:
 
 Do not imply that an interpretive example is the source for the birth time unless the natal data source explicitly says so.
 
+Historical character cards should stay compact: show only date, place, and sex in the repeated card body. Put repeated provenance fields such as natal-data source, Rodden rating, time source, source date, and interpretive references in a small detail popover opened from the `Date`/`Fecha` label.
+
+Historical character Wikipedia links should follow the active UI language: Spanish UI opens `es.wikipedia.org`, and English UI opens `en.wikipedia.org`.
+
 ## Future Topic Readings
 
 The current interpretation is a general natal reading. Topic-specific readings should be added as a separate module before prediction/timing modules become too prominent. Suggested topics:

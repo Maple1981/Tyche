@@ -47,7 +47,11 @@ assert("TycheTest exposes visible angular helper", app.includes("visibleAngularP
 assert("Browser regression runner starts a temporary server", browserRunner.includes("createServer") && browserRunner.includes("__TYCHE_REGRESSION_DONE__"));
 assert("Regression page emits completion state", regression.includes("__TYCHE_REGRESSION_DONE__") && regression.includes("tyche:regression-complete"));
 assert("Regression iframe is assigned after listeners", regression.includes('<iframe id="appFrame"></iframe>') && regression.indexOf("frame.addEventListener") < regression.indexOf("frame.src ="));
-assert("Regression iframe propagates cache-buster", regression.includes("test=regression&v=") && regression.includes("testApi.buildHash === version"));
+assert("Regression iframe propagates cache-buster", regression.includes("test=regression&v=") && regression.includes("sameBuild(testApi.buildHash, version)"));
+assert("Regression page shows final build and schema summary", regression.includes('id="summary"') && regression.includes("Resultado:") && regression.includes("schemaVersion: loadedSchemaVersion"));
+assert("Historical cards expose natal data popover", index.includes("personDataPopover") && app.includes("data-person-source-id") && app.includes("openPersonData"));
+assert("Historical visible card omits repeated quality rows", !sectionBetween(app, "function historicalPersonCard(person)", "function renderHistoricalPeople").includes("historicalQualityRows(person)"));
+assert("Historical Wikipedia links follow active UI language", app.includes("function localizeWikipediaUrl") && sectionBetween(app, "function personWikipediaUrl(person)", "function capitalizeText").includes("localizeWikipediaUrl") && regression.includes("Wikipedia historica usa enlace ingles en interfaz EN"));
 
 assert("parseDate BCE support is explicit opt-in", app.includes("function parseDate(value, { allowBce = false } = {})") && app.includes("allowBce ? /^(-?\\d{1,6})-"));
 assert("BCE limitation is documented", docs.some(([, content]) => content.includes("BCE dates are blocked")));
@@ -66,13 +70,14 @@ assert("Focus evidence uses house rulers", app.includes("function focusRulerEvid
 assert("Mercury solar phase qualifier is explicit", app.includes("function mercuryPhaseQualifier") && app.includes("common and variable nature"));
 assert("Technical evidence sections have stable hooks", app.includes('data-test="evidence-score"') && app.includes('data-test="evidence-main-lots"') && app.includes('data-test="evidence-general"'));
 assert("Main lots expose direct administration hook", app.includes("lotAuditDirectAdministration") && app.includes("direct-administration") && app.includes("lot-direct-administration"));
-assert("Lot pressure audit preserves raw and regulated pressure", app.includes("function lotPressureAuditText") && app.includes("Presión bruta") && app.includes("Raw pressure"));
+assert("Lot pressure audit preserves raw and regulated pressure", app.includes("function lotPressureAuditText") && app.includes("function lotPressureAuditHtml") && app.includes("lot-pressure-lines") && app.includes("Presión bruta") && app.includes("Raw pressure"));
 assert("Sensitive sect judgment notice is visible", app.includes("sectLowConfidenceJudgment") && app.includes("sectConfidenceNotice"));
 assert("Modern planets are blocked from judgment helpers", app.includes("!VISIBLE_KEYS.includes(target) || !VISIBLE_KEYS.includes(actor)") && app.includes(".filter((key) => VISIBLE_KEYS.includes(key))"));
 
 assert("Historical archive has substantial example coverage", personCount >= 35);
 assert("Historical archive is fully externally audited", personCount === auditIds.length && historicalIds.every((id) => auditIds.includes(id)));
 assert("Historical audit rows include required external-source fields", completeAuditRows.length === auditIds.length);
+assert("Historical normalized audit metadata includes ISO audit date and time source", app.includes('externalAuditDate: "2026-06-10"') && app.includes("timeSource: {") && app.includes("Astro-Databank Source Notes"));
 assert("Historical time confidence is normalized", app.includes("function historicalTimeConfidence"));
 assert("Historical zone reliability is normalized", app.includes("function historicalZoneReliability"));
 assert("Historical natal source is separated from interpretive references", app.includes("function historicalNatalSource") && app.includes("function historicalInterpretiveReferences"));

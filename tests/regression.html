@@ -33,20 +33,37 @@
         color: #9f1d2d;
         font-weight: 700;
       }
+
+      .test-summary {
+        margin: 0 0 16px;
+        padding: 10px 12px;
+        border: 1px solid #c8d3e1;
+        background: #fff;
+        font-weight: 700;
+      }
+
+      .test-summary.fail {
+        border-color: #d99aa5;
+        color: #9f1d2d;
+      }
     </style>
   </head>
   <body>
     <main>
       <h1>Tyche regression smoke tests</h1>
+      <p id="summary" class="test-summary">Pendiente · Build: — · Schema: —</p>
       <ol id="results"></ol>
       <iframe id="appFrame"></iframe>
     </main>
     <script>
       const results = document.querySelector("#results");
+      const summary = document.querySelector("#summary");
       const frame = document.querySelector("#appFrame");
       const version = new URLSearchParams(location.search).get("v") || "dev";
       let resultCount = 0;
       let failureCount = 0;
+      let loadedBuildHash = "pending";
+      let loadedSchemaVersion = "pending";
 
       function record(label, passed) {
         const item = document.createElement("li");
@@ -58,9 +75,15 @@
       }
 
       function finish() {
+        const passed = resultCount - failureCount;
+        summary.textContent = `Resultado: ${passed}/${resultCount} tests passed · Build: ${loadedBuildHash} · Esperado: ${version} · Schema: ${loadedSchemaVersion}`;
+        summary.classList.toggle("fail", failureCount > 0);
         window.__TYCHE_REGRESSION_DONE__ = {
           resultCount,
           failureCount,
+          buildHash: loadedBuildHash,
+          expectedBuildHash: version,
+          schemaVersion: loadedSchemaVersion,
         };
         window.dispatchEvent(new CustomEvent("tyche:regression-complete", {
           detail: window.__TYCHE_REGRESSION_DONE__,
@@ -93,6 +116,11 @@
         record(label, Boolean(condition));
       }
 
+      function sameBuild(left, right) {
+        if (!left || !right) return false;
+        return left === right || left.startsWith(right) || right.startsWith(left);
+      }
+
       function waitForChartResult(win) {
         return Promise.race([
           new Promise((resolve) => {
@@ -114,9 +142,28 @@
         const $ = (selector) => doc.querySelector(selector);
         const $$ = (selector) => Array.from(doc.querySelectorAll(selector));
         const testApi = win.TycheTest;
+        loadedBuildHash = testApi.buildHash || "missing";
+        loadedSchemaVersion = testApi.schemaVersion || "missing";
         assert("TycheTest queda congelado en modo regresion", Object.isFrozen(testApi));
         assert("TycheTest expone version de esquema esperada", testApi.schemaVersion === 2);
-        assert("TycheTest expone build hash efectivo", testApi.buildHash === version);
+        assert("TycheTest expone build hash efectivo", sameBuild(testApi.buildHash, version));
+
+        $("#peopleToggle").click();
+        await waitFor(() => !$("#peopleModal").hidden && $("[data-person-source-id]"), "historical people modal");
+        const firstPersonCard = $(".person-card");
+        assert("Cards historicas compactan procedencia natal fuera del resumen visible", firstPersonCard && firstPersonCard.querySelectorAll("dl > dt").length === 3);
+        assert("Wikipedia historica usa enlace espanol en interfaz ES", firstPersonCard.querySelector(".person-wiki")?.href.includes("https://es.wikipedia.org/"));
+        firstPersonCard.querySelector("[data-person-source-id]").click();
+        await waitFor(() => !$("#personDataPopover").hidden && $("#personDataPopover .person-data-details"), "natal data popover");
+        const personDataText = $("#personDataPopover").textContent;
+        assert("Label Fecha abre detalle de fuente natal", personDataText.includes("Fuente de datos natales") && personDataText.includes("Rodden") && personDataText.includes("Hora"));
+        $("#personDataClose").click();
+        $("#languageToggle").click();
+        await waitFor(() => doc.documentElement.lang === "en" && $(".person-card .person-wiki")?.href.includes("https://en.wikipedia.org/"), "english historical Wikipedia link");
+        assert("Wikipedia historica usa enlace ingles en interfaz EN", $(".person-card .person-wiki")?.href.includes("https://en.wikipedia.org/"));
+        $("#languageToggle").click();
+        await waitFor(() => doc.documentElement.lang === "es" && $(".person-card .person-wiki")?.href.includes("https://es.wikipedia.org/"), "spanish historical Wikipedia link");
+        $("#peopleClose").click();
 
         $("#birthDate").value = "1980-01-01";
         $("#birthTime").value = "12:00";

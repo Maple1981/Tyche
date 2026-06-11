@@ -1216,6 +1216,18 @@ td {
   background: color-mix(in srgb, var(--blue) 8%, transparent);
 }
 
+.lot-pressure-lines {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lot-pressure-lines b {
+  color: var(--blue-deep);
+}
+
 .alternate-sect-lots {
   margin-top: 10px;
   border: 1px dotted color-mix(in srgb, var(--blue) 42%, var(--line));
@@ -1562,11 +1574,55 @@ body.night .person-audit-badge {
   font-weight: 700;
 }
 
+.person-data-trigger {
+  appearance: none;
+  border: 0;
+  border-bottom: 1px dotted currentColor;
+  border-radius: 0;
+  background: transparent;
+  color: var(--blue-deep);
+  padding: 0;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.person-data-trigger:hover,
+.person-data-trigger:focus-visible {
+  color: var(--blue);
+}
+
 .person-card dd {
   margin: 0;
 }
 
-.person-card button {
+.person-data-details {
+  display: grid;
+  grid-template-columns: minmax(8.5rem, auto) minmax(0, 1fr);
+  gap: 6px 10px;
+  margin: 0;
+  font-size: 0.86rem;
+}
+
+.person-data-details dt {
+  color: var(--blue-deep);
+  font-weight: 700;
+  font-variant: small-caps;
+  font-variant-caps: all-small-caps;
+}
+
+.person-data-details dd {
+  min-width: 0;
+  margin: 0;
+}
+
+.person-data-details a {
+  color: var(--blue-deep);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.person-card button[data-person-id] {
   min-height: 36px;
   border: 1px solid var(--blue);
   border-radius: 6px;
@@ -1577,7 +1633,7 @@ body.night .person-audit-badge {
   font-weight: 700;
 }
 
-body.night .person-card button {
+body.night .person-card button[data-person-id] {
   color: #102033;
   background: var(--blue);
 }
@@ -1709,6 +1765,10 @@ body.night .person-card button {
 
   .lot-audit-lines dt {
     margin-top: 4px;
+  }
+
+  .person-data-details {
+    grid-template-columns: 1fr;
   }
 
   .chart-wheel {

@@ -268,6 +268,14 @@
       <div class="glossary-body" id="glossaryBody"></div>
     </aside>
 
+    <aside class="glossary-popover person-data-popover" id="personDataPopover" role="dialog" aria-modal="false" aria-labelledby="personDataTitle" hidden>
+      <div class="glossary-heading">
+        <h2 id="personDataTitle"></h2>
+        <button class="glossary-close" id="personDataClose" type="button" aria-label="Cerrar" title="Cerrar">×</button>
+      </div>
+      <div class="glossary-body" id="personDataBody"></div>
+    </aside>
+
     <script>
       (() => {
         const version = new URLSearchParams(window.location.search).get("v") || "";

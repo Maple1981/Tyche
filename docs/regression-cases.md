@@ -15,6 +15,8 @@ Regression tests should prefer stable hooks over visible prose:
 - Keep `window.TycheTest` frozen and expose only stable calculation or judgment helpers needed by tests.
 - Assert `window.TycheTest.schemaVersion` before relying on helper names or result shapes.
 - Open the smoke page with `tests/regression.html?v=<commit-or-tag>` when auditing a publication. The iframe passes that value to `index.html`, and the app exposes it as `TycheTest.buildHash`; `index.html` also propagates it to `styles.css`, Astronomy Engine, and `app.js`.
+- The smoke page should show a visible final summary with passed/total tests, loaded build, expected build, and `TycheTest.schemaVersion`.
+- Build comparison may accept short and long Git hashes when one is a prefix of the other. The important contract is that the same version tag reaches the smoke page, iframe, and app assets.
 - Treat objects returned by `window.TycheTest` as disposable test results. Do not mutate them and then reuse them as if they were internal app state.
 - Avoid asserting translated copy unless the test is specifically about content.
 - Wait for `window.__TYCHE_READY__` or the `tyche:chart-rendered` event rather than using fixed sleeps.
@@ -56,7 +58,7 @@ Regression tests should prefer stable hooks over visible prose:
 - Reception language around lots should say that the testifying planet is in reception with the lord of the lot, not that the lot itself receives.
 - Mutual reception involving malefic pressure should be described as giving the pressure form, continuity, or reciprocal dependence rather than automatically turning it into help.
 - Lot-audit tests should cover direct lord roles, such as a principal lot administered by the benefic of sect or by the malefic contrary to sect.
-- Lot-audit output should keep malefic raw pressure and regulated pressure visible as separate ideas. Reception may regulate or channel pressure, but should not erase the original pressure level.
+- Lot-audit output should keep malefic raw pressure, regulation, and final reading visible as separate lines. Reception may regulate or channel pressure, but should not erase the original pressure level.
 
 ## Lunar Condition
 

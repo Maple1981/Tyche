@@ -46,6 +46,7 @@
     activePlaceIndex: -1,
     modalReturnFocus: null,
     glossaryReturnFocus: null,
+    personDataReturnFocus: null,
     ephemerisEngine: "fallback",
   };
 
@@ -123,6 +124,8 @@
       dataDate: "Fecha",
       dataPlace: "Lugar",
       dataSex: "Sexo",
+      personDataDetailsTitle: "Datos natales",
+      personDataDetailsOpen: "Ver fuente de datos natales",
       dataSource: "Fuente",
       dataSourceDate: "Fecha en fuente",
       dataRodden: "Rodden",
@@ -318,6 +321,9 @@
       lotAuditLordSolarPhase: "Fase solar zodiacal del señor",
       lotAuditBeneficTestimony: "Testimonio benéfico",
       lotAuditMaleficPressure: "Presión maléfica",
+      lotAuditRawPressure: "Presión bruta",
+      lotAuditRegulation: "Regulación",
+      lotAuditReading: "Lectura",
       negotiatedSupport: "apoyo negociado",
       regulatedBeneficFriction: "testimonio benéfico con fricción regulada",
       regulatedPressure: "presión regulada",
@@ -523,6 +529,8 @@
       dataDate: "Date",
       dataPlace: "Place",
       dataSex: "Sex",
+      personDataDetailsTitle: "Natal data",
+      personDataDetailsOpen: "View natal data source",
       dataSource: "Source",
       dataSourceDate: "Source date",
       dataRodden: "Rodden",
@@ -718,6 +726,9 @@
       lotAuditLordSolarPhase: "Lord zodiacal solar phase",
       lotAuditBeneficTestimony: "Benefic testimony",
       lotAuditMaleficPressure: "Malefic pressure",
+      lotAuditRawPressure: "Raw pressure",
+      lotAuditRegulation: "Regulation",
+      lotAuditReading: "Reading",
       negotiatedSupport: "negotiated support",
       regulatedBeneficFriction: "benefic testimony with regulated friction",
       regulatedPressure: "regulated pressure",
@@ -3235,12 +3246,28 @@
       .replaceAll('"', "&quot;");
   }
 
+  function wikipediaHost() {
+    return state.lang === "es" ? "es.wikipedia.org" : "en.wikipedia.org";
+  }
+
+  function localizeWikipediaUrl(url) {
+    try {
+      const parsed = new URL(url);
+      if (parsed.hostname.endsWith(".wikipedia.org")) parsed.hostname = wikipediaHost();
+      return parsed.toString();
+    } catch {
+      return url;
+    }
+  }
+
   function personWikipediaUrl(person) {
-    if (typeof person.wikipedia === "string") return person.wikipedia;
-    if (person.wikipedia) return person.wikipedia[state.lang] || person.wikipedia.en || person.wikipedia.es;
+    if (typeof person.wikipedia === "string") return localizeWikipediaUrl(person.wikipedia);
+    if (person.wikipedia) {
+      const preferred = person.wikipedia[state.lang] || person.wikipedia.en || person.wikipedia.es;
+      if (preferred) return localizeWikipediaUrl(preferred);
+    }
     const slug = encodeURIComponent(person.name.replace(/\s+/g, "_"));
-    const host = state.lang === "es" ? "es.wikipedia.org" : "en.wikipedia.org";
-    return `https://${host}/wiki/${slug}`;
+    return `https://${wikipediaHost()}/wiki/${slug}`;
   }
 
   function capitalizeText(value) {
@@ -3398,6 +3425,8 @@
     });
     $("#glossaryClose")?.setAttribute("aria-label", t("close"));
     if ($("#glossaryClose")) $("#glossaryClose").title = t("close");
+    $("#personDataClose")?.setAttribute("aria-label", t("close"));
+    if ($("#personDataClose")) $("#personDataClose").title = t("close");
   }
 
   function openGlossary(key, trigger) {
@@ -3420,8 +3449,7 @@
     state.glossaryReturnFocus = null;
   }
 
-  function positionGlossary(trigger) {
-    const popover = $("#glossaryPopover");
+  function positionFloatingPopover(popover, trigger) {
     if (!popover || popover.hidden || !trigger) return;
     popover.removeAttribute("style");
     if (window.matchMedia("(max-width: 680px)").matches) return;
@@ -3439,6 +3467,14 @@
       : Math.max(margin, above);
     popover.style.left = `${left}px`;
     popover.style.top = `${top}px`;
+  }
+
+  function positionGlossary(trigger) {
+    positionFloatingPopover($("#glossaryPopover"), trigger);
+  }
+
+  function positionPersonData(trigger) {
+    positionFloatingPopover($("#personDataPopover"), trigger);
   }
 
   function countryName(country, lang = state.lang) {
@@ -3904,6 +3940,30 @@
     return rows.join("");
   }
 
+  function historicalQualityDetailsHtml(person) {
+    return `<dl class="person-data-details">${historicalQualityRows(person)}</dl>`;
+  }
+
+  function openPersonData(personId, trigger) {
+    const person = HISTORICAL_PEOPLE.find((item) => item.id === personId);
+    if (!person) return;
+    const popover = $("#personDataPopover");
+    $("#personDataTitle").textContent = `${t("personDataDetailsTitle")}: ${person.name}`;
+    $("#personDataBody").innerHTML = historicalQualityDetailsHtml(person);
+    popover.hidden = false;
+    state.personDataReturnFocus = trigger || null;
+    window.requestAnimationFrame(() => positionPersonData(trigger));
+  }
+
+  function closePersonData({ restoreFocus = false } = {}) {
+    const popover = $("#personDataPopover");
+    if (!popover || popover.hidden) return;
+    popover.hidden = true;
+    popover.removeAttribute("style");
+    if (restoreFocus && state.personDataReturnFocus) state.personDataReturnFocus.focus();
+    state.personDataReturnFocus = null;
+  }
+
   function personAuditStatus(person) {
     const audit = historicalAuditMetadata(person);
     if (person.auditStatus || audit.auditStatus) return person.auditStatus || audit.auditStatus;
@@ -3980,13 +4040,12 @@
           </h3>
           ${auditBadge(person)}
           <dl>
-            <dt>${escapeHtml(t("dataDate"))}</dt>
+            <dt><button class="person-data-trigger" type="button" data-person-source-id="${escapeHtml(person.id)}" aria-haspopup="dialog" aria-label="${escapeHtml(`${t("personDataDetailsOpen")}: ${person.name}`)}">${escapeHtml(t("dataDate"))}</button></dt>
             <dd>${escapeHtml(person.birthLabel[state.lang] || person.birthLabel.es)}</dd>
             <dt>${escapeHtml(t("dataPlace"))}</dt>
             <dd>${escapeHtml(formatCity(person.place))}</dd>
             <dt>${escapeHtml(t("dataSex"))}</dt>
             <dd>${escapeHtml(t(person.sex))}</dd>
-            ${historicalQualityRows(person)}
           </dl>
           <button type="button" data-person-id="${escapeHtml(person.id)}">${escapeHtml(t("useExample"))}</button>
         </div>
@@ -4018,6 +4077,7 @@
   }
 
   function closePeopleModal() {
+    closePersonData();
     $("#peopleModal").hidden = true;
     document.body.classList.remove("modal-open");
     state.modalReturnFocus?.focus?.();
@@ -6195,19 +6255,41 @@
       .sort((a, b) => levelRank(b) - levelRank(a))[0] || "";
   }
 
-  function lotPressureAuditText(items, lot) {
-    if (!items.length) return lotTestimonyText(items, "tension", lot);
+  function lotPressureAuditParts(items, lot) {
+    if (!items.length) {
+      return [
+        { label: t("lotAuditRawPressure"), value: lotTestimonyText(items, "tension", lot) },
+        { label: t("lotAuditRegulation"), value: state.lang === "es" ? "sin recepción reguladora clara" : "no clear regulating reception" },
+      ];
+    }
     const raw = strongestLevel(items, "rawLevel");
     const regulated = strongestLevel(items, "level");
     const regulationItems = items.filter((item) => item.reception?.hasReception);
     const regulation = regulationItems.length
       ? naturalList(regulationItems.map((item) => `${planetLabel(item.key)} / ${planetLabel(lot.lord)} (${receptionStrengthLabel(item.reception)})`))
       : (state.lang === "es" ? "sin recepción reguladora clara" : "no clear regulating reception");
-    const reading = lotTestimonyText(items, "tension", lot);
-    if (state.lang === "es") {
-      return `Presión bruta: ${t(raw || regulated)}. Regulación: ${raw && regulated && raw !== regulated ? `${t(regulated)} por ${regulation}` : regulation}. Lectura: ${reading}.`;
-    }
-    return `Raw pressure: ${t(raw || regulated)}. Regulation: ${raw && regulated && raw !== regulated ? `${t(regulated)} through ${regulation}` : regulation}. Reading: ${reading}.`;
+    const regulatedText = raw && regulated && raw !== regulated
+      ? (state.lang === "es" ? `${t(regulated)} por ${regulation}` : `${t(regulated)} through ${regulation}`)
+      : regulation;
+    return [
+      { label: t("lotAuditRawPressure"), value: t(raw || regulated) },
+      { label: t("lotAuditRegulation"), value: regulatedText },
+      { label: t("lotAuditReading"), value: lotTestimonyText(items, "tension", lot) },
+    ];
+  }
+
+  function lotPressureAuditText(items, lot) {
+    return lotPressureAuditParts(items, lot)
+      .map((item) => `${item.label}: ${item.value}.`)
+      .join(" ");
+  }
+
+  function lotPressureAuditHtml(items, lot) {
+    return `
+      <ul class="lot-pressure-lines">
+        ${lotPressureAuditParts(items, lot).map((item) => `<li><b>${escapeHtml(item.label)}:</b> ${escapeHtml(item.value)}</li>`).join("")}
+      </ul>
+    `;
   }
 
   function lotConditionReading(lot, chart) {
@@ -6848,7 +6930,7 @@
           ? (state.lang === "es" ? "luminaria" : "luminary")
           : solarPhaseTableText(lot.lord, chart);
         const beneficTestimony = lotTestimonyText(lotTestimonyItems(lot, ["jupiter", "venus"], chart, "support"), "support", lot);
-        const maleficPressure = lotPressureAuditText(lotTestimonyItems(lot, ["mars", "saturn"], chart, "tension"), lot);
+        const maleficPressure = lotPressureAuditHtml(lotTestimonyItems(lot, ["mars", "saturn"], chart, "tension"), lot);
         const lordLabel = planetLabel(lot.lord);
         return `
           <li data-test="main-lot-${escapeHtml(lot.key)}">
@@ -6873,7 +6955,7 @@
               <dt>${escapeHtml(t("lotAuditBeneficTestimony"))}</dt>
               <dd>${escapeHtml(beneficTestimony)}</dd>
               <dt>${escapeHtml(t("lotAuditMaleficPressure"))}</dt>
-              <dd>${escapeHtml(maleficPressure)}</dd>
+              <dd>${maleficPressure}</dd>
             </dl>
           </li>
         `;
@@ -7265,6 +7347,13 @@
       if (event.target === $("#peopleModal")) closePeopleModal();
     });
     $("#peopleGrid").addEventListener("click", (event) => {
+      const dataTrigger = event.target.closest("[data-person-source-id]");
+      if (dataTrigger) {
+        event.preventDefault();
+        event.stopPropagation();
+        openPersonData(dataTrigger.dataset.personSourceId, dataTrigger);
+        return;
+      }
       const button = event.target.closest("[data-person-id]");
       if (button) loadHistoricalPerson(button.dataset.personId);
     });
@@ -7277,6 +7366,7 @@
         return;
       }
       if (!event.target.closest("#glossaryPopover")) closeGlossary();
+      if (!event.target.closest("#personDataPopover") && !event.target.closest("[data-person-source-id]")) closePersonData();
     });
     document.addEventListener("keydown", (event) => {
       const trigger = event.target.closest("[data-glossary]");
@@ -7290,12 +7380,19 @@
           closeGlossary({ restoreFocus: true });
           return;
         }
+        if (!$("#personDataPopover").hidden) {
+          closePersonData({ restoreFocus: true });
+          return;
+        }
         if (!$("#peopleModal").hidden) closePeopleModal();
       }
     });
     $("#glossaryClose").addEventListener("click", () => closeGlossary({ restoreFocus: true }));
+    $("#personDataClose").addEventListener("click", () => closePersonData({ restoreFocus: true }));
     window.addEventListener("resize", () => positionGlossary(state.glossaryReturnFocus));
+    window.addEventListener("resize", () => positionPersonData(state.personDataReturnFocus));
     window.addEventListener("scroll", () => positionGlossary(state.glossaryReturnFocus), true);
+    window.addEventListener("scroll", () => positionPersonData(state.personDataReturnFocus), true);
     $("#themeToggle").addEventListener("click", () => {
       state.theme = state.theme === "night" ? "day" : "night";
       localStorage.setItem("tyche-theme", state.theme);
