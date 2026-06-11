@@ -6,6 +6,8 @@ The external audit for the current archive was closed on 2026-06-10. The per-per
 
 ## Current Data Policy
 
+The current public archive follows a strict production policy: published historical examples must be externally audited. The `partial` and `pending` states remain supported by the model and UI for future staging, deliberate review workflows, or explicitly approved exceptions, but they are not the normal public-archive policy.
+
 Every historical example must have:
 
 - Public figure name.
@@ -77,6 +79,7 @@ The current archive is closed as an externally audited example archive with norm
 
 - Every current character has an individual `HISTORICAL_AUDIT_ROWS` entry with a rated external natal-data source, source URL, time-confidence classification, zone-reliability classification, and audit date.
 - New records without an audit row are not allowed to pass the static contract test.
+- The production test intentionally requires the current public archive to contain audited records only. If a future release deliberately exposes partial or pending examples, that policy change must be documented and the tests should validate each state separately instead of relaxing the rule silently.
 - Manual offsets are retained for reproducibility but do not prove civil-time certainty.
 - Julian-calendar examples must keep both the calendar flag and visible label clear.
 - No person should be described as audited unless audited metadata is explicitly present through the character object or `HISTORICAL_AUDIT_ROWS`.

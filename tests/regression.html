@@ -307,6 +307,8 @@
         assert("Planetas modernos no entran en juicios relacionales", testApi.planetRelationJudgment("sun", "uranus", modernChart, "support") === "");
         assert("Planetas modernos no entran en testimonios de lotes", testApi.lotTestimonyItems(testApi.lotByKey(modernChart, "fortune"), ["uranus", "neptune", "pluto"], modernChart, "support").length === 0);
         assert("Planetas modernos no entran en angularidad visible del juicio", testApi.visibleAngularPlanets(modernChart).every((key) => !["uranus", "neptune", "pluto"].includes(key)));
+        const modernInterpretationText = JSON.stringify(testApi.interpretChart(modernChart)).toLowerCase();
+        assert("Planetas modernos no entran en la interpretacion helenistica base", !["uranus", "neptune", "pluto", "urano", "neptuno", "pluton", "plutón"].some((key) => modernInterpretationText.includes(key)));
         assert("Las formulas de lotes principales no usan planetas modernos", !["uranus", "neptune", "pluto"].some((key) => (
           testApi.lotFormulaText("fortune", true).toLowerCase().includes(key)
           || testApi.lotFormulaText("spirit", false).toLowerCase().includes(key)

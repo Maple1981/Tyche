@@ -6859,7 +6859,7 @@
               <dt>${escapeHtml(t("lotAuditLord"))}</dt>
               <dd>${escapeHtml(lordLabel)} · ${escapeHtml(t("tableHouse"))} ${escapeHtml(String(lord?.house || "—"))}</dd>
               <dt>${escapeHtml(t("lotAuditDirectAdministration"))}</dt>
-              <dd class="lot-audit-role" data-test="main-lot-${escapeHtml(lot.key)}-direct-administration">${escapeHtml(directLotAdministrationText(lot, chart))}</dd>
+              <dd class="lot-audit-role lot-direct-administration" data-test="main-lot-${escapeHtml(lot.key)}-direct-administration">${escapeHtml(directLotAdministrationText(lot, chart))}</dd>
               <dt>${escapeHtml(t("lotAuditLordRole"))}</dt>
               <dd class="lot-audit-role">${escapeHtml(lotLordRoleText(lot, chart))}</dd>
               <dt>${escapeHtml(t("lotAuditLordCondition"))}</dt>

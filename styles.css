@@ -1208,6 +1208,14 @@ td {
   font-weight: 700;
 }
 
+.lot-direct-administration {
+  color: var(--blue-deep);
+  border-left: 3px solid color-mix(in srgb, var(--blue) 68%, var(--blue-deep));
+  border-radius: 4px;
+  padding: 5px 8px;
+  background: color-mix(in srgb, var(--blue) 8%, transparent);
+}
+
 .alternate-sect-lots {
   margin-top: 10px;
   border: 1px dotted color-mix(in srgb, var(--blue) 42%, var(--line));

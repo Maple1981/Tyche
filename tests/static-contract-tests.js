@@ -65,7 +65,7 @@ assert("10th-house ruler contributes a public focus signal", app.includes("tenth
 assert("Focus evidence uses house rulers", app.includes("function focusRulerEvidence") && app.includes("An empty house remains active through its ruler"));
 assert("Mercury solar phase qualifier is explicit", app.includes("function mercuryPhaseQualifier") && app.includes("common and variable nature"));
 assert("Technical evidence sections have stable hooks", app.includes('data-test="evidence-score"') && app.includes('data-test="evidence-main-lots"') && app.includes('data-test="evidence-general"'));
-assert("Main lots expose direct administration hook", app.includes("lotAuditDirectAdministration") && app.includes("direct-administration"));
+assert("Main lots expose direct administration hook", app.includes("lotAuditDirectAdministration") && app.includes("direct-administration") && app.includes("lot-direct-administration"));
 assert("Lot pressure audit preserves raw and regulated pressure", app.includes("function lotPressureAuditText") && app.includes("Presión bruta") && app.includes("Raw pressure"));
 assert("Sensitive sect judgment notice is visible", app.includes("sectLowConfidenceJudgment") && app.includes("sectConfidenceNotice"));
 assert("Modern planets are blocked from judgment helpers", app.includes("!VISIBLE_KEYS.includes(target) || !VISIBLE_KEYS.includes(actor)") && app.includes(".filter((key) => VISIBLE_KEYS.includes(key))"));
@@ -90,6 +90,7 @@ assert("Judgment factor matrix exists", read("docs/judgment-factor-matrix.md").i
 assert("Transcript-derived interpretation refinements are documented", read("docs/public-transcript-synthesis.md").includes("10th-place ruler") && read("docs/judgment-factor-matrix.md").includes("Mercury morning/evening phase"));
 assert("Precision limits doc exists", read("docs/precision-limits.md").includes("Precision and Reliability Limits"));
 assert("Historical audit doc exists", read("docs/historical-data-audit.md").includes("Normalized Reliability"));
+assert("Historical audit doc states strict public archive policy", read("docs/historical-data-audit.md").includes("strict production policy") && read("docs/historical-data-audit.md").includes("audited records only"));
 assert("Historical character audit doc prepares future additions", read("docs/historical-character-audit.md").includes("Future Addition Checklist"));
 assert("Glossary coverage doc exists", read("docs/glossary-coverage.md").includes("Required Coverage"));
 assert("Future techniques roadmap exists", read("docs/future-techniques-roadmap.md").includes("Future Techniques Roadmap"));
