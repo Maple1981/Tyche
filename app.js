@@ -1362,11 +1362,53 @@
           "<p>El ciclo va de Luna nueva a llena y vuelve por las fases menguantes hasta la balsámica.</p>",
         ],
       },
+      moonElongation: {
+        title: "Elongación Sol→Luna",
+        body: [
+          "<p>Distancia zodiacal entre el Sol y la Luna, medida desde la posición solar hacia la lunar.</p>",
+          "<p>Este ángulo sostiene el nombre de la fase lunar y ayuda a situar la Luna dentro del ciclo sinódico.</p>",
+        ],
+      },
+      moonLastSeparation: {
+        title: "Último contacto lunar",
+        body: [
+          "<p>Última configuración mayor que la Luna perfeccionó antes del momento de la carta.</p>",
+          "<p>Sirve para ver de qué planeta viene la Luna y qué tipo de testimonio acaba de transmitir.</p>",
+        ],
+      },
+      moonNextApplication: {
+        title: "Próximo contacto lunar",
+        body: [
+          "<p>Siguiente configuración mayor que la Luna perfeccionará si avanza desde su posición actual.</p>",
+          "<p>Indica hacia qué planeta se dirige la actividad lunar y ayuda a valorar continuidad, bloqueo o transmisión.</p>",
+        ],
+      },
       moonVoc: {
         title: "Vacía de curso",
         body: [
           "<p>Tyche usa como juicio principal la definición helenística amplia: la Luna está vacía si no perfecciona una conjunción, sextil, cuadrado, trígono u oposición en los próximos 30° de movimiento lunar.</p>",
           "<p>También se muestra si la Luna perfecciona o no antes de abandonar el signo. El indicador de ausencia de aplicación dentro de 12° se mantiene aparte para no confundir una lectura por orbe con la definición de 30°.</p>",
+        ],
+      },
+      moonVoc30: {
+        title: "Vacía de curso, definición helenística",
+        body: [
+          "<p>Indica si la Luna no perfecciona ninguna configuración mayor en los próximos 30° de su propio movimiento.</p>",
+          "<p>Esta es la definición amplia que Tyche usa como indicador principal de vacío de curso en la capa helenística.</p>",
+        ],
+      },
+      moonVocSign: {
+        title: "Vacía de curso, hasta salir del signo",
+        body: [
+          "<p>Indica si la Luna perfecciona o no una configuración mayor antes de abandonar el signo donde se encuentra.</p>",
+          "<p>Tyche lo muestra separado de la definición helenística de 30° para no mezclar dos criterios distintos.</p>",
+        ],
+      },
+      moonNoApplyingWithinOrb: {
+        title: "Sin aplicación cercana, 12°",
+        body: [
+          "<p>Indica si la Luna tiene alguna aplicación mayor dentro de un margen cercano de 12°.</p>",
+          "<p>Es una lectura por cercanía u orbe; no sustituye a la definición helenística de vacío de curso por los próximos 30°.</p>",
         ],
       },
       applications: {
@@ -1971,11 +2013,53 @@
           "<p>The cycle runs from New Moon to Full Moon and back through waning phases to Balsamic.</p>",
         ],
       },
+      moonElongation: {
+        title: "Sun→Moon elongation",
+        body: [
+          "<p>The zodiacal distance from the Sun to the Moon, measured forward from the solar position to the lunar position.</p>",
+          "<p>This angle supports the lunar phase name and places the Moon within the synodic cycle.</p>",
+        ],
+      },
+      moonLastSeparation: {
+        title: "Last lunar contact",
+        body: [
+          "<p>The last major configuration the Moon perfected before the chart moment.</p>",
+          "<p>It shows which planet the Moon is coming from and what testimony it has just transmitted.</p>",
+        ],
+      },
+      moonNextApplication: {
+        title: "Next lunar contact",
+        body: [
+          "<p>The next major configuration the Moon will perfect as it moves from its current position.</p>",
+          "<p>It shows where lunar activity is heading and helps judge continuity, blockage, or transmission.</p>",
+        ],
+      },
       moonVoc: {
         title: "Void of course",
         body: [
           "<p>Tyche uses the broader Hellenistic definition as the main judgment: the Moon is void if it perfects no conjunction, sextile, square, trine, or opposition in the next 30° of lunar motion.</p>",
           "<p>Tyche also shows whether the Moon perfects before leaving its sign. The separate no-application-within-12° indicator remains apart so an orb-based reading is not confused with the 30° definition.</p>",
+        ],
+      },
+      moonVoc30: {
+        title: "Void of course, Hellenistic definition",
+        body: [
+          "<p>Shows whether the Moon perfects no major configuration in the next 30° of its own motion.</p>",
+          "<p>This is the broader definition Tyche uses as the main void-of-course indicator in the Hellenistic layer.</p>",
+        ],
+      },
+      moonVocSign: {
+        title: "Void of course, until sign exit",
+        body: [
+          "<p>Shows whether the Moon perfects a major configuration before leaving its current sign.</p>",
+          "<p>Tyche keeps it separate from the 30° Hellenistic definition so the two criteria are not blended.</p>",
+        ],
+      },
+      moonNoApplyingWithinOrb: {
+        title: "No close application, 12°",
+        body: [
+          "<p>Shows whether the Moon has a major application within a close 12° range.</p>",
+          "<p>This is an orb-based proximity indicator; it does not replace the 30° Hellenistic void-of-course definition.</p>",
         ],
       },
       applications: {
@@ -5379,12 +5463,12 @@
       <h3>${glossaryTerm(t("moonTitle"), "lunarCondition")}</h3>
       <div class="metric-grid">
         ${metric(t("moonPhase"), `${chart.moon.phase} · ${phaseContext}`, "capitalize-first", "moonPhase", "moonPhase")}
-        ${metric(t("moonElongation"), `${formatDecimal(chart.moon.elongation, 1)}°`, "", "moonPhase")}
-        ${metric(t("moonLastSeparation"), lastSeparation, "", "applications")}
-        ${metric(t("moonNextApplication"), nextApplication, "", "applications")}
-        ${metric(t("moonVoc30"), chart.moon.voidOfCourse ? t("yesVoc") : t("notVoc"), "", "moonVoc")}
-        ${metric(t("moonVocSign"), chart.moon.voidOfCourseBySign ? t("yesVocSign") : t("notVocSign"), "", "moonVoc")}
-        ${metric(t("moonNoApplyingWithinOrb"), chart.moon.hasApplyingWithinOrb ? t("no") : t("yes"), "", "moonVoc")}
+        ${metric(t("moonElongation"), `${formatDecimal(chart.moon.elongation, 1)}°`, "", "moonElongation")}
+        ${metric(t("moonLastSeparation"), lastSeparation, "", "moonLastSeparation")}
+        ${metric(t("moonNextApplication"), nextApplication, "", "moonNextApplication")}
+        ${metric(t("moonVoc30"), chart.moon.voidOfCourse ? t("yesVoc") : t("notVoc"), "", "moonVoc30")}
+        ${metric(t("moonVocSign"), chart.moon.voidOfCourseBySign ? t("yesVocSign") : t("notVocSign"), "", "moonVocSign")}
+        ${metric(t("moonNoApplyingWithinOrb"), chart.moon.hasApplyingWithinOrb ? t("no") : t("yes"), "", "moonNoApplyingWithinOrb")}
       </div>
     `;
   }
@@ -6834,7 +6918,7 @@
 
     const lead = focusLeadReading(focuses);
     const summaryBase = state.lang === "es"
-      ? `La carta pone mucho peso en la casa ${dominant.house}: ${houseReadingTopics(dominant.house, "double")}. ${secondaryFocuses.length ? `También conviene mirar ${naturalList(secondaryFocuses.map((focus) => `casa ${focus.house}`))}, porque completan el dibujo general.` : ""} El hilo rector sigue siendo ${planetLabel(ascLord)}, regente del Ascendente, situado en casa ${ascLordPosition.house}; por eso la lectura parte de la dirección vital y no de una posición aislada.`
+      ? `La carta pone mucho peso en la casa ${dominant.house}. ${capitalizeText(houseReadingTopics(dominant.house, "double"))}. ${secondaryFocuses.length ? `También conviene mirar ${naturalList(secondaryFocuses.map((focus) => `casa ${focus.house}`))}, porque completan el dibujo general.` : ""} El hilo rector sigue siendo ${planetLabel(ascLord)}, regente del Ascendente, situado en casa ${ascLordPosition.house}; por eso la lectura parte de la dirección vital y no de una posición aislada.`
       : `The chart puts a great deal of weight on house ${dominant.house}: ${houseReadingTopics(dominant.house, "double")}. ${secondaryFocuses.length ? `It is also worth reading ${naturalList(secondaryFocuses.map((focus) => `house ${focus.house}`))}, because they complete the general pattern.` : ""} The guiding thread remains ${planetLabel(ascLord)}, lord of the Ascendant / Hour-Marker, placed in house ${ascLordPosition.house}; this is why the reading begins from life direction rather than from an isolated placement.`;
     const summary = [summaryBase, sectConfidenceNotice].filter(Boolean).join(" ");
 

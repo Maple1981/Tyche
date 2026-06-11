@@ -200,6 +200,13 @@
         await waitFor(() => !$("#glossaryPopover").hidden && $("#glossaryTitle").textContent.includes("Dignidad mayor"), "major dignity glossary");
         assert("Dignidad mayor abre su propio modal", $("#glossaryTitle").textContent === "Dignidad mayor" && !$("#glossaryTitle").textContent.includes("Condición esencial"));
         $("#glossaryClose").click();
+        const moonLabelGlossaryKeys = $$("#moonPanel .metric b [data-glossary]").map((node) => node.dataset.glossary);
+        const expectedMoonGlossaryKeys = ["moonPhase", "moonElongation", "moonLastSeparation", "moonNextApplication", "moonVoc30", "moonVocSign", "moonNoApplyingWithinOrb"];
+        assert("Labels de condicion lunar tienen modales especificos", expectedMoonGlossaryKeys.every((key) => moonLabelGlossaryKeys.includes(key)) && !moonLabelGlossaryKeys.includes("applications") && !moonLabelGlossaryKeys.includes("moonVoc"));
+        $("#moonPanel [data-glossary='moonElongation']").click();
+        await waitFor(() => !$("#glossaryPopover").hidden && $("#glossaryTitle").textContent.includes("Elongación"), "moon elongation glossary");
+        assert("Elongacion lunar abre su propio modal", $("#glossaryTitle").textContent === "Elongación Sol→Luna" && !$("#glossaryTitle").textContent.includes("Fase lunar"));
+        $("#glossaryClose").click();
 
         assert("Fortuna y Espiritu siguen auditables aunque se oculten en la tabla", $("[data-test='main-lots-audit']") && $("[data-test='main-lot-fortune']") && $("[data-test='main-lot-spirit']"));
         assert("La base tecnica queda subdividida en score, lotes y evidencias", $("[data-test='evidence-score']") && $("[data-test='evidence-main-lots']") && $("[data-test='evidence-general']"));

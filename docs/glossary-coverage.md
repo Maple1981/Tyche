@@ -17,7 +17,8 @@ The glossary should cover:
 - Bounds, bound lord, decan, decan lord.
 - Lots: Fortune, Spirit, Eros, Necessity, Courage, Victory, Nemesis.
 - Solar phase: morning/evening, under the beams, combustion, in the heart/cazimi, chariot protection.
-- Lunar condition: phase, applications/separations, void of course by 30 degrees, void before sign exit, no close application within orb.
+- Lunar condition: phase, Sun-Moon elongation, last lunar contact, next lunar contact, void of course by 30 degrees, void before sign exit, no close application within orb.
+- Lunar condition labels should each use their own glossary entry. Do not point elongation to the phase popover, contacts to a generic applications popover, or the different void/course indicators to one generic void Moon popover.
 - Configurations: copresence, sextile, square, trine, opposition, aversion, sign-based, degree-based, overcoming.
 - Reception, mutual reception, bonification, maltreatment.
 - Precision/audit terms: ephemeris, boundary audit, sect-sensitive context, historical/manual offset.

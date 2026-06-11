@@ -57,6 +57,11 @@ assert("Ascendant and descendant display whole-sign houses", sectionBetween(app,
 const ascLordRenderBlock = sectionBetween(app, "function renderAscLord(chart)", "function renderMoon(chart)");
 assert("Ascendant lord condition labels use specific glossary keys", ["dignityMajor", "dignityTriplicity", "dignityMinor", "dignityAdministration", "weaknesses"].every((key) => ascLordRenderBlock.includes(`\"${key}\"`)) && !ascLordRenderBlock.includes('\"essentialCondition\"'));
 assert("Specific dignity glossary entries exist", ["dignityMajor", "dignityTriplicity", "dignityMinor", "dignityAdministration", "weaknesses"].every((key) => app.includes(`${key}: {`)));
+const moonRenderBlock = sectionBetween(app, "function renderMoon(chart)", "function renderTechnicalPanel(chart)");
+const moonGlossaryKeys = ["moonPhase", "moonElongation", "moonLastSeparation", "moonNextApplication", "moonVoc30", "moonVocSign", "moonNoApplyingWithinOrb"];
+assert("Lunar condition labels use specific glossary keys", moonGlossaryKeys.every((key) => moonRenderBlock.includes(`\"${key}\"`)) && !moonRenderBlock.includes('\"applications\"') && !moonRenderBlock.includes('\"moonVoc\"'));
+assert("Specific lunar glossary entries exist", moonGlossaryKeys.every((key) => app.includes(`${key}: {`)));
+assert("Dominant focus sentence avoids double colon before house topics", app.includes("La carta pone mucho peso en la casa ${dominant.house}. ${capitalizeText(houseReadingTopics(dominant.house, \"double\"))}") && !app.includes("La carta pone mucho peso en la casa ${dominant.house}: ${houseReadingTopics"));
 assert("Technical notes and limits sit after chart tables", index.indexOf('id="tab-aspects"') < index.indexOf('id="technicalPanel"') && app.includes("technicalLimitsCompact") && app.includes("technical-notes"));
 assert("Structured lists and definitions are normalized to initial caps", app.includes("function capitalizeStructuredText") && app.includes("\"dl dt, dl dd, ul li, ol li\"") && app.includes("capitalizeStructuredText($(\"#results\"))"));
 assert("Boundary audit list labels are capitalized before rendering", sectionBetween(app, "function boundaryChangeLabels(warning)", "function boundaryWarningText").includes("capitalizeText"));
