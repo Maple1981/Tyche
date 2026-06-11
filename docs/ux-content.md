@@ -31,16 +31,17 @@ Advanced options:
 After calculation, show the result in this order:
 
 1. Chart wheel.
-2. Sect and core angles.
-3. Hour-Marker lord panel.
-4. Plain-language natal reading with collapsible technical evidence.
-5. Planet table.
-6. Whole sign houses.
-7. Lots.
-8. Configurations/aspects.
-9. Notes on astronomical precision.
+2. Sect.
+3. Angles and time-zone basis.
+4. Hour-Marker lord panel.
+5. Plain-language natal reading with collapsible technical evidence.
+6. Planet table.
+7. Whole sign houses.
+8. Lots.
+9. Configurations/aspects.
+10. Collapsed technical notes, precision limits, privacy scope, and audit details.
 
-The calculated chart view should include a visible limits section, not only footer text. It should state educational scope, approximate planetary precision, angle sensitivity to time/place/zone, and the fact that place search and historical images may contact external services.
+The calculated chart view should include a visible but visually secondary limits section, not only footer text. Keep it out of the immediate sect card. It should state educational scope, approximate planetary precision, angle sensitivity to time/place/zone, and the fact that place search and historical images may contact external services.
 
 Advanced options that move away from the default model should warn immediately, not only after calculation. This applies to Julian calendar, approximate sidereal zodiac, and modern planets shown as an unweighted layer in traditional mode.
 
@@ -62,6 +63,8 @@ The Hour-Marker lord panel should answer:
 
 Whole Sign Houses should explain that the MC and IC are astronomical points and do not always fall in houses 10 and 4.
 
+The `Sect` card should stay doctrinally narrow: chart type, sect light, benefic of sect, malefic of sect, malefic contrary to sect, and any liminal/sensitive sect warning. Put Ascendant, Descendant, MC, IC, and the time-zone basis in a separate `Angles and zone` card.
+
 ## Tone
 
 Use concise, sober interpretive language. Avoid deterministic fatalism, medical/legal claims, and overly modern psychological sun-sign phrasing.
@@ -76,6 +79,8 @@ Use a consistent double layer:
 - Technical evidence: preserve the traditional topics plainly so the user can audit the doctrine behind the reading.
 
 Use paired labels such as `Lugares/Casas` when a UI element needs both traditional vocabulary and immediate clarity.
+
+Visible `dl`, `ul`, and `ol` entries should start with an uppercase initial word. Internal reason codes and translated fragments may remain lowercase in data, but rendered definition/list items should be normalized for reading polish.
 
 ## Historical Archive Metadata
 

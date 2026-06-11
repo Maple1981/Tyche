@@ -181,6 +181,19 @@
         $("#chart-form").dispatchEvent(new win.Event("submit", { bubbles: true, cancelable: true }));
         await chartRendered;
 
+        const coreSummaryText = $("#coreSummary").textContent;
+        const anglesPanelText = $("#anglesPanel").textContent;
+        const technicalPanelText = $("#technicalPanel").textContent;
+        assert("La card Secta no mezcla angulos, zona ni limites", coreSummaryText.includes("Secta") && !coreSummaryText.includes("Ascendente") && !coreSummaryText.includes("Zona usada") && !coreSummaryText.includes("Límites"));
+        assert("Angulos y zona separa Ascendente, MC, IC y zona usada", anglesPanelText.includes("Ángulos y zona") && anglesPanelText.includes("Ascendente") && anglesPanelText.includes("MC") && anglesPanelText.includes("IC") && anglesPanelText.includes("Zona usada"));
+        assert("Notas tecnicas y limites quedan al final del resultado", technicalPanelText.includes("Notas técnicas y límites") && technicalPanelText.includes("Astronomy Engine") && $("#technicalPanel").previousElementSibling?.classList.contains("tab-panels"));
+        const firstAlphaIsUpper = (value) => {
+          const char = Array.from(value || "").find((letter) => letter.toLocaleLowerCase("es-ES") !== letter.toLocaleUpperCase("es-ES"));
+          return !char || char === char.toLocaleUpperCase("es-ES");
+        };
+        const structuredTextNodes = $$("#results dl dt, #results dl dd, #results ul li, #results ol li");
+        assert("Listas y definiciones empiezan con palabra inicial en mayuscula", structuredTextNodes.length > 0 && structuredTextNodes.every((node) => firstAlphaIsUpper(node.textContent)));
+
         assert("Fortuna y Espiritu siguen auditables aunque se oculten en la tabla", $("[data-test='main-lots-audit']") && $("[data-test='main-lot-fortune']") && $("[data-test='main-lot-spirit']"));
         assert("La base tecnica queda subdividida en score, lotes y evidencias", $("[data-test='evidence-score']") && $("[data-test='evidence-main-lots']") && $("[data-test='evidence-general']"));
         assert("Los lotes principales resaltan administracion directa", $("[data-test='main-lot-fortune-direct-administration']") && $("[data-test='main-lot-spirit-direct-administration']"));
@@ -254,6 +267,7 @@
         assert("El aviso de secta expone data-code estable", testApi.renderBoundaryAudit(sectWarnings).includes('data-code="sect-boundary"'));
         assert("El render de auditoria de frontera tiene anclaje estable", testApi.renderBoundaryAudit(sectWarnings).includes('data-test="boundary-audit"'));
         assert("El aviso de secta tiene codigos estructurados", sectWarnings.some((warning) => warning.key === "sect-boundary" && warning.changeCodes.includes("fortune-spirit-formulas") && warning.actionCode === "verify-time-coordinates-zone-rectification"));
+        assert("La auditoria de frontera capitaliza cada cambio en lista", !testApi.renderBoundaryAudit(sectWarnings).includes("<li>secta") && testApi.renderBoundaryAudit(sectWarnings).includes("<li>Secta"));
 
         const sensitiveSectChart = {
           ...chart,

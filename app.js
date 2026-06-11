@@ -100,7 +100,6 @@
       planets: "Planetas",
       places: "Lugares/Casas",
       configurations: "Configuraciones",
-      precisionNote: "Cálculo astronómico local: Astronomy Engine. Precisión aproximada ±1′. Para rectificaciones, cartas críticas o investigación profesional, conviene contrastar con efemérides especializadas.",
       missingDate: "Añade fecha y hora de nacimiento.",
       invalidHistoricalYear: "Tyche aún no admite años BCE/a. C. en el formulario. Para evitar ambigüedades entre año histórico y año astronómico, usa solo años CE/d. C. por ahora.",
       missingPlace: "Elige una ciudad sugerida o introduce latitud, longitud y zona horaria.",
@@ -149,6 +148,7 @@
       dayChart: "Carta diurna",
       nightChart: "Carta nocturna",
       sect: "Secta",
+      anglesZoneTitle: "Ángulos y zona",
       chartType: "Tipo de carta",
       sectLight: "Luminaria de la secta",
       beneficSect: "Benéfico de la secta",
@@ -160,9 +160,12 @@
       ic: "IC",
       timezoneUsed: "Zona usada",
       julianDay: "Día juliano",
-      technicalTitle: "Auditoría de carta",
+      technicalTitle: "Notas técnicas y límites",
       technicalAstronomyTitle: "Cálculo astronómico",
       technicalJudgmentTitle: "Criterios de juicio",
+      technicalMcIcNote: "En casas de signos enteros, el MC y el IC no abren las casas 10 y 4: son puntos astronómicos sensibles, y Tyche muestra también en qué casa caen.",
+      technicalLimitsCompact: "Tyche calcula la carta localmente en tu navegador con Astronomy Engine. La precisión planetaria aproximada es ±1′; Ascendente, MC, casas y lotes dependen de la hora, coordenadas y zona usada.",
+      technicalUsePrivacyCompact: "Uso educativo. Para rectificaciones, cartas críticas o investigación profesional, contrasta los datos con efemérides y fuentes especializadas. La búsqueda de lugar y las imágenes históricas pueden consultar servicios externos.",
       interpretationTitle: "Lectura natal",
       interpretationLeadTitle: "En una frase",
       interpretationSummary: "Lo más importante",
@@ -505,7 +508,6 @@
       planets: "Planets",
       places: "Places/Houses",
       configurations: "Configurations",
-      precisionNote: "Local astronomical calculation: Astronomy Engine. Approximate accuracy ±1′. For rectification, critical charts, or professional research, compare with specialized ephemerides.",
       missingDate: "Add birth date and time.",
       invalidHistoricalYear: "Tyche does not yet support BCE years in the form. To avoid ambiguity between historical and astronomical year numbering, use CE years only for now.",
       missingPlace: "Choose a suggested city or enter latitude, longitude, and time zone.",
@@ -554,6 +556,7 @@
       dayChart: "Day chart",
       nightChart: "Night chart",
       sect: "Sect",
+      anglesZoneTitle: "Angles and zone",
       chartType: "Chart type",
       sectLight: "Sect light",
       beneficSect: "Benefic of sect",
@@ -565,9 +568,12 @@
       ic: "IC",
       timezoneUsed: "Zone used",
       julianDay: "Julian day",
-      technicalTitle: "Chart audit",
+      technicalTitle: "Technical notes and limits",
       technicalAstronomyTitle: "Astronomical calculation",
       technicalJudgmentTitle: "Judgment criteria",
+      technicalMcIcNote: "In Whole Sign Houses, the MC and IC do not open houses 10 and 4: they are sensitive astronomical points, and Tyche also shows which house they fall in.",
+      technicalLimitsCompact: "Tyche calculates the chart locally in your browser with Astronomy Engine. Approximate planetary accuracy is ±1′; Ascendant, MC, houses, and lots depend on the time, coordinates, and time zone used.",
+      technicalUsePrivacyCompact: "Educational use. For rectification, critical charts, or professional research, compare the data with specialized ephemerides and sources. Place search and historical images may contact external services.",
       interpretationTitle: "Natal reading",
       interpretationLeadTitle: "In one sentence",
       interpretationSummary: "Most important",
@@ -3278,6 +3284,22 @@
     return chars.join("");
   }
 
+  function capitalizeStructuredText(root = document) {
+    const targets = root.querySelectorAll?.("dl dt, dl dd, ul li, ol li") || [];
+    targets.forEach((node) => {
+      const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT, {
+        acceptNode(textNode) {
+          return Array.from(textNode.nodeValue || "").some((char) => char.toLowerCase() !== char.toUpperCase())
+            ? NodeFilter.FILTER_ACCEPT
+            : NodeFilter.FILTER_SKIP;
+        },
+      });
+      const textNode = walker.nextNode();
+      if (!textNode) return;
+      textNode.nodeValue = capitalizeText(textNode.nodeValue);
+    });
+  }
+
   function capitalizeList(items) {
     return items.map(capitalizeText).join(", ");
   }
@@ -3435,6 +3457,7 @@
     const popover = $("#glossaryPopover");
     $("#glossaryTitle").textContent = entry.title;
     $("#glossaryBody").innerHTML = entry.body.join("");
+    capitalizeStructuredText($("#glossaryBody"));
     popover.hidden = false;
     state.glossaryReturnFocus = trigger || null;
     window.requestAnimationFrame(() => positionGlossary(trigger));
@@ -3950,6 +3973,7 @@
     const popover = $("#personDataPopover");
     $("#personDataTitle").textContent = `${t("personDataDetailsTitle")}: ${person.name}`;
     $("#personDataBody").innerHTML = historicalQualityDetailsHtml(person);
+    capitalizeStructuredText($("#personDataBody"));
     popover.hidden = false;
     state.personDataReturnFocus = trigger || null;
     window.requestAnimationFrame(() => positionPersonData(trigger));
@@ -4066,6 +4090,7 @@
       pending.length ? `<h3 class="people-group-title">${escapeHtml(t("peoplePendingTitle"))}</h3>` : "",
       ...pending.map(historicalPersonCard),
     ].join("");
+    capitalizeStructuredText($("#peopleGrid"));
   }
 
   function openPeopleModal() {
@@ -5195,6 +5220,7 @@
     $("#chartMeta").textContent = chartMetaText(chart.input);
     $("#chartWheel").innerHTML = renderWheel(chart);
     renderCoreSummary(chart);
+    renderAnglesPanel(chart);
     renderAscLord(chart);
     renderMoon(chart);
     renderTechnicalPanel(chart);
@@ -5203,6 +5229,7 @@
     renderHouseTable(chart);
     renderLotTable(chart);
     renderAspectTable(chart);
+    capitalizeStructuredText($("#results"));
     $("#results").scrollIntoView({ behavior: "smooth", block: "start" });
     window.dispatchEvent(new CustomEvent("tyche:chart-rendered", { detail: { chart } }));
   }
@@ -5216,13 +5243,6 @@
   }
 
   function renderCoreSummary(chart) {
-    const mcNote = state.lang === "es"
-      ? `<strong>Nota sobre ${glossaryTerm(t("mc"), "mc")}/${glossaryTerm(t("ic"), "ic")}:</strong> en ${glossaryTerm("casas de signos enteros", "wholeSign")}, las casas se cuentan desde el signo Ascendente. El ${glossaryTerm(t("mc"), "mc")} y el ${glossaryTerm(t("ic"), "ic")} no abren las casas 10 y 4: son puntos astronómicos sensibles. Por eso Tyche muestra también en qué casa caen.`
-      : `<strong>Note on ${glossaryTerm(t("mc"), "mc")}/${glossaryTerm(t("ic"), "ic")}:</strong> in ${glossaryTerm("Whole Sign Houses", "wholeSign")}, houses are counted from the Ascendant sign. The ${glossaryTerm(t("mc"), "mc")} and ${glossaryTerm(t("ic"), "ic")} do not open houses 10 and 4: they are sensitive astronomical points. This is why Tyche also shows which house they fall in.`;
-    const precisionNote = state.lang === "es"
-      ? `${glossaryTerm("Cálculo astronómico", "ephemeris")} local: Astronomy Engine. Precisión aproximada ±1′. Para rectificaciones, cartas críticas o investigación profesional, conviene contrastar con efemérides especializadas.`
-      : `Local ${glossaryTerm("astronomical calculation", "ephemeris")}: Astronomy Engine. Approximate accuracy ±1′. For rectification, critical charts, or professional research, compare with specialized ephemerides.`;
-    const limits = [t("limitsEducational"), t("limitsPrecision"), t("limitsPrivacy")];
     const html = `
       <h3>${glossaryTerm(t("sect"), "sect")}</h3>
       <div class="metric-grid">
@@ -5231,24 +5251,24 @@
         ${metric(t("beneficSect"), `${PLANETS[chart.beneficOfSect].symbol} ${planetName(chart.beneficOfSect)}`, "", "beneficSect")}
         ${metric(t("maleficSect"), `${PLANETS[chart.maleficOfSect].symbol} ${planetName(chart.maleficOfSect)}`, "", "maleficSect")}
         ${metric(t("maleficContrarySect"), `${PLANETS[chart.maleficContrarySect].symbol} ${planetName(chart.maleficContrarySect)}`, "", "maleficContrarySect")}
+      </div>
+      ${sectSensitivityNote(chart) ? `<p class="text-note">${escapeHtml(sectSensitivityNote(chart))}</p>` : ""}
+      ${renderAlternateSectLots(chart)}
+    `;
+    $("#coreSummary").innerHTML = html;
+  }
+
+  function renderAnglesPanel(chart) {
+    $("#anglesPanel").innerHTML = `
+      <h3>${escapeHtml(t("anglesZoneTitle"))}</h3>
+      <div class="metric-grid">
         ${metric(t("ascendant"), formatDegree(chart.angles.asc), "", "ascendant")}
         ${metric(t("descendant"), formatDegree(chart.angles.desc), "", "descendant")}
         ${metric(t("mc"), `${formatDegree(chart.angles.mc)} · ${t("tableHouse")} ${chart.mcHouse}`, "", "mc")}
         ${metric(t("ic"), `${formatDegree(chart.angles.ic)} · ${t("tableHouse")} ${chart.icHouse}`, "", "ic")}
         ${metric(t("timezoneUsed"), chart.zoneLabel, "", "timezoneUsed")}
       </div>
-      ${sectSensitivityNote(chart) ? `<p class="text-note">${escapeHtml(sectSensitivityNote(chart))}</p>` : ""}
-      ${renderAlternateSectLots(chart)}
-      <p class="text-note">${mcNote}</p>
-      <p class="text-note">${precisionNote}</p>
-      <section class="limits-panel" aria-label="${escapeHtml(t("limitsTitle"))}">
-        <h4>${escapeHtml(t("limitsTitle"))}</h4>
-        <ul>
-          ${limits.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
-        </ul>
-      </section>
     `;
-    $("#coreSummary").innerHTML = html;
   }
 
   function renderAscLord(chart) {
@@ -5312,6 +5332,11 @@
     $("#technicalPanel").innerHTML = `
       <details>
         <summary>${escapeHtml(t("technicalTitle"))}</summary>
+        <div class="technical-notes">
+          <p>${escapeHtml(t("technicalLimitsCompact"))}</p>
+          <p>${escapeHtml(t("technicalMcIcNote"))}</p>
+          <p>${escapeHtml(t("technicalUsePrivacyCompact"))}</p>
+        </div>
         <section class="technical-section">
           <h4>${escapeHtml(t("technicalAstronomyTitle"))}</h4>
           <div class="technical-grid">
@@ -6599,9 +6624,9 @@
   }
 
   function boundaryChangeLabels(warning) {
-    const labels = (warning.changeCodes || []).map((code) => t(BOUNDARY_CHANGE_LABEL_KEYS[code] || code));
+    const labels = (warning.changeCodes || []).map((code) => capitalizeText(t(BOUNDARY_CHANGE_LABEL_KEYS[code] || code)));
     const shift = boundaryShiftLabel(warning);
-    return shift ? [...labels, shift] : labels;
+    return shift ? [...labels, capitalizeText(shift)] : labels;
   }
 
   function boundaryWarningText(warning) {

@@ -799,10 +799,32 @@ td {
   gap: 10px;
 }
 
+.technical-panel {
+  margin-top: 16px;
+}
+
 .technical-panel summary {
   color: var(--blue-deep);
   font-weight: 700;
   cursor: pointer;
+  font-variant: small-caps;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0;
+}
+
+.technical-notes {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  border-top: 1px dotted color-mix(in srgb, var(--blue) 42%, var(--line));
+  padding-top: 10px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.technical-notes p {
+  margin: 0;
 }
 
 .technical-grid {
@@ -1290,31 +1312,6 @@ td {
   color: var(--muted);
   font-size: 0.9rem;
   text-align: center;
-}
-
-.limits-panel {
-  margin-top: 14px;
-  border-top: 1px dotted color-mix(in srgb, var(--blue) 42%, var(--line));
-  padding-top: 10px;
-}
-
-.limits-panel h4 {
-  margin: 0 0 6px;
-  color: var(--blue-deep);
-  font-variant-caps: all-small-caps;
-  letter-spacing: 0;
-}
-
-.limits-panel ul {
-  margin: 0;
-  padding-left: 1.1rem;
-  color: var(--muted);
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
-.limits-panel li + li {
-  margin-top: 4px;
 }
 
 .site-footer {

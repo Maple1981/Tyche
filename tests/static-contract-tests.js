@@ -52,6 +52,10 @@ assert("Regression page shows final build and schema summary", regression.includ
 assert("Historical cards expose natal data popover", index.includes("personDataPopover") && app.includes("data-person-source-id") && app.includes("openPersonData"));
 assert("Historical visible card omits repeated quality rows", !sectionBetween(app, "function historicalPersonCard(person)", "function renderHistoricalPeople").includes("historicalQualityRows(person)"));
 assert("Historical Wikipedia links follow active UI language", app.includes("function localizeWikipediaUrl") && sectionBetween(app, "function personWikipediaUrl(person)", "function capitalizeText").includes("localizeWikipediaUrl") && regression.includes("Wikipedia historica usa enlace ingles en interfaz EN"));
+assert("Sect and angle panels are separated", index.includes('id="anglesPanel"') && app.includes("function renderAnglesPanel") && !sectionBetween(app, "function renderCoreSummary(chart)", "function renderAnglesPanel(chart)").includes('t("ascendant")'));
+assert("Technical notes and limits sit after chart tables", index.indexOf('id="tab-aspects"') < index.indexOf('id="technicalPanel"') && app.includes("technicalLimitsCompact") && app.includes("technical-notes"));
+assert("Structured lists and definitions are normalized to initial caps", app.includes("function capitalizeStructuredText") && app.includes("\"dl dt, dl dd, ul li, ol li\"") && app.includes("capitalizeStructuredText($(\"#results\"))"));
+assert("Boundary audit list labels are capitalized before rendering", sectionBetween(app, "function boundaryChangeLabels(warning)", "function boundaryWarningText").includes("capitalizeText"));
 
 assert("parseDate BCE support is explicit opt-in", app.includes("function parseDate(value, { allowBce = false } = {})") && app.includes("allowBce ? /^(-?\\d{1,6})-"));
 assert("BCE limitation is documented", docs.some(([, content]) => content.includes("BCE dates are blocked")));
