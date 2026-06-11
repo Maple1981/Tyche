@@ -15,7 +15,7 @@ Regression tests should prefer stable hooks over visible prose:
 - Keep `window.TycheTest` frozen and expose only stable calculation or judgment helpers needed by tests.
 - Assert `window.TycheTest.schemaVersion` before relying on helper names or result shapes.
 - Open the smoke page with `tests/regression.html?v=<commit-or-tag>` when auditing a publication. The iframe passes that value to `index.html`, and the app exposes it as `TycheTest.buildHash`; `index.html` also propagates it to `styles.css`, Astronomy Engine, and `app.js`.
-- The smoke page should show a visible final summary with passed/total tests, loaded build, expected build, and `TycheTest.schemaVersion`.
+- The smoke page should show a visible final summary with passed/total tests, loaded build (`Build cargado`), expected build (`Build esperado`), and `TycheTest.schemaVersion`.
 - Build comparison may accept short and long Git hashes when one is a prefix of the other. The important contract is that the same version tag reaches the smoke page, iframe, and app assets.
 - Treat objects returned by `window.TycheTest` as disposable test results. Do not mutate them and then reuse them as if they were internal app state.
 - Avoid asserting translated copy unless the test is specifically about content.
@@ -31,10 +31,12 @@ Regression tests should prefer stable hooks over visible prose:
 - When the widened sect threshold is used, the audit must show the applied threshold and the reasons for the sensitive time context.
 - The summary should distinguish `liminal` within 1 degree from `sensitive` in the widened reliability threshold.
 - If sect is liminal or sensitive, the summary should show the Fortune and Spirit positions used by Tyche and the alternate positions if sect were reversed.
+- If sect is liminal or sensitive, the Sect card should also name the testimonies that become lower confidence: benefic/malefic of sect, malefic contrary to sect, Fortune/Spirit, and triplicity of the sect light.
 - Ascendant within 1 degree of a sign boundary: the audit must warn that the Ascendant lord, whole-sign houses, lots, and main topical focuses can change.
 - MC or IC within 1 degree of a sign boundary: the audit must warn that the whole-sign place receiving public-projection or foundation testimony can change.
 - Visible planet within 30 arcminutes of an Egyptian-bound boundary: the audit must warn that degree administration, own minor dignity if applicable, and reception by bound can change.
 - Boundary warnings should use unique keys/codes such as `asc-sign-boundary`, `mc-sign-boundary`, `lot-boundary:fortune`, and `planet-bound-boundary:mars`; rendered warning cards should expose `data-test="boundary-warning"` and `data-code`.
+- Rendered boundary warning cards should use scan-friendly definition rows (`dl`/`dt`/`dd`) rather than one long prose string.
 - `boundaryWarnings()` should return neutral data only: `typeCode`, `changeCodes`, `actionCode`, distance fields, and specific structured fields such as MC/IC possible sign/house. Translation belongs to render helpers.
 - MC and IC boundary tests should cover both previous-boundary and next-boundary cases, using structured fields rather than translated prose.
 - Inverted Fortune/Spirit tests should compare angular distance, not raw subtraction across 0 Aries.
@@ -67,6 +69,7 @@ Regression tests should prefer stable hooks over visible prose:
 - The current smoke test covers the linear fallback for crossing 0 Aries, retrograde application, ordered future candidates, perfection after sign exit but within 30 degrees, no contact when relative speed is zero, at least one iterative contact from a complete calculated chart, and one pinned case where the iterative Saturn application differs materially from the linear estimate.
 - Void-of-course by the 30-degree Hellenistic rule and void before sign exit must remain separate outputs in the lunar panel and evidence layer.
 - The close no-application-within-orb indicator must remain separate from both void-of-course criteria.
+- The lunar panel should begin with a readable status summary while preserving the separate technical indicators below it.
 
 ## Modern/Mixed Layer
 
@@ -75,3 +78,4 @@ Regression tests should prefer stable hooks over visible prose:
 - Regression score comparisons should use stable `reasonCode` fields rather than translated or editable human prose.
 - Modern planets may appear in display data when enabled, but base score items, lot formulas, traditional regencies, and judgment focus signals must not contain Uranus, Neptune, or Pluto.
 - Modern planets must also be ignored by judgment helpers such as lot testimony, visible angular planets for judgment, and planet-relation judgment.
+- When modern planets are displayed, the planet table should split traditional visible planets from modern planets as an additional layer.

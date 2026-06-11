@@ -51,7 +51,7 @@
   <body>
     <main>
       <h1>Tyche regression smoke tests</h1>
-      <p id="summary" class="test-summary">Pendiente · Build: — · Schema: —</p>
+      <p id="summary" class="test-summary">Pendiente · Build esperado: — · Build cargado: — · Schema: —</p>
       <ol id="results"></ol>
       <iframe id="appFrame"></iframe>
     </main>
@@ -60,6 +60,7 @@
       const summary = document.querySelector("#summary");
       const frame = document.querySelector("#appFrame");
       const version = new URLSearchParams(location.search).get("v") || "dev";
+      summary.textContent = `Pendiente · Build esperado: ${version} · Build cargado: — · Schema: —`;
       let resultCount = 0;
       let failureCount = 0;
       let loadedBuildHash = "pending";
@@ -76,7 +77,7 @@
 
       function finish() {
         const passed = resultCount - failureCount;
-        summary.textContent = `Resultado: ${passed}/${resultCount} tests passed · Build: ${loadedBuildHash} · Esperado: ${version} · Schema: ${loadedSchemaVersion}`;
+        summary.textContent = `Resultado: ${passed}/${resultCount} tests passed · Build cargado: ${loadedBuildHash} · Build esperado: ${version} · Schema: ${loadedSchemaVersion}`;
         summary.classList.toggle("fail", failureCount > 0);
         window.__TYCHE_REGRESSION_DONE__ = {
           resultCount,
@@ -191,6 +192,7 @@
         assert("Encabezado de carta no muestra sexo no usado", chartMetaText.includes("Fecha:") && chartMetaText.includes("Lugar de nacimiento:") && !chartMetaText.includes("Sexo"));
         assert("Notas tecnicas y limites quedan al final del resultado", technicalPanelText.includes("Notas técnicas y límites") && technicalPanelText.includes("Astronomy Engine") && $("#technicalPanel").previousElementSibling?.classList.contains("tab-panels") && $("#technicalPanel summary h3")?.textContent.includes("Notas técnicas y límites"));
         assert("Titulo de direccion vital queda formalizado", $("#interpretationPanel").textContent.includes("Dirección vital") && !$("#interpretationPanel").textContent.includes("Hacia dónde tira"));
+        assert("Condicion lunar muestra estado resumido", $("#moonPanel").textContent.includes("Estado lunar"));
         const firstAlphaIsUpper = (value) => {
           const char = Array.from(value || "").find((letter) => letter.toLocaleLowerCase("es-ES") !== letter.toLocaleUpperCase("es-ES"));
           return !char || char === char.toLocaleUpperCase("es-ES");
@@ -204,7 +206,7 @@
         assert("Dignidad mayor abre su propio modal", $("#glossaryTitle").textContent === "Dignidad mayor" && !$("#glossaryTitle").textContent.includes("Condición esencial"));
         $("#glossaryClose").click();
         const moonLabelGlossaryKeys = $$("#moonPanel .metric b [data-glossary]").map((node) => node.dataset.glossary);
-        const expectedMoonGlossaryKeys = ["moonPhase", "moonElongation", "moonLastSeparation", "moonNextApplication", "moonVoc30", "moonVocSign", "moonNoApplyingWithinOrb"];
+        const expectedMoonGlossaryKeys = ["moonStatus", "moonPhase", "moonElongation", "moonLastSeparation", "moonNextApplication", "moonVoc30", "moonVocSign", "moonNoApplyingWithinOrb"];
         assert("Labels de condicion lunar tienen modales especificos", expectedMoonGlossaryKeys.every((key) => moonLabelGlossaryKeys.includes(key)) && !moonLabelGlossaryKeys.includes("applications") && !moonLabelGlossaryKeys.includes("moonVoc"));
         $("#moonPanel [data-glossary='moonElongation']").click();
         await waitFor(() => !$("#glossaryPopover").hidden && $("#glossaryTitle").textContent.includes("Elongación"), "moon elongation glossary");
@@ -220,6 +222,10 @@
         $("#includeModern").dispatchEvent(new win.Event("change", { bubbles: true }));
         await waitFor(() => $("[data-test='modern-strict-warning']:not([hidden])"), "modern strict warning");
         assert("Modernos visibles en modo tradicional muestran aviso inmediato", $("[data-test='modern-strict-warning']:not([hidden])"));
+        const modernChartRendered = waitForChartResult(win);
+        $("#chart-form").dispatchEvent(new win.Event("submit", { bubbles: true, cancelable: true }));
+        await modernChartRendered;
+        assert("Tabla de planetas separa visibles tradicionales y modernos", $("[data-test='traditional-planets-section']") && $("[data-test='modern-planets-section']"));
 
         // 2 Aries = termino de Jupiter en los terminos egipcios.
         const ownBound = testApi.dignityGroups(testApi.dignityFor("jupiter", 2, true));
@@ -290,6 +296,7 @@
         assert("Avisos de frontera separan datos logicos de traduccion", sectWarnings.every((warning) => warning.typeCode && Array.isArray(warning.changeCodes) && warning.actionCode && !("changes" in warning) && !("action" in warning)));
         assert("El aviso de secta expone data-code estable", testApi.renderBoundaryAudit(sectWarnings).includes('data-code="sect-boundary"'));
         assert("El render de auditoria de frontera tiene anclaje estable", testApi.renderBoundaryAudit(sectWarnings).includes('data-test="boundary-audit"'));
+        assert("El render de auditoria de frontera usa definiciones escaneables", testApi.renderBoundaryAudit(sectWarnings).includes("<dl>") && testApi.renderBoundaryAudit(sectWarnings).includes("<dt>Tipo</dt>"));
         assert("El aviso de secta tiene codigos estructurados", sectWarnings.some((warning) => warning.key === "sect-boundary" && warning.changeCodes.includes("fortune-spirit-formulas") && warning.actionCode === "verify-time-coordinates-zone-rectification"));
         assert("La auditoria de frontera capitaliza cada cambio en lista", !testApi.renderBoundaryAudit(sectWarnings).includes("<li>secta") && testApi.renderBoundaryAudit(sectWarnings).includes("<li>Secta"));
 

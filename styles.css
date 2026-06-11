@@ -742,6 +742,24 @@ body.night .primary-button {
   overflow-x: auto;
 }
 
+.table-section {
+  display: grid;
+  gap: 10px;
+}
+
+.table-section + .table-section {
+  margin-top: 18px;
+}
+
+.table-section h3 {
+  margin: 0;
+  color: var(--blue-deep);
+  font-size: 0.92rem;
+  font-variant: small-caps;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -866,7 +884,6 @@ td {
 
 .boundary-audit-list article {
   display: grid;
-  gap: 4px;
   border-top: 1px dotted color-mix(in srgb, var(--blue) 42%, var(--line));
   padding-top: 8px;
 }
@@ -876,17 +893,39 @@ td {
   padding-top: 0;
 }
 
-.boundary-audit-list strong {
+.boundary-audit-list dl {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+
+.boundary-audit-list dl > div {
+  display: grid;
+  grid-template-columns: minmax(7rem, 0.35fr) minmax(0, 1fr);
+  gap: 8px;
+}
+
+.boundary-audit-list dt {
+  color: var(--blue-deep);
+  font-size: 0.76rem;
+  font-weight: 700;
+  font-variant: small-caps;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0;
+}
+
+.boundary-audit-list dd {
+  margin: 0;
+  min-width: 0;
   color: var(--ink);
+  line-height: 1.45;
 }
 
-.boundary-audit-list p {
+.boundary-audit-list dd ul {
+  display: grid;
+  gap: 2px;
   margin: 0;
-}
-
-.boundary-audit-list ul {
-  margin: 0;
-  padding-left: 1.1rem;
+  padding-left: 1rem;
 }
 
 .interpretation-panel {
@@ -1766,6 +1805,11 @@ body.night .person-card button[data-person-id] {
 
   .lot-audit-lines {
     grid-template-columns: 1fr;
+  }
+
+  .boundary-audit-list dl > div {
+    grid-template-columns: 1fr;
+    gap: 2px;
   }
 
   .lot-audit-lines dt {

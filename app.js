@@ -98,6 +98,8 @@
       calculate: "Calcular carta",
       resultEyebrow: "Resultado",
       planets: "Planetas",
+      traditionalPlanetsTitle: "Planetas visibles tradicionales",
+      modernPlanetsTitle: "Planetas modernos como capa adicional",
       places: "Lugares/Casas",
       configurations: "Configuraciones",
       missingDate: "Añade fecha y hora de nacimiento.",
@@ -260,6 +262,7 @@
       sectSensitiveDay: "Carta diurna, sensible",
       sectSensitiveNight: "Carta nocturna, sensible",
       sectSensitiveNote: "Secta técnicamente {sect}; tratar las fórmulas y testimonios dependientes de secta como sensibles por contexto temporal.",
+      sectDependencyCaution: "Testimonios con menor confianza: benéfico y maléfico de secta, maléfico contrario, Fortuna/Espíritu y triplicidad de la luminaria.",
       sectLowConfidenceJudgment: "Esta lectura usa la secta técnica calculada por Tyche, pero varios testimonios dependen de una frontera sensible. Contrasta especialmente benéfico/maléfico de secta, Fortuna/Espíritu y triplicidad si se rectifica la hora.",
       boundaryThreshold: "Umbral aplicado",
       boundaryThresholdSensitive: "{threshold} por contexto temporal sensible: {reasons}",
@@ -348,6 +351,11 @@
       weaknesses: "Debilidades",
       none: "ninguna",
       moonTitle: "Condición lunar",
+      moonStatus: "Estado lunar",
+      moonStatusActive: "Activa: perfecciona un contacto mayor antes de abandonar el signo.",
+      moonStatusVoid30: "Vacía según la definición helenística de 30°: no perfecciona contacto mayor en ese tramo.",
+      moonStatusVoidSign: "Sin perfección antes de salir del signo, aunque conserva la revisión helenística de 30°.",
+      moonStatusNoClose: "Sin aplicación cercana dentro de 12°: la señal es más amplia que puntual.",
       moonPhase: "Fase sinódica",
       moonElongation: "Elongación Sol→Luna",
       moonLastSeparation: "Último contacto",
@@ -506,6 +514,8 @@
       calculate: "Calculate chart",
       resultEyebrow: "Result",
       planets: "Planets",
+      traditionalPlanetsTitle: "Traditional visible planets",
+      modernPlanetsTitle: "Modern planets as an additional layer",
       places: "Places/Houses",
       configurations: "Configurations",
       missingDate: "Add birth date and time.",
@@ -668,6 +678,7 @@
       sectSensitiveDay: "Day chart, sensitive",
       sectSensitiveNight: "Night chart, sensitive",
       sectSensitiveNote: "Technically {sect}; treat sect-dependent formulas and testimonies as sensitive because the time context is uncertain.",
+      sectDependencyCaution: "Lower-confidence testimonies: benefic and malefic of sect, malefic contrary to sect, Fortune/Spirit, and triplicity of the sect light.",
       sectLowConfidenceJudgment: "This reading uses the technical sect calculated by Tyche, but several testimonies depend on a sensitive boundary. Check the benefic/malefic of sect, Fortune/Spirit, and triplicity especially if the birth time is rectified.",
       boundaryThreshold: "Applied threshold",
       boundaryThresholdSensitive: "{threshold} for sensitive time context: {reasons}",
@@ -756,6 +767,11 @@
       weaknesses: "Weaknesses",
       none: "none",
       moonTitle: "Lunar condition",
+      moonStatus: "Lunar status",
+      moonStatusActive: "Active: it perfects a major contact before leaving the sign.",
+      moonStatusVoid30: "Void by the Hellenistic 30° definition: it perfects no major contact in that span.",
+      moonStatusVoidSign: "No perfection before leaving the sign, while the Hellenistic 30° check remains separate.",
+      moonStatusNoClose: "No close application within 12°: the signal is broad rather than punctual.",
       moonPhase: "Synodic phase",
       moonElongation: "Sun→Moon elongation",
       moonLastSeparation: "Last contact",
@@ -1353,6 +1369,13 @@
         body: [
           "<p>Resume fase de la Luna, distancia angular respecto al Sol, aplicaciones/separaciones y posible vacío de curso.</p>",
           "<p>La Luna describe cuerpo, cambio, ritmo vital, acontecimientos cercanos y transmisión de luz entre planetas.</p>",
+        ],
+      },
+      moonStatus: {
+        title: "Estado lunar",
+        body: [
+          "<p>Resumen operativo de la condición lunar: si la Luna perfecciona un contacto, queda vacía según la regla helenística de 30°, no perfecciona antes de salir del signo o no tiene aplicación cercana por orbe.</p>",
+          "<p>La línea no sustituye los detalles inferiores; solo ordena la lectura para ver de un vistazo si la actividad lunar continúa o queda más abierta.</p>",
         ],
       },
       moonPhase: {
@@ -2004,6 +2027,13 @@
         body: [
           "<p>Summary of lunar phase, angular distance from the Sun, applications/separations, and possible void-of-course condition.</p>",
           "<p>The Moon describes body, change, vital rhythm, near events, and transmission of light among planets.</p>",
+        ],
+      },
+      moonStatus: {
+        title: "Lunar status",
+        body: [
+          "<p>Operational summary of the lunar condition: whether the Moon perfects a contact, is void by the Hellenistic 30° rule, does not perfect before leaving the sign, or has no close orb-based application.</p>",
+          "<p>This line does not replace the details below; it gives a quick reading of whether lunar activity continues or remains more open-ended.</p>",
         ],
       },
       moonPhase: {
@@ -3814,6 +3844,10 @@
     return t(stateKey === "liminal" ? "sectLiminalNote" : "sectSensitiveNote", { sect: sectLower });
   }
 
+  function sectDependencyCaution(chart) {
+    return sectSensitivityState(chart) === "stable" ? "" : t("sectDependencyCaution");
+  }
+
   function badges(items) {
     if (!items.length) return "";
     return `<div class="badge-row">${items.map((item) => `<span class="badge">${glossaryMaybe(capitalizeText(item), glossaryKeyForText(item), "capitalize-first")}</span>`).join("")}</div>`;
@@ -5409,6 +5443,7 @@
         ${metric(t("maleficContrarySect"), `${PLANETS[chart.maleficContrarySect].symbol} ${planetName(chart.maleficContrarySect)}`, "", "maleficContrarySect")}
       </div>
       ${sectSensitivityNote(chart) ? `<p class="text-note">${escapeHtml(sectSensitivityNote(chart))}</p>` : ""}
+      ${sectDependencyCaution(chart) ? `<p class="text-note">${escapeHtml(sectDependencyCaution(chart))}</p>` : ""}
       ${renderAlternateSectLots(chart)}
     `;
     $("#coreSummary").innerHTML = html;
@@ -5452,6 +5487,13 @@
     `;
   }
 
+  function moonStatusText(chart) {
+    if (chart.moon.voidOfCourse) return t("moonStatusVoid30");
+    if (chart.moon.voidOfCourseBySign) return t("moonStatusVoidSign");
+    if (!chart.moon.hasApplyingWithinOrb) return t("moonStatusNoClose");
+    return t("moonStatusActive");
+  }
+
   function renderMoon(chart) {
     const phaseDistance = chart.moon.elongation > 180 ? 360 - chart.moon.elongation : chart.moon.elongation;
     const phaseContext = t(chart.moon.elongation > 180 ? "moonBeforeNew" : "moonAfterNew", {
@@ -5462,6 +5504,7 @@
     $("#moonPanel").innerHTML = `
       <h3>${glossaryTerm(t("moonTitle"), "lunarCondition")}</h3>
       <div class="metric-grid">
+        ${metric(t("moonStatus"), moonStatusText(chart), "capitalize-first", "moonStatus")}
         ${metric(t("moonPhase"), `${chart.moon.phase} · ${phaseContext}`, "capitalize-first", "moonPhase", "moonPhase")}
         ${metric(t("moonElongation"), `${formatDecimal(chart.moon.elongation, 1)}°`, "", "moonElongation")}
         ${metric(t("moonLastSeparation"), lastSeparation, "", "moonLastSeparation")}
@@ -6801,22 +6844,56 @@
 
   function renderBoundaryAudit(warnings) {
     if (!warnings.length) return metric(t("boundaryAudit"), t("noBoundaryNotices"));
+    const fieldLabels = state.lang === "es"
+      ? {
+        type: "Tipo",
+        distance: "Distancia",
+        mayChange: "Puede cambiar",
+        action: "Acción",
+      }
+      : {
+        type: "Type",
+        distance: "Distance",
+        mayChange: "May change",
+        action: "Action",
+      };
     return `
       <section class="metric boundary-audit-list" data-test="boundary-audit">
         <b>${escapeHtml(t("boundaryAudit"))}</b>
         <div>
-          ${warnings.map((warning) => `
-            <article data-test="boundary-warning" data-code="${escapeHtml(warning.code)}" data-key="${escapeHtml(warning.key)}">
-              <strong>${escapeHtml(boundaryTypeLabel(warning))}</strong>
-              <p>${escapeHtml(state.lang === "es" ? "Distancia" : "Distance")}: ${escapeHtml(formatAngle(warning.distance))}</p>
-              ${Number.isFinite(warning.threshold) ? `<p>${escapeHtml(t("boundaryThreshold"))}: ${escapeHtml(warning.sensitiveThreshold
+          ${warnings.map((warning) => {
+            const thresholdText = Number.isFinite(warning.threshold)
+              ? (warning.sensitiveThreshold
                 ? t("boundaryThresholdSensitive", { threshold: formatAngle(warning.threshold), reasons: sensitivityReasonLabels(warning.thresholdReasonCodes).join(", ") })
-                : t("boundaryThresholdNormal", { threshold: formatAngle(warning.threshold) }))}</p>` : ""}
-              <p>${escapeHtml(state.lang === "es" ? "Puede cambiar" : "May change")}:</p>
-              <ul>${boundaryChangeLabels(warning).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-              <p>${escapeHtml(state.lang === "es" ? "Acción" : "Action")}: ${escapeHtml(boundaryActionLabel(warning))}</p>
-            </article>
-          `).join("")}
+                : t("boundaryThresholdNormal", { threshold: formatAngle(warning.threshold) }))
+              : "";
+            return `
+              <article data-test="boundary-warning" data-code="${escapeHtml(warning.code)}" data-key="${escapeHtml(warning.key)}">
+                <dl>
+                  <div>
+                    <dt>${escapeHtml(fieldLabels.type)}</dt>
+                    <dd>${escapeHtml(boundaryTypeLabel(warning))}</dd>
+                  </div>
+                  <div>
+                    <dt>${escapeHtml(fieldLabels.distance)}</dt>
+                    <dd>${escapeHtml(formatAngle(warning.distance))}</dd>
+                  </div>
+                  ${thresholdText ? `<div>
+                    <dt>${escapeHtml(t("boundaryThreshold"))}</dt>
+                    <dd>${escapeHtml(thresholdText)}</dd>
+                  </div>` : ""}
+                  <div>
+                    <dt>${escapeHtml(fieldLabels.mayChange)}</dt>
+                    <dd><ul>${boundaryChangeLabels(warning).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></dd>
+                  </div>
+                  <div>
+                    <dt>${escapeHtml(fieldLabels.action)}</dt>
+                    <dd>${escapeHtml(capitalizeText(boundaryActionLabel(warning)))}</dd>
+                  </div>
+                </dl>
+              </article>
+            `;
+          }).join("")}
         </div>
       </section>
     `;
@@ -7228,7 +7305,7 @@
       tableHead(t("tableAngularity"), "angularity"),
       tableHead(t("tablePhase"), "solarPhase"),
     ];
-    const rows = chart.planetKeys.map((key) => {
+    const planetRows = (keys) => keys.map((key) => {
       const p = chart.positions[key];
       const condition = p.dignities?.length ? glossaryList(p.dignities, chart) : "—";
       return [
@@ -7240,7 +7317,22 @@
         glossaryParts(solarPhaseTableText(key, chart)),
       ];
     });
-    $("#tab-planets").innerHTML = makeTable(headers, rows);
+    const traditionalKeys = chart.planetKeys.filter((key) => VISIBLE_KEYS.includes(key));
+    const modernKeys = chart.planetKeys.filter((key) => MODERN_KEYS.includes(key));
+    if (modernKeys.length) {
+      $("#tab-planets").innerHTML = `
+        <section class="table-section" data-test="traditional-planets-section">
+          <h3>${escapeHtml(t("traditionalPlanetsTitle"))}</h3>
+          ${makeTable(headers, planetRows(traditionalKeys))}
+        </section>
+        <section class="table-section" data-test="modern-planets-section">
+          <h3>${escapeHtml(t("modernPlanetsTitle"))}</h3>
+          ${makeTable(headers, planetRows(modernKeys))}
+        </section>
+      `;
+      return;
+    }
+    $("#tab-planets").innerHTML = makeTable(headers, planetRows(chart.planetKeys));
   }
 
   function renderHouseTable(chart) {

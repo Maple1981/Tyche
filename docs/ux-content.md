@@ -70,7 +70,15 @@ The `Sect` card should stay doctrinally narrow: chart type, sect light, benefic 
 
 If a liminal or sensitive sect chart needs alternate roles or alternate Fortune/Spirit positions, keep that material inside a collapsible subsection within the Sect card.
 
+When sect is liminal or sensitive, add a short confidence note naming the dependent testimonies that should be read cautiously: benefic/malefic of sect, malefic contrary to sect, Fortune/Spirit, and triplicity of the sect light.
+
 The `Zone used` value should stay visually clean: show the actual IANA zone or UTC offset, not the provenance suffix. Explain whether it came from IANA rules, manual offset, LMT, or historical-character data in the glossary/help modal for the label.
+
+The `Lunar condition` card should begin with a one-line status summary, then keep the separate technical checks below it: synodic phase, elongation, last separation, next application, Hellenistic 30-degree void-of-course, sign-exit void-of-course, and no close application within the configured orb.
+
+When modern planets are enabled, the planet table should visually separate `Traditional visible planets` from `Modern planets as an additional layer`. The separation is part of the doctrinal UI, not only an explanatory disclaimer.
+
+Boundary audits should be rendered as scan-friendly definition cards rather than long prose. Each warning should expose type, distance, applied threshold when present, what may change, and recommended action. Keep stable `data-test` and `data-code` hooks for regression tests.
 
 ## Tone
 

@@ -48,7 +48,7 @@ assert("Browser regression runner starts a temporary server", browserRunner.incl
 assert("Regression page emits completion state", regression.includes("__TYCHE_REGRESSION_DONE__") && regression.includes("tyche:regression-complete"));
 assert("Regression iframe is assigned after listeners", regression.includes('<iframe id="appFrame"></iframe>') && regression.indexOf("frame.addEventListener") < regression.indexOf("frame.src ="));
 assert("Regression iframe propagates cache-buster", regression.includes("test=regression&v=") && regression.includes("sameBuild(testApi.buildHash, version)"));
-assert("Regression page shows final build and schema summary", regression.includes('id="summary"') && regression.includes("Resultado:") && regression.includes("schemaVersion: loadedSchemaVersion"));
+assert("Regression page shows final build and schema summary", regression.includes('id="summary"') && regression.includes("Resultado:") && regression.includes("Build cargado") && regression.includes("Build esperado") && regression.includes("schemaVersion: loadedSchemaVersion"));
 assert("Historical cards expose natal data popover", index.includes("personDataPopover") && app.includes("data-person-source-id") && app.includes("openPersonData"));
 assert("Historical visible card omits repeated quality rows", !sectionBetween(app, "function historicalPersonCard(person)", "function renderHistoricalPeople").includes("historicalQualityRows(person)"));
 assert("Historical Wikipedia links follow active UI language", app.includes("function localizeWikipediaUrl") && sectionBetween(app, "function personWikipediaUrl(person)", "function capitalizeText").includes("localizeWikipediaUrl") && regression.includes("Wikipedia historica usa enlace ingles en interfaz EN"));
@@ -58,9 +58,10 @@ const ascLordRenderBlock = sectionBetween(app, "function renderAscLord(chart)", 
 assert("Ascendant lord condition labels use specific glossary keys", ["dignityMajor", "dignityTriplicity", "dignityMinor", "dignityAdministration", "weaknesses"].every((key) => ascLordRenderBlock.includes(`\"${key}\"`)) && !ascLordRenderBlock.includes('\"essentialCondition\"'));
 assert("Specific dignity glossary entries exist", ["dignityMajor", "dignityTriplicity", "dignityMinor", "dignityAdministration", "weaknesses"].every((key) => app.includes(`${key}: {`)));
 const moonRenderBlock = sectionBetween(app, "function renderMoon(chart)", "function renderTechnicalPanel(chart)");
-const moonGlossaryKeys = ["moonPhase", "moonElongation", "moonLastSeparation", "moonNextApplication", "moonVoc30", "moonVocSign", "moonNoApplyingWithinOrb"];
+const moonGlossaryKeys = ["moonStatus", "moonPhase", "moonElongation", "moonLastSeparation", "moonNextApplication", "moonVoc30", "moonVocSign", "moonNoApplyingWithinOrb"];
 assert("Lunar condition labels use specific glossary keys", moonGlossaryKeys.every((key) => moonRenderBlock.includes(`\"${key}\"`)) && !moonRenderBlock.includes('\"applications\"') && !moonRenderBlock.includes('\"moonVoc\"'));
 assert("Specific lunar glossary entries exist", moonGlossaryKeys.every((key) => app.includes(`${key}: {`)));
+assert("Lunar panel starts with a status summary", app.includes("function moonStatusText") && moonRenderBlock.includes('t("moonStatus")') && moonRenderBlock.includes("moonStatusText(chart)"));
 assert("Dominant focus sentence avoids double colon before house topics", app.includes("La carta pone mucho peso en la casa ${dominant.house}. ${capitalizeText(houseReadingTopics(dominant.house, \"double\"))}") && !app.includes("La carta pone mucho peso en la casa ${dominant.house}: ${houseReadingTopics"));
 const renderChartBlock = sectionBetween(app, "function renderChart(chart)", "function calculateCurrentChart()");
 assert("Technical notes and limits sit after chart tables", index.indexOf('id="tab-aspects"') < index.indexOf('id="technicalPanel"') && app.includes("technicalLimitsCompact") && app.includes("technical-notes") && renderChartBlock.indexOf("renderAspectTable(chart)") < renderChartBlock.indexOf("renderTechnicalPanel(chart)"));
@@ -70,6 +71,8 @@ assert("First house plain topics stay physical and bilingual", app.includes('1: 
 assert("Life direction language stays formal", app.includes('lifeDirectionTitle: "Dirección vital"') && app.includes('lifeDirectionTitle: "Life Direction"') && !app.includes("Hacia dónde tira la carta") && !app.includes("Where the chart pulls"));
 assert("Structured lists and definitions are normalized to initial caps", app.includes("function capitalizeStructuredText") && app.includes("\"dl dt, dl dd, ul li, ol li\"") && app.includes("capitalizeStructuredText($(\"#results\"))"));
 assert("Boundary audit list labels are capitalized before rendering", sectionBetween(app, "function boundaryChangeLabels(warning)", "function boundaryWarningText").includes("capitalizeText"));
+const boundaryRenderBlock = sectionBetween(app, "function renderBoundaryAudit(warnings)", "function lotByKey(chart, key)");
+assert("Boundary audit renders scan-friendly definition cards", boundaryRenderBlock.includes("fieldLabels") && boundaryRenderBlock.includes("<dl>") && boundaryRenderBlock.includes('data-test="boundary-warning"'));
 assert("Zone used display omits source suffix", app.includes("const manualZoneLabel = `UTC${formatOffset(manualOffset)}`") && !app.includes("const manualZoneLabel = `UTC${formatOffset(manualOffset)} ·"));
 assert("Zone used help explains historical source", app.includes("datos natales auditados del personaje") && regression.includes("Ayuda de Zona usada explica procedencia historica"));
 
@@ -92,7 +95,10 @@ assert("Technical evidence sections have stable hooks", app.includes('data-test=
 assert("Main lots expose direct administration hook", app.includes("lotAuditDirectAdministration") && app.includes("direct-administration") && app.includes("lot-direct-administration"));
 assert("Lot pressure audit preserves raw and regulated pressure", app.includes("function lotPressureAuditText") && app.includes("function lotPressureAuditHtml") && app.includes("lot-pressure-lines") && app.includes("Presión bruta") && app.includes("Raw pressure"));
 assert("Sensitive sect judgment notice is visible", app.includes("sectLowConfidenceJudgment") && app.includes("sectConfidenceNotice"));
+assert("Sensitive sect card names the lower-confidence testimonies", app.includes("sectDependencyCaution") && app.includes("sectDependencyCaution(chart)"));
 assert("Modern planets are blocked from judgment helpers", app.includes("!VISIBLE_KEYS.includes(target) || !VISIBLE_KEYS.includes(actor)") && app.includes(".filter((key) => VISIBLE_KEYS.includes(key))"));
+const planetRenderBlock = sectionBetween(app, "function renderPlanetTable(chart)", "function renderHouseTable(chart)");
+assert("Modern planets are visually separated from traditional visible planets", planetRenderBlock.includes("traditional-planets-section") && planetRenderBlock.includes("modern-planets-section") && app.includes("traditionalPlanetsTitle") && app.includes("modernPlanetsTitle"));
 
 assert("Historical archive has substantial example coverage", personCount >= 35);
 assert("Historical archive is fully externally audited", personCount === auditIds.length && historicalIds.every((id) => auditIds.includes(id)));
