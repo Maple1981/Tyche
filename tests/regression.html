@@ -184,10 +184,13 @@
         const coreSummaryText = $("#coreSummary").textContent;
         const anglesPanelText = $("#anglesPanel").textContent;
         const technicalPanelText = $("#technicalPanel").textContent;
+        const chartMetaText = $("#chartMeta").textContent;
         assert("La card Secta no mezcla angulos, zona ni limites", coreSummaryText.includes("Secta") && !coreSummaryText.includes("Ascendente") && !coreSummaryText.includes("Zona usada") && !coreSummaryText.includes("Límites"));
         assert("Angulos y zona separa Ascendente, MC, IC y zona usada", anglesPanelText.includes("Ángulos y zona") && anglesPanelText.includes("Ascendente") && anglesPanelText.includes("MC") && anglesPanelText.includes("IC") && anglesPanelText.includes("Zona usada"));
         assert("Ascendente y Descendente muestran casa como MC e IC", anglesPanelText.includes("Ascendente") && anglesPanelText.includes("Casa 1") && anglesPanelText.includes("Descendente") && anglesPanelText.includes("Casa 7"));
-        assert("Notas tecnicas y limites quedan al final del resultado", technicalPanelText.includes("Notas técnicas y límites") && technicalPanelText.includes("Astronomy Engine") && $("#technicalPanel").previousElementSibling?.classList.contains("tab-panels"));
+        assert("Encabezado de carta no muestra sexo no usado", chartMetaText.includes("Fecha:") && chartMetaText.includes("Lugar de nacimiento:") && !chartMetaText.includes("Sexo"));
+        assert("Notas tecnicas y limites quedan al final del resultado", technicalPanelText.includes("Notas técnicas y límites") && technicalPanelText.includes("Astronomy Engine") && $("#technicalPanel").previousElementSibling?.classList.contains("tab-panels") && $("#technicalPanel summary h3")?.textContent.includes("Notas técnicas y límites"));
+        assert("Titulo de direccion vital queda formalizado", $("#interpretationPanel").textContent.includes("Dirección vital") && !$("#interpretationPanel").textContent.includes("Hacia dónde tira"));
         const firstAlphaIsUpper = (value) => {
           const char = Array.from(value || "").find((letter) => letter.toLocaleLowerCase("es-ES") !== letter.toLocaleUpperCase("es-ES"));
           return !char || char === char.toLocaleUpperCase("es-ES");

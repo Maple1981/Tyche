@@ -144,7 +144,7 @@
       chartFor: "Carta para {place}",
       chartForPerson: "Carta para {name}",
       anonymousChart: "Carta anónima",
-      chartMeta: "Fecha: {date} · Hora: {time} · Lugar de nacimiento: {place} · Sexo: {sex}",
+      chartMeta: "Fecha: {date} · Hora: {time} · Lugar de nacimiento: {place}",
       dayChart: "Carta diurna",
       nightChart: "Carta nocturna",
       sect: "Secta",
@@ -164,7 +164,7 @@
       technicalAstronomyTitle: "Cálculo astronómico",
       technicalJudgmentTitle: "Criterios de juicio",
       technicalMcIcNote: "En casas de signos enteros, el MC y el IC no abren las casas 10 y 4: son puntos astronómicos sensibles, y Tyche muestra también en qué casa caen.",
-      technicalLimitsCompact: "Tyche calcula la carta localmente en tu navegador con Astronomy Engine. La precisión planetaria aproximada es ±1′; Ascendente, MC, casas y lotes dependen de la hora, coordenadas y zona usada.",
+      technicalLimitsCompact: "Efemérides locales mediante Astronomy Engine. La precisión planetaria aproximada es ±1′; Ascendente, MC, casas y lotes dependen de la hora, coordenadas y zona usada.",
       technicalUsePrivacyCompact: "Uso educativo. Para rectificaciones, cartas críticas o investigación profesional, contrasta los datos con efemérides y fuentes especializadas. La búsqueda de lugar y las imágenes históricas pueden consultar servicios externos.",
       interpretationTitle: "Lectura natal",
       interpretationLeadTitle: "En una frase",
@@ -177,7 +177,7 @@
       dominantTopicTitle: "Focos principales",
       mainFocusTitle: "Zonas más activadas",
       hierarchyTitle: "Base de lectura",
-      lifeDirectionTitle: "Hacia dónde tira la carta",
+      lifeDirectionTitle: "Dirección vital",
       publicProjectionTitle: "Proyección pública",
       limitsTitle: "Límites",
       limitsEducational: "Uso educativo: la lectura no sustituye efemérides profesionales ni una investigación de rectificación.",
@@ -337,7 +337,7 @@
       astronomyEngine: "Astronomy Engine local",
       fallbackEngine: "Motor aproximado de respaldo",
       ascLordTitle: "Regente del Ascendente",
-      ascLordText: "{lord} rige {ascSign} y cae en {lordPosition}, casa {house}. Esta casa orienta la dirección principal de la carta hacia {topics}. Su angularidad es {angularity}.",
+      ascLordText: "{lord} rige {ascSign} y cae en {lordPosition}, casa {house}. Al regir el Ascendente, vincula la dirección vital del nativo con los temas de esta casa: {topics}. Su angularidad es {angularity}.",
       dignifiedText: "Condición esencial: {condition}.",
       mcWholeSignNote: "En casas de signos enteros, las casas se cuentan desde el signo Ascendente. El MC y el IC no abren las casas 10 y 4: son puntos astronómicos sensibles. Tyche muestra también en qué casa caen.",
       noMajorDignity: "sin dignidad mayor",
@@ -552,7 +552,7 @@
       chartFor: "Chart for {place}",
       chartForPerson: "Chart for {name}",
       anonymousChart: "Anonymous chart",
-      chartMeta: "Date: {date} · Time: {time} · Birthplace: {place} · Sex: {sex}",
+      chartMeta: "Date: {date} · Time: {time} · Birthplace: {place}",
       dayChart: "Day chart",
       nightChart: "Night chart",
       sect: "Sect",
@@ -572,7 +572,7 @@
       technicalAstronomyTitle: "Astronomical calculation",
       technicalJudgmentTitle: "Judgment criteria",
       technicalMcIcNote: "In Whole Sign Houses, the MC and IC do not open houses 10 and 4: they are sensitive astronomical points, and Tyche also shows which house they fall in.",
-      technicalLimitsCompact: "Tyche calculates the chart locally in your browser with Astronomy Engine. Approximate planetary accuracy is ±1′; Ascendant, MC, houses, and lots depend on the time, coordinates, and time zone used.",
+      technicalLimitsCompact: "Local ephemerides through Astronomy Engine. Approximate planetary accuracy is ±1′; Ascendant, MC, houses, and lots depend on the time, coordinates, and time zone used.",
       technicalUsePrivacyCompact: "Educational use. For rectification, critical charts, or professional research, compare the data with specialized ephemerides and sources. Place search and historical images may contact external services.",
       interpretationTitle: "Natal reading",
       interpretationLeadTitle: "In one sentence",
@@ -585,7 +585,7 @@
       dominantTopicTitle: "Main focuses",
       mainFocusTitle: "Most activated zones",
       hierarchyTitle: "Reading basis",
-      lifeDirectionTitle: "Where the chart pulls",
+      lifeDirectionTitle: "Life Direction",
       publicProjectionTitle: "Public projection",
       limitsTitle: "Limits",
       limitsEducational: "Educational use: the reading does not replace professional ephemerides or rectification research.",
@@ -745,7 +745,7 @@
       astronomyEngine: "Local Astronomy Engine",
       fallbackEngine: "Approximate fallback engine",
       ascLordTitle: "Ascendant / Hour-Marker Lord",
-      ascLordText: "{lord} rules {ascSign} and falls in {lordPosition}, house {house}. This house steers the chart toward {topics}. Its angularity is {angularity}.",
+      ascLordText: "{lord} rules {ascSign} and falls in {lordPosition}, house {house}. As ruler of the Ascendant / Hour-Marker, it links the native's life direction with this house's topics: {topics}. Its angularity is {angularity}.",
       dignifiedText: "Essential condition: {condition}.",
       mcWholeSignNote: "In Whole Sign Houses, houses are counted from the Ascendant sign. The MC and IC do not open houses 10 and 4: they are sensitive astronomical points. Tyche also shows which house they fall in.",
       noMajorDignity: "no major dignity",
@@ -5174,14 +5174,14 @@
       `;
     }).join("");
     return `
-      <section class="alternate-sect-lots" data-test="alternate-sect-lots">
-        <h4>${escapeHtml(t("alternateSectLotsTitle"))}</h4>
+      <details class="alternate-sect-lots" data-test="alternate-sect-lots">
+        <summary>${escapeHtml(t("alternateSectLotsTitle"))}</summary>
         <div class="alternate-sect-roles" data-test="alternate-sect-roles">
           <p><b>${escapeHtml(t("sectRolesUsedByTyche"))}</b>: ${escapeHtml(sectRoleSnapshotText(currentRoles))}</p>
           <p><b>${escapeHtml(t("sectRolesIfReversed"))}</b>: ${escapeHtml(sectRoleSnapshotText(alternateRoles))}</p>
         </div>
         <ul>${rows}</ul>
-      </section>
+      </details>
     `;
   }
 
@@ -5379,12 +5379,12 @@
     renderAnglesPanel(chart);
     renderAscLord(chart);
     renderMoon(chart);
-    renderTechnicalPanel(chart);
     renderInterpretation(chart);
     renderPlanetTable(chart);
     renderHouseTable(chart);
     renderLotTable(chart);
     renderAspectTable(chart);
+    renderTechnicalPanel(chart);
     capitalizeStructuredText($("#results"));
     $("#results").scrollIntoView({ behavior: "smooth", block: "start" });
     window.dispatchEvent(new CustomEvent("tyche:chart-rendered", { detail: { chart } }));
@@ -5487,11 +5487,10 @@
       : t(chart.input.zodiac);
     $("#technicalPanel").innerHTML = `
       <details>
-        <summary>${escapeHtml(t("technicalTitle"))}</summary>
+        <summary><h3>${escapeHtml(t("technicalTitle"))}</h3></summary>
         <div class="technical-notes">
           <p>${escapeHtml(t("technicalLimitsCompact"))}</p>
           <p>${escapeHtml(t("technicalMcIcNote"))}</p>
-          <p>${escapeHtml(t("technicalUsePrivacyCompact"))}</p>
         </div>
         <section class="technical-section">
           <h4>${escapeHtml(t("technicalAstronomyTitle"))}</h4>
@@ -5581,7 +5580,7 @@
   function plainHouseTopics(house) {
     const topics = {
       es: {
-        1: "cuerpo, salud, apariencia, carácter y presencia personal",
+        1: "cuerpo, salud, apariencia, constitución y presencia personal",
         2: "recursos, dinero y medios de vida",
         3: "aprendizaje, escritura, mensajes, hermanos y entorno cercano",
         4: "raíces, hogar, familia, mundo privado y finales",
@@ -5595,7 +5594,7 @@
         12: "aislamiento, cargas, pérdidas, encierros y situaciones difíciles de controlar",
       },
       en: {
-        1: "body, character, and personal direction",
+        1: "body, health, appearance, constitution, and personal presence",
         2: "resources, money, and livelihood",
         3: "learning, writing, messages, siblings, and the nearby environment",
         4: "roots, home, family, private life, and endings",

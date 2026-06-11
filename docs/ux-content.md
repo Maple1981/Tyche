@@ -34,14 +34,17 @@ After calculation, show the result in this order:
 2. Sect.
 3. Angles and time-zone basis.
 4. Hour-Marker lord panel.
-5. Plain-language natal reading with collapsible technical evidence.
-6. Planet table.
-7. Whole sign houses.
-8. Lots.
-9. Configurations/aspects.
-10. Collapsed technical notes, precision limits, privacy scope, and audit details.
+5. Lunar condition.
+6. Plain-language natal reading with collapsible technical evidence.
+7. Planet table.
+8. Whole sign houses.
+9. Lots.
+10. Configurations/aspects.
+11. Collapsed technical notes, calculation limits, and audit details.
 
-The calculated chart view should include a visible but visually secondary limits section, not only footer text. Keep it out of the immediate sect card. It should state educational scope, approximate planetary precision, angle sensitivity to time/place/zone, and the fact that place search and historical images may contact external services.
+The calculated chart view should include a visible but visually secondary technical-notes section, not only footer text. Keep it out of the immediate sect card. It should state chart-specific calculation limits, approximate planetary precision, angle sensitivity to time/place/zone, and boundary/audit details. General privacy, educational-use, attribution, and external-service language belongs in the footer.
+
+The chart header should show date, time, and birthplace. Optional sex metadata stays in advanced options and historical cards, but should not appear in the calculated chart header while it does not affect the base judgment.
 
 Advanced options that move away from the default model should warn immediately, not only after calculation. This applies to Julian calendar, approximate sidereal zodiac, and modern planets shown as an unweighted layer in traditional mode.
 
@@ -64,6 +67,8 @@ The Hour-Marker lord panel should answer:
 Whole Sign Houses should explain that the MC and IC are astronomical points and do not always fall in houses 10 and 4.
 
 The `Sect` card should stay doctrinally narrow: chart type, sect light, benefic of sect, malefic of sect, malefic contrary to sect, and any liminal/sensitive sect warning. Put Ascendant, Descendant, MC, IC, and the time-zone basis in a separate `Angles and zone` card.
+
+If a liminal or sensitive sect chart needs alternate roles or alternate Fortune/Spirit positions, keep that material inside a collapsible subsection within the Sect card.
 
 The `Zone used` value should stay visually clean: show the actual IANA zone or UTC offset, not the provenance suffix. Explain whether it came from IANA rules, manual offset, LMT, or historical-character data in the glossary/help modal for the label.
 
