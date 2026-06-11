@@ -22,7 +22,7 @@ When a manual offset is used, label it as manual or as historical example data. 
 
 Default zodiac is tropical. A sidereal option may be present only as an advanced setting and should be labeled as approximate and outside the strict tropical default.
 
-Julian-calendar support is a basic date conversion. For ancient or premodern charts, the app must warn that local calendar practice, local mean time, historical offset, and the time source need separate verification. BCE dates are blocked in the current form until a specific CE/BCE era control exists; otherwise year 0 and negative years are too easy to confuse with historical chronology.
+Julian-calendar support is a basic date conversion. For ancient or premodern charts, the app must warn that local calendar practice, local mean time, historical offset, and the time source need separate verification. BCE dates are blocked in the current form until a specific CE/BCE era control exists; otherwise year 0 and negative years are too easy to confuse with historical chronology. Internal BCE parsing must remain explicit opt-in rather than accepted accidentally by the public date field.
 
 ## Angles
 
@@ -47,9 +47,9 @@ Boundary notices are audit flags, not reinterpretations. Show them when:
 - A calculated lot that enters display or judgment is within 1 degree of a sign/whole-sign-house change.
 - A visible planet is within 30 arcminutes of an Egyptian bound change.
 
-Show the boundary audit in technical data, and repeat the detailed notices in the interpretation evidence when any notices exist. Each notice should name the boundary type, distance, what may change, and what the user should verify. Boundary notices need stable unique keys such as `sect-boundary`, `mc-sign-boundary`, `lot-boundary:fortune`, and `planet-bound-boundary:mars`, plus rendered `data-code` hooks for tests.
+Show the boundary audit in technical data, and repeat the detailed notices in the interpretation evidence when any notices exist. Each rendered notice should name the boundary type, distance, what may change, and what the user should verify. Boundary notices need stable unique keys such as `sect-boundary`, `mc-sign-boundary`, `lot-boundary:fortune`, and `planet-bound-boundary:mars`, plus rendered `data-code` hooks for tests.
 
-The warning object should keep structural codes alongside translated text: `changeCodes`, `actionCode`, threshold reason codes, and for MC/IC sign boundaries the current sign/house, possible adjacent sign/house, and whether the boundary is previous or next. Rendering may translate those codes, but tests should prefer the stable fields.
+The warning object should keep structural codes, not translated text: `typeCode`, `changeCodes`, `actionCode`, threshold reason codes, and for MC/IC sign boundaries the current sign/house, possible adjacent sign/house, and whether the boundary is previous or next. Rendering may translate those codes, but tests should prefer the stable fields.
 
 ## Sect
 
@@ -170,7 +170,11 @@ The standard rule reverses the luminaries by day and night. A small number of ne
 
 When sect is liminal or sensitive, Tyche should show the sect roles and the Fortune/Spirit positions used by the current technical sect, plus the alternate roles and lot positions that would result if sect were reversed. The role change affects sect light, benefic of sect, malefic of sect, malefic contrary to sect, Fortune/Spirit formulas, triplicity emphasis, and judgment confidence.
 
+The visible interpretation should state that a liminal or sensitive sect chart is a lower-confidence sect judgment: Tyche uses the technical sect it calculated, but the reader should compare sect-dependent roles, Fortune/Spirit, and triplicity if the time is rectified.
+
 If a benefic or malefic is itself the domicile lord of Fortune or Spirit, that direct administration should be surfaced separately from ordinary testimony by configuration. For example, "Jupiter administers Fortune and is the benefic of sect" is a stronger structural statement than a generic benefic contact.
+
+When malefic pressure to Fortune or Spirit is regulated by reception, show the raw pressure and the regulation separately. Reception may channel, formalize, or regulate the pressure; it should not make the original malefic testimony disappear.
 
 Eros and Necessity use the older Fortune/Spirit-based tradition:
 

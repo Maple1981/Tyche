@@ -39,11 +39,12 @@
     <main>
       <h1>Tyche regression smoke tests</h1>
       <ol id="results"></ol>
-      <iframe id="appFrame" src="../index.html?test=regression"></iframe>
+      <iframe id="appFrame"></iframe>
     </main>
     <script>
       const results = document.querySelector("#results");
       const frame = document.querySelector("#appFrame");
+      const version = new URLSearchParams(location.search).get("v") || "dev";
       let resultCount = 0;
       let failureCount = 0;
 
@@ -115,6 +116,7 @@
         const testApi = win.TycheTest;
         assert("TycheTest queda congelado en modo regresion", Object.isFrozen(testApi));
         assert("TycheTest expone version de esquema esperada", testApi.schemaVersion === 2);
+        assert("TycheTest expone build hash efectivo", testApi.buildHash === version);
 
         $("#birthDate").value = "1980-01-01";
         $("#birthTime").value = "12:00";
@@ -134,6 +136,7 @@
 
         assert("Fortuna y Espiritu siguen auditables aunque se oculten en la tabla", $("[data-test='main-lots-audit']") && $("[data-test='main-lot-fortune']") && $("[data-test='main-lot-spirit']"));
         assert("La base tecnica queda subdividida en score, lotes y evidencias", $("[data-test='evidence-score']") && $("[data-test='evidence-main-lots']") && $("[data-test='evidence-general']"));
+        assert("Los lotes principales resaltan administracion directa", $("[data-test='main-lot-fortune-direct-administration']") && $("[data-test='main-lot-spirit-direct-administration']"));
 
         $("#techniqueMode").value = "strict";
         $("#includeModern").checked = true;
@@ -200,6 +203,7 @@
         const sectChart = { ...chart, sunAltitude: 0.2 };
         const sectWarnings = testApi.boundaryWarnings(sectChart);
         assert("Sol cerca del horizonte produce aviso de secta", sectWarnings.some((warning) => warning.key === "sect-boundary"));
+        assert("Avisos de frontera separan datos logicos de traduccion", sectWarnings.every((warning) => warning.typeCode && Array.isArray(warning.changeCodes) && warning.actionCode && !("changes" in warning) && !("action" in warning)));
         assert("El aviso de secta expone data-code estable", testApi.renderBoundaryAudit(sectWarnings).includes('data-code="sect-boundary"'));
         assert("El render de auditoria de frontera tiene anclaje estable", testApi.renderBoundaryAudit(sectWarnings).includes('data-test="boundary-audit"'));
         assert("El aviso de secta tiene codigos estructurados", sectWarnings.some((warning) => warning.key === "sect-boundary" && warning.changeCodes.includes("fortune-spirit-formulas") && warning.actionCode === "verify-time-coordinates-zone-rectification"));
@@ -262,6 +266,9 @@
           .filter((key) => key !== "moon" && key !== "sun")
           .flatMap((key) => testApi.lunarAspectCandidates(chart.positions.moon, chart.positions[key], 1, 30, chart, key));
         assert("Metodo lunar iterativo produce contactos refinados cuando hay carta completa", iterativeContact.some((candidate) => candidate.method === "iterative"));
+        const linearSaturn = testApi.linearLunarAspectCandidates(chart.positions.moon, chart.positions.saturn, 1, 30)[0];
+        const iterativeSaturn = testApi.lunarAspectCandidatesIterative("saturn", 1, 30, chart)[0];
+        assert("Busqueda lunar iterativa corrige la estimacion lineal", linearSaturn && iterativeSaturn && Math.abs(linearSaturn.days - iterativeSaturn.days) > 0.01);
 
         const mcNextChart = { ...chart, angles: { ...chart.angles, mc: 29.7, ic: 209.7 } };
         const mcNext = testApi.boundaryWarnings(mcNextChart).find((warning) => warning.key === "mc-sign-boundary");
@@ -296,6 +303,10 @@
         assert("Score helenistico no contiene Urano", !modernScoreText.includes("uranus"));
         assert("Score helenistico no contiene Neptuno", !modernScoreText.includes("neptune"));
         assert("Score helenistico no contiene Pluton", !modernScoreText.includes("pluto"));
+        assert("VISIBLE_KEYS conserva solo planetas visibles clasicos", testApi.VISIBLE_KEYS.every((key) => !["uranus", "neptune", "pluto"].includes(key)));
+        assert("Planetas modernos no entran en juicios relacionales", testApi.planetRelationJudgment("sun", "uranus", modernChart, "support") === "");
+        assert("Planetas modernos no entran en testimonios de lotes", testApi.lotTestimonyItems(testApi.lotByKey(modernChart, "fortune"), ["uranus", "neptune", "pluto"], modernChart, "support").length === 0);
+        assert("Planetas modernos no entran en angularidad visible del juicio", testApi.visibleAngularPlanets(modernChart).every((key) => !["uranus", "neptune", "pluto"].includes(key)));
         assert("Las formulas de lotes principales no usan planetas modernos", !["uranus", "neptune", "pluto"].some((key) => (
           testApi.lotFormulaText("fortune", true).toLowerCase().includes(key)
           || testApi.lotFormulaText("spirit", false).toLowerCase().includes(key)
@@ -308,7 +319,8 @@
         run()
           .catch((error) => record(error.message || String(error), false))
           .finally(finish);
-      });
+      }, { once: true });
+      frame.src = `../index.html?test=regression&v=${encodeURIComponent(version)}`;
     </script>
   </body>
 </html>

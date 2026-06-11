@@ -108,7 +108,9 @@ The interface should feel mobile-first, calm, scholarly, and usable:
 - Browser regression tests should use stable `data-test` hooks and the `window.TycheTest` API exposed only in `?test=regression` mode, not translated prose.
 - Keep `window.TycheTest` frozen, limited to regression mode, and broad enough to test calculation and judgment helpers without scraping rendered copy.
 - Version `window.TycheTest` with `schemaVersion` whenever its exposed helper names or result shapes become test dependencies.
+- Expose `TycheTest.buildHash` from the `v` query parameter for publication audits, and have `tests/regression.html?v=<tag>` pass that tag into the iframe. `index.html` should propagate `v` to CSS and JS assets so tests do not mix a fresh smoke page with cached app files.
 - Render boundary notices with stable unique keys/codes such as `sect-boundary`, `mc-sign-boundary`, `lot-boundary:fortune`, and `planet-bound-boundary:mars`.
+- Keep `boundaryWarnings()` language-neutral: return `typeCode`, `changeCodes`, `actionCode`, distances, threshold reason codes, and structured sign/house fields. Translate those codes only in render/evidence helpers.
 - `tests/browser-regression-runner.js` is an optional local smoke runner. It may use Playwright and an installed browser for verification, but Tyche itself must not gain a build step or runtime dependency from it.
 - Hard rule: do not run `git push`, publish, deploy, or update GitHub Pages unless the user explicitly asks for that exact action in the current turn.
 

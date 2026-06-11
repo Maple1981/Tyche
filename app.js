@@ -8,6 +8,16 @@
   const PLACE_SEARCH_DELAY = 260;
   const PLACE_RESULT_LIMIT = 8;
   const TYCHE_TEST_SCHEMA_VERSION = 2;
+  const TYCHE_BUILD_HASH = (() => {
+    try {
+      const scriptVersion = document.currentScript?.src
+        ? new URL(document.currentScript.src, window.location.href).searchParams.get("v")
+        : "";
+      return scriptVersion || window.TYCHE_BUILD_HASH || new URLSearchParams(window.location.search).get("v") || "dev";
+    } catch {
+      return window.TYCHE_BUILD_HASH || "dev";
+    }
+  })();
   const TIME_CONFIDENCE_VALUES = Object.freeze([
     "exact",
     "rounded-to-minute",
@@ -244,9 +254,44 @@
       sectSensitiveDay: "Carta diurna, sensible",
       sectSensitiveNight: "Carta nocturna, sensible",
       sectSensitiveNote: "Secta técnicamente {sect}; tratar las fórmulas y testimonios dependientes de secta como sensibles por contexto temporal.",
+      sectLowConfidenceJudgment: "Esta lectura usa la secta técnica calculada por Tyche, pero varios testimonios dependen de una frontera sensible. Contrasta especialmente benéfico/maléfico de secta, Fortuna/Espíritu y triplicidad si se rectifica la hora.",
       boundaryThreshold: "Umbral aplicado",
       boundaryThresholdSensitive: "{threshold} por contexto temporal sensible: {reasons}",
       boundaryThresholdNormal: "{threshold} estándar",
+      boundaryTypeSect: "Secta cerca del horizonte",
+      boundaryTypeAsc: "Ascendente cerca de cambio de signo",
+      boundaryTypeMc: "MC cerca de cambio de signo",
+      boundaryTypeIc: "IC cerca de cambio de signo",
+      boundaryTypeLot: "{lot} cerca de cambio de signo/casa",
+      boundaryTypePlanetBound: "{planet} cerca de cambio de término",
+      boundaryChangeSect: "secta",
+      boundaryChangeSectLight: "luminaria de la secta",
+      boundaryChangeBeneficMaleficSect: "benéfico/maléfico de la secta",
+      boundaryChangeContraryMalefic: "maléfico contrario",
+      boundaryChangeFortuneSpirit: "fórmulas de Fortuna/Espíritu",
+      boundaryChangeGeneralJudgment: "juicio general",
+      boundaryChangeAscLord: "regente del Ascendente",
+      boundaryChangeWholeSignHouses: "casas por signos enteros",
+      boundaryChangeLots: "lotes",
+      boundaryChangeMainFocuses: "focos principales",
+      boundaryChangeMcHouse: "casa por signos enteros del MC",
+      boundaryChangeIcHouse: "casa por signos enteros del IC",
+      boundaryChangeChartProjection: "proyección/fundamento de la carta",
+      boundaryChangeSecondaryFocuses: "focos secundarios",
+      boundaryChangeLotHouse: "casa del lote",
+      boundaryChangeLotLord: "señor del lote",
+      boundaryChangeTopicReading: "lectura del tema",
+      boundaryChangeDegreeAdministration: "administración del grado",
+      boundaryChangeOwnMinorDignity: "dignidad menor propia si procede",
+      boundaryChangeBoundReception: "recepción por término",
+      boundaryActionVerifyRectification: "verificar hora, coordenadas, zona usada y posible rectificación",
+      boundaryActionReviewTimeSource: "revisar hora, fuente o rectificación",
+      boundaryActionVerifyZone: "verificar hora, coordenadas y zona usada",
+      boundaryActionReviewTimeCoordinates: "revisar hora y coordenadas",
+      boundaryActionReviewPlanetaryPrecision: "revisar minutos de hora y precisión planetaria",
+      boundaryShiftText: "{angle} a {distance} del {side}; actual: {currentSign}, casa {currentHouse}; posible por pequeña variación: {possibleSign}, casa {possibleHouse}",
+      boundarySidePrevious: "límite anterior",
+      boundarySideNext: "límite siguiente",
       sensitiveJulian: "calendario juliano",
       sensitiveAuditPending: "datos natales pendientes de auditoría",
       sensitiveTimeConfidence: "hora natal no exacta o redondeada",
@@ -262,6 +307,7 @@
       nightFormulaLabel: "fórmula nocturna",
       lotAuditPosition: "Posición",
       lotAuditLord: "Señor",
+      lotAuditDirectAdministration: "Administración directa",
       lotAuditLordRole: "Rol del señor",
       lotAuditFormula: "Fórmula",
       lotAuditTestimonies: "Testimonios",
@@ -608,9 +654,44 @@
       sectSensitiveDay: "Day chart, sensitive",
       sectSensitiveNight: "Night chart, sensitive",
       sectSensitiveNote: "Technically {sect}; treat sect-dependent formulas and testimonies as sensitive because the time context is uncertain.",
+      sectLowConfidenceJudgment: "This reading uses the technical sect calculated by Tyche, but several testimonies depend on a sensitive boundary. Check the benefic/malefic of sect, Fortune/Spirit, and triplicity especially if the birth time is rectified.",
       boundaryThreshold: "Applied threshold",
       boundaryThresholdSensitive: "{threshold} for sensitive time context: {reasons}",
       boundaryThresholdNormal: "{threshold} standard",
+      boundaryTypeSect: "Sect near horizon",
+      boundaryTypeAsc: "Ascendant near sign change",
+      boundaryTypeMc: "MC near sign change",
+      boundaryTypeIc: "IC near sign change",
+      boundaryTypeLot: "{lot} near sign/house change",
+      boundaryTypePlanetBound: "{planet} near bound change",
+      boundaryChangeSect: "sect",
+      boundaryChangeSectLight: "sect light",
+      boundaryChangeBeneficMaleficSect: "benefic/malefic of sect",
+      boundaryChangeContraryMalefic: "contrary malefic",
+      boundaryChangeFortuneSpirit: "Fortune/Spirit formulas",
+      boundaryChangeGeneralJudgment: "general judgment",
+      boundaryChangeAscLord: "Ascendant lord",
+      boundaryChangeWholeSignHouses: "whole-sign houses",
+      boundaryChangeLots: "lots",
+      boundaryChangeMainFocuses: "main focuses",
+      boundaryChangeMcHouse: "MC whole-sign house",
+      boundaryChangeIcHouse: "IC whole-sign house",
+      boundaryChangeChartProjection: "chart projection/foundation",
+      boundaryChangeSecondaryFocuses: "secondary focuses",
+      boundaryChangeLotHouse: "lot house",
+      boundaryChangeLotLord: "lot lord",
+      boundaryChangeTopicReading: "topic reading",
+      boundaryChangeDegreeAdministration: "degree administration",
+      boundaryChangeOwnMinorDignity: "own minor dignity if applicable",
+      boundaryChangeBoundReception: "reception by bound",
+      boundaryActionVerifyRectification: "verify time, coordinates, zone used, and possible rectification",
+      boundaryActionReviewTimeSource: "review time, source, or rectification",
+      boundaryActionVerifyZone: "verify time, coordinates, and zone used",
+      boundaryActionReviewTimeCoordinates: "review time and coordinates",
+      boundaryActionReviewPlanetaryPrecision: "review birth-time minutes and planetary precision",
+      boundaryShiftText: "{angle} within {distance} of the {side}; current: {currentSign}, house {currentHouse}; possible with a small variation: {possibleSign}, house {possibleHouse}",
+      boundarySidePrevious: "previous boundary",
+      boundarySideNext: "next boundary",
       sensitiveJulian: "Julian calendar",
       sensitiveAuditPending: "pending natal-data audit",
       sensitiveTimeConfidence: "birth time not exact or rounded",
@@ -626,6 +707,7 @@
       nightFormulaLabel: "night formula",
       lotAuditPosition: "Position",
       lotAuditLord: "Lord",
+      lotAuditDirectAdministration: "Direct administration",
       lotAuditLordRole: "Lord role",
       lotAuditFormula: "Formula",
       lotAuditTestimonies: "Testimonies",
@@ -3999,8 +4081,8 @@
     }).format(astronomyTimeFromJd(jd));
   }
 
-  function parseDate(value) {
-    const match = /^(\d{1,6})-(\d{2})-(\d{2})$/.exec(value);
+  function parseDate(value, { allowBce = false } = {}) {
+    const match = (allowBce ? /^(-?\d{1,6})-(\d{2})-(\d{2})$/ : /^(\d{1,6})-(\d{2})-(\d{2})$/).exec(value);
     if (!match) return null;
     return { y: Number(match[1]), m: Number(match[2]), d: Number(match[3]) };
   }
@@ -5850,6 +5932,7 @@
 
   function planetRelationJudgment(target, actor, chart, role) {
     if (target === actor) return "";
+    if (!VISIBLE_KEYS.includes(target) || !VISIBLE_KEYS.includes(actor)) return "";
     const targetPos = chart.positions[target];
     const actorPos = chart.positions[actor];
     const signType = signAspectType(signOf(targetPos.lon), signOf(actorPos.lon));
@@ -5980,6 +6063,14 @@
       : `${planetLabel(lot.lord)} administers ${lotName(lot.key)} and is the ${role}.`;
   }
 
+  function directLotAdministrationText(lot, chart) {
+    const role = lotPlanetRoleText(lot.lord, chart);
+    const lordText = state.lang === "es"
+      ? `Señor de ${lotName(lot.key)}: ${planetLabel(lot.lord)}`
+      : `Lord of ${lotName(lot.key)}: ${planetLabel(lot.lord)}`;
+    return role ? `${lordText}, ${role}.` : `${lordText}.`;
+  }
+
   function lotTensionRawLevel(key, chart, signType, degree, planetSuperior) {
     const position = chart.positions[key];
     const acute = degree && degree.delta <= 3;
@@ -6008,6 +6099,7 @@
   function lotTestimonyItems(lot, planetKeys, chart, role) {
     const lotSign = signOf(lot.lon);
     return planetKeys
+      .filter((key) => VISIBLE_KEYS.includes(key))
       .map((key) => {
         const position = chart.positions[key];
         const signType = signAspectType(lotSign, signOf(position.lon));
@@ -6090,6 +6182,32 @@
       ].filter(Boolean);
       return details.join(", ");
     }));
+  }
+
+  function levelRank(level) {
+    return { lowLevel: 1, mediumLevel: 2, highLevel: 3, strongLevel: 3, moderateLevel: 2, secondaryLevel: 1 }[level] || 0;
+  }
+
+  function strongestLevel(items, field) {
+    return items
+      .map((item) => item[field])
+      .filter(Boolean)
+      .sort((a, b) => levelRank(b) - levelRank(a))[0] || "";
+  }
+
+  function lotPressureAuditText(items, lot) {
+    if (!items.length) return lotTestimonyText(items, "tension", lot);
+    const raw = strongestLevel(items, "rawLevel");
+    const regulated = strongestLevel(items, "level");
+    const regulationItems = items.filter((item) => item.reception?.hasReception);
+    const regulation = regulationItems.length
+      ? naturalList(regulationItems.map((item) => `${planetLabel(item.key)} / ${planetLabel(lot.lord)} (${receptionStrengthLabel(item.reception)})`))
+      : (state.lang === "es" ? "sin recepción reguladora clara" : "no clear regulating reception");
+    const reading = lotTestimonyText(items, "tension", lot);
+    if (state.lang === "es") {
+      return `Presión bruta: ${t(raw || regulated)}. Regulación: ${raw && regulated && raw !== regulated ? `${t(regulated)} por ${regulation}` : regulation}. Lectura: ${reading}.`;
+    }
+    return `Raw pressure: ${t(raw || regulated)}. Regulation: ${raw && regulated && raw !== regulated ? `${t(regulated)} through ${regulation}` : regulation}. Reading: ${reading}.`;
   }
 
   function lotConditionReading(lot, chart) {
@@ -6243,15 +6361,13 @@
 
   function boundaryWarnings(chart) {
     const warnings = [];
-    const notice = (key, type, distance, changes, action, extra = {}) => ({
+    const notice = (key, typeCode, distance, changeCodes, actionCode, extra = {}) => ({
       key,
       code: key,
-      type,
+      typeCode,
       distance,
-      changes,
-      changeCodes: [],
-      action,
-      actionCode: "",
+      changeCodes,
+      actionCode,
       ...extra,
     });
     const sunHorizonDistance = Math.abs(chart.sunAltitude);
@@ -6259,20 +6375,14 @@
     if (sunHorizonDistance <= sectThreshold.threshold) {
       warnings.push(notice(
         "sect-boundary",
-        state.lang === "es" ? "Secta cerca del horizonte" : "Sect near horizon",
+        "sect",
         sunHorizonDistance,
-        state.lang === "es"
-          ? ["secta", "luminaria de la secta", "benéfico/maléfico de la secta", "maléfico contrario", "fórmulas de Fortuna/Espíritu", "juicio general"]
-          : ["sect", "sect light", "benefic/malefic of sect", "contrary malefic", "Fortune/Spirit formulas", "general judgment"],
-        state.lang === "es"
-          ? "verificar hora, coordenadas, zona usada y posible rectificación"
-          : "verify time, coordinates, zone used, and possible rectification",
+        ["sect", "sect-light", "benefic-malefic-of-sect", "contrary-malefic", "fortune-spirit-formulas", "general-judgment"],
+        "verify-time-coordinates-zone-rectification",
         {
           threshold: sectThreshold.threshold,
           sensitiveThreshold: sectThreshold.sensitive,
           thresholdReasonCodes: sectThreshold.reasons,
-          changeCodes: ["sect", "sect-light", "benefic-malefic-of-sect", "contrary-malefic", "fortune-spirit-formulas", "general-judgment"],
-          actionCode: "verify-time-coordinates-zone-rectification",
         }
       ));
     }
@@ -6280,21 +6390,15 @@
     if (ascDistance <= 1) {
       warnings.push(notice(
         "asc-sign-boundary",
-        state.lang === "es" ? "Ascendente cerca de cambio de signo" : "Ascendant near sign change",
+        "asc",
         ascDistance,
-        state.lang === "es"
-          ? ["regente del Ascendente", "casas por signos enteros", "lotes", "focos principales"]
-          : ["Ascendant lord", "whole-sign houses", "lots", "main focuses"],
-        state.lang === "es" ? "revisar hora, fuente o rectificación" : "review time, source, or rectification",
-        {
-          changeCodes: ["ascendant-lord", "whole-sign-houses", "lots", "main-focuses"],
-          actionCode: "review-time-source-rectification",
-        }
+        ["ascendant-lord", "whole-sign-houses", "lots", "main-focuses"],
+        "review-time-source-rectification"
       ));
     }
     [
-      { key: "mc", label: t("mc"), lon: chart.angles.mc },
-      { key: "ic", label: t("ic"), lon: chart.angles.ic },
+      { key: "mc", lon: chart.angles.mc },
+      { key: "ic", lon: chart.angles.ic },
     ].forEach((angle) => {
       const distance = distanceToSignBoundary(angle.lon);
       if (distance <= 1) {
@@ -6303,31 +6407,19 @@
         const possibleSign = degree < 1 ? (currentSign + 11) % 12 : (currentSign + 1) % 12;
         const currentHouse = houseFromSign(currentSign, chart.ascSign);
         const possibleHouse = houseFromSign(possibleSign, chart.ascSign);
-        const boundarySide = degree < 1
-          ? (state.lang === "es" ? "límite anterior" : "previous boundary")
-          : (state.lang === "es" ? "límite siguiente" : "next boundary");
         const boundarySideCode = degree < 1 ? "previous" : "next";
-        const shiftText = state.lang === "es"
-          ? `${angle.label} a ${formatAngle(distance)} del ${boundarySide}; actual: ${signLabel(currentSign)}, casa ${currentHouse}; posible por pequeña variación: ${signLabel(possibleSign)}, casa ${possibleHouse}`
-          : `${angle.label} within ${formatAngle(distance)} of the ${boundarySide}; current: ${signLabel(currentSign)}, house ${currentHouse}; possible with a small variation: ${signLabel(possibleSign)}, house ${possibleHouse}`;
         warnings.push(notice(
           `${angle.key}-sign-boundary`,
-          state.lang === "es" ? `${angle.label} cerca de cambio de signo` : `${angle.label} near sign change`,
+          angle.key,
           distance,
-          state.lang === "es"
-            ? [`casa por signos enteros del ${angle.label}`, "proyección/fundamento de la carta", "focos secundarios", shiftText]
-            : [`${angle.label} whole-sign house`, "chart projection/foundation", "secondary focuses", shiftText],
-          state.lang === "es"
-            ? "verificar hora, coordenadas y zona usada"
-            : "verify time, coordinates, and zone used",
+          [`${angle.key}-whole-sign-house`, "chart-projection-foundation", "secondary-focuses"],
+          "verify-time-coordinates-zone",
           {
             boundarySideCode,
             currentSign,
             possibleSign,
             currentHouse,
             possibleHouse,
-            changeCodes: [`${angle.key}-whole-sign-house`, "chart-projection-foundation", "secondary-focuses"],
-            actionCode: "verify-time-coordinates-zone",
           }
         ));
       }
@@ -6337,16 +6429,12 @@
       if (distance <= 1) {
         warnings.push(notice(
           `lot-boundary:${lot.key}`,
-          state.lang === "es" ? `${lotName(lot.key)} cerca de cambio de signo/casa` : `${lotName(lot.key)} near sign/house change`,
+          "lot",
           distance,
-          state.lang === "es"
-            ? ["casa del lote", "señor del lote", "lectura del tema"]
-            : ["lot house", "lot lord", "topic reading"],
-          state.lang === "es" ? "revisar hora y coordenadas" : "review time and coordinates",
+          ["lot-house", "lot-lord", "topic-reading"],
+          "review-time-coordinates",
           {
             lotKey: lot.key,
-            changeCodes: ["lot-house", "lot-lord", "topic-reading"],
-            actionCode: "review-time-coordinates",
           }
         ));
       }
@@ -6357,23 +6445,81 @@
       if (distance <= 0.5) {
         warnings.push(notice(
           `planet-bound-boundary:${key}`,
-          state.lang === "es" ? `${planetLabel(key)} cerca de cambio de término` : `${planetLabel(key)} near bound change`,
+          "planet-bound",
           distance,
-          state.lang === "es"
-            ? ["administración del grado", "dignidad menor propia si procede", "recepción por término"]
-            : ["degree administration", "own minor dignity if applicable", "reception by bound"],
-          state.lang === "es"
-            ? "revisar minutos de hora y precisión planetaria"
-            : "review birth-time minutes and planetary precision",
+          ["degree-administration", "own-minor-dignity", "bound-reception"],
+          "review-birth-time-minutes-planetary-precision",
           {
             planetKey: key,
-            changeCodes: ["degree-administration", "own-minor-dignity", "bound-reception"],
-            actionCode: "review-birth-time-minutes-planetary-precision",
           }
         ));
       }
     });
     return warnings;
+  }
+
+  const BOUNDARY_CHANGE_LABEL_KEYS = Object.freeze({
+    "sect": "boundaryChangeSect",
+    "sect-light": "boundaryChangeSectLight",
+    "benefic-malefic-of-sect": "boundaryChangeBeneficMaleficSect",
+    "contrary-malefic": "boundaryChangeContraryMalefic",
+    "fortune-spirit-formulas": "boundaryChangeFortuneSpirit",
+    "general-judgment": "boundaryChangeGeneralJudgment",
+    "ascendant-lord": "boundaryChangeAscLord",
+    "whole-sign-houses": "boundaryChangeWholeSignHouses",
+    "lots": "boundaryChangeLots",
+    "main-focuses": "boundaryChangeMainFocuses",
+    "mc-whole-sign-house": "boundaryChangeMcHouse",
+    "ic-whole-sign-house": "boundaryChangeIcHouse",
+    "chart-projection-foundation": "boundaryChangeChartProjection",
+    "secondary-focuses": "boundaryChangeSecondaryFocuses",
+    "lot-house": "boundaryChangeLotHouse",
+    "lot-lord": "boundaryChangeLotLord",
+    "topic-reading": "boundaryChangeTopicReading",
+    "degree-administration": "boundaryChangeDegreeAdministration",
+    "own-minor-dignity": "boundaryChangeOwnMinorDignity",
+    "bound-reception": "boundaryChangeBoundReception",
+  });
+
+  const BOUNDARY_ACTION_LABEL_KEYS = Object.freeze({
+    "verify-time-coordinates-zone-rectification": "boundaryActionVerifyRectification",
+    "review-time-source-rectification": "boundaryActionReviewTimeSource",
+    "verify-time-coordinates-zone": "boundaryActionVerifyZone",
+    "review-time-coordinates": "boundaryActionReviewTimeCoordinates",
+    "review-birth-time-minutes-planetary-precision": "boundaryActionReviewPlanetaryPrecision",
+  });
+
+  function boundaryTypeLabel(warning) {
+    if (warning.typeCode === "sect") return t("boundaryTypeSect");
+    if (warning.typeCode === "asc") return t("boundaryTypeAsc");
+    if (warning.typeCode === "mc") return t("boundaryTypeMc");
+    if (warning.typeCode === "ic") return t("boundaryTypeIc");
+    if (warning.typeCode === "lot") return t("boundaryTypeLot", { lot: lotName(warning.lotKey) });
+    if (warning.typeCode === "planet-bound") return t("boundaryTypePlanetBound", { planet: planetLabel(warning.planetKey) });
+    return warning.typeCode || warning.key;
+  }
+
+  function boundaryActionLabel(warning) {
+    return t(BOUNDARY_ACTION_LABEL_KEYS[warning.actionCode] || warning.actionCode || "none");
+  }
+
+  function boundaryShiftLabel(warning) {
+    if (!Number.isFinite(warning.currentSign) || !Number.isFinite(warning.possibleSign)) return "";
+    return t("boundaryShiftText", {
+      angle: angleDisplayName(warning.typeCode),
+      distance: formatAngle(warning.distance),
+      side: t(warning.boundarySideCode === "previous" ? "boundarySidePrevious" : "boundarySideNext"),
+      currentSign: signLabel(warning.currentSign),
+      currentHouse: warning.currentHouse,
+      possibleSign: signLabel(warning.possibleSign),
+      possibleHouse: warning.possibleHouse,
+    });
+  }
+
+  function boundaryChangeLabels(warning) {
+    const labels = (warning.changeCodes || []).map((code) => t(BOUNDARY_CHANGE_LABEL_KEYS[code] || code));
+    const shift = boundaryShiftLabel(warning);
+    return shift ? [...labels, shift] : labels;
   }
 
   function boundaryWarningText(warning) {
@@ -6383,9 +6529,12 @@
         ? t("boundaryThresholdSensitive", { threshold: formatAngle(warning.threshold), reasons: sensitivityReasonLabels(warning.thresholdReasonCodes).join(", ") })
         : t("boundaryThresholdNormal", { threshold: formatAngle(warning.threshold) }))
       : "";
+    const changes = boundaryChangeLabels(warning);
+    const type = boundaryTypeLabel(warning);
+    const action = boundaryActionLabel(warning);
     return state.lang === "es"
-      ? `Tipo: ${warning.type}. Distancia: ${formatAngle(warning.distance)}.${thresholdText ? ` ${t("boundaryThreshold")}: ${thresholdText}.` : ""} Puede cambiar: ${warning.changes.join(", ")}. Acción recomendada: ${warning.action}.`
-      : `Type: ${warning.type}. Distance: ${formatAngle(warning.distance)}.${thresholdText ? ` ${t("boundaryThreshold")}: ${thresholdText}.` : ""} May change: ${warning.changes.join(", ")}. Recommended action: ${warning.action}.`;
+      ? `Tipo: ${type}. Distancia: ${formatAngle(warning.distance)}.${thresholdText ? ` ${t("boundaryThreshold")}: ${thresholdText}.` : ""} Puede cambiar: ${changes.join(", ")}. Acción recomendada: ${action}.`
+      : `Type: ${type}. Distance: ${formatAngle(warning.distance)}.${thresholdText ? ` ${t("boundaryThreshold")}: ${thresholdText}.` : ""} May change: ${changes.join(", ")}. Recommended action: ${action}.`;
   }
 
   function renderBoundaryAudit(warnings) {
@@ -6396,14 +6545,14 @@
         <div>
           ${warnings.map((warning) => `
             <article data-test="boundary-warning" data-code="${escapeHtml(warning.code)}" data-key="${escapeHtml(warning.key)}">
-              <strong>${escapeHtml(warning.type)}</strong>
+              <strong>${escapeHtml(boundaryTypeLabel(warning))}</strong>
               <p>${escapeHtml(state.lang === "es" ? "Distancia" : "Distance")}: ${escapeHtml(formatAngle(warning.distance))}</p>
               ${Number.isFinite(warning.threshold) ? `<p>${escapeHtml(t("boundaryThreshold"))}: ${escapeHtml(warning.sensitiveThreshold
                 ? t("boundaryThresholdSensitive", { threshold: formatAngle(warning.threshold), reasons: sensitivityReasonLabels(warning.thresholdReasonCodes).join(", ") })
                 : t("boundaryThresholdNormal", { threshold: formatAngle(warning.threshold) }))}</p>` : ""}
               <p>${escapeHtml(state.lang === "es" ? "Puede cambiar" : "May change")}:</p>
-              <ul>${warning.changes.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-              <p>${escapeHtml(state.lang === "es" ? "Acción" : "Action")}: ${escapeHtml(warning.action)}</p>
+              <ul>${boundaryChangeLabels(warning).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+              <p>${escapeHtml(state.lang === "es" ? "Acción" : "Action")}: ${escapeHtml(boundaryActionLabel(warning))}</p>
             </article>
           `).join("")}
         </div>
@@ -6490,6 +6639,7 @@
     const sectLabel = chart.isDay ? t("dayChart") : t("nightChart");
     const sectContext = sectLabel.toLocaleLowerCase(state.lang === "es" ? "es-ES" : "en");
     const sectDescription = state.lang === "es" ? `una ${sectContext}` : `a ${sectContext}`;
+    const sectConfidenceNotice = sectSensitivityState(chart) === "stable" ? "" : t("sectLowConfidenceJudgment");
     const secondaryFocuses = focuses.slice(1);
     const visibility = visibilityReading(chart);
     const configurations = configurationsReading(chart, focuses, ascLordPosition);
@@ -6504,9 +6654,10 @@
       : "";
 
     const lead = focusLeadReading(focuses);
-    const summary = state.lang === "es"
+    const summaryBase = state.lang === "es"
       ? `La carta pone mucho peso en la casa ${dominant.house}: ${houseReadingTopics(dominant.house, "double")}. ${secondaryFocuses.length ? `También conviene mirar ${naturalList(secondaryFocuses.map((focus) => `casa ${focus.house}`))}, porque completan el dibujo general.` : ""} El hilo rector sigue siendo ${planetLabel(ascLord)}, regente del Ascendente, situado en casa ${ascLordPosition.house}; por eso la lectura parte de la dirección vital y no de una posición aislada.`
       : `The chart puts a great deal of weight on house ${dominant.house}: ${houseReadingTopics(dominant.house, "double")}. ${secondaryFocuses.length ? `It is also worth reading ${naturalList(secondaryFocuses.map((focus) => `house ${focus.house}`))}, because they complete the general pattern.` : ""} The guiding thread remains ${planetLabel(ascLord)}, lord of the Ascendant / Hour-Marker, placed in house ${ascLordPosition.house}; this is why the reading begins from life direction rather than from an isolated placement.`;
+    const summary = [summaryBase, sectConfidenceNotice].filter(Boolean).join(" ");
 
     const lifeDirection = state.lang === "es"
       ? `El Ascendente está en ${signLabel(chart.ascSign)}, por lo que ${planetLabel(ascLord)} lleva la dirección general de la carta. ${planetLabel(ascLord)} habla de ${planetPlainMeaning(ascLord)}. Al caer en ${signLabel(signOf(ascLordPosition.lon))}, casa ${ascLordPosition.house}, esas capacidades se vinculan con ${houseReadingTopics(ascLordPosition.house, "double")}. ${signStyleReading(ascLordSign)} Al estar en una casa ${t(ascLordPosition.angularity)}, este tema se muestra ${angularityReading(ascLordPosition.angularity)}. ${essentialConditionReading(ascLordPosition, chart)}`
@@ -6546,6 +6697,7 @@
         benefic: planetLabel(benefic),
         malefic: planetLabel(malefic),
       }),
+      ...(sectConfidenceNotice ? [sectConfidenceNotice] : []),
       t("evidenceMcHouse", {
         house: chart.mcHouse,
         topics: houseTopics(chart.mcHouse),
@@ -6696,7 +6848,7 @@
           ? (state.lang === "es" ? "luminaria" : "luminary")
           : solarPhaseTableText(lot.lord, chart);
         const beneficTestimony = lotTestimonyText(lotTestimonyItems(lot, ["jupiter", "venus"], chart, "support"), "support", lot);
-        const maleficPressure = lotTestimonyText(lotTestimonyItems(lot, ["mars", "saturn"], chart, "tension"), "tension", lot);
+        const maleficPressure = lotPressureAuditText(lotTestimonyItems(lot, ["mars", "saturn"], chart, "tension"), lot);
         const lordLabel = planetLabel(lot.lord);
         return `
           <li data-test="main-lot-${escapeHtml(lot.key)}">
@@ -6706,6 +6858,8 @@
               <dd>${escapeHtml(formatDegree(lot.lon))} · ${escapeHtml(t("tableHouse"))} ${escapeHtml(String(lot.house))}</dd>
               <dt>${escapeHtml(t("lotAuditLord"))}</dt>
               <dd>${escapeHtml(lordLabel)} · ${escapeHtml(t("tableHouse"))} ${escapeHtml(String(lord?.house || "—"))}</dd>
+              <dt>${escapeHtml(t("lotAuditDirectAdministration"))}</dt>
+              <dd class="lot-audit-role" data-test="main-lot-${escapeHtml(lot.key)}-direct-administration">${escapeHtml(directLotAdministrationText(lot, chart))}</dd>
               <dt>${escapeHtml(t("lotAuditLordRole"))}</dt>
               <dd class="lot-audit-role">${escapeHtml(lotLordRoleText(lot, chart))}</dd>
               <dt>${escapeHtml(t("lotAuditLordCondition"))}</dt>
@@ -7253,6 +7407,7 @@
     };
     window.TycheTest = Object.freeze({
       schemaVersion: TYCHE_TEST_SCHEMA_VERSION,
+      buildHash: TYCHE_BUILD_HASH,
       calculateChart(overrides = {}) {
         return computeChart({ ...defaultInput, ...overrides });
       },
@@ -7286,6 +7441,7 @@
       houseFromSign,
       boundLordFor,
       solarPhaseState,
+      visibleAngularPlanets,
       linearLunarAspectCandidates,
       lunarAspectCandidatesIterative,
       lunarAspectCandidates,

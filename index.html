@@ -6,7 +6,15 @@
     <meta name="description" content="Tyche calcula cartas natales helenísticas con Ascendente, casas de signos enteros, secta, condición esencial y lotes, procesadas localmente en el navegador.">
     <title>Tyche · Carta natal helenística</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-    <link rel="stylesheet" href="styles.css">
+    <script>
+      (() => {
+        const version = new URLSearchParams(window.location.search).get("v") || "";
+        const suffix = version ? `?v=${encodeURIComponent(version)}` : "";
+        window.TYCHE_BUILD_HASH = version || "dev";
+        document.write(`<link rel="stylesheet" href="styles.css${suffix}">`);
+      })();
+    </script>
+    <noscript><link rel="stylesheet" href="styles.css"></noscript>
   </head>
   <body>
     <div class="page-shell">
@@ -260,7 +268,13 @@
       <div class="glossary-body" id="glossaryBody"></div>
     </aside>
 
-    <script src="assets/vendor/astronomy.browser.min.js"></script>
-    <script src="app.js"></script>
+    <script>
+      (() => {
+        const version = new URLSearchParams(window.location.search).get("v") || "";
+        const suffix = version ? `?v=${encodeURIComponent(version)}` : "";
+        document.write(`<script src="assets/vendor/astronomy.browser.min.js${suffix}"><\/script>`);
+        document.write(`<script src="app.js${suffix}"><\/script>`);
+      })();
+    </script>
   </body>
 </html>

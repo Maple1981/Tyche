@@ -34,27 +34,41 @@ const glossaryKeys = [...index.matchAll(/data-glossary="([^"]+)"/g)].map((match)
 const uniqueGlossaryKeys = [...new Set(glossaryKeys)];
 
 assert("index loads Astronomy Engine before app.js", index.indexOf("assets/vendor/astronomy.browser.min.js") < index.indexOf("app.js"));
+assert("index propagates cache-buster to versioned assets", index.includes("styles.css${suffix}") && index.includes("astronomy.browser.min.js${suffix}") && index.includes("app.js${suffix}"));
 assert("TycheTest schema version exists", app.includes("const TYCHE_TEST_SCHEMA_VERSION = 2"));
+assert("TycheTest build hash exists", app.includes("const TYCHE_BUILD_HASH"));
 assert("TycheTest exposes schemaVersion", app.includes("schemaVersion: TYCHE_TEST_SCHEMA_VERSION"));
+assert("TycheTest exposes buildHash", app.includes("buildHash: TYCHE_BUILD_HASH"));
 assert("TycheTest exposes alternate sect renderer", app.includes("renderAlternateSectLots"));
 assert("TycheTest exposes historical audit records", app.includes("historicalAuditRecords"));
 assert("TycheTest exposes angular distance helper", app.includes("angleDistance"));
 assert("TycheTest exposes linear lunar helper", app.includes("linearLunarAspectCandidates"));
+assert("TycheTest exposes visible angular helper", app.includes("visibleAngularPlanets"));
 assert("Browser regression runner starts a temporary server", browserRunner.includes("createServer") && browserRunner.includes("__TYCHE_REGRESSION_DONE__"));
 assert("Regression page emits completion state", regression.includes("__TYCHE_REGRESSION_DONE__") && regression.includes("tyche:regression-complete"));
+assert("Regression iframe is assigned after listeners", regression.includes('<iframe id="appFrame"></iframe>') && regression.indexOf("frame.addEventListener") < regression.indexOf("frame.src ="));
+assert("Regression iframe propagates cache-buster", regression.includes("test=regression&v=") && regression.includes("testApi.buildHash === version"));
 
-assert("parseDate does not accept negative years", /function parseDate\(value\) \{\s+const match = \/\^\(\\d\{1,6\}\)-/.test(app));
+assert("parseDate BCE support is explicit opt-in", app.includes("function parseDate(value, { allowBce = false } = {})") && app.includes("allowBce ? /^(-?\\d{1,6})-"));
 assert("BCE limitation is documented", docs.some(([, content]) => content.includes("BCE dates are blocked")));
 assert("Year zero is covered by regression tests", regression.includes("0000-01-01") && regression.includes("fechas BCE ambiguas"));
 
-assert("Boundary warnings carry changeCodes", app.includes("changeCodes: []"));
-assert("Boundary warnings carry actionCode", app.includes("actionCode: \"\""));
+const boundaryWarningsBlock = sectionBetween(app, "function boundaryWarnings(chart)", "const BOUNDARY_CHANGE_LABEL_KEYS");
+assert("Boundary warnings carry neutral typeCode", boundaryWarningsBlock.includes("typeCode"));
+assert("Boundary warnings carry changeCodes", boundaryWarningsBlock.includes("changeCodes"));
+assert("Boundary warnings carry actionCode", boundaryWarningsBlock.includes("actionCode"));
+assert("Boundary warning calculation does not translate copy", !boundaryWarningsBlock.includes("state.lang"));
 assert("MC/IC warnings carry boundarySideCode", app.includes("boundarySideCode"));
 assert("Score items carry reasonCode", app.includes("reasonCode: reasonCode || category"));
+assert("Score focus type can show mixed categories", app.includes("value / total >= 0.3") && app.includes("naturalList([...new Set(labels)])"));
 assert("10th-house ruler contributes a public focus signal", app.includes("tenth-ruler:"));
 assert("Focus evidence uses house rulers", app.includes("function focusRulerEvidence") && app.includes("An empty house remains active through its ruler"));
 assert("Mercury solar phase qualifier is explicit", app.includes("function mercuryPhaseQualifier") && app.includes("common and variable nature"));
 assert("Technical evidence sections have stable hooks", app.includes('data-test="evidence-score"') && app.includes('data-test="evidence-main-lots"') && app.includes('data-test="evidence-general"'));
+assert("Main lots expose direct administration hook", app.includes("lotAuditDirectAdministration") && app.includes("direct-administration"));
+assert("Lot pressure audit preserves raw and regulated pressure", app.includes("function lotPressureAuditText") && app.includes("Presión bruta") && app.includes("Raw pressure"));
+assert("Sensitive sect judgment notice is visible", app.includes("sectLowConfidenceJudgment") && app.includes("sectConfidenceNotice"));
+assert("Modern planets are blocked from judgment helpers", app.includes("!VISIBLE_KEYS.includes(target) || !VISIBLE_KEYS.includes(actor)") && app.includes(".filter((key) => VISIBLE_KEYS.includes(key))"));
 
 assert("Historical archive has substantial example coverage", personCount >= 35);
 assert("Historical archive is fully externally audited", personCount === auditIds.length && historicalIds.every((id) => auditIds.includes(id)));

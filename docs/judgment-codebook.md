@@ -6,19 +6,23 @@ This file records stable internal codes used for tests, audit trails, and docume
 
 - `TycheTest.schemaVersion`: current regression helper schema. Current value: `2`. Increment when exposed helper names or result shapes change.
 - `TycheTest` is installed only when the URL contains `?test=regression`.
+- `TycheTest.buildHash`: version string supplied through the `v` URL parameter. It is a cache-busting and audit-synchronization tag, not a self-computed Git hash.
+- `tests/regression.html?v=<tag>` passes the same tag to the app iframe, and `index.html?v=<tag>` passes it to CSS and JavaScript assets.
 
 ## Boundary Codes
 
 | Code | Meaning | Required structured fields |
 |---|---|---|
-| `sect-boundary` | Sun close enough to horizon for sect-dependent judgment to be sensitive. | `distance`, `threshold`, `thresholdReasonCodes`, `changeCodes`, `actionCode` |
-| `asc-sign-boundary` | Ascendant close to a sign change. | `distance`, `changeCodes`, `actionCode` |
-| `mc-sign-boundary` | MC close to a sign change. | `distance`, `boundarySideCode`, `currentSign`, `possibleSign`, `currentHouse`, `possibleHouse` |
-| `ic-sign-boundary` | IC close to a sign change. | `distance`, `boundarySideCode`, `currentSign`, `possibleSign`, `currentHouse`, `possibleHouse` |
-| `lot-boundary:{lot}` | A calculated lot close to a sign/whole-sign-house change. | `distance`, `lotKey`, `changeCodes`, `actionCode` |
-| `planet-bound-boundary:{planet}` | Visible planet close to an Egyptian bound change. | `distance`, `planetKey`, `changeCodes`, `actionCode` |
+| `sect-boundary` | Sun close enough to horizon for sect-dependent judgment to be sensitive. | `typeCode`, `distance`, `threshold`, `thresholdReasonCodes`, `changeCodes`, `actionCode` |
+| `asc-sign-boundary` | Ascendant close to a sign change. | `typeCode`, `distance`, `changeCodes`, `actionCode` |
+| `mc-sign-boundary` | MC close to a sign change. | `typeCode`, `distance`, `boundarySideCode`, `currentSign`, `possibleSign`, `currentHouse`, `possibleHouse`, `changeCodes`, `actionCode` |
+| `ic-sign-boundary` | IC close to a sign change. | `typeCode`, `distance`, `boundarySideCode`, `currentSign`, `possibleSign`, `currentHouse`, `possibleHouse`, `changeCodes`, `actionCode` |
+| `lot-boundary:{lot}` | A calculated lot close to a sign/whole-sign-house change. | `typeCode`, `distance`, `lotKey`, `changeCodes`, `actionCode` |
+| `planet-bound-boundary:{planet}` | Visible planet close to an Egyptian bound change. | `typeCode`, `distance`, `planetKey`, `changeCodes`, `actionCode` |
 
 Common `changeCodes` include `sect`, `sect-light`, `benefic-malefic-of-sect`, `contrary-malefic`, `fortune-spirit-formulas`, `general-judgment`, `whole-sign-houses`, `lot-house`, `lot-lord`, `degree-administration`, `own-minor-dignity`, and `bound-reception`.
+
+Boundary-warning objects should not carry translated `type`, `changes`, or `action` strings. Rendering functions derive copy from `typeCode`, `changeCodes`, `actionCode`, and structured fields.
 
 ## Score Reason Codes
 

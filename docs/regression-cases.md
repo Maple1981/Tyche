@@ -2,9 +2,9 @@
 
 This file records technical scenarios that should remain stable when Tyche's calculation or judgment layer changes.
 
-`tests/regression.html` is the first browser-executable smoke test page. It does not replace the full checklist below, but it verifies important regressions without a build step: principal lots remain auditable when hidden from the visible lot table, modern planets shown in traditional mode trigger an immediate warning, own bound differs from foreign-bound administration, bound-only reception does not reduce strong malefic pressure, lot testimony items preserve direct lord and sect-role metadata, the 10th-place ruler contributes a stable public-focus reason code, focus evidence shows house rulers rather than treating empty places as inactive, modern planets do not alter the base focus score, score items expose stable reason codes separate from translated prose, sect/MC/IC boundary notices are emitted with stable codes, sensitive-sect widening depends on time reliability, sensitive sect shows alternate benefic/malefic roles as well as alternate lots, lunar fallback calculation crosses 0 Aries correctly, iterative lunar search emits refined contacts for a complete chart, Fortune/Spirit swap correctly when sect is reversed, and every current historical example exposes audited natal-source metadata.
+`tests/regression.html` is the first browser-executable smoke test page. It does not replace the full checklist below, but it verifies important regressions without a build step: principal lots remain auditable when hidden from the visible lot table, direct administration of Fortune/Spirit is visible, modern planets shown in traditional mode trigger an immediate warning, own bound differs from foreign-bound administration, bound-only reception does not reduce strong malefic pressure, lot testimony items preserve direct lord and sect-role metadata, the 10th-place ruler contributes a stable public-focus reason code, focus evidence shows house rulers rather than treating empty places as inactive, modern planets do not alter the base focus score or judgment helpers, score items expose stable reason codes separate from translated prose, sect/MC/IC boundary notices are emitted with stable neutral codes, sensitive-sect widening depends on time reliability, sensitive sect shows alternate benefic/malefic roles as well as alternate lots, lunar fallback calculation crosses 0 Aries correctly, iterative lunar search emits refined contacts for a complete chart and differs materially from the linear estimate in a pinned case, Fortune/Spirit swap correctly when sect is reversed, and every current historical example exposes audited natal-source metadata.
 
-`tests/static-contract-tests.js` is the no-browser contract check. It validates static invariants that are easy to break during refactors: vendor script order, exposed `TycheTest` helpers, BCE/calendar documentation, historical reliability normalization, complete `HISTORICAL_PEOPLE` to `HISTORICAL_AUDIT_ROWS` coverage, natal-source and interpretive-reference separation, glossary key coverage, score/boundary code documentation, and the presence of the factor/precision/codebook docs.
+`tests/static-contract-tests.js` is the no-browser contract check. It validates static invariants that are easy to break during refactors: versioned asset loading, vendor script order, exposed `TycheTest` helpers, BCE/calendar documentation, historical reliability normalization, complete `HISTORICAL_PEOPLE` to `HISTORICAL_AUDIT_ROWS` coverage, natal-source and interpretive-reference separation, glossary key coverage, score/boundary code documentation, and the presence of the factor/precision/codebook docs.
 
 `tests/browser-regression-runner.js` is an optional local browser runner for the smoke page. It starts a temporary local HTTP server and uses Playwright plus an installed Edge/Chrome executable. The app still has no build step and no runtime dependency on Playwright.
 
@@ -14,6 +14,7 @@ Regression tests should prefer stable hooks over visible prose:
 - Use `window.TycheTest` only in `?test=regression` mode for calculation-layer checks.
 - Keep `window.TycheTest` frozen and expose only stable calculation or judgment helpers needed by tests.
 - Assert `window.TycheTest.schemaVersion` before relying on helper names or result shapes.
+- Open the smoke page with `tests/regression.html?v=<commit-or-tag>` when auditing a publication. The iframe passes that value to `index.html`, and the app exposes it as `TycheTest.buildHash`; `index.html` also propagates it to `styles.css`, Astronomy Engine, and `app.js`.
 - Treat objects returned by `window.TycheTest` as disposable test results. Do not mutate them and then reuse them as if they were internal app state.
 - Avoid asserting translated copy unless the test is specifically about content.
 - Wait for `window.__TYCHE_READY__` or the `tyche:chart-rendered` event rather than using fixed sleeps.
@@ -32,6 +33,7 @@ Regression tests should prefer stable hooks over visible prose:
 - MC or IC within 1 degree of a sign boundary: the audit must warn that the whole-sign place receiving public-projection or foundation testimony can change.
 - Visible planet within 30 arcminutes of an Egyptian-bound boundary: the audit must warn that degree administration, own minor dignity if applicable, and reception by bound can change.
 - Boundary warnings should use unique keys/codes such as `asc-sign-boundary`, `mc-sign-boundary`, `lot-boundary:fortune`, and `planet-bound-boundary:mars`; rendered warning cards should expose `data-test="boundary-warning"` and `data-code`.
+- `boundaryWarnings()` should return neutral data only: `typeCode`, `changeCodes`, `actionCode`, distance fields, and specific structured fields such as MC/IC possible sign/house. Translation belongs to render helpers.
 - MC and IC boundary tests should cover both previous-boundary and next-boundary cases, using structured fields rather than translated prose.
 - Inverted Fortune/Spirit tests should compare angular distance, not raw subtraction across 0 Aries.
 
@@ -54,12 +56,13 @@ Regression tests should prefer stable hooks over visible prose:
 - Reception language around lots should say that the testifying planet is in reception with the lord of the lot, not that the lot itself receives.
 - Mutual reception involving malefic pressure should be described as giving the pressure form, continuity, or reciprocal dependence rather than automatically turning it into help.
 - Lot-audit tests should cover direct lord roles, such as a principal lot administered by the benefic of sect or by the malefic contrary to sect.
+- Lot-audit output should keep malefic raw pressure and regulated pressure visible as separate ideas. Reception may regulate or channel pressure, but should not erase the original pressure level.
 
 ## Lunar Condition
 
 - The Moon's next application should be refined by iterative search when possible, with the linear speed estimate used only as fallback.
-- Future browser tests should include lunar edge cases where iterative search changes the result: retrograde planet application, crossing 0 Aries, perfection after sign exit but within 30 degrees, no perfection within 30 degrees despite a misleading linear estimate, and competing candidates where the earliest real perfection wins.
-- The current smoke test covers the linear fallback for crossing 0 Aries, retrograde application, ordered future candidates, perfection after sign exit but within 30 degrees, no contact when relative speed is zero, and at least one iterative contact from a complete calculated chart.
+- Future browser tests should include lunar edge cases where iterative search changes the result: no perfection within 30 degrees despite a misleading linear estimate, and competing candidates where the earliest real perfection wins.
+- The current smoke test covers the linear fallback for crossing 0 Aries, retrograde application, ordered future candidates, perfection after sign exit but within 30 degrees, no contact when relative speed is zero, at least one iterative contact from a complete calculated chart, and one pinned case where the iterative Saturn application differs materially from the linear estimate.
 - Void-of-course by the 30-degree Hellenistic rule and void before sign exit must remain separate outputs in the lunar panel and evidence layer.
 - The close no-application-within-orb indicator must remain separate from both void-of-course criteria.
 
@@ -69,3 +72,4 @@ Regression tests should prefer stable hooks over visible prose:
 - The technical audit must also state that modern planets are not weighted in the base Hellenistic judgment.
 - Regression score comparisons should use stable `reasonCode` fields rather than translated or editable human prose.
 - Modern planets may appear in display data when enabled, but base score items, lot formulas, traditional regencies, and judgment focus signals must not contain Uranus, Neptune, or Pluto.
+- Modern planets must also be ignored by judgment helpers such as lot testimony, visible angular planets for judgment, and planet-relation judgment.
