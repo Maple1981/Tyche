@@ -185,12 +185,12 @@
       limitsEducational: "Uso educativo: la lectura no sustituye efemérides profesionales ni una investigación de rectificación.",
       limitsPrecision: "Precisión planetaria aproximada ±1′; Ascendente, MC y casas dependen mucho de hora, coordenadas y zona usada.",
       limitsPrivacy: "La carta se calcula localmente; la búsqueda de lugar y las imágenes históricas sí consultan servicios externos.",
-      resourcesTitle: "Donde la carta facilita",
-      tensionsTitle: "Donde la carta exige más",
-      visibilityTitle: "Fase solar zodiacal",
-      configurationsTitle: "Relaciones entre planetas",
-      moonJudgmentTitle: "Condición lunar",
-      foundationsTitle: "Base de estabilidad",
+      resourcesTitle: "Apoyos y oportunidades",
+      tensionsTitle: "Presiones a manejar",
+      visibilityTitle: "Visibilidad de planetas clave",
+      configurationsTitle: "Ayudas y presiones entre planetas",
+      moonJudgmentTitle: "Ritmo lunar",
+      foundationsTitle: "Base de sostén",
       prominenceLabel: "Prominencia",
       easeLabel: "Condición esencial",
       tensionLabel: "Tensión",
@@ -601,12 +601,12 @@
       limitsEducational: "Educational use: the reading does not replace professional ephemerides or rectification research.",
       limitsPrecision: "Approximate planetary accuracy ±1′; Ascendant, MC, and houses depend strongly on time, coordinates, and zone used.",
       limitsPrivacy: "The chart is calculated locally; place search and historical images do contact external services.",
-      resourcesTitle: "Where the chart facilitates",
-      tensionsTitle: "Where the chart asks more",
-      visibilityTitle: "Zodiacal solar phase",
-      configurationsTitle: "Relations between planets",
-      moonJudgmentTitle: "Lunar condition",
-      foundationsTitle: "Stability base",
+      resourcesTitle: "Supports and openings",
+      tensionsTitle: "Pressures to manage",
+      visibilityTitle: "Visibility of key planets",
+      configurationsTitle: "Planetary supports and pressures",
+      moonJudgmentTitle: "Lunar flow",
+      foundationsTitle: "Background support",
       prominenceLabel: "Prominence",
       easeLabel: "Essential condition",
       tensionLabel: "Tension",
@@ -1083,7 +1083,7 @@
         title: "Planetas",
         body: [
           "<p>La base clásica usa siete cuerpos visibles: Sol, Luna, Mercurio, Venus, Marte, Júpiter y Saturno.</p>",
-          "<p>Los planetas significan actores, potencias y cualidades; los signos describen cómo actúan y los lugares dónde se manifiestan.</p>",
+          "<p>Los planetas significan principios, potencias y cualidades; los signos describen cómo actúan y los lugares dónde se manifiestan.</p>",
         ],
       },
       planet: {
@@ -1741,7 +1741,7 @@
         title: "Planets",
         body: [
           "<p>The classical base uses seven visible bodies: Sun, Moon, Mercury, Venus, Mars, Jupiter, and Saturn.</p>",
-          "<p>Planets signify actors, powers, and qualities; signs show how they act; places show where they manifest.</p>",
+          "<p>Planets signify principles, powers, and qualities; signs show how they act; places show where they manifest.</p>",
         ],
       },
       planet: {
@@ -5085,33 +5085,32 @@
 
   function receptionNote(target, actor, reception, role) {
     if (!reception?.hasReception) return "";
-    const phrase = receptionPhrase(target, actor, reception);
     const strength = receptionStrengthLabel(reception);
     const boundOnly = receptionByBoundOnly(reception);
     if (state.lang === "es") {
-      const noun = reception.isMutual ? "recepción mutua" : "recepción";
+      const noun = reception.isMutual ? "un canal recíproco" : "un canal formal";
       const caution = boundOnly
-        ? " La recepción por término es un canal técnico, pero no anula por sí sola una presión fuerte."
+        ? " Al depender solo del término, este canal no anula por sí solo una presión fuerte."
         : reception.isMutual && (reception.effectiveScore ?? reception.strongest) <= 1
-          ? " Crea un canal recíproco, pero no basta por sí sola para neutralizar la presión."
+          ? " Es recíproco, pero débil: no basta por sí solo para neutralizar la presión."
           : "";
       return role === "support"
-        ? ` Hay ${noun} ${strength} (${phrase}), lo que refuerza el canal de ayuda.${caution}`
+        ? ` Hay ${noun} ${strength}, lo que hace la ayuda más utilizable.${caution}`
         : reception.isMutual
-          ? ` Hay ${noun} ${strength} (${phrase}); la presión no queda anulada, sino más integrada en el tema, con forma, continuidad o dependencia recíproca.${caution}`
-          : ` Hay ${noun} ${strength} (${phrase}), así que la presión encuentra un canal de manejo, aunque no desaparece.${caution}`;
+          ? ` Hay ${noun} ${strength}; la presión no queda anulada, pero toma forma y se vuelve más trabajable.${caution}`
+          : ` Hay ${noun} ${strength}, así que la presión encuentra una vía de manejo, aunque no desaparece.${caution}`;
     }
-    const noun = reception.isMutual ? "mutual reception" : "reception";
+    const noun = reception.isMutual ? "a reciprocal channel" : "a formal channel";
     const caution = boundOnly
-      ? " Reception by bound is a technical channel, but by itself it does not cancel strong pressure."
+      ? " Because it depends only on the bound, this channel does not cancel strong pressure by itself."
       : reception.isMutual && (reception.effectiveScore ?? reception.strongest) <= 1
-        ? " It creates a reciprocal channel, but by itself it is not enough to neutralize pressure."
+        ? " It is reciprocal but weak; by itself it is not enough to neutralize pressure."
         : "";
     return role === "support"
-      ? ` There is ${strength} ${noun} (${phrase}), strengthening the channel of help.${caution}`
+      ? ` There is ${strength} ${noun}, making the help more usable.${caution}`
       : reception.isMutual
-        ? ` There is ${strength} ${noun} (${phrase}); the pressure is not cancelled, but becomes more integrated into the topic, with form, continuity, or reciprocal dependence.${caution}`
-        : ` There is ${strength} ${noun} (${phrase}), so the pressure has a channel for handling, though it does not disappear.${caution}`;
+        ? ` There is ${strength} ${noun}; the pressure is not cancelled, but it gains form and becomes more workable.${caution}`
+        : ` There is ${strength} ${noun}, so the pressure has a route for handling, though it does not disappear.${caution}`;
   }
 
   function lotLongitude(key, chart) {
@@ -5848,26 +5847,26 @@
     const connection = connectionStrength(position, focuses, ascLordPosition);
     if (state.lang === "es") {
       if (role === "support") {
-        if (connection === "strong") return "Además se conecta con fuerza al eje de la carta, así que su ayuda pesa de forma visible.";
-        if (connection === "medium") return "También toca uno de los focos principales, por lo que su ayuda no queda como promesa secundaria.";
-        if (connection === "weak") return "Tiene una conexión secundaria con el regente del Ascendente; conviene no exagerarla sin cercanía, recepción o angularidad.";
-        return "No parece ser el eje de la carta; conviene leerlo como recurso secundario, aunque real.";
+        if (connection === "strong") return "Al tocar una zona central de la carta, esa ayuda se vuelve visible y utilizable.";
+        if (connection === "medium") return "También toca uno de los focos principales, así que no queda como una promesa secundaria.";
+        if (connection === "weak") return "Tiene una conexión de fondo con la dirección vital; conviene no exagerarla sin señales adicionales.";
+        return "No parece organizar la carta entera; funciona mejor como recurso secundario, aunque real.";
       }
-      if (connection === "strong") return "Como toca con fuerza el eje de la carta, su exigencia pesa mucho en la lectura.";
-      if (connection === "medium") return "Como toca uno de los focos principales, su exigencia pesa más en la lectura.";
-      if (connection === "weak") return "Hay una conexión amplia con el regente del Ascendente, pero por sí sola no convierte esta presión en dominante.";
-      return "Parece una tensión secundaria: conviene tenerla presente, pero no domina la estructura principal.";
+      if (connection === "strong") return "Al tocar una zona central de la carta, esta presión pesa mucho y pide manejo consciente.";
+      if (connection === "medium") return "Como toca uno de los focos principales, esta presión se nota más en la vida práctica.";
+      if (connection === "weak") return "Hay una conexión amplia con la dirección vital, pero por sí sola no vuelve dominante esta presión.";
+      return "Parece una fricción secundaria: conviene tenerla presente, pero no domina la estructura principal.";
     }
     if (role === "support") {
-      if (connection === "strong") return "It connects strongly with the chart's axis, so its help carries visible weight.";
-      if (connection === "medium") return "It also touches one of the main focuses, so its help is not merely a secondary promise.";
-      if (connection === "weak") return "It has a secondary connection with the Ascendant lord; do not overstate it without closeness, reception, or angularity.";
-      return "It does not seem to be the chart's axis; read it as a secondary but real resource.";
+      if (connection === "strong") return "Because it touches a central part of the chart, that help becomes visible and usable.";
+      if (connection === "medium") return "It also touches one of the main focuses, so it is not merely a secondary promise.";
+      if (connection === "weak") return "It has a background connection with life direction; do not overstate it without additional signals.";
+      return "It does not seem to organize the whole chart; it works better as a secondary but real resource.";
     }
-    if (connection === "strong") return "Because it strongly touches the chart's axis, its demand weighs heavily in the reading.";
-    if (connection === "medium") return "Because it touches one of the main focuses, its demand weighs more heavily in the reading.";
-    if (connection === "weak") return "There is a broad connection with the Ascendant lord, but by itself it does not make this pressure dominant.";
-    return "It looks like a secondary tension: worth noting, but not dominant in the overall structure.";
+    if (connection === "strong") return "Because it touches a central part of the chart, this pressure carries weight and asks for conscious handling.";
+    if (connection === "medium") return "Because it touches one of the main focuses, this pressure is more noticeable in practical life.";
+    if (connection === "weak") return "There is a broad connection with life direction, but by itself it does not make this pressure dominant.";
+    return "It looks like secondary friction: worth noting, but not dominant in the overall structure.";
   }
 
   function focusLeadReading(focuses) {
@@ -5943,6 +5942,84 @@
     };
   }
 
+  function conditionPlainTone(planet, position, chart) {
+    const strength = dignityStrength(planet, position, chart);
+    if (state.lang === "es") {
+      if (strength.strong && strength.weak) return "Tiene recursos reales, aunque también necesita ajustes para usarlos sin fricción.";
+      if (strength.strong) return "Cuenta con recursos propios y puede actuar con más coherencia.";
+      if (strength.weak && strength.medium) return "Tiene apoyo parcial, pero lo expresa con esfuerzo o negociación.";
+      if (strength.weak) return "Trabaja con fricción de fondo y necesita más mediación.";
+      if (strength.medium) return "Tiene apoyo parcial; no es una fuerza plena, pero sí un sostén aprovechable.";
+      return "No muestra recursos propios fuertes; su peso depende más del lugar que ocupa y de sus conexiones.";
+    }
+    if (strength.strong && strength.weak) return "It has real resources, though it also needs adjustment to use them without friction.";
+    if (strength.strong) return "It has resources of its own and can act with more coherence.";
+    if (strength.weak && strength.medium) return "It has partial support, but expresses it through effort or negotiation.";
+    if (strength.weak) return "It works with background friction and needs more mediation.";
+    if (strength.medium) return "It has partial support; not full strength, but usable backing.";
+    return "It shows no strong resources of its own; its weight depends more on placement and connections.";
+  }
+
+  function placementVisibilityTone(position) {
+    if (state.lang === "es") {
+      if (position.angularity === "angular") return "se vuelve visible y difícil de ignorar";
+      if (position.angularity === "succedent") return "se sostiene con el tiempo y gana peso por acumulación";
+      return "opera de forma más indirecta, discreta o dependiente del contexto";
+    }
+    if (position.angularity === "angular") return "becomes visible and hard to ignore";
+    if (position.angularity === "succedent") return "builds over time and gains weight by accumulation";
+    return "operates more indirectly, quietly, or through context";
+  }
+
+  function publicProjectionConclusion(chart, planetsInTenth, tenthRuler, tenthRulerPosition) {
+    const rulerStrength = dignityStrength(tenthRuler, tenthRulerPosition, chart);
+    const rulerObscured = isSolarObscuredWithoutChariot(tenthRuler, chart);
+    let score = 0;
+    if (chart.mcHouse === 10) score += 2;
+    else if (placeQuality(chart.mcHouse) === "angular") score += 1;
+    else if (placeQuality(chart.mcHouse) === "succedent") score += 0.5;
+    else score -= 0.5;
+    if (planetsInTenth.length) score += 1;
+    if (tenthRulerPosition.angularity === "angular") score += 1.25;
+    else if (tenthRulerPosition.angularity === "succedent") score += 0.5;
+    else score -= 0.5;
+    if (rulerStrength.strong) score += 1;
+    if (rulerStrength.weak) score -= 1;
+    if (rulerObscured) score -= 0.75;
+    if (isDifficultHouse(tenthRulerPosition.house)) score -= 0.5;
+
+    const channel = state.lang === "es"
+      ? `La reputación tiende a construirse a través de la casa ${tenthRulerPosition.house}: ${houseReadingTopics(tenthRulerPosition.house, "double")}.`
+      : `Reputation tends to be built through house ${tenthRulerPosition.house}: ${houseReadingTopics(tenthRulerPosition.house, "double")}.`;
+    const relationshipNote = [7, 11].includes(tenthRulerPosition.house)
+      ? (state.lang === "es"
+        ? "Al pasar por una casa de vínculos, la visibilidad puede depender mucho de alianzas, audiencias, pactos o redes; a veces eso comparte el foco con otras personas."
+        : "Because this runs through a relational house, visibility can depend strongly on alliances, audiences, agreements, or networks; at times the spotlight is shared with others.")
+      : "";
+    const hiddenNote = rulerObscured
+      ? (state.lang === "es"
+        ? "El regente de la casa 10 está oculto por el Sol, así que una parte del reconocimiento puede ser menos directa, más privada o más difícil de leer desde fuera."
+        : "The 10th-house ruler is hidden by the Sun, so part of the recognition can be less direct, more private, or harder to read from the outside.")
+      : "";
+
+    if (state.lang === "es") {
+      if (score >= 3) {
+        return `Conclusión: la proyección pública no parece marginal; tiende a pedir presencia, responsabilidad o reconocimiento visible. ${channel} ${relationshipNote} ${hiddenNote}`.trim();
+      }
+      if (score <= 0) {
+        return `Conclusión: la vida pública no desaparece, pero se muestra más indirecta, reducida o mediada; puede requerir tiempo, protección o trabajo detrás de escena antes de volverse reconocible. ${channel} ${relationshipNote} ${hiddenNote}`.trim();
+      }
+      return `Conclusión: hay proyección pública, pero no funciona como simple exposición constante; se gana forma por el área que administra el regente de la casa 10. ${channel} ${relationshipNote} ${hiddenNote}`.trim();
+    }
+    if (score >= 3) {
+      return `Conclusion: public projection does not look marginal; it tends to ask for presence, responsibility, or visible recognition. ${channel} ${relationshipNote} ${hiddenNote}`.trim();
+    }
+    if (score <= 0) {
+      return `Conclusion: public life does not disappear, but it looks more indirect, reduced, or mediated; it may need time, protection, or behind-the-scenes work before becoming recognizable. ${channel} ${relationshipNote} ${hiddenNote}`.trim();
+    }
+    return `Conclusion: public projection is present, but not as constant exposure; it takes shape through the area managed by the 10th-house ruler. ${channel} ${relationshipNote} ${hiddenNote}`.trim();
+  }
+
   function supportLevel(position, focuses, ascLordPosition, planet = "", chart = null) {
     const strength = dignityStrength(planet, position, chart);
     const connected = connectionStrength(position, focuses, ascLordPosition);
@@ -5954,12 +6031,36 @@
     return level;
   }
 
+  function supportConclusion(planet, position, focuses, ascLordPosition, chart) {
+    const level = supportLevel(position, focuses, ascLordPosition, planet, chart);
+    if (state.lang === "es") {
+      if (level === "strongLevel") return "Conclusión: este apoyo es central y utilizable; puede traducirse en protección, oportunidades, mediadores favorables o crecimiento real en esa zona.";
+      if (level === "moderateLevel") return "Conclusión: hay ayuda real, pero conviene cultivarla; no actúa como garantía automática, sino como una puerta que se abre mejor cuando se trabaja ese tema.";
+      return "Conclusión: el apoyo existe más como recurso de fondo que como motor principal; suma alivio, pero no organiza toda la lectura.";
+    }
+    if (level === "strongLevel") return "Conclusion: this support is central and usable; it can show as protection, opportunity, helpful mediators, or real growth in that area.";
+    if (level === "moderateLevel") return "Conclusion: there is real help, but it needs cultivation; it is not an automatic guarantee, but a door that opens better when the topic is worked.";
+    return "Conclusion: the support exists more as a background resource than as the main engine; it adds relief, but does not organize the whole reading.";
+  }
+
   function tensionLevel(position, focuses, ascLordPosition, planet = "", chart = null) {
     const strength = dignityStrength(planet, position, chart);
     const connected = connectionStrength(position, focuses, ascLordPosition);
     if (["strong", "medium"].includes(connected) && strength.weak) return "highLevel";
     if (["strong", "medium"].includes(connected)) return "mediumLevel";
     return "lowLevel";
+  }
+
+  function tensionConclusion(planet, position, focuses, ascLordPosition, chart) {
+    const level = tensionLevel(position, focuses, ascLordPosition, planet, chart);
+    if (state.lang === "es") {
+      if (level === "highLevel") return "Conclusión: esta zona no conviene ignorarla; pide límites claros, paciencia y decisiones prácticas para que la presión no gobierne el resto de la carta.";
+      if (level === "mediumLevel") return "Conclusión: la presión es relevante pero manejable; puede convertirse en disciplina, resistencia o madurez si no se deja actuar de forma automática.";
+      return "Conclusión: es una fricción secundaria; merece atención, pero no parece opacar por sí sola la dirección principal de la vida.";
+    }
+    if (level === "highLevel") return "Conclusion: this area should not be ignored; it asks for clear limits, patience, and practical decisions so the pressure does not run the rest of the chart.";
+    if (level === "mediumLevel") return "Conclusion: the pressure is relevant but manageable; it can become discipline, endurance, or maturity when it is not left to act automatically.";
+    return "Conclusion: this is secondary friction; it deserves attention, but does not by itself seem to overshadow the main life direction.";
   }
 
   function prominenceLevel(position) {
@@ -6012,45 +6113,45 @@
     if (state.lang === "es") {
       if (strongMitigation) {
         return regulatedHardSupport
-          ? "La mitigación es fuerte pero negociada: el contacto no es suave, pero la recepción da un canal formal para que el benéfico de la secta intervenga con claridad."
-          : "La mitigación es fuerte y directa: el benéfico de la secta puede intervenir de forma clara, por cercanía, aspecto favorable o fuerza propia.";
+          ? "Hay una salida fuerte pero negociada: el contacto no es suave, pero existe un canal claro para que el planeta de apoyo intervenga."
+          : "Hay una salida fuerte y directa: el planeta de apoyo puede intervenir con claridad, por cercanía, relación favorable o fuerza propia.";
       }
       if (mediumMitigation) {
         if (regulatedHardSupport) {
-          return "La mitigación es media y regulada: la presión no desaparece, pero la recepción convierte el contacto difícil en un canal manejable. La lectura debe mantener ambas señales.";
+          return "Hay un manejo intermedio y regulado: la presión no desaparece, pero el contacto difícil tiene una vía más tratable. La lectura debe mantener ambas señales.";
         }
-        return "La mitigación es media: la presión no desaparece, pero aparece algún canal de regulación, por apoyo benéfico, recepción o recursos propios del planeta. La lectura debe mantener ambas señales.";
+        return "Hay un manejo intermedio: la presión no desaparece, pero aparecen recursos, ayuda o fuerza propia suficientes para trabajarla. La lectura debe mantener ambas señales.";
       }
       if (weakMitigation) {
         return beneficObscured
-          ? "La mitigación es débil o dudosa: hay contacto benéfico, pero el benéfico está oculto por el Sol sin protección clara."
-          : "La mitigación es débil: aparece algún recurso, pero de forma indirecta o poco dominante.";
+          ? "La ayuda es débil o dudosa: existe contacto con el planeta de apoyo, pero está oculto por el Sol sin protección clara."
+          : "La ayuda es débil: aparece algún recurso, pero de forma indirecta o poco dominante.";
       }
       if (maleficStrength.weak) {
         return "Al no verse claramente compensada, esta tensión puede sentirse más cruda o menos integrada.";
       }
-      return "No aparece una mitigación fuerte, pero tampoco una debilidad mayor clara; conviene leerla con sus aspectos y casa.";
+      return "No aparece una salida fuerte, pero tampoco una debilidad mayor clara; conviene leerla por su casa y por sus relaciones.";
     }
     if (strongMitigation) {
       return regulatedHardSupport
-        ? "Mitigation is strong but negotiated: the contact is not smooth, but reception gives the benefic of sect a formal channel for clear intervention."
-        : "Mitigation is strong and direct: the benefic of sect can intervene clearly through closeness, a favorable aspect, or its own strength.";
+        ? "There is a strong but negotiated outlet: the contact is not smooth, but there is a clear channel for the support planet to intervene."
+        : "There is a strong and direct outlet: the support planet can intervene clearly through closeness, a favorable relationship, or its own strength.";
     }
     if (mediumMitigation) {
       if (regulatedHardSupport) {
-        return "Mitigation is medium and regulated: the pressure does not disappear, but reception turns the difficult contact into a manageable channel. Keep both testimonies in the reading.";
+        return "There is moderate, regulated handling: the pressure does not disappear, but the difficult contact has a more workable route. Keep both signals in the reading.";
       }
-      return "Mitigation is medium: the pressure does not disappear, but some channel of regulation appears through benefic support, reception, or the planet's own resources. Keep both testimonies in the reading.";
+      return "There is moderate handling: the pressure does not disappear, but enough resources, help, or strength of its own appear to work with it. Keep both signals in the reading.";
     }
     if (weakMitigation) {
       return beneficObscured
-        ? "Mitigation is weak or uncertain: benefic contact exists, but the benefic is hidden by the Sun without clear protection."
-        : "Mitigation is weak: some resource appears, but indirectly or without dominance.";
+        ? "Help is weak or uncertain: contact with the support planet exists, but that planet is hidden by the Sun without clear protection."
+        : "Help is weak: some resource appears, but indirectly or without dominance.";
     }
     if (maleficStrength.weak) {
       return "Without clear compensation, this tension can feel rawer or less integrated.";
     }
-    return "No strong mitigation appears, but no clear major weakness appears either; read it through its aspects and house.";
+    return "No strong outlet appears, but no clear major weakness appears either; read it through its house and relationships.";
   }
 
   function sectTriplicityRulers(chart) {
@@ -6233,31 +6334,31 @@
     const receptionText = receptionNote(target, actor, reception, role);
     const copresenceText = signType === "copresence"
       ? (state.lang === "es"
-        ? " La copresencia indica convivencia corporal en el mismo Lugar/Casa; su cualidad depende del planeta implicado y de su condición."
-        : " Copresence indicates bodily cohabitation in the same Place/House; its quality depends on the planet involved and its condition.")
+        ? " Al compartir el mismo Lugar/Casa, ambos temas conviven de forma intensa; el resultado depende de la condición de los planetas."
+        : " Because both share the same Place/House, the topics live together intensely; the result depends on the planets' condition.")
       : "";
     if (state.lang === "es") {
       if (role === "support") {
         const superiority = actorSuperior
-          ? " El apoyo llega desde posición superior."
-          : targetSuperior ? " El significador recibe apoyo sin perder posición superior." : "";
-        return `${targetName} recibe testimonio de ${actorName} por ${relation}${acute ? " muy cerca de perfección" : " por signo"}; esto funciona como bonificación o apoyo de intensidad ${t(intensity)}.${superiority}${receptionText}${copresenceText}`;
+          ? " Ese apoyo llega con ventaja y puede imponerse más fácilmente."
+          : targetSuperior ? " El tema principal conserva ventaja mientras recibe ayuda." : "";
+        return `${actorName} ayuda a ${targetName} mediante una relación de ${relation}${acute ? " muy cercana por grado" : " por signo"}; la ayuda es de intensidad ${t(intensity)}.${superiority}${receptionText}${copresenceText}`;
       }
       const superiority = actorSuperior
-        ? ", y además lo domina por superioridad"
-        : targetSuperior ? ", aunque el significador queda en posición superior frente a esa presión" : "";
-      return `${targetName} recibe presión de ${actorName} por ${relation}${acute ? " muy cerca de perfección" : " por signo"}${superiority}; esto pesa como maltrato o exigencia de intensidad ${t(intensity)}.${receptionText}${copresenceText}`;
+        ? ", y llega con ventaja sobre ese tema"
+        : targetSuperior ? ", aunque el tema principal conserva ventaja frente a esa presión" : "";
+      return `${actorName} presiona a ${targetName} mediante una relación de ${relation}${acute ? " muy cercana por grado" : " por signo"}${superiority}; la presión es de intensidad ${t(intensity)}.${receptionText}${copresenceText}`;
     }
     if (role === "support") {
       const superiority = actorSuperior
-        ? " The support comes from a superior position."
-        : targetSuperior ? " The significator receives support while retaining the superior position." : "";
-      return `${targetName} receives testimony from ${actorName} by ${relation}${acute ? " very close to perfection" : " by sign"}; this acts as ${t(intensity)} bonification or support.${superiority}${receptionText}${copresenceText}`;
+        ? " The support comes with leverage and can assert itself more easily."
+        : targetSuperior ? " The main topic keeps leverage while receiving help." : "";
+      return `${actorName} helps ${targetName} through a ${relation} relationship${acute ? " very close by degree" : " by sign"}; the help is ${t(intensity)}.${superiority}${receptionText}${copresenceText}`;
     }
     const superiority = actorSuperior
-      ? ", and also overcomes it from the superior position"
-      : targetSuperior ? ", though the significator holds the superior position against that pressure" : "";
-    return `${targetName} receives pressure from ${actorName} by ${relation}${acute ? " very close to perfection" : " by sign"}${superiority}; this weighs as ${t(intensity)} maltreatment or demand.${receptionText}${copresenceText}`;
+      ? ", and comes with leverage over that topic"
+      : targetSuperior ? ", though the main topic keeps leverage against that pressure" : "";
+    return `${actorName} presses ${targetName} through a ${relation} relationship${acute ? " very close by degree" : " by sign"}${superiority}; the pressure is ${t(intensity)}.${receptionText}${copresenceText}`;
   }
 
   function configurationsReading(chart, focuses, ascLordPosition) {
@@ -6275,12 +6376,12 @@
     const angular = visibleAngularPlanets(chart).filter((key) => isConnectedWithFocus(chart.positions[key], focuses, ascLordPosition));
     if (angular.length) {
       return state.lang === "es"
-        ? `No destacan bonificaciones o maltratos fuertes sobre los significadores principales. La lectura descansa más en angularidad y foco por casas, especialmente ${naturalList(angular.map(planetLabel))}.`
-        : `No strong bonification or maltreatment stands out on the main significators. The reading rests more on angularity and house focus, especially ${naturalList(angular.map(planetLabel))}.`;
+        ? `No destaca una ayuda o presión planetaria dominante sobre los puntos principales. La lectura descansa más en qué lugares están muy visibles, especialmente ${naturalList(angular.map(planetLabel))}.`
+        : `No dominant planetary help or pressure stands out on the main points. The reading rests more on which places are highly visible, especially ${naturalList(angular.map(planetLabel))}.`;
     }
     return state.lang === "es"
-      ? "No aparece una relación planetaria dominante sobre los significadores principales; por eso el juicio se apoya más en regencias, casas, secta y condición esencial."
-      : "No dominant planetary relation appears on the main significators; the judgment therefore leans more on rulerships, houses, sect, and essential condition.";
+      ? "No aparece una relación planetaria dominante sobre los puntos principales; por eso la lectura se apoya más en regentes, casas, secta y condición esencial."
+      : "No dominant planetary relationship appears on the main points; the reading therefore leans more on rulers, houses, sect, and essential condition.";
   }
 
   function receptionEvidenceItems(chart) {
@@ -6307,22 +6408,72 @@
     return [...new Set(items)].slice(0, 4);
   }
 
+  function triplicityRulerSupportScore(key, chart) {
+    const position = chart.positions[key];
+    const strength = dignityStrength(key, position, chart);
+    let score = 0;
+    if (position.angularity === "angular") score += 1.25;
+    else if (position.angularity === "succedent") score += 0.5;
+    else score -= 0.25;
+    if (strength.strong) score += 1;
+    if (strength.medium) score += 0.5;
+    if (strength.weak) score -= 1;
+    if (isSolarObscuredWithoutChariot(key, chart)) score -= 0.75;
+    return score;
+  }
+
+  function triplicityRulerPlainText(key, role, chart) {
+    const position = chart.positions[key];
+    const topic = houseReadingTopics(position.house, "double");
+    const visibility = placementVisibilityTone(position);
+    const condition = conditionPlainTone(key, position, chart);
+    return state.lang === "es"
+      ? `${planetLabel(key)} lleva el sostén ${role} desde casa ${position.house}: ${topic}; allí ${visibility}. ${condition}`
+      : `${planetLabel(key)} carries the ${role} support from house ${position.house}: ${topic}; there it ${visibility}. ${condition}`;
+  }
+
+  function triplicityFoundationConclusion(chart, entries) {
+    const scores = entries.map(([key]) => triplicityRulerSupportScore(key, chart));
+    const primaryScore = scores[0] || 0;
+    const average = scores.reduce((sum, value) => sum + value, 0) / Math.max(scores.length, 1);
+    const compensation = scores.slice(1).some((score) => score > primaryScore + 0.75);
+    if (state.lang === "es") {
+      if (primaryScore >= 1.5 && average >= 0.75) {
+        return "Conclusión: la base de sostén es bastante amplia; no elimina los problemas, pero da continuidad, personas o circunstancias que ayudan a recomponer el rumbo.";
+      }
+      if (primaryScore <= 0 && average <= 0.25) {
+        return "Conclusión: la estabilidad no parece venir dada de entrada; se construye con paciencia, apoyos concretos y ajustes repetidos.";
+      }
+      if (compensation) {
+        return "Conclusión: la base es desigual: el sostén principal no lo lleva todo solo, y una ayuda secundaria puede compensar o estabilizar etapas importantes.";
+      }
+      return "Conclusión: la estabilidad existe, pero por capas; unas zonas sostienen y otras piden más trabajo antes de dar seguridad.";
+    }
+    if (primaryScore >= 1.5 && average >= 0.75) {
+      return "Conclusion: the base of support is fairly broad; it does not erase problems, but it gives continuity, people, or circumstances that help restore direction.";
+    }
+    if (primaryScore <= 0 && average <= 0.25) {
+      return "Conclusion: stability does not seem simply given at the start; it is built through patience, concrete support, and repeated adjustments.";
+    }
+    if (compensation) {
+      return "Conclusion: the base is uneven: the main support does not carry everything alone, and a secondary support can compensate or stabilize important stages.";
+    }
+    return "Conclusion: stability exists in layers; some areas support, while others need more work before they feel secure.";
+  }
+
   function triplicityFoundationReading(chart) {
     const trip = sectTriplicityRulers(chart);
     const entries = [
-      [trip.primary, state.lang === "es" ? "activo por secta" : "active by sect"],
-      [trip.secondary, state.lang === "es" ? "fuera de secta" : "out of sect"],
+      [trip.primary, state.lang === "es" ? "principal" : "main"],
+      [trip.secondary, state.lang === "es" ? "secundario" : "secondary"],
       [trip.cooperating, state.lang === "es" ? "cooperante" : "cooperating"],
     ];
-    const houseWord = state.lang === "es" ? "casa" : "house";
-    const parts = entries.map(([key, role]) => {
-      const position = chart.positions[key];
-      return `${planetLabel(key)} (${role}) ${state.lang === "es" ? "en" : "in"} ${houseWord} ${position.house}, ${t(position.angularity)}, ${plainDignityText(position.dignities, chart)}`;
-    });
+    const parts = entries.map(([key, role]) => triplicityRulerPlainText(key, role, chart));
+    const conclusion = triplicityFoundationConclusion(chart, entries);
     if (state.lang === "es") {
-      return `La luminaria de la secta está en ${trip.sign.es}; sus regentes de triplicidad dan el fondo de apoyo de la carta: ${parts.join("; ")}. No sustituyen al regente del Ascendente, pero muestran si la vida cuenta con una base amplia, desigual o tardía de sostén.`;
+      return `Esta sección mira el sostén de fondo: qué ayuda a que la vida no dependa solo del empuje del Ascendente. La luminaria de la secta está en ${trip.sign.es}. ${parts.join(" ")} ${conclusion}`;
     }
-    return `The sect light is in ${trip.sign.en}; its triplicity rulers give the chart's background support: ${parts.join("; ")}. They do not replace the Ascendant lord, but they show whether life has a broad, uneven, or delayed base of stability.`;
+    return `This section looks at background support: what helps life not depend only on the Ascendant's push. The sect light is in ${trip.sign.en}. ${parts.join(" ")} ${conclusion}`;
   }
 
   function lotPlanetRoleText(key, chart) {
@@ -6515,6 +6666,84 @@
     `;
   }
 
+  function lotPlainMeaning(key) {
+    const meanings = {
+      es: {
+        fortune: "lo que llega por cuerpo, circunstancias, entorno y sucesos que no se controlan del todo",
+        spirit: "lo que la persona intenta dirigir con intención, decisión y acción consciente",
+        eros: "atracción, deseo, vínculo y aquello que mueve el corazón hacia algo",
+        necessity: "obligaciones, presiones inevitables y condiciones que estrechan el margen de elección",
+        courage: "respuesta ante el riesgo, defensa, impulso y capacidad de afrontar",
+        victory: "ayudas para vencer obstáculos, ganar favor o salir adelante",
+        nemesis: "límites, corrección, pérdida de exceso y consecuencias de lo no resuelto",
+      },
+      en: {
+        fortune: "what arrives through body, circumstances, surroundings, and events not fully under control",
+        spirit: "what the person tries to direct through intention, decision, and conscious action",
+        eros: "attraction, desire, bonding, and what moves the heart toward something",
+        necessity: "obligations, unavoidable pressures, and conditions that narrow choice",
+        courage: "response to risk, defense, drive, and the capacity to face things",
+        victory: "help in overcoming obstacles, gaining favor, or moving ahead",
+        nemesis: "limits, correction, loss of excess, and consequences of what remains unresolved",
+      },
+    };
+    return meanings[state.lang]?.[key] || lotName(key).toLocaleLowerCase(state.lang === "es" ? "es-ES" : "en");
+  }
+
+  function lotTestimonyPlainSummary(items, role) {
+    if (!items.length) {
+      return role === "support"
+        ? (state.lang === "es" ? "No aparece una ayuda planetaria clara sobre este lote." : "No clear planetary help appears for this lot.")
+        : (state.lang === "es" ? "No aparece una presión planetaria clara sobre este lote." : "No clear planetary pressure appears for this lot.");
+    }
+    const level = strongestLevel(items, "level");
+    const names = naturalList([...new Set(items
+      .filter((item) => item.level === level || levelRank(item.level) === levelRank(level))
+      .slice(0, 2)
+      .map((item) => planetLabel(item.key)))]);
+    const hardSupport = role === "support" && items.some((item) => ["square", "opposition"].includes(item.signType));
+    const regulatedPressure = role === "tension" && items.some((item) => item.reception?.hasReception && item.rawLevel !== item.level);
+    if (state.lang === "es") {
+      if (role === "support") {
+        if (level === "strongLevel") return `Hay ayuda clara de ${names}; puede abrir protección, mediación o crecimiento.${hardSupport ? " No es una ayuda completamente suave: llega con fricción que hay que negociar." : ""}`;
+        if (level === "mediumLevel") return `Hay ayuda moderada de ${names}; sirve, pero necesita contexto, relación o trabajo para rendir.`;
+        return `Hay ayuda leve de ${names}; suma, aunque no domina el tema.`;
+      }
+      if (level === "highLevel") return `Hay presión fuerte de ${names}; este tema pide cuidado, límites y manejo activo.${regulatedPressure ? " Parte de esa presión tiene una vía de regulación." : ""}`;
+      if (level === "mediumLevel") return `Hay presión moderada de ${names}; no bloquea por sí sola, pero obliga a tomar el tema en serio.${regulatedPressure ? " Parte de esa presión tiene una vía de regulación." : ""}`;
+      return `Hay presión leve de ${names}; conviene observarla, pero no parece llevar todo el peso.`;
+    }
+    if (role === "support") {
+      if (level === "strongLevel") return `There is clear help from ${names}; it can open protection, mediation, or growth.${hardSupport ? " This is not completely smooth help: it arrives with friction that must be negotiated." : ""}`;
+      if (level === "mediumLevel") return `There is moderate help from ${names}; it works, but needs context, relationship, or effort to deliver.`;
+      return `There is light help from ${names}; it adds something, though it does not dominate the topic.`;
+    }
+    if (level === "highLevel") return `There is strong pressure from ${names}; this topic asks for care, limits, and active handling.${regulatedPressure ? " Part of that pressure has a regulating route." : ""}`;
+    if (level === "mediumLevel") return `There is moderate pressure from ${names}; it does not block by itself, but it makes the topic serious.${regulatedPressure ? " Part of that pressure has a regulating route." : ""}`;
+    return `There is light pressure from ${names}; it should be observed, but does not seem to carry the whole weight.`;
+  }
+
+  function lotPracticalConclusion(lot, lordPosition, beneficItems, maleficItems, chart) {
+    const supportLevel = strongestLevel(beneficItems, "level");
+    const pressureLevel = strongestLevel(maleficItems, "level");
+    const supportRank = levelRank(supportLevel);
+    const pressureRank = levelRank(pressureLevel);
+    const lordHidden = isSolarObscuredWithoutChariot(lot.lord, chart);
+    const demanding = isDifficultHouse(lot.house) || isDifficultHouse(lordPosition.house);
+    if (state.lang === "es") {
+      const hidden = lordHidden ? " Parte del tema puede funcionar de forma menos visible o más privada porque su regente está cerca del Sol." : "";
+      if (pressureRank > supportRank && demanding) return `Conclusión: ${lotName(lot.key)} describe un campo que puede sentirse pesado o condicionado; no queda cerrado, pero necesita manejo consciente, apoyo externo y margen de tiempo.${hidden}`;
+      if (pressureRank > supportRank) return `Conclusión: ${lotName(lot.key)} trae oportunidades mezcladas con presión; conviene no esperar que el tema fluya solo.${hidden}`;
+      if (supportRank > pressureRank) return `Conclusión: ${lotName(lot.key)} tiene más ayuda que bloqueo; el tema puede abrirse cuando se aprovechan sus mediadores y recursos.${hidden}`;
+      return `Conclusión: ${lotName(lot.key)} es mixto: ni completamente fácil ni cerrado, y su resultado depende de cómo se administre el lugar de su regente.${hidden}`;
+    }
+    const hidden = lordHidden ? " Part of the topic may work less visibly or more privately because its ruler is close to the Sun." : "";
+    if (pressureRank > supportRank && demanding) return `Conclusion: ${lotName(lot.key)} describes a field that can feel heavy or conditioned; it is not closed, but it needs conscious handling, outside support, and time.${hidden}`;
+    if (pressureRank > supportRank) return `Conclusion: ${lotName(lot.key)} brings opportunities mixed with pressure; do not expect the topic to flow by itself.${hidden}`;
+    if (supportRank > pressureRank) return `Conclusion: ${lotName(lot.key)} has more help than blockage; the topic can open when its mediators and resources are used.${hidden}`;
+    return `Conclusion: ${lotName(lot.key)} is mixed: neither completely easy nor closed, and its outcome depends on how the ruler's place is managed.${hidden}`;
+  }
+
   function lotConditionReading(lot, chart) {
     if (!lot) return "";
     const lordPosition = chart.positions[lot.lord];
@@ -6523,16 +6752,17 @@
     const solar = solarPhaseState(lot.lord, chart);
     const solarConcern = ["combust", "underBeams"].includes(solar.category);
     const placeTone = [6, 8, 12].includes(lot.house)
-      ? (state.lang === "es" ? "un lugar exigente" : "a demanding place")
+      ? (state.lang === "es" ? "un campo que pide cuidado práctico" : "a field that asks for practical care")
       : chart.positions[lot.lord]?.angularity === "angular"
-        ? (state.lang === "es" ? "una administración visible o activa" : "visible or active administration")
-        : (state.lang === "es" ? "una administración más indirecta" : "more indirect administration");
-    const support = lotTestimonyText(beneficItems, "support", lot);
-    const pressure = lotTestimonyText(maleficItems, "tension", lot);
+        ? (state.lang === "es" ? "un tema visible o activo" : "a visible or active topic")
+        : (state.lang === "es" ? "un tema más indirecto" : "a more indirect topic");
+    const support = lotTestimonyPlainSummary(beneficItems, "support");
+    const pressure = lotTestimonyPlainSummary(maleficItems, "tension");
+    const conclusion = lotPracticalConclusion(lot, lordPosition, beneficItems, maleficItems, chart);
     if (state.lang === "es") {
-      return `${lotName(lot.key)} cae en casa ${lot.house}: ${houseReadingTopics(lot.house, "double")}; su señor es ${planetLabel(lot.lord)} en casa ${lordPosition.house}: ${houseReadingTopics(lordPosition.house, "double")}, ${t(lordPosition.angularity)}, con ${plainDignityText(lordPosition.dignities, chart)}. Esto da ${placeTone}. Recibe testimonio de ${support} y presión de ${pressure}.${solarConcern ? ` El señor del lote está ${solar.category === "combust" ? "combusto" : "bajo los rayos"}, así que parte del tema puede operar con menor legibilidad técnica.` : ""}`;
+      return `${lotName(lot.key)} describe ${lotPlainMeaning(lot.key)}. Cae en casa ${lot.house}: ${houseReadingTopics(lot.house, "double")}. Su regente, ${planetLabel(lot.lord)}, lleva ese asunto a casa ${lordPosition.house}: ${houseReadingTopics(lordPosition.house, "double")}; allí ${placementVisibilityTone(lordPosition)}. ${conditionPlainTone(lot.lord, lordPosition, chart)} Esto vuelve el lote ${placeTone}. ${support} ${pressure}${solarConcern ? ` El regente del lote está ${solar.category === "combust" ? "combusto" : "bajo los rayos"}, así que parte del tema puede operar con menor claridad pública.` : ""} ${conclusion}`;
     }
-    return `${lotName(lot.key)} falls in house ${lot.house}: ${houseReadingTopics(lot.house, "double")}; its lord is ${planetLabel(lot.lord)} in house ${lordPosition.house}: ${houseReadingTopics(lordPosition.house, "double")}, ${t(lordPosition.angularity)}, with ${plainDignityText(lordPosition.dignities, chart)}. This gives ${placeTone}. It receives testimony from ${support} and pressure from ${pressure}.${solarConcern ? ` The lot lord is ${solar.category === "combust" ? "combust" : "under the beams"}, so part of the topic may operate with lower technical legibility.` : ""}`;
+    return `${lotName(lot.key)} describes ${lotPlainMeaning(lot.key)}. It falls in house ${lot.house}: ${houseReadingTopics(lot.house, "double")}. Its ruler, ${planetLabel(lot.lord)}, carries that matter into house ${lordPosition.house}: ${houseReadingTopics(lordPosition.house, "double")}; there it ${placementVisibilityTone(lordPosition)}. ${conditionPlainTone(lot.lord, lordPosition, chart)} This makes the lot ${placeTone}. ${support} ${pressure}${solarConcern ? ` The lot ruler is ${solar.category === "combust" ? "combust" : "under the beams"}, so part of the topic may operate with less public clarity.` : ""} ${conclusion}`;
   }
 
   function moonJudgmentReading(chart) {
@@ -6553,24 +6783,44 @@
       : next?.planet === chart.maleficContrarySect ? "tension" : "neutral";
     if (state.lang === "es") {
       const roleText = nextRole === "support"
-        ? "El próximo contacto va hacia el planeta que más facilita, lo que suaviza la transmisión lunar."
+        ? "El próximo contacto va hacia el planeta de apoyo, así que el ritmo inmediato puede encontrar ayuda, conciliación o una salida más amable."
         : nextRole === "tension"
-          ? "El próximo contacto va hacia el maléfico contrario a la secta, así que la Luna transmite más exigencia o presión."
-          : "El próximo contacto no recae sobre el benéfico de la secta ni sobre el maléfico contrario, por lo que se lee por la naturaleza del planeta implicado.";
+          ? "El próximo contacto va hacia el planeta de presión, así que el ritmo inmediato puede traer más fricción, demora o necesidad de resolver algo incómodo."
+          : "El próximo contacto no va al principal planeta de apoyo ni al principal planeta de presión; se lee por la naturaleza concreta del planeta implicado.";
       const signVocText = chart.moon.voidOfCourseBySign
-        ? "Antes de abandonar el signo tampoco perfecciona un contacto mayor."
-        : `Antes de abandonar el signo todavía perfecciona con ${bySignText}.`;
-      return `La Luna está en fase ${chart.moon.phase}. Viene de ${lastText} y se dirige a ${nextText}. ${chart.moon.voidOfCourse ? "Bajo la definición helenística amplia está vacía de curso: la acción inmediata se dispersa o queda menos encaminada." : roleText} ${signVocText} ${chart.moon.hasApplyingWithinOrb ? "Además hay aplicación cercana dentro de 12°, por lo que la señal lunar es más concreta." : "No hay aplicación cercana dentro de 12°, así que la señal lunar es más amplia que puntual."}`;
+        ? "Antes de abandonar el signo tampoco completa un contacto mayor; eso deja el desarrollo más abierto o menos rematado."
+        : `Antes de abandonar el signo todavía completa un contacto con ${bySignText}; eso da más continuidad al proceso.`;
+      const closeText = chart.moon.hasApplyingWithinOrb
+        ? "Además hay aplicación cercana dentro de 12°, por lo que el asunto se vuelve más concreto y reconocible."
+        : "No hay aplicación cercana dentro de 12°, así que el asunto se siente más amplio, difuso o dependiente del contexto.";
+      const conclusion = chart.moon.voidOfCourse
+        ? "Conclusión: el flujo lunar no empuja con dirección fuerte; conviene leerlo como un ritmo de apertura, dispersión o espera más que como avance inmediato."
+        : nextRole === "support"
+          ? "Conclusión: la Luna conserva movimiento y tiende a buscar una salida más favorable."
+          : nextRole === "tension"
+            ? "Conclusión: la Luna conserva movimiento, pero lo lleva hacia una zona que pide trabajo, paciencia o resolución."
+            : "Conclusión: la Luna conserva movimiento, pero el tono final depende del planeta al que se dirige y de su condición.";
+      return `La Luna muestra el ritmo de los acontecimientos, el cuerpo y la continuidad cotidiana. Está en fase ${chart.moon.phase}. Viene de ${lastText} y se dirige a ${nextText}. ${chart.moon.voidOfCourse ? "Según la regla helenística amplia de 30°, está vacía de curso: la acción inmediata se dispersa o queda menos encaminada." : roleText} ${signVocText} ${closeText} ${conclusion}`;
     }
     const roleText = nextRole === "support"
-      ? "The next contact goes to the planet that most facilitates, softening the lunar transmission."
+      ? "The next contact goes to the support planet, so the immediate rhythm can find help, reconciliation, or a gentler outlet."
       : nextRole === "tension"
-        ? "The next contact goes to the malefic contrary to sect, so the Moon transmits more demand or pressure."
-        : "The next contact is neither to the benefic of sect nor to the malefic contrary to sect, so read it through the nature of the planet involved.";
+        ? "The next contact goes to the pressure planet, so the immediate rhythm can bring more friction, delay, or the need to resolve something uncomfortable."
+        : "The next contact goes neither to the main support planet nor to the main pressure planet; read it through the concrete nature of the planet involved.";
     const signVocText = chart.moon.voidOfCourseBySign
-      ? "Before leaving the sign it also perfects no major contact."
-      : `Before leaving the sign it still perfects with ${bySignText}.`;
-    return `The Moon is in ${chart.moon.phase} phase. It comes from ${lastText} and moves toward ${nextText}. ${chart.moon.voidOfCourse ? "Under the broad Hellenistic definition it is void of course: immediate action disperses or is less directed." : roleText} ${signVocText} ${chart.moon.hasApplyingWithinOrb ? "There is also a close application within 12°, making the lunar signal more concrete." : "There is no close application within 12°, so the lunar signal is broader rather than punctual."}`;
+      ? "Before leaving the sign it also completes no major contact; that leaves the development more open or less resolved."
+      : `Before leaving the sign it still completes a contact with ${bySignText}; that gives the process more continuity.`;
+    const closeText = chart.moon.hasApplyingWithinOrb
+      ? "There is also a close application within 12°, making the matter more concrete and recognizable."
+      : "There is no close application within 12°, so the matter feels broader, more diffuse, or more dependent on context.";
+    const conclusion = chart.moon.voidOfCourse
+      ? "Conclusion: the lunar flow does not push with strong direction; read it as opening, dispersal, or waiting rather than immediate forward motion."
+      : nextRole === "support"
+        ? "Conclusion: the Moon keeps moving and tends to seek a more favorable outlet."
+        : nextRole === "tension"
+          ? "Conclusion: the Moon keeps moving, but it carries the matter toward an area that asks for work, patience, or resolution."
+          : "Conclusion: the Moon keeps moving, but the final tone depends on the planet it approaches and that planet's condition.";
+    return `The Moon shows the rhythm of events, the body, and daily continuity. It is in ${chart.moon.phase} phase. It comes from ${lastText} and moves toward ${nextText}. ${chart.moon.voidOfCourse ? "By the broad Hellenistic 30° rule it is void of course: immediate action disperses or is less directed." : roleText} ${signVocText} ${closeText} ${conclusion}`;
   }
 
   function visibleAngularPlanets(chart) {
@@ -6942,17 +7192,21 @@
 
   function publicProjectionReading(chart) {
     const tenthSignIndex = wholeSignHouseSign(chart, 10);
-    const tenthSign = SIGNS[tenthSignIndex];
     const tenthRuler = wholeSignHouseRuler(chart, 10);
     const tenthRulerPosition = chart.positions[tenthRuler];
     const planetsInTenth = VISIBLE_KEYS.filter((key) => chart.positions[key]?.house === 10);
-    const tenthPlanetText = planetsInTenth.length
-      ? naturalList(planetsInTenth.map(planetLabel))
-      : (state.lang === "es" ? "ningún planeta visible" : "no visible planet");
+    const tenthHouseText = planetsInTenth.length
+      ? (state.lang === "es"
+        ? `La casa 10 contiene ${naturalList(planetsInTenth.map(planetLabel))}; esos planetas colorean directamente la forma de mostrarse, trabajar, ganar rango o asumir visibilidad.`
+        : `The 10th house contains ${naturalList(planetsInTenth.map(planetLabel))}; those planets directly color how the person shows up, works, gains rank, or becomes visible.`)
+      : (state.lang === "es"
+        ? "La casa 10 no contiene planetas visibles. Eso no borra la vida pública: significa que el peso de la interpretación pasa al regente de la casa 10 y al MC."
+        : "The 10th house contains no visible planet. That does not erase public life: it means the interpretation leans on the 10th-house ruler and the MC.");
+    const conclusion = publicProjectionConclusion(chart, planetsInTenth, tenthRuler, tenthRulerPosition);
     if (state.lang === "es") {
-      return `La proyección pública se lee aparte de la dirección vital. El MC cae en casa ${chart.mcHouse}: ${houseReadingTopics(chart.mcHouse, "double")}. La casa 10 está en ${signLabel(tenthSignIndex)} y su regente, ${planetLabel(tenthRuler)}, cae en casa ${tenthRulerPosition.house}: ${houseReadingTopics(tenthRulerPosition.house, "double")}. En la casa 10 hay ${tenthPlanetText}; esto muestra qué actores se hacen más visibles en reputación, oficio, rango o acción pública.`;
+      return `La proyección pública describe cómo una persona se vuelve visible: oficio, reputación, responsabilidades, reconocimiento y papel ante otros. El MC cae en casa ${chart.mcHouse}: ${houseReadingTopics(chart.mcHouse, "double")}. La casa 10 está en ${signLabel(tenthSignIndex)} y su regente, ${planetLabel(tenthRuler)}, cae en casa ${tenthRulerPosition.house}: ${houseReadingTopics(tenthRulerPosition.house, "double")}. ${tenthHouseText} ${conclusion}`;
     }
-    return `Public projection is read separately from life direction. The MC falls in house ${chart.mcHouse}: ${houseReadingTopics(chart.mcHouse, "double")}. The 10th house is in ${signLabel(tenthSignIndex)} and its ruler, ${planetLabel(tenthRuler)}, falls in house ${tenthRulerPosition.house}: ${houseReadingTopics(tenthRulerPosition.house, "double")}. The 10th house contains ${tenthPlanetText}; this shows which actors become more visible in reputation, craft, rank, or public action.`;
+    return `Public projection describes how a person becomes visible: craft, reputation, responsibility, recognition, and role before others. The MC falls in house ${chart.mcHouse}: ${houseReadingTopics(chart.mcHouse, "double")}. The 10th house is in ${signLabel(tenthSignIndex)} and its ruler, ${planetLabel(tenthRuler)}, falls in house ${tenthRulerPosition.house}: ${houseReadingTopics(tenthRulerPosition.house, "double")}. ${tenthHouseText} ${conclusion}`;
   }
 
   function interpretChart(chart) {
@@ -6988,8 +7242,8 @@
     const lotConditionTexts = [lotConditionReading(fortune, chart), lotConditionReading(spirit, chart)].filter(Boolean);
     const beneficSolarCaution = isSolarObscuredWithoutChariot(benefic, chart)
       ? (state.lang === "es"
-        ? `Su apoyo existe, pero queda con menor legibilidad técnica o menor autonomía simbólica porque está ${solarPhaseTableText(benefic, chart)}.`
-        : `Its support exists, but has lower technical legibility or less symbolic autonomy because it is ${solarPhaseTableText(benefic, chart)}.`)
+        ? `Su apoyo existe, pero puede verse menos, depender de mediadores o tardar más porque está ${solarPhaseTableText(benefic, chart)}.`
+        : `Its support exists, but may be less visible, more mediated, or slower because it is ${solarPhaseTableText(benefic, chart)}.`)
       : "";
 
     const lead = focusLeadReading(focuses);
@@ -7003,16 +7257,16 @@
       : `The Ascendant / Hour-Marker is in ${signLabel(chart.ascSign)}, so ${planetLabel(ascLord)} carries the chart's general direction. ${planetLabel(ascLord)} speaks of ${planetPlainMeaning(ascLord)}. Placed in ${signLabel(signOf(ascLordPosition.lon))}, house ${ascLordPosition.house}, those capacities connect with ${houseReadingTopics(ascLordPosition.house, "double")}. ${signStyleReading(ascLordSign)} Being in a ${t(ascLordPosition.angularity)} house, this topic shows itself ${angularityReading(ascLordPosition.angularity)}. ${essentialConditionReading(ascLordPosition, chart)}`;
 
     const resources = state.lang === "es"
-      ? `En esta ${sectContext}, ${planetLabel(benefic)} es el planeta que más facilita (técnicamente: benéfico de la secta). Está en casa ${beneficPosition.house}: ${houseReadingTopics(beneficPosition.house, "double")}. Muestra dónde las cosas tienden a crecer, encontrar apoyo o abrir oportunidades. ${connectionReading(beneficPosition, focuses, ascLordPosition, "support")} ${beneficSolarCaution}`
-      : `In this ${sectContext}, ${planetLabel(benefic)} is the planet that most facilitates the chart (technically: benefic of sect). It is in house ${beneficPosition.house}: ${houseReadingTopics(beneficPosition.house, "double")}. It shows where things tend to grow, find support, or open opportunities. ${connectionReading(beneficPosition, focuses, ascLordPosition, "support")} ${beneficSolarCaution}`;
+      ? `Esta sección muestra de dónde puede venir ayuda real: protección, mediadores favorables, crecimiento, conciliación o margen para respirar. En esta ${sectContext}, ${planetLabel(benefic)} es el principal planeta de apoyo. Está en casa ${beneficPosition.house}: ${houseReadingTopics(beneficPosition.house, "double")}. Ahí facilita que el tema crezca, encuentre respaldo o abra oportunidades concretas. ${connectionReading(beneficPosition, focuses, ascLordPosition, "support")} ${beneficSolarCaution} ${supportConclusion(benefic, beneficPosition, focuses, ascLordPosition, chart)}`
+      : `This section shows where real help can come from: protection, favorable mediators, growth, reconciliation, or room to breathe. In this ${sectContext}, ${planetLabel(benefic)} is the main support planet. It is in house ${beneficPosition.house}: ${houseReadingTopics(beneficPosition.house, "double")}. There it helps the topic grow, find backing, or open concrete opportunities. ${connectionReading(beneficPosition, focuses, ascLordPosition, "support")} ${beneficSolarCaution} ${supportConclusion(benefic, beneficPosition, focuses, ascLordPosition, chart)}`;
 
     const tensions = state.lang === "es"
-      ? `${planetLabel(malefic)} es el planeta que más tensión puede introducir en esta carta (técnicamente: maléfico contrario a la secta). Está en casa ${maleficPosition.house}: ${houseReadingTopics(maleficPosition.house, "double")}. No es un juicio moral, pero sí un testimonio técnico de fricción: señala presión, conflicto, corte, desgaste, daño potencial o condiciones que exigen manejo. ${connectionReading(maleficPosition, focuses, ascLordPosition, "tension")} ${maleficMitigationReading(maleficPosition, beneficPosition, chart)}`
-      : `${planetLabel(malefic)} is the planet that can introduce the most tension in this chart (technically: malefic contrary to sect). It is in house ${maleficPosition.house}: ${houseReadingTopics(maleficPosition.house, "double")}. This is not a moral judgment, but it is a technical testimony of friction: pressure, conflict, cutting, strain, potential damage, or conditions that require handling. ${connectionReading(maleficPosition, focuses, ascLordPosition, "tension")} ${maleficMitigationReading(maleficPosition, beneficPosition, chart)}`;
+      ? `${planetLabel(malefic)} señala la presión que más cuidado pide en esta carta. Está en casa ${maleficPosition.house}: ${houseReadingTopics(maleficPosition.house, "double")}. En la vida real puede sentirse como límites, conflicto, desgaste, demoras, separación o condiciones que obligan a actuar con más estrategia. ${connectionReading(maleficPosition, focuses, ascLordPosition, "tension")} ${maleficMitigationReading(maleficPosition, beneficPosition, chart)} ${tensionConclusion(malefic, maleficPosition, focuses, ascLordPosition, chart)}`
+      : `${planetLabel(malefic)} marks the pressure that asks for the most care in this chart. It is in house ${maleficPosition.house}: ${houseReadingTopics(maleficPosition.house, "double")}. In real life this can feel like limits, conflict, strain, delays, separation, or conditions that require more strategy. ${connectionReading(maleficPosition, focuses, ascLordPosition, "tension")} ${maleficMitigationReading(maleficPosition, beneficPosition, chart)} ${tensionConclusion(malefic, maleficPosition, focuses, ascLordPosition, chart)}`;
 
     const lotReading = state.lang === "es"
-      ? `Fortuna habla de lo que llega: cuerpo, circunstancias, entorno y sucesos que no dependen del todo de la voluntad. Espíritu habla de lo que la persona intenta dirigir: decisiones, intención, propósito y acción consciente. ${lotConditionTexts.join(" ")}`
-      : `Fortune speaks of what arrives: body, circumstances, surroundings, and events that do not fully depend on the will. Spirit speaks of what the person tries to direct: decisions, intention, purpose, and conscious action. ${lotConditionTexts.join(" ")}`;
+      ? `Los lotes principales separan dos planos: Fortuna muestra lo que llega y condiciona; Espíritu muestra lo que la persona intenta orientar. ${lotConditionTexts.join(" ")}`
+      : `The principal lots separate two planes: Fortune shows what arrives and conditions life; Spirit shows what the person tries to direct. ${lotConditionTexts.join(" ")}`;
 
     const evidence = [
       t("evidenceFocuses", {

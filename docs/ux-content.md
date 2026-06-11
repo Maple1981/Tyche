@@ -86,6 +86,10 @@ Use concise, sober interpretive language. Avoid deterministic fatalism, medical/
 
 The interpretation panel should read like a clear human explanation first. Use technical terms such as benefic, malefic, sect, testimony, dignity, and angularity in the evidence layer or glossary; translate them in the first layer into support, tension, repeated signals, resources, visibility, and difficulty.
 
+Visible interpretation sections should not merely restate the calculation. Start by naming the life area in ordinary language, then say what the chart does with that area, and close with a short practical conclusion. Examples of conclusion language: amplified, visible, mediated by other people, reduced, indirect, hidden, mixed, supported, demanding, or requiring deliberate management.
+
+When a house is empty, do not write as if nothing is happening there. Say that the topic is read through its ruler and explain whether that makes the topic more direct, indirect, dependent on another life area, or less publicly visible.
+
 Do not erase traditional difficult topics from technical tables or glossary entries. In the plain reading, contextualize them so they do not sound like a fatalistic sentence.
 
 Use a consistent double layer:

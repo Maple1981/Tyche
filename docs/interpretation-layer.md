@@ -8,6 +8,14 @@ The first implementation is natal only. Timing, prediction, and activation requi
 
 The user-facing layer should be plain and accessible. Technical terms may remain in the evidence section and glossary, but the first reading should say what the chart emphasizes in ordinary language.
 
+Each visible reading block should do three things:
+
+- Define the life area in plain language before giving chart mechanics.
+- Translate the calculated factors into lived possibilities such as visibility, support, pressure, delay, mediation, shared focus, protection, or practical management.
+- End with a short conclusion that states whether the topic looks amplified, indirect, reduced, mixed, demanding, or supported.
+
+Do not open a block by saying that it is read separately; the separate section already communicates that. Explain what the section is about instead. Empty places should never be phrased as absence by default. State that the place is read through its ruler, and then interpret whether the result is direct, indirect, mediated, or reduced.
+
 ## Reading Order
 
 The default hierarchy is:
@@ -29,7 +37,9 @@ This order keeps the app from treating every placement as equally important.
 
 The visible summary should normally show the first three strongest topical focuses, not only one dominant house. A single house can be technically central without describing the whole chart by itself.
 
-Public projection should be its own plain-language block when interpretation is rendered. It should combine MC, the 10th whole-sign house, the ruler of the 10th house, and visible planets in the 10th. This block clarifies reputation, craft, rank, and action in public without replacing the Ascendant lord as the main life-direction thread.
+Public projection should be its own plain-language block when interpretation is rendered. It should define public projection as the way a person becomes visible through craft, reputation, responsibility, recognition, and role before others. It should combine MC, the 10th whole-sign house, the ruler of the 10th house, and visible planets in the 10th without replacing the Ascendant lord as the main life-direction thread.
+
+If no visible planet occupies the 10th house, the text should not imply that public life is absent. Say that interpretation moves to the MC and the ruler of the 10th. The conclusion should describe whether public projection is strong, mediated through other people or networks, indirect, reduced, hidden, or slow to become recognizable.
 
 The 10th-place ruler may contribute a moderate public-focus score where it falls. This does not make public projection equal to the Ascendant lord; it simply shows where reputation, craft, rank, and visible action are administered.
 
@@ -73,11 +83,15 @@ Prominence and ease must remain separate:
 
 In the plain-language layer, translate technical roles:
 
-- Benefic of sect: the planet that most facilitates.
-- Malefic contrary to sect: the planet that most demands attention.
+- Benefic of sect: the main support planet.
+- Malefic contrary to sect: the main pressure planet.
 - Angularity: visibility and strength, not automatic ease.
 - Fortune: what arrives through body, circumstance, and events.
 - Spirit: what the person tries to direct through intention and action.
+
+For lots, the visible reading should state what the lot describes, where it falls, where its ruler carries the topic, and whether help or pressure is stronger. Detailed benefic/malefic testimony belongs in the lot audit, while the visible block should close with a practical conclusion.
+
+For lunar condition, define the Moon as the rhythm of events, the body, and everyday continuity. The visible block should explain whether the flow is directed, dispersed, concrete, open-ended, supportive, or pressured. Both void-of-course rules remain in evidence, but the reading should say what the condition means in practice.
 
 The plain-language layer may add context for difficult houses, but it should not censor the traditional topics. Technical surfaces can retain words such as illness, death, enemies, loss, and confinement when those are the relevant house topics.
 
