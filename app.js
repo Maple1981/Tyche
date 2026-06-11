@@ -5497,7 +5497,7 @@
   function plainHouseTopics(house) {
     const topics = {
       es: {
-        1: "cuerpo, carácter y dirección personal",
+        1: "cuerpo, salud, apariencia, carácter y presencia personal",
         2: "recursos, dinero y medios de vida",
         3: "aprendizaje, escritura, mensajes, hermanos y entorno cercano",
         4: "raíces, hogar, familia, mundo privado y finales",
