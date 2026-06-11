@@ -53,9 +53,15 @@ assert("Historical cards expose natal data popover", index.includes("personDataP
 assert("Historical visible card omits repeated quality rows", !sectionBetween(app, "function historicalPersonCard(person)", "function renderHistoricalPeople").includes("historicalQualityRows(person)"));
 assert("Historical Wikipedia links follow active UI language", app.includes("function localizeWikipediaUrl") && sectionBetween(app, "function personWikipediaUrl(person)", "function capitalizeText").includes("localizeWikipediaUrl") && regression.includes("Wikipedia historica usa enlace ingles en interfaz EN"));
 assert("Sect and angle panels are separated", index.includes('id="anglesPanel"') && app.includes("function renderAnglesPanel") && !sectionBetween(app, "function renderCoreSummary(chart)", "function renderAnglesPanel(chart)").includes('t("ascendant")'));
+assert("Ascendant and descendant display whole-sign houses", sectionBetween(app, "function renderAnglesPanel(chart)", "function renderAscLord(chart)").includes('t("tableHouse")} 1') && sectionBetween(app, "function renderAnglesPanel(chart)", "function renderAscLord(chart)").includes('t("tableHouse")} 7'));
+const ascLordRenderBlock = sectionBetween(app, "function renderAscLord(chart)", "function renderMoon(chart)");
+assert("Ascendant lord condition labels use specific glossary keys", ["dignityMajor", "dignityTriplicity", "dignityMinor", "dignityAdministration", "weaknesses"].every((key) => ascLordRenderBlock.includes(`\"${key}\"`)) && !ascLordRenderBlock.includes('\"essentialCondition\"'));
+assert("Specific dignity glossary entries exist", ["dignityMajor", "dignityTriplicity", "dignityMinor", "dignityAdministration", "weaknesses"].every((key) => app.includes(`${key}: {`)));
 assert("Technical notes and limits sit after chart tables", index.indexOf('id="tab-aspects"') < index.indexOf('id="technicalPanel"') && app.includes("technicalLimitsCompact") && app.includes("technical-notes"));
 assert("Structured lists and definitions are normalized to initial caps", app.includes("function capitalizeStructuredText") && app.includes("\"dl dt, dl dd, ul li, ol li\"") && app.includes("capitalizeStructuredText($(\"#results\"))"));
 assert("Boundary audit list labels are capitalized before rendering", sectionBetween(app, "function boundaryChangeLabels(warning)", "function boundaryWarningText").includes("capitalizeText"));
+assert("Zone used display omits source suffix", app.includes("const manualZoneLabel = `UTC${formatOffset(manualOffset)}`") && !app.includes("const manualZoneLabel = `UTC${formatOffset(manualOffset)} ·"));
+assert("Zone used help explains historical source", app.includes("datos natales auditados del personaje") && regression.includes("Ayuda de Zona usada explica procedencia historica"));
 
 assert("parseDate BCE support is explicit opt-in", app.includes("function parseDate(value, { allowBce = false } = {})") && app.includes("allowBce ? /^(-?\\d{1,6})-"));
 assert("BCE limitation is documented", docs.some(([, content]) => content.includes("BCE dates are blocked")));

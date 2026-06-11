@@ -186,6 +186,7 @@
         const technicalPanelText = $("#technicalPanel").textContent;
         assert("La card Secta no mezcla angulos, zona ni limites", coreSummaryText.includes("Secta") && !coreSummaryText.includes("Ascendente") && !coreSummaryText.includes("Zona usada") && !coreSummaryText.includes("Límites"));
         assert("Angulos y zona separa Ascendente, MC, IC y zona usada", anglesPanelText.includes("Ángulos y zona") && anglesPanelText.includes("Ascendente") && anglesPanelText.includes("MC") && anglesPanelText.includes("IC") && anglesPanelText.includes("Zona usada"));
+        assert("Ascendente y Descendente muestran casa como MC e IC", anglesPanelText.includes("Ascendente") && anglesPanelText.includes("Casa 1") && anglesPanelText.includes("Descendente") && anglesPanelText.includes("Casa 7"));
         assert("Notas tecnicas y limites quedan al final del resultado", technicalPanelText.includes("Notas técnicas y límites") && technicalPanelText.includes("Astronomy Engine") && $("#technicalPanel").previousElementSibling?.classList.contains("tab-panels"));
         const firstAlphaIsUpper = (value) => {
           const char = Array.from(value || "").find((letter) => letter.toLocaleLowerCase("es-ES") !== letter.toLocaleUpperCase("es-ES"));
@@ -193,6 +194,12 @@
         };
         const structuredTextNodes = $$("#results dl dt, #results dl dd, #results ul li, #results ol li");
         assert("Listas y definiciones empiezan con palabra inicial en mayuscula", structuredTextNodes.length > 0 && structuredTextNodes.every((node) => firstAlphaIsUpper(node.textContent)));
+        const ascLordGlossaryKeys = $$("#ascLordPanel .condition-list [data-glossary]").map((node) => node.dataset.glossary);
+        assert("Labels de condicion del regente tienen modales especificos", ["dignityMajor", "dignityTriplicity", "dignityMinor", "dignityAdministration", "weaknesses"].every((key) => ascLordGlossaryKeys.includes(key)) && !ascLordGlossaryKeys.includes("essentialCondition"));
+        $("#ascLordPanel [data-glossary='dignityMajor']").click();
+        await waitFor(() => !$("#glossaryPopover").hidden && $("#glossaryTitle").textContent.includes("Dignidad mayor"), "major dignity glossary");
+        assert("Dignidad mayor abre su propio modal", $("#glossaryTitle").textContent === "Dignidad mayor" && !$("#glossaryTitle").textContent.includes("Condición esencial"));
+        $("#glossaryClose").click();
 
         assert("Fortuna y Espiritu siguen auditables aunque se oculten en la tabla", $("[data-test='main-lots-audit']") && $("[data-test='main-lot-fortune']") && $("[data-test='main-lot-spirit']"));
         assert("La base tecnica queda subdividida en score, lotes y evidencias", $("[data-test='evidence-score']") && $("[data-test='evidence-main-lots']") && $("[data-test='evidence-general']"));
@@ -223,6 +230,13 @@
 
         const chart = testApi.calculateChart({ selectedLots: [] });
         assert("Fortuna y Espiritu se calculan internamente aunque selectedLots este vacio", testApi.lotByKey(chart, "fortune") && testApi.lotByKey(chart, "spirit"));
+        const historicalZoneChart = testApi.calculateChart({ timeZone: "", manualOffset: "-08:00", zoneSource: "datos históricos del personaje", zoneReliability: "historical" });
+        assert("Zona usada muestra valor limpio sin coletilla historica", historicalZoneChart.zoneLabel === "UTC-08:00" && !historicalZoneChart.zoneLabel.includes("datos históricos"));
+        const zoneHelpTrigger = $("#anglesPanel [data-glossary='timezoneUsed']");
+        zoneHelpTrigger.click();
+        await waitFor(() => !$("#glossaryPopover").hidden && $("#glossaryPopover").textContent.includes("datos natales auditados del personaje"), "timezone used help");
+        assert("Ayuda de Zona usada explica procedencia historica", $("#glossaryPopover").textContent.includes("datos natales auditados del personaje"));
+        $("#glossaryClose").click();
         const scoreItems = testApi.scoreChartTopics(chart).flatMap((focus) => focus.scoreItems || []);
         assert("El regente de casa 10 pesa como testimonio publico moderado", scoreItems.some((item) => item.reasonCode && item.reasonCode.startsWith("tenth-ruler:")));
         const interpretation = testApi.interpretChart(chart);

@@ -65,6 +65,8 @@ Whole Sign Houses should explain that the MC and IC are astronomical points and 
 
 The `Sect` card should stay doctrinally narrow: chart type, sect light, benefic of sect, malefic of sect, malefic contrary to sect, and any liminal/sensitive sect warning. Put Ascendant, Descendant, MC, IC, and the time-zone basis in a separate `Angles and zone` card.
 
+The `Zone used` value should stay visually clean: show the actual IANA zone or UTC offset, not the provenance suffix. Explain whether it came from IANA rules, manual offset, LMT, or historical-character data in the glossary/help modal for the label.
+
 ## Tone
 
 Use concise, sober interpretive language. Avoid deterministic fatalism, medical/legal claims, and overly modern psychological sun-sign phrasing.

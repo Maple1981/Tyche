@@ -337,7 +337,7 @@
       astronomyEngine: "Astronomy Engine local",
       fallbackEngine: "Motor aproximado de respaldo",
       ascLordTitle: "Regente del Ascendente",
-      ascLordText: "{lord} rige {ascSign} y cae en {lordPosition}, casa {house}. Esta casa pone el timón de la carta sobre {topics}. Su angularidad es {angularity}.",
+      ascLordText: "{lord} rige {ascSign} y cae en {lordPosition}, casa {house}. Esta casa orienta la dirección principal de la carta hacia {topics}. Su angularidad es {angularity}.",
       dignifiedText: "Condición esencial: {condition}.",
       mcWholeSignNote: "En casas de signos enteros, las casas se cuentan desde el signo Ascendente. El MC y el IC no abren las casas 10 y 4: son puntos astronómicos sensibles. Tyche muestra también en qué casa caen.",
       noMajorDignity: "sin dignidad mayor",
@@ -1166,7 +1166,8 @@
       timezoneUsed: {
         title: "Zona usada",
         body: [
-          "<p>Regla de conversión aplicada para pasar de hora local a UTC: zona IANA, diferencia manual, datos históricos del ejemplo o LMT por longitud.</p>",
+          "<p>Regla de conversión aplicada para pasar de hora local a UTC. Puede ser una zona IANA con reglas históricas, una diferencia UTC manual, LMT por longitud o un valor preparado para un personaje histórico.</p>",
+          "<p>Cuando la carta procede del archivo histórico, el valor mostrado se obtiene de los datos natales auditados del personaje y de la conversión temporal guardada para ese ejemplo.</p>",
           "<p>Es un dato crítico porque los ángulos dependen directamente del tiempo universal obtenido.</p>",
         ],
       },
@@ -1174,7 +1175,7 @@
         title: "Regente del Ascendente",
         body: [
           "<p>Planeta que rige el signo ascendente por domicilio. Es el señor del Ascendente y uno de los indicadores principales de vida, cuerpo, carácter y dirección.</p>",
-          "<p>La casa donde cae muestra qué temas toman el timón de la carta; su condición esencial y angularidad describen con qué recursos actúa.</p>",
+          "<p>La casa donde cae muestra qué temas orientan la dirección principal de la carta; su condición esencial y angularidad describen con qué recursos actúa.</p>",
         ],
       },
       essentialCondition: {
@@ -1182,6 +1183,41 @@
         body: [
           "<p>Estado zodiacal de un planeta según dignidades y debilidades: domicilio, exaltación, triplicidad, término, decanato, detrimento y caída.</p>",
           "<p>Describe si el planeta actúa con recursos propios, apoyo parcial, administración ajena del grado o dificultad esencial.</p>",
+        ],
+      },
+      dignityMajor: {
+        title: "Dignidad mayor",
+        body: [
+          "<p>Recurso esencial fuerte por domicilio o exaltación. Indica que el planeta tiene autoridad, honor o coherencia zodiacal para actuar según su naturaleza.</p>",
+          "<p>No incluye triplicidad, término ni decanato. Tyche reserva esta categoría para los testimonios mayores.</p>",
+        ],
+      },
+      dignityTriplicity: {
+        title: "Soporte por triplicidad",
+        body: [
+          "<p>Apoyo elemental que depende de la secta de la carta: hay un regente activo por secta, uno fuera de secta y uno cooperante.</p>",
+          "<p>Es soporte real, pero no equivale a domicilio o exaltación; por eso Tyche lo muestra separado de la dignidad mayor.</p>",
+        ],
+      },
+      dignityMinor: {
+        title: "Dignidad menor propia",
+        body: [
+          "<p>Recurso menor cuando el planeta cae en su propio término o su propio decanato.</p>",
+          "<p>Da capacidad local sobre ese grado, pero tiene menos peso que domicilio o exaltación.</p>",
+        ],
+      },
+      dignityAdministration: {
+        title: "Administración del grado",
+        body: [
+          "<p>Indica qué planeta gobierna el término o decanato donde cae el significador cuando ese regente no es el propio planeta.</p>",
+          "<p>No es una dignidad propia automática ni una mitigación fuerte por sí sola: describe quién administra el grado y puede crear dependencia, canal o recepción si hay relación entre planetas.</p>",
+        ],
+      },
+      weaknesses: {
+        title: "Debilidades",
+        body: [
+          "<p>Dificultades esenciales por detrimento o caída. El planeta actúa en un signo que contradice o rebaja su modo natural de operar.</p>",
+          "<p>No significa fracaso automático; señala que el planeta necesita más ajuste, apoyo o mediación para expresar sus asuntos.</p>",
         ],
       },
       noMajorDignity: {
@@ -1739,7 +1775,8 @@
       timezoneUsed: {
         title: "Zone used",
         body: [
-          "<p>The conversion rule used to turn local time into UTC: IANA zone, manual offset, historical example data, or LMT by longitude.</p>",
+          "<p>The conversion rule used to turn local time into UTC. It may be an IANA zone with historical rules, a manual UTC offset, LMT by longitude, or a prepared value for a historical figure.</p>",
+          "<p>When the chart comes from the historical archive, the displayed value is taken from the figure's audited natal data and from the stored time conversion for that example.</p>",
           "<p>This is critical because the angles depend directly on the resulting universal time.</p>",
         ],
       },
@@ -1755,6 +1792,41 @@
         body: [
           "<p>A planet's zodiacal state by dignities and weaknesses: domicile, exaltation, triplicity, bound, decan, detriment, and fall.</p>",
           "<p>It describes whether the planet acts with its own resources, partial support, another planet's degree administration, or essential difficulty.</p>",
+        ],
+      },
+      dignityMajor: {
+        title: "Major dignity",
+        body: [
+          "<p>Strong essential resource through domicile or exaltation. It shows that the planet has authority, honor, or zodiacal coherence for acting according to its nature.</p>",
+          "<p>It does not include triplicity, bound, or decan. Tyche reserves this category for the major testimonies.</p>",
+        ],
+      },
+      dignityTriplicity: {
+        title: "Triplicity support",
+        body: [
+          "<p>Elemental support that depends on the chart's sect: one ruler is active by sect, one is out of sect, and one cooperates.</p>",
+          "<p>It is real support, but not the same as domicile or exaltation; Tyche therefore shows it separately from major dignity.</p>",
+        ],
+      },
+      dignityMinor: {
+        title: "Own minor dignity",
+        body: [
+          "<p>Minor resource when a planet falls in its own bound or its own decan.</p>",
+          "<p>It gives local capacity over that degree, but weighs less than domicile or exaltation.</p>",
+        ],
+      },
+      dignityAdministration: {
+        title: "Degree administration",
+        body: [
+          "<p>Shows which planet rules the bound or decan occupied by the significator when that ruler is not the significator itself.</p>",
+          "<p>It is not automatic dignity of its own or strong mitigation by itself: it describes who administers the degree and can create dependency, channel, or reception if the planets relate.</p>",
+        ],
+      },
+      weaknesses: {
+        title: "Weaknesses",
+        body: [
+          "<p>Essential difficulties through detriment or fall. The planet acts in a sign that contradicts or lowers its natural mode of operation.</p>",
+          "<p>This does not mean automatic failure; it shows that the planet needs more adjustment, support, or mediation to express its topics.</p>",
         ],
       },
       noMajorDignity: {
@@ -4253,7 +4325,7 @@
 
     const manualOffset = parseOffset(input.manualOffset);
     if (manualOffset === null) throw new Error(t("invalidOffset"));
-    const manualZoneLabel = `UTC${formatOffset(manualOffset)} · ${input.zoneSource || t("manualOffsetSource")}`;
+    const manualZoneLabel = `UTC${formatOffset(manualOffset)}`;
 
     if (input.calendar === "julian") {
       const day = date.d + (time.h + time.min / 60 - manualOffset / 60) / 24;
@@ -5262,8 +5334,8 @@
     $("#anglesPanel").innerHTML = `
       <h3>${escapeHtml(t("anglesZoneTitle"))}</h3>
       <div class="metric-grid">
-        ${metric(t("ascendant"), formatDegree(chart.angles.asc), "", "ascendant")}
-        ${metric(t("descendant"), formatDegree(chart.angles.desc), "", "descendant")}
+        ${metric(t("ascendant"), `${formatDegree(chart.angles.asc)} · ${t("tableHouse")} 1`, "", "ascendant")}
+        ${metric(t("descendant"), `${formatDegree(chart.angles.desc)} · ${t("tableHouse")} 7`, "", "descendant")}
         ${metric(t("mc"), `${formatDegree(chart.angles.mc)} · ${t("tableHouse")} ${chart.mcHouse}`, "", "mc")}
         ${metric(t("ic"), `${formatDegree(chart.angles.ic)} · ${t("tableHouse")} ${chart.icHouse}`, "", "ic")}
         ${metric(t("timezoneUsed"), chart.zoneLabel, "", "timezoneUsed")}
@@ -5287,11 +5359,11 @@
         angularity: t(p.angularity),
       }))}</p>
       <div class="condition-list">
-        <p><strong>${glossaryTerm(t("dignityMajor"), "essentialCondition")}:</strong> ${dignityGroupText(groups.major, chart)}.</p>
-        <p><strong>${glossaryTerm(t("dignityTriplicity"), "essentialCondition")}:</strong> ${dignityGroupText(groups.triplicity, chart)}.</p>
-        <p><strong>${glossaryTerm(t("dignityMinor"), "essentialCondition")}:</strong> ${dignityGroupText(groups.minor, chart)}.</p>
-        <p><strong>${glossaryTerm(t("dignityAdministration"), "essentialCondition")}:</strong> ${dignityGroupText(groups.administration, chart)}.</p>
-        <p><strong>${glossaryTerm(t("weaknesses"), "essentialCondition")}:</strong> ${dignityGroupText(groups.weakness, chart)}.</p>
+        <p><strong>${glossaryTerm(t("dignityMajor"), "dignityMajor")}:</strong> ${dignityGroupText(groups.major, chart)}.</p>
+        <p><strong>${glossaryTerm(t("dignityTriplicity"), "dignityTriplicity")}:</strong> ${dignityGroupText(groups.triplicity, chart)}.</p>
+        <p><strong>${glossaryTerm(t("dignityMinor"), "dignityMinor")}:</strong> ${dignityGroupText(groups.minor, chart)}.</p>
+        <p><strong>${glossaryTerm(t("dignityAdministration"), "dignityAdministration")}:</strong> ${dignityGroupText(groups.administration, chart)}.</p>
+        <p><strong>${glossaryTerm(t("weaknesses"), "weaknesses")}:</strong> ${dignityGroupText(groups.weakness, chart)}.</p>
       </div>
     `;
   }

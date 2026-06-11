@@ -13,6 +13,7 @@ The glossary should cover:
 - Ascendant, Ascendant lord, MC, IC, Descendant.
 - Whole-sign places/houses and topics.
 - Essential condition, major dignity, triplicity support, own minor dignity, degree administration, detriment, fall.
+- Ascendant lord condition labels should each use their own glossary entry: major dignity, triplicity support, own minor dignity, degree administration, and weaknesses must not all point to the generic essential-condition popover.
 - Bounds, bound lord, decan, decan lord.
 - Lots: Fortune, Spirit, Eros, Necessity, Courage, Victory, Nemesis.
 - Solar phase: morning/evening, under the beams, combustion, in the heart/cazimi, chariot protection.
