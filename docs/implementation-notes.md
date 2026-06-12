@@ -148,6 +148,8 @@ Technical panel rendering should keep notes and metric sections in dedicated hel
 
 Chart render completion should keep final text cleanup, viewport scrolling, and rendered-event dispatch in named helpers. Preserve their order, but avoid hiding all post-render side effects in one mixed block.
 
+Chart content rendering should be callable without completion side effects. Use full `renderChart()` for a new calculation, and content-only rendering plus text cleanup for language/theme refresh paths that should not scroll the viewport or emit calculation events.
+
 Chart submission errors should pass through a small error flow: derive a display message, render it, then dispatch the regression-friendly error event. Keep that out of the form submit catch block.
 
 Regression-only APIs should be built through dedicated helpers. Keep the default regression input and the exposed `window.TycheTest` helper map separate from the installer that checks `?test=regression`, and group exposed helpers by calculation, historical data, lots/sect, rendering, and judgment responsibilities. The default regression input should mirror production input assembly by composing birth, place, and technique defaults.

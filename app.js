@@ -5838,10 +5838,14 @@
     dispatchChartRenderedEvent(chart);
   }
 
-  function renderChart(chart) {
+  function renderChartContent(chart) {
     state.lastChart = chart;
     renderChartFrame(chart);
     renderChartPanels(chart);
+  }
+
+  function renderChart(chart) {
+    renderChartContent(chart);
     finishChartRender(chart);
   }
 
@@ -9638,7 +9642,10 @@
 
   function refreshLocalizedLastChart() {
     if (state.lastChart?.input?.city) state.lastChart.input.place = formatCity(state.lastChart.input.city);
-    if (state.lastChart) renderChart(state.lastChart);
+    if (state.lastChart) {
+      renderChartContent(state.lastChart);
+      finalizeRenderedChartText();
+    }
   }
 
   function refreshLocalizedDynamicContent() {
