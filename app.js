@@ -9486,8 +9486,7 @@
     });
   }
 
-  function refreshLocalizedDynamicContent() {
-    populateLists();
+  function refreshLocalizedPlaceState() {
     const city = findCity($("#birthPlace").value);
     if (city) {
       state.selectedCity = city;
@@ -9496,9 +9495,18 @@
     }
     updateClearPlaceButton();
     hidePlaceSuggestions();
-    renderHistoricalPeople();
+  }
+
+  function refreshLocalizedLastChart() {
     if (state.lastChart?.input?.city) state.lastChart.input.place = formatCity(state.lastChart.input.city);
     if (state.lastChart) renderChart(state.lastChart);
+  }
+
+  function refreshLocalizedDynamicContent() {
+    populateLists();
+    refreshLocalizedPlaceState();
+    renderHistoricalPeople();
+    refreshLocalizedLastChart();
     updateOptionWarnings();
   }
 
@@ -9591,8 +9599,7 @@
     };
   }
 
-  function updateOptionWarnings() {
-    const model = buildOptionWarningsModel();
+  function applyOptionWarningsModel(model) {
     const calendarWarning = $("#calendarWarning");
     const zodiacWarning = $("#zodiacWarning");
     const techniqueWarning = $("#techniqueWarning");
@@ -9603,6 +9610,10 @@
       techniqueWarning.dataset.test = model.technique.test;
       techniqueWarning.hidden = model.technique.hidden;
     }
+  }
+
+  function updateOptionWarnings() {
+    applyOptionWarningsModel(buildOptionWarningsModel());
   }
 
   function activateTab(button) {
