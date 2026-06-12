@@ -50,6 +50,8 @@ Complex interpretive judgments should keep testimony extraction, level/flag deci
 
 High-level visible readings should expose profile helpers before final prose. Lead focus, life direction, solar phase, triplicity foundations, and lot testimony summaries should calculate their interpretive profile separately from the localized sentence.
 
+Visible conclusions should use the same profile/text split when they contain branching judgment. Visibility, lots, and Moon conclusions should expose a profile helper and a final localized text helper.
+
 Essential-condition readings should keep dignity labels, judgment profile, and localized prose separate. This prevents changes to dignity grouping from being tangled with the final interpretive wording.
 
 Stable plain-language maps for house topics, sign style, angularity wording, planet meanings, lot meanings, lunar fallback labels, and mitigation copy should live as shared data constants. Lookup functions should format from those constants rather than rebuilding text maps on every call.

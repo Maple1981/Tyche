@@ -6893,13 +6893,24 @@
       : "The key planets are not under strong solar concealment; read their topics mainly through house, essential condition, sect, and configurations.";
   }
 
-  function visibilityConclusion(chart) {
+  function visibilityConclusionProfile(chart) {
     const priority = keyPlanetList(chart)
       .map((key) => ({ key, stateInfo: solarPhaseState(key, chart) }))
       .filter((item) => item.stateInfo.category !== "luminary");
-    const hidden = priority.filter((item) => ["combust", "underBeams"].includes(item.stateInfo.category) && !item.stateInfo.chariot);
-    const protectedHidden = priority.filter((item) => ["combust", "underBeams"].includes(item.stateInfo.category) && item.stateInfo.chariot);
-    const cazimi = priority.filter((item) => item.stateInfo.category === "cazimi");
+    return {
+      priority,
+      hidden: priority.filter((item) => ["combust", "underBeams"].includes(item.stateInfo.category) && !item.stateInfo.chariot),
+      protectedHidden: priority.filter((item) => ["combust", "underBeams"].includes(item.stateInfo.category) && item.stateInfo.chariot),
+      cazimi: priority.filter((item) => item.stateInfo.category === "cazimi"),
+    };
+  }
+
+  function visibilityConclusion(chart) {
+    return visibilityConclusionText(visibilityConclusionProfile(chart));
+  }
+
+  function visibilityConclusionText(profile) {
+    const { hidden, protectedHidden, cazimi } = profile;
     if (state.lang === "es") {
       if (cazimi.length) return `${naturalList(cazimi.map((item) => planetLabel(item.key)))} concentra su tema de forma intensa; puede dar foco, notoriedad o dependencia fuerte de una figura solar, según la casa implicada.`;
       if (hidden.length) return `${naturalList(hidden.map((item) => planetLabel(item.key)))} opera con menor exposición: sus temas no desaparecen, pero tienden a expresarse con reserva, demora, trabajo interno o mediadores.`;
@@ -7487,13 +7498,25 @@
     return { lot, score, supportRank, pressureRank, demanding, hidden };
   }
 
-  function lotsConclusion(fortune, spirit, chart) {
+  function lotsConclusionProfile(fortune, spirit, chart) {
     const fortuneProfile = lotJudgmentProfile(fortune, chart);
     const spiritProfile = lotJudgmentProfile(spirit, chart);
-    const fortuneGood = fortuneProfile.score >= 0.75;
-    const fortuneHard = fortuneProfile.score <= -0.75;
-    const spiritGood = spiritProfile.score >= 0.75;
-    const spiritHard = spiritProfile.score <= -0.75;
+    return {
+      fortuneProfile,
+      spiritProfile,
+      fortuneGood: fortuneProfile.score >= 0.75,
+      fortuneHard: fortuneProfile.score <= -0.75,
+      spiritGood: spiritProfile.score >= 0.75,
+      spiritHard: spiritProfile.score <= -0.75,
+    };
+  }
+
+  function lotsConclusion(fortune, spirit, chart) {
+    return lotsConclusionText(lotsConclusionProfile(fortune, spirit, chart));
+  }
+
+  function lotsConclusionText(profile) {
+    const { fortuneGood, fortuneHard, spiritGood, spiritHard } = profile;
     if (state.lang === "es") {
       if (fortuneGood && spiritGood) return "Circunstancia e intención colaboran mejor de lo habitual: la vida trae materiales aprovechables y la persona tiene margen para dirigirlos.";
       if (fortuneHard && spiritGood) return "Las circunstancias pueden pesar más al comienzo, pero Espíritu conserva margen de respuesta; la lectura no es de bloqueo, sino de voluntad que aprende a organizar lo recibido.";
@@ -7577,15 +7600,26 @@
     return "neutral";
   }
 
+  function moonConclusionProfile(chart) {
+    return {
+      nextRole: moonNextRole(chart),
+      voidOfCourse: chart.moon.voidOfCourse,
+    };
+  }
+
   function moonConclusion(chart) {
-    const nextRole = moonNextRole(chart);
+    return moonConclusionText(moonConclusionProfile(chart));
+  }
+
+  function moonConclusionText(profile) {
+    const { nextRole, voidOfCourse } = profile;
     if (state.lang === "es") {
-      if (chart.moon.voidOfCourse) return "El flujo lunar no empuja con dirección fuerte; conviene leerlo como un ritmo de apertura, dispersión o espera más que como avance inmediato.";
+      if (voidOfCourse) return "El flujo lunar no empuja con dirección fuerte; conviene leerlo como un ritmo de apertura, dispersión o espera más que como avance inmediato.";
       if (nextRole === "support") return "La Luna conserva movimiento y tiende a buscar una salida más favorable, con más capacidad de continuidad o alivio.";
       if (nextRole === "tension") return "La Luna conserva movimiento, pero lo lleva hacia una zona que pide trabajo, paciencia o resolución.";
       return "La Luna conserva movimiento, pero el tono final depende del planeta al que se dirige y de su condición.";
     }
-    if (chart.moon.voidOfCourse) return "The lunar flow does not push with strong direction; read it as opening, dispersal, or waiting rather than immediate forward motion.";
+    if (voidOfCourse) return "The lunar flow does not push with strong direction; read it as opening, dispersal, or waiting rather than immediate forward motion.";
     if (nextRole === "support") return "The Moon keeps moving and tends to seek a more favorable outlet, with more capacity for continuity or relief.";
     if (nextRole === "tension") return "The Moon keeps moving, but it carries the matter toward an area that asks for work, patience, or resolution.";
     return "The Moon keeps moving, but the final tone depends on the planet it approaches and that planet's condition.";
