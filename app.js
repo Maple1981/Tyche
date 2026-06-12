@@ -6371,7 +6371,7 @@
     return `The central life-direction topic is ${topic}. The judgment is mixed: usable resources are present, but so are conditions that ask for mediation, learning, or strategy. ${roleText}${hidden}`.trim();
   }
 
-  function publicProjectionConclusion(chart, planetsInTenth, tenthRuler, tenthRulerPosition) {
+  function publicProjectionScore(chart, planetsInTenth, tenthRuler, tenthRulerPosition) {
     const rulerStrength = dignityStrength(tenthRuler, tenthRulerPosition, chart);
     const rulerObscured = isSolarObscuredWithoutChariot(tenthRuler, chart);
     let score = 0;
@@ -6387,37 +6387,62 @@
     if (rulerStrength.weak) score -= 1;
     if (rulerObscured) score -= 0.75;
     if (isDifficultHouse(tenthRulerPosition.house)) score -= 0.5;
+    return score;
+  }
 
-    const channel = state.lang === "es"
+  function publicProjectionLevel(score) {
+    if (score >= 3) return "strong";
+    if (score <= 0) return "reduced";
+    return "mediated";
+  }
+
+  function publicProjectionChannelText(tenthRulerPosition) {
+    return state.lang === "es"
       ? `La reputación tiende a construirse a través de la casa ${tenthRulerPosition.house}: ${houseReadingTopics(tenthRulerPosition.house, "double")}.`
       : `Reputation tends to be built through house ${tenthRulerPosition.house}: ${houseReadingTopics(tenthRulerPosition.house, "double")}.`;
-    const relationshipNote = [7, 11].includes(tenthRulerPosition.house)
-      ? (state.lang === "es"
-        ? "Al pasar por una casa de vínculos, la visibilidad puede depender mucho de alianzas, audiencias, pactos o redes; a veces eso comparte el foco con otras personas."
-        : "Because this runs through a relational house, visibility can depend strongly on alliances, audiences, agreements, or networks; at times the spotlight is shared with others.")
-      : "";
-    const hiddenNote = rulerObscured
-      ? (state.lang === "es"
-        ? "El regente de la casa 10 está oculto por el Sol, así que una parte del reconocimiento puede ser menos directa, más privada o más difícil de leer desde fuera."
-        : "The 10th-house ruler is hidden by the Sun, so part of the recognition can be less direct, more private, or harder to read from the outside.")
-      : "";
+  }
 
+  function publicProjectionRelationshipNote(tenthRulerPosition) {
+    if (![7, 11].includes(tenthRulerPosition.house)) return "";
+    return state.lang === "es"
+      ? "Al pasar por una casa de vínculos, la visibilidad puede depender mucho de alianzas, audiencias, pactos o redes; a veces eso comparte el foco con otras personas."
+      : "Because this runs through a relational house, visibility can depend strongly on alliances, audiences, agreements, or networks; at times the spotlight is shared with others.";
+  }
+
+  function publicProjectionHiddenNote(tenthRuler, chart) {
+    if (!isSolarObscuredWithoutChariot(tenthRuler, chart)) return "";
+    return state.lang === "es"
+      ? "El regente de la casa 10 está oculto por el Sol, así que una parte del reconocimiento puede ser menos directa, más privada o más difícil de leer desde fuera."
+      : "The 10th-house ruler is hidden by the Sun, so part of the recognition can be less direct, more private, or harder to read from the outside.";
+  }
+
+  function publicProjectionConclusionText(level, notes) {
+    const { channel, relationshipNote, hiddenNote } = notes;
     if (state.lang === "es") {
-      if (score >= 3) {
+      if (level === "strong") {
         return `La proyección pública no parece marginal; tiende a pedir presencia, responsabilidad o reconocimiento visible. ${channel} ${relationshipNote} ${hiddenNote}`.trim();
       }
-      if (score <= 0) {
+      if (level === "reduced") {
         return `La vida pública no desaparece, pero se muestra más indirecta, reducida o mediada; puede requerir tiempo, protección o trabajo detrás de escena antes de volverse reconocible. ${channel} ${relationshipNote} ${hiddenNote}`.trim();
       }
       return `Hay proyección pública, pero no funciona como simple exposición constante; se gana forma por el área que administra el regente de la casa 10. ${channel} ${relationshipNote} ${hiddenNote}`.trim();
     }
-    if (score >= 3) {
+    if (level === "strong") {
       return `Public projection does not look marginal; it tends to ask for presence, responsibility, or visible recognition. ${channel} ${relationshipNote} ${hiddenNote}`.trim();
     }
-    if (score <= 0) {
+    if (level === "reduced") {
       return `Public life does not disappear, but it looks more indirect, reduced, or mediated; it may need time, protection, or behind-the-scenes work before becoming recognizable. ${channel} ${relationshipNote} ${hiddenNote}`.trim();
     }
     return `Public projection is present, but not as constant exposure; it takes shape through the area managed by the 10th-house ruler. ${channel} ${relationshipNote} ${hiddenNote}`.trim();
+  }
+
+  function publicProjectionConclusion(chart, planetsInTenth, tenthRuler, tenthRulerPosition) {
+    const score = publicProjectionScore(chart, planetsInTenth, tenthRuler, tenthRulerPosition);
+    return publicProjectionConclusionText(publicProjectionLevel(score), {
+      channel: publicProjectionChannelText(tenthRulerPosition),
+      relationshipNote: publicProjectionRelationshipNote(tenthRulerPosition),
+      hiddenNote: publicProjectionHiddenNote(tenthRuler, chart),
+    });
   }
 
   function supportLevel(position, focuses, ascLordPosition, planet = "", chart = null) {
@@ -6481,7 +6506,7 @@
     return ["combust", "underBeams"].includes(solar.category) && !solar.chariot;
   }
 
-  function maleficMitigationReading(maleficPosition, beneficPosition, chart) {
+  function buildMaleficMitigationContext(maleficPosition, beneficPosition, chart) {
     const maleficKey = chart.maleficContrarySect;
     const beneficKey = chart.beneficOfSect;
     const maleficStrength = dignityStrength(maleficKey, maleficPosition, chart);
@@ -6494,6 +6519,27 @@
     const beneficObscured = ["combust", "underBeams"].includes(beneficSolar.category) && !beneficSolar.chariot;
     const reception = beneficContact ? receptionBetween(beneficKey, maleficKey, chart) : null;
     const receptionScore = reception?.effectiveScore ?? reception?.strongest ?? 0;
+    return {
+      maleficStrength,
+      beneficStrength,
+      beneficAspect,
+      beneficContact,
+      closeContact,
+      beneficObscured,
+      receptionScore,
+    };
+  }
+
+  function maleficMitigationFlags(context) {
+    const {
+      maleficStrength,
+      beneficStrength,
+      beneficAspect,
+      beneficContact,
+      closeContact,
+      beneficObscured,
+      receptionScore,
+    } = context;
     const strongReception = receptionScore >= 3;
     const mediumReception = receptionScore >= 2;
     const favorableAspect = ["sextile", "trine"].includes(beneficAspect) || (beneficAspect === "copresence" && closeContact);
@@ -6510,48 +6556,54 @@
       && (beneficHasSomeWeight || mediumReception || closeContact)
     ) || mediumReception || maleficStrength.strong || maleficStrength.triplicityStrong || (maleficStrength.ownMinor && beneficContact && !beneficObscured);
     const weakMitigation = beneficContact || maleficStrength.ownMinor || maleficStrength.triplicityStrong || mediumReception;
-    if (state.lang === "es") {
-      if (strongMitigation) {
-        return regulatedHardSupport
-          ? "Hay una salida fuerte pero negociada: el contacto no es suave, pero existe un canal claro para que el planeta de apoyo intervenga."
-          : "Hay una salida fuerte y directa: el planeta de apoyo puede intervenir con claridad, por cercanía, relación favorable o fuerza propia.";
-      }
-      if (mediumMitigation) {
-        if (regulatedHardSupport) {
-          return "Hay un manejo intermedio y regulado: la presión no desaparece, pero el contacto difícil tiene una vía más tratable. La lectura debe mantener ambas señales.";
-        }
-        return "Hay un manejo intermedio: la presión no desaparece, pero aparecen recursos, ayuda o fuerza propia suficientes para trabajarla. La lectura debe mantener ambas señales.";
-      }
-      if (weakMitigation) {
-        return beneficObscured
-          ? "La ayuda es débil o dudosa: existe contacto con el planeta de apoyo, pero está oculto por el Sol sin protección clara."
-          : "La ayuda es débil: aparece algún recurso, pero de forma indirecta o poco dominante.";
-      }
-      if (maleficStrength.weak) {
-        return "Al no verse claramente compensada, esta tensión puede sentirse más cruda o menos integrada.";
-      }
-      return "No aparece una salida fuerte, pero tampoco una debilidad mayor clara; conviene leerla por su casa y por sus relaciones.";
-    }
-    if (strongMitigation) {
-      return regulatedHardSupport
-        ? "There is a strong but negotiated outlet: the contact is not smooth, but there is a clear channel for the support planet to intervene."
-        : "There is a strong and direct outlet: the support planet can intervene clearly through closeness, a favorable relationship, or its own strength.";
-    }
-    if (mediumMitigation) {
-      if (regulatedHardSupport) {
-        return "There is moderate, regulated handling: the pressure does not disappear, but the difficult contact has a more workable route. Keep both signals in the reading.";
-      }
-      return "There is moderate handling: the pressure does not disappear, but enough resources, help, or strength of its own appear to work with it. Keep both signals in the reading.";
-    }
-    if (weakMitigation) {
-      return beneficObscured
-        ? "Help is weak or uncertain: contact with the support planet exists, but that planet is hidden by the Sun without clear protection."
-        : "Help is weak: some resource appears, but indirectly or without dominance.";
-    }
-    if (maleficStrength.weak) {
-      return "Without clear compensation, this tension can feel rawer or less integrated.";
-    }
-    return "No strong outlet appears, but no clear major weakness appears either; read it through its house and relationships.";
+    return {
+      regulatedHardSupport,
+      beneficObscured,
+      maleficWeak: maleficStrength.weak,
+      strongMitigation,
+      mediumMitigation,
+      weakMitigation,
+    };
+  }
+
+  function maleficMitigationLevel(flags) {
+    if (flags.strongMitigation) return flags.regulatedHardSupport ? "strongRegulated" : "strongDirect";
+    if (flags.mediumMitigation) return flags.regulatedHardSupport ? "mediumRegulated" : "medium";
+    if (flags.weakMitigation) return flags.beneficObscured ? "weakObscured" : "weak";
+    if (flags.maleficWeak) return "raw";
+    return "unmarked";
+  }
+
+  function maleficMitigationText(level) {
+    const text = {
+      es: {
+        strongRegulated: "Hay una salida fuerte pero negociada: el contacto no es suave, pero existe un canal claro para que el planeta de apoyo intervenga.",
+        strongDirect: "Hay una salida fuerte y directa: el planeta de apoyo puede intervenir con claridad, por cercanía, relación favorable o fuerza propia.",
+        mediumRegulated: "Hay un manejo intermedio y regulado: la presión no desaparece, pero el contacto difícil tiene una vía más tratable. La lectura debe mantener ambas señales.",
+        medium: "Hay un manejo intermedio: la presión no desaparece, pero aparecen recursos, ayuda o fuerza propia suficientes para trabajarla. La lectura debe mantener ambas señales.",
+        weakObscured: "La ayuda es débil o dudosa: existe contacto con el planeta de apoyo, pero está oculto por el Sol sin protección clara.",
+        weak: "La ayuda es débil: aparece algún recurso, pero de forma indirecta o poco dominante.",
+        raw: "Al no verse claramente compensada, esta tensión puede sentirse más cruda o menos integrada.",
+        unmarked: "No aparece una salida fuerte, pero tampoco una debilidad mayor clara; conviene leerla por su casa y por sus relaciones.",
+      },
+      en: {
+        strongRegulated: "There is a strong but negotiated outlet: the contact is not smooth, but there is a clear channel for the support planet to intervene.",
+        strongDirect: "There is a strong and direct outlet: the support planet can intervene clearly through closeness, a favorable relationship, or its own strength.",
+        mediumRegulated: "There is moderate, regulated handling: the pressure does not disappear, but the difficult contact has a more workable route. Keep both signals in the reading.",
+        medium: "There is moderate handling: the pressure does not disappear, but enough resources, help, or strength of its own appear to work with it. Keep both signals in the reading.",
+        weakObscured: "Help is weak or uncertain: contact with the support planet exists, but that planet is hidden by the Sun without clear protection.",
+        weak: "Help is weak: some resource appears, but indirectly or without dominance.",
+        raw: "Without clear compensation, this tension can feel rawer or less integrated.",
+        unmarked: "No strong outlet appears, but no clear major weakness appears either; read it through its house and relationships.",
+      },
+    };
+    return text[state.lang === "es" ? "es" : "en"][level];
+  }
+
+  function maleficMitigationReading(maleficPosition, beneficPosition, chart) {
+    const context = buildMaleficMitigationContext(maleficPosition, beneficPosition, chart);
+    const flags = maleficMitigationFlags(context);
+    return maleficMitigationText(maleficMitigationLevel(flags));
   }
 
   function sectTriplicityRulers(chart) {
@@ -7781,7 +7833,7 @@
     return `Public projection describes how a person becomes visible: craft, reputation, responsibility, recognition, and role before others. The MC falls in house ${chart.mcHouse}: ${houseReadingTopics(chart.mcHouse, "double")}. The 10th house is in ${signLabel(tenthSignIndex)} and its ruler, ${planetLabel(tenthRuler)}, falls in house ${tenthRulerPosition.house}: ${houseReadingTopics(tenthRulerPosition.house, "double")}. ${tenthHouseText}`;
   }
 
-  function createNatalReadingContext(chart) {
+  function buildNatalAnchorContext(chart) {
     const ascSign = SIGNS[chart.ascSign];
     const ascLord = ascSign.ruler;
     const ascLordPosition = chart.positions[ascLord];
@@ -7789,37 +7841,7 @@
     const tenthRuler = wholeSignHouseRuler(chart, 10);
     const tenthRulerPosition = chart.positions[tenthRuler];
     const planetsInTenth = VISIBLE_KEYS.filter((key) => chart.positions[key]?.house === 10);
-    const focuses = scoreChartTopics(chart).filter((focus) => focus.score > 0).slice(0, 3);
-    const dominant = focuses[0] || { house: ascLordPosition.house, score: 0, reasons: [] };
-    const sectLight = chart.sectLight;
-    const benefic = chart.beneficOfSect;
-    const malefic = chart.maleficContrarySect;
-    const beneficPosition = chart.positions[benefic];
-    const maleficPosition = chart.positions[malefic];
-    const angularPlanets = visibleAngularPlanets(chart);
-    const exactAnglePlanets = visiblePlanetsNearAngles(chart);
-    const receptionEvidence = receptionEvidenceItems(chart);
-    const boundaryEvidence = boundaryWarnings(chart);
-    const fortune = lotByKey(chart, "fortune");
-    const spirit = lotByKey(chart, "spirit");
-    const sectLabel = chart.isDay ? t("dayChart") : t("nightChart");
-    const sectContext = sectLabel.toLocaleLowerCase(state.lang === "es" ? "es-ES" : "en");
-    const sectDescription = state.lang === "es" ? `una ${sectContext}` : `a ${sectContext}`;
-    const sectConfidenceNotice = sectSensitivityState(chart) === "stable" ? "" : t("sectLowConfidenceJudgment");
-    const secondaryFocuses = focuses.slice(1);
-    const visibility = visibilityReading(chart);
-    const configurations = configurationsReading(chart, focuses, ascLordPosition);
-    const moonJudgment = moonJudgmentReading(chart);
-    const foundations = triplicityFoundationReading(chart);
-    const publicProjection = publicProjectionReading(chart);
-    const lotConditionTexts = [lotConditionReading(fortune, chart), lotConditionReading(spirit, chart)].filter(Boolean);
-    const beneficSolarCaution = isSolarObscuredWithoutChariot(benefic, chart)
-      ? (state.lang === "es"
-        ? `Su apoyo existe, pero puede verse menos, depender de mediadores o tardar más porque está ${solarPhaseTableText(benefic, chart)}.`
-        : `Its support exists, but may be less visible, more mediated, or slower because it is ${solarPhaseTableText(benefic, chart)}.`)
-      : "";
     return {
-      chart,
       ascSign,
       ascLord,
       ascLordPosition,
@@ -7827,30 +7849,94 @@
       tenthRuler,
       tenthRulerPosition,
       planetsInTenth,
+    };
+  }
+
+  function buildNatalFocusContext(chart, ascLordPosition) {
+    const focuses = scoreChartTopics(chart).filter((focus) => focus.score > 0).slice(0, 3);
+    const dominant = focuses[0] || { house: ascLordPosition.house, score: 0, reasons: [] };
+    return {
       focuses,
       dominant,
+      secondaryFocuses: focuses.slice(1),
+    };
+  }
+
+  function buildNatalSectContext(chart) {
+    const sectLight = chart.sectLight;
+    const benefic = chart.beneficOfSect;
+    const malefic = chart.maleficContrarySect;
+    const beneficPosition = chart.positions[benefic];
+    const maleficPosition = chart.positions[malefic];
+    const sectLabel = chart.isDay ? t("dayChart") : t("nightChart");
+    const sectContext = sectLabel.toLocaleLowerCase(state.lang === "es" ? "es-ES" : "en");
+    const sectDescription = state.lang === "es" ? `una ${sectContext}` : `a ${sectContext}`;
+    const sectConfidenceNotice = sectSensitivityState(chart) === "stable" ? "" : t("sectLowConfidenceJudgment");
+    return {
       sectLight,
       benefic,
       malefic,
       beneficPosition,
       maleficPosition,
-      angularPlanets,
-      exactAnglePlanets,
-      receptionEvidence,
-      boundaryEvidence,
-      fortune,
-      spirit,
       sectContext,
       sectDescription,
       sectConfidenceNotice,
-      secondaryFocuses,
-      visibility,
-      configurations,
-      moonJudgment,
-      foundations,
-      publicProjection,
+    };
+  }
+
+  function buildNatalProminenceContext(chart) {
+    return {
+      angularPlanets: visibleAngularPlanets(chart),
+      exactAnglePlanets: visiblePlanetsNearAngles(chart),
+      receptionEvidence: receptionEvidenceItems(chart),
+      boundaryEvidence: boundaryWarnings(chart),
+    };
+  }
+
+  function buildNatalLotContext(chart) {
+    const fortune = lotByKey(chart, "fortune");
+    const spirit = lotByKey(chart, "spirit");
+    const lotConditionTexts = [lotConditionReading(fortune, chart), lotConditionReading(spirit, chart)].filter(Boolean);
+    return {
+      fortune,
+      spirit,
       lotConditionTexts,
-      beneficSolarCaution,
+    };
+  }
+
+  function buildNatalDerivedReadingsContext(chart, focuses, ascLordPosition) {
+    return {
+      visibility: visibilityReading(chart),
+      configurations: configurationsReading(chart, focuses, ascLordPosition),
+      moonJudgment: moonJudgmentReading(chart),
+      foundations: triplicityFoundationReading(chart),
+      publicProjection: publicProjectionReading(chart),
+    };
+  }
+
+  function beneficSolarCautionText(benefic, chart) {
+    if (!isSolarObscuredWithoutChariot(benefic, chart)) return "";
+    return state.lang === "es"
+      ? `Su apoyo existe, pero puede verse menos, depender de mediadores o tardar más porque está ${solarPhaseTableText(benefic, chart)}.`
+      : `Its support exists, but may be less visible, more mediated, or slower because it is ${solarPhaseTableText(benefic, chart)}.`;
+  }
+
+  function createNatalReadingContext(chart) {
+    const anchors = buildNatalAnchorContext(chart);
+    const focus = buildNatalFocusContext(chart, anchors.ascLordPosition);
+    const sect = buildNatalSectContext(chart);
+    const prominence = buildNatalProminenceContext(chart);
+    const lots = buildNatalLotContext(chart);
+    const derived = buildNatalDerivedReadingsContext(chart, focus.focuses, anchors.ascLordPosition);
+    return {
+      chart,
+      ...anchors,
+      ...focus,
+      ...sect,
+      ...prominence,
+      ...lots,
+      ...derived,
+      beneficSolarCaution: beneficSolarCautionText(sect.benefic, chart),
     };
   }
 
@@ -7890,25 +7976,8 @@
       : `The principal lots separate two planes: Fortune shows what arrives and conditions life; Spirit shows what the person tries to direct. ${lotConditionTexts.join(" ")}`;
   }
 
-  function buildNatalReadingEvidence(context) {
-    const {
-      chart,
-      focuses,
-      ascLordPosition,
-      sectLight,
-      benefic,
-      malefic,
-      sectDescription,
-      sectConfidenceNotice,
-      tenthRuler,
-      tenthRulerPosition,
-      angularPlanets,
-      exactAnglePlanets,
-      receptionEvidence,
-      boundaryEvidence,
-      fortune,
-      spirit,
-    } = context;
+  function buildFocusAscEvidence(context) {
+    const { chart, focuses, ascLordPosition } = context;
     return [
       t("evidenceFocuses", {
         focuses: focusTextList(focuses),
@@ -7925,6 +7994,12 @@
       t("evidenceAscLordCondition", {
         condition: plainDignityText(ascLordPosition.dignities, chart),
       }),
+    ];
+  }
+
+  function buildSectEvidence(context) {
+    const { sectLight, benefic, malefic, sectDescription, sectConfidenceNotice } = context;
+    return [
       t("evidenceSect", {
         sect: sectDescription,
         sectLight: planetLabel(sectLight),
@@ -7932,36 +8007,99 @@
         malefic: planetLabel(malefic),
       }),
       ...(sectConfidenceNotice ? [sectConfidenceNotice] : []),
+    ];
+  }
+
+  function tenthRulerEvidenceText(tenthRuler, tenthRulerPosition) {
+    return state.lang === "es"
+      ? `Regente de casa 10: ${planetLabel(tenthRuler)} en casa ${tenthRulerPosition.house}.`
+      : `10th-house ruler: ${planetLabel(tenthRuler)} in house ${tenthRulerPosition.house}.`;
+  }
+
+  function exactAngleEvidenceText(exactAnglePlanets) {
+    const planets = exactAnglePlanets.length ? exactAngleListText(exactAnglePlanets) : capitalizeText(t("none"));
+    return state.lang === "es"
+      ? `Planetas visibles cerca de ángulos exactos: ${planets}.`
+      : `Visible planets near exact angles: ${planets}.`;
+  }
+
+  function buildPublicProminenceEvidence(context) {
+    const { chart, tenthRuler, tenthRulerPosition, angularPlanets, exactAnglePlanets } = context;
+    return [
       t("evidenceMcHouse", {
         house: chart.mcHouse,
         topics: houseTopics(chart.mcHouse),
       }),
-      state.lang === "es"
-        ? `Regente de casa 10: ${planetLabel(tenthRuler)} en casa ${tenthRulerPosition.house}.`
-        : `10th-house ruler: ${planetLabel(tenthRuler)} in house ${tenthRulerPosition.house}.`,
+      tenthRulerEvidenceText(tenthRuler, tenthRulerPosition),
       t("evidenceAngularPlanets", {
         planets: angularPlanets.length ? naturalList(angularPlanets.map(planetLabel)) : capitalizeText(t("none")),
       }),
-      state.lang === "es"
-        ? `Planetas visibles cerca de ángulos exactos: ${exactAnglePlanets.length ? exactAngleListText(exactAnglePlanets) : capitalizeText(t("none"))}.`
-        : `Visible planets near exact angles: ${exactAnglePlanets.length ? exactAngleListText(exactAnglePlanets) : capitalizeText(t("none"))}.`,
+      exactAngleEvidenceText(exactAnglePlanets),
+    ];
+  }
+
+  function buildReceptionBoundaryEvidence(context) {
+    const { receptionEvidence, boundaryEvidence } = context;
+    return [
       ...(receptionEvidence.length ? receptionEvidence : [state.lang === "es"
         ? "Recepción: no destaca entre los significadores principales configurados."
         : "Reception: none stands out among the configured main significators."]),
       ...(boundaryEvidence.length ? [state.lang === "es"
         ? `Avisos de frontera: ${boundaryEvidence.map(boundaryWarningText).join(" ")}`
         : `Boundary notices: ${boundaryEvidence.map(boundaryWarningText).join(" ")}`] : []),
+    ];
+  }
+
+  function buildLotEvidence(context) {
+    const { fortune, spirit } = context;
+    return [
       t("evidenceLots", { fortuneHouse: fortune.house, spiritHouse: spirit.house }),
       t("evidenceLotsAlwaysWeighted"),
-      state.lang === "es"
-        ? `Fase solar aplicada a planetas clave: ${keyPlanetList(chart).map((key) => `${planetLabel(key)}: ${solarPhaseState(key, chart).category === "luminary" ? "luminaria" : solarPhaseTableText(key, chart)}`).join("; ")}.`
-        : `Solar phase applied to key planets: ${keyPlanetList(chart).map((key) => `${planetLabel(key)}: ${solarPhaseState(key, chart).category === "luminary" ? "luminary" : solarPhaseTableText(key, chart)}`).join("; ")}.`,
-      state.lang === "es"
-        ? `Luna: fase ${chart.moon.phase}; próximo contacto ${chart.moon.nextApplication ? lunarContactLabel(chart.moon.nextApplication) : "ninguno en 30°"}${chart.moon.nextApplication?.method ? `; método: ${t(chart.moon.nextApplication.method === "iterative" ? "lunarMethodIterative" : "lunarMethodFallback")}` : ""}; vacía de curso por 30°: ${chart.moon.voidOfCourse ? t("yes") : t("no")}; vacía antes de salir del signo: ${chart.moon.voidOfCourseBySign ? t("yes") : t("no")}.`
-        : `Moon: ${chart.moon.phase} phase; next contact ${chart.moon.nextApplication ? lunarContactLabel(chart.moon.nextApplication) : "none within 30°"}${chart.moon.nextApplication?.method ? `; method: ${t(chart.moon.nextApplication.method === "iterative" ? "lunarMethodIterative" : "lunarMethodFallback")}` : ""}; void of course by 30°: ${chart.moon.voidOfCourse ? t("yes") : t("no")}; void before sign exit: ${chart.moon.voidOfCourseBySign ? t("yes") : t("no")}.`,
-      state.lang === "es"
-        ? `Triplicidad de la luminaria de la secta: ${naturalList([sectTriplicityRulers(chart).primary, sectTriplicityRulers(chart).secondary, sectTriplicityRulers(chart).cooperating].map(planetLabel))}.`
-        : `Sect-light triplicity rulers: ${naturalList([sectTriplicityRulers(chart).primary, sectTriplicityRulers(chart).secondary, sectTriplicityRulers(chart).cooperating].map(planetLabel))}.`,
+    ];
+  }
+
+  function solarPhaseEvidenceText(chart) {
+    const keyPlanetText = keyPlanetList(chart).map((key) => {
+      const phase = solarPhaseState(key, chart).category === "luminary"
+        ? (state.lang === "es" ? "luminaria" : "luminary")
+        : solarPhaseTableText(key, chart);
+      return `${planetLabel(key)}: ${phase}`;
+    }).join("; ");
+    return state.lang === "es"
+      ? `Fase solar aplicada a planetas clave: ${keyPlanetText}.`
+      : `Solar phase applied to key planets: ${keyPlanetText}.`;
+  }
+
+  function moonEvidenceText(chart) {
+    const nextContact = chart.moon.nextApplication
+      ? lunarContactLabel(chart.moon.nextApplication)
+      : (state.lang === "es" ? "ninguno en 30°" : "none within 30°");
+    const method = chart.moon.nextApplication?.method
+      ? `; ${state.lang === "es" ? "método" : "method"}: ${t(chart.moon.nextApplication.method === "iterative" ? "lunarMethodIterative" : "lunarMethodFallback")}`
+      : "";
+    return state.lang === "es"
+      ? `Luna: fase ${chart.moon.phase}; próximo contacto ${nextContact}${method}; vacía de curso por 30°: ${chart.moon.voidOfCourse ? t("yes") : t("no")}; vacía antes de salir del signo: ${chart.moon.voidOfCourseBySign ? t("yes") : t("no")}.`
+      : `Moon: ${chart.moon.phase} phase; next contact ${nextContact}${method}; void of course by 30°: ${chart.moon.voidOfCourse ? t("yes") : t("no")}; void before sign exit: ${chart.moon.voidOfCourseBySign ? t("yes") : t("no")}.`;
+  }
+
+  function triplicityEvidenceText(chart) {
+    const rulers = sectTriplicityRulers(chart);
+    const rulerText = naturalList([rulers.primary, rulers.secondary, rulers.cooperating].map(planetLabel));
+    return state.lang === "es"
+      ? `Triplicidad de la luminaria de la secta: ${rulerText}.`
+      : `Sect-light triplicity rulers: ${rulerText}.`;
+  }
+
+  function buildNatalReadingEvidence(context) {
+    return [
+      ...buildFocusAscEvidence(context),
+      ...buildSectEvidence(context),
+      ...buildPublicProminenceEvidence(context),
+      ...buildReceptionBoundaryEvidence(context),
+      ...buildLotEvidence(context),
+      solarPhaseEvidenceText(context.chart),
+      moonEvidenceText(context.chart),
+      triplicityEvidenceText(context.chart),
     ];
   }
 

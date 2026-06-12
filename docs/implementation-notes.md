@@ -32,6 +32,14 @@ Lunar condition should keep the contact scan separate from the final condition o
 
 For the natal interpretation panel, `interpretChart()` should remain an orchestrator. It should collect a context, call dedicated builders for summary, evidence, hierarchy, qualities, and reading blocks, and return a view model. It should not render HTML directly or own all prose-building responsibility in one long function.
 
+The natal reading context should be composed from focused context builders: anchors, topic focus, sect actors, prominence/evidence, lots, and derived reading fragments. Keep `createNatalReadingContext()` as a merger of those pieces so future interpretive factors can be added without turning context assembly into a hidden use case.
+
+Natal reading evidence should be assembled from testimony-family helpers: focus/Ascendant, sect, public prominence, reception/boundaries, lots, solar phase, Moon, and triplicity support. New evidence should enter through the smallest relevant family helper rather than extending one monolithic evidence array.
+
+Complex interpretive judgments should keep testimony extraction, level/flag decisions, and localized prose separate. The malefic-mitigation reading is the reference pattern: collect factors, derive mitigation flags and level, then choose copy from that level.
+
+Public-projection conclusions should keep score calculation, level selection, contextual notes, and final localized text separate. This makes it easier to refine real-world judgments about visibility, reduction, mediation, and shared spotlight without rewriting the whole section.
+
 Topic scoring should keep score-row setup, score mutation, accumulator creation, testimony families, and final sorting in helpers. New scoring rules should avoid reimplementing the house row shape or direct mutation details inline.
 
 For chart rendering, keep frame setup, panel rendering, and completion side effects separate: the shell prepares title/meta/wheel, the panel renderer owns panel order, and the completion step handles capitalization, scrolling, and chart-rendered events.
