@@ -36,6 +36,8 @@ For the natal interpretation panel, `interpretChart()` should remain an orchestr
 
 The natal reading context should be composed from focused context builders: anchors, topic focus, sect actors, prominence/evidence, lots, and derived reading fragments. Keep `createNatalReadingContext()` as a merger of those pieces so future interpretive factors can be added without turning context assembly into a hidden use case.
 
+Visible natal reading sections should be built through one helper per section and collected through an ordered builder list. Adding or reordering a section should not require editing every block object in one large array.
+
 Natal reading evidence should be assembled from testimony-family helpers: focus/Ascendant, sect, public prominence, reception/boundaries, lots, solar phase, Moon, and triplicity support. New evidence should enter through the smallest relevant family helper rather than extending one monolithic evidence array.
 
 Complex interpretive judgments should keep testimony extraction, level/flag decisions, and localized prose separate. The malefic-mitigation reading is the reference pattern: collect factors, derive mitigation flags and level, then choose copy from that level.
@@ -48,6 +50,8 @@ Public-projection conclusions should keep score calculation, level selection, co
 
 Planetary relation judgments should build one reusable relation context for target, actor, role, aspect, superiority, reception, raw intensity, and regulated intensity. Visible judgment prose and technical relation item lists should consume that same context instead of recalculating relation geometry separately.
 
+Reception notes should keep channel noun, caution, and role-specific prose in separate helpers so reception strength changes do not require rewriting the final relationship sentence.
+
 Lot testimony should build item models before prose. Keep lot testimony geometry, reception, raw/regulating intensity, and final item text in separate helpers so Fortune/Spirit evidence can be expanded without rebuilding every audit row.
 
 Topic scoring should keep score-row setup, score mutation, accumulator creation, testimony families, and final sorting in helpers. New scoring rules should avoid reimplementing the house row shape or direct mutation details inline.
@@ -58,9 +62,9 @@ The chart frame itself should use a small model for title, metadata, and wheel H
 
 Where a renderer needs calculated or audited data, prefer a small view model builder before HTML generation. For example, the main lots audit should build each lot row and its fields first, then render that model. Boundary audits should translate neutral warning codes into labeled fields before the renderer writes definition-list markup. Score breakdowns should likewise group and label score data before rendering HTML. Historical example cards should prepare natal-source, audit-status, localized label, and group data before the card renderer writes markup. This keeps testimony extraction and provenance handling separate from HTML details.
 
-Boundary warning calculation should stay split by testimony family. Sect, Ascendant sign, MC/IC sign, lot sign, and Egyptian-bound proximity warnings should live in dedicated detector helpers, with `boundaryWarnings()` only concatenating their neutral notices.
+Boundary warning calculation should stay split by testimony family. Sect, Ascendant sign, MC/IC sign, lot sign, and Egyptian-bound proximity warnings should live in dedicated detector helpers, with `boundaryWarnings()` only concatenating their neutral notices. MC/IC boundary warnings should build a boundary model before converting it into a neutral notice.
 
-Historical example loading should also keep responsibilities apart: update selection/audit state, build form-field values, apply those values to the DOM, then calculate the chart. Do not hide all of that work inside one click handler.
+Historical example loading should also keep responsibilities apart: update selection/audit state, build form-field values, apply those values to the DOM, then calculate the chart. Do not hide all of that work inside one click handler. Historical person cards should keep header/link, natal data list, audit badge, and action rendering in focused subrenderers.
 
 Sect-sensitive alternate lot displays should follow the same model-first rule. Build current/alternate role text and Fortune/Spirit snapshots first, then render the disclosure block.
 

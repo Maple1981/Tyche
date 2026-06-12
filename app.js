@@ -4349,31 +4349,47 @@
     };
   }
 
+  function renderHistoricalPersonHeader(card) {
+    return `
+      <h3>
+        <span>${escapeHtml(card.name)}</span>
+        <a class="person-wiki" href="${escapeHtml(card.wikipediaUrl)}" target="_blank" rel="noreferrer" aria-label="${escapeHtml(`${t("openWikipedia")}: ${card.name}`)}" title="${escapeHtml(t("openWikipedia"))}">
+          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <path d="M14 5h5v5"></path>
+            <path d="M13 11l6-6"></path>
+            <path d="M10 7H6.75A1.75 1.75 0 0 0 5 8.75v8.5C5 18.22 5.78 19 6.75 19h8.5c.97 0 1.75-.78 1.75-1.75V14"></path>
+          </svg>
+        </a>
+      </h3>
+    `;
+  }
+
+  function renderHistoricalPersonDataList(card) {
+    return `
+      <dl>
+        <dt><button class="person-data-trigger" type="button" data-person-source-id="${escapeHtml(card.id)}" aria-haspopup="dialog" aria-label="${escapeHtml(`${t("personDataDetailsOpen")}: ${card.name}`)}">${escapeHtml(t("dataDate"))}</button></dt>
+        <dd>${escapeHtml(card.birthLabel)}</dd>
+        <dt>${escapeHtml(t("dataPlace"))}</dt>
+        <dd>${escapeHtml(card.placeLabel)}</dd>
+        <dt>${escapeHtml(t("dataSex"))}</dt>
+        <dd>${escapeHtml(card.sexLabel)}</dd>
+      </dl>
+    `;
+  }
+
+  function renderHistoricalPersonAction(card) {
+    return `<button type="button" data-person-id="${escapeHtml(card.id)}">${escapeHtml(t("useExample"))}</button>`;
+  }
+
   function renderHistoricalPersonCard(card) {
     return `
       <article class="person-card">
         <img src="${escapeHtml(card.image)}" alt="${escapeHtml(card.imageAlt)}" loading="lazy">
         <div>
-          <h3>
-            <span>${escapeHtml(card.name)}</span>
-            <a class="person-wiki" href="${escapeHtml(card.wikipediaUrl)}" target="_blank" rel="noreferrer" aria-label="${escapeHtml(`${t("openWikipedia")}: ${card.name}`)}" title="${escapeHtml(t("openWikipedia"))}">
-              <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
-                <path d="M14 5h5v5"></path>
-                <path d="M13 11l6-6"></path>
-                <path d="M10 7H6.75A1.75 1.75 0 0 0 5 8.75v8.5C5 18.22 5.78 19 6.75 19h8.5c.97 0 1.75-.78 1.75-1.75V14"></path>
-              </svg>
-            </a>
-          </h3>
+          ${renderHistoricalPersonHeader(card)}
           ${renderAuditBadge(card.auditBadgeText)}
-          <dl>
-            <dt><button class="person-data-trigger" type="button" data-person-source-id="${escapeHtml(card.id)}" aria-haspopup="dialog" aria-label="${escapeHtml(`${t("personDataDetailsOpen")}: ${card.name}`)}">${escapeHtml(t("dataDate"))}</button></dt>
-            <dd>${escapeHtml(card.birthLabel)}</dd>
-            <dt>${escapeHtml(t("dataPlace"))}</dt>
-            <dd>${escapeHtml(card.placeLabel)}</dd>
-            <dt>${escapeHtml(t("dataSex"))}</dt>
-            <dd>${escapeHtml(card.sexLabel)}</dd>
-          </dl>
-          <button type="button" data-person-id="${escapeHtml(card.id)}">${escapeHtml(t("useExample"))}</button>
+          ${renderHistoricalPersonDataList(card)}
+          ${renderHistoricalPersonAction(card)}
         </div>
       </article>
     `;
@@ -5260,34 +5276,45 @@
     return parts.join("; ");
   }
 
-  function receptionNote(target, actor, reception, role) {
-    if (!reception?.hasReception) return "";
-    const strength = receptionStrengthLabel(reception);
-    const boundOnly = receptionByBoundOnly(reception);
+  function receptionChannelNoun(reception) {
     if (state.lang === "es") {
-      const noun = reception.isMutual ? "un canal recíproco" : "un canal formal";
-      const caution = boundOnly
-        ? " Al depender solo del término, este canal no anula por sí solo una presión fuerte."
-        : reception.isMutual && (reception.effectiveScore ?? reception.strongest) <= 1
-          ? " Es recíproco, pero débil: no basta por sí solo para neutralizar la presión."
-          : "";
+      return reception.isMutual ? "un canal recíproco" : "un canal formal";
+    }
+    return reception.isMutual ? "a reciprocal channel" : "a formal channel";
+  }
+
+  function receptionCautionText(reception) {
+    const boundOnly = receptionByBoundOnly(reception);
+    const weakMutual = reception.isMutual && (reception.effectiveScore ?? reception.strongest) <= 1;
+    if (state.lang === "es") {
+      if (boundOnly) return " Al depender solo del término, este canal no anula por sí solo una presión fuerte.";
+      if (weakMutual) return " Es recíproco, pero débil: no basta por sí solo para neutralizar la presión.";
+      return "";
+    }
+    if (boundOnly) return " Because it depends only on the bound, this channel does not cancel strong pressure by itself.";
+    if (weakMutual) return " It is reciprocal but weak; by itself it is not enough to neutralize pressure.";
+    return "";
+  }
+
+  function receptionNoteText(reception, role, strength, noun, caution) {
+    if (state.lang === "es") {
       return role === "support"
         ? ` Hay ${noun} ${strength}, lo que hace la ayuda más utilizable.${caution}`
         : reception.isMutual
           ? ` Hay ${noun} ${strength}; la presión no queda anulada, pero toma forma y se vuelve más trabajable.${caution}`
           : ` Hay ${noun} ${strength}, así que la presión encuentra una vía de manejo, aunque no desaparece.${caution}`;
     }
-    const noun = reception.isMutual ? "a reciprocal channel" : "a formal channel";
-    const caution = boundOnly
-      ? " Because it depends only on the bound, this channel does not cancel strong pressure by itself."
-      : reception.isMutual && (reception.effectiveScore ?? reception.strongest) <= 1
-        ? " It is reciprocal but weak; by itself it is not enough to neutralize pressure."
-        : "";
     return role === "support"
       ? ` There is ${strength} ${noun}, making the help more usable.${caution}`
       : reception.isMutual
         ? ` There is ${strength} ${noun}; the pressure is not cancelled, but it gains form and becomes more workable.${caution}`
         : ` There is ${strength} ${noun}, so the pressure has a route for handling, though it does not disappear.${caution}`;
+  }
+
+  function receptionNote(target, actor, reception, role) {
+    if (!reception?.hasReception) return "";
+    const strength = receptionStrengthLabel(reception);
+    return receptionNoteText(reception, role, strength, receptionChannelNoun(reception), receptionCautionText(reception));
   }
 
   function lotLongitude(key, chart) {
@@ -7669,34 +7696,47 @@
       : [];
   }
 
+  function angleBoundaryModel(angle, chart) {
+    const distance = distanceToSignBoundary(angle.lon);
+    if (distance > 1) return null;
+    const currentSign = signOf(angle.lon);
+    const degree = degreeInSign(angle.lon);
+    const possibleSign = degree < 1 ? (currentSign + 11) % 12 : (currentSign + 1) % 12;
+    return {
+      key: angle.key,
+      distance,
+      boundarySideCode: degree < 1 ? "previous" : "next",
+      currentSign,
+      possibleSign,
+      currentHouse: houseFromSign(currentSign, chart.ascSign),
+      possibleHouse: houseFromSign(possibleSign, chart.ascSign),
+    };
+  }
+
+  function angleBoundaryNotice(model) {
+    return boundaryNotice(
+      `${model.key}-sign-boundary`,
+      model.key,
+      model.distance,
+      [`${model.key}-whole-sign-house`, "chart-projection-foundation", "secondary-focuses"],
+      "verify-time-coordinates-zone",
+      {
+        boundarySideCode: model.boundarySideCode,
+        currentSign: model.currentSign,
+        possibleSign: model.possibleSign,
+        currentHouse: model.currentHouse,
+        possibleHouse: model.possibleHouse,
+      }
+    );
+  }
+
   function angleBoundaryWarnings(chart) {
     return [
       { key: "mc", lon: chart.angles.mc },
       { key: "ic", lon: chart.angles.ic },
-    ].flatMap((angle) => {
-      const distance = distanceToSignBoundary(angle.lon);
-      if (distance > 1) return [];
-      const currentSign = signOf(angle.lon);
-      const degree = degreeInSign(angle.lon);
-      const possibleSign = degree < 1 ? (currentSign + 11) % 12 : (currentSign + 1) % 12;
-      const currentHouse = houseFromSign(currentSign, chart.ascSign);
-      const possibleHouse = houseFromSign(possibleSign, chart.ascSign);
-      const boundarySideCode = degree < 1 ? "previous" : "next";
-      return [boundaryNotice(
-        `${angle.key}-sign-boundary`,
-        angle.key,
-        distance,
-        [`${angle.key}-whole-sign-house`, "chart-projection-foundation", "secondary-focuses"],
-        "verify-time-coordinates-zone",
-        {
-          boundarySideCode,
-          currentSign,
-          possibleSign,
-          currentHouse,
-          possibleHouse,
-        }
-      )];
-    });
+    ].map((angle) => angleBoundaryModel(angle, chart))
+      .filter(Boolean)
+      .map(angleBoundaryNotice);
   }
 
   function lotBoundaryWarnings(chart) {
@@ -8302,38 +8342,56 @@
     ];
   }
 
+  function buildLifeDirectionBlock(context) {
+    return { title: t("lifeDirectionTitle"), text: buildLifeDirectionText(context), conclusion: lifeDirectionConclusion(context.ascLord, context.ascLordPosition, context.chart) };
+  }
+
+  function buildPublicProjectionBlock(context) {
+    return { title: t("publicProjectionTitle"), text: context.publicProjection, conclusion: publicProjectionConclusion(context.chart, context.planetsInTenth, context.tenthRuler, context.tenthRulerPosition) };
+  }
+
+  function buildVisibilityBlock(context) {
+    return { title: t("visibilityTitle"), text: context.visibility, conclusion: visibilityConclusion(context.chart) };
+  }
+
+  function buildSupportBlock(context) {
+    return { title: t("resourcesTitle"), text: buildSupportText(context), conclusion: supportConclusion(context.benefic, context.beneficPosition, context.focuses, context.ascLordPosition, context.chart) };
+  }
+
+  function buildTensionBlock(context) {
+    return { title: t("tensionsTitle"), text: buildTensionText(context), conclusion: tensionConclusion(context.malefic, context.maleficPosition, context.focuses, context.ascLordPosition, context.chart) };
+  }
+
+  function buildConfigurationsBlock(context) {
+    return { title: t("configurationsTitle"), text: context.configurations, conclusion: configurationsConclusion(context.chart) };
+  }
+
+  function buildMoonJudgmentBlock(context) {
+    return { title: t("moonJudgmentTitle"), text: context.moonJudgment, conclusion: moonConclusion(context.chart) };
+  }
+
+  function buildFoundationsBlock(context) {
+    return { title: t("foundationsTitle"), text: context.foundations, conclusion: triplicityFoundationConclusion(context.chart) };
+  }
+
+  function buildLotsBlock(context) {
+    return { title: t("lots"), text: buildLotReadingText(context), conclusion: lotsConclusion(context.fortune, context.spirit, context.chart) };
+  }
+
+  const NATAL_READING_BLOCK_BUILDERS = Object.freeze([
+    buildLifeDirectionBlock,
+    buildPublicProjectionBlock,
+    buildVisibilityBlock,
+    buildSupportBlock,
+    buildTensionBlock,
+    buildConfigurationsBlock,
+    buildMoonJudgmentBlock,
+    buildFoundationsBlock,
+    buildLotsBlock,
+  ]);
+
   function buildNatalReadingBlocks(context) {
-    const {
-      chart,
-      ascLord,
-      ascLordPosition,
-      planetsInTenth,
-      tenthRuler,
-      tenthRulerPosition,
-      visibility,
-      benefic,
-      beneficPosition,
-      malefic,
-      maleficPosition,
-      focuses,
-      configurations,
-      moonJudgment,
-      foundations,
-      publicProjection,
-      fortune,
-      spirit,
-    } = context;
-    return [
-      { title: t("lifeDirectionTitle"), text: buildLifeDirectionText(context), conclusion: lifeDirectionConclusion(ascLord, ascLordPosition, chart) },
-      { title: t("publicProjectionTitle"), text: publicProjection, conclusion: publicProjectionConclusion(chart, planetsInTenth, tenthRuler, tenthRulerPosition) },
-      { title: t("visibilityTitle"), text: visibility, conclusion: visibilityConclusion(chart) },
-      { title: t("resourcesTitle"), text: buildSupportText(context), conclusion: supportConclusion(benefic, beneficPosition, focuses, ascLordPosition, chart) },
-      { title: t("tensionsTitle"), text: buildTensionText(context), conclusion: tensionConclusion(malefic, maleficPosition, focuses, ascLordPosition, chart) },
-      { title: t("configurationsTitle"), text: configurations, conclusion: configurationsConclusion(chart) },
-      { title: t("moonJudgmentTitle"), text: moonJudgment, conclusion: moonConclusion(chart) },
-      { title: t("foundationsTitle"), text: foundations, conclusion: triplicityFoundationConclusion(chart) },
-      { title: t("lots"), text: buildLotReadingText(context), conclusion: lotsConclusion(fortune, spirit, chart) },
-    ];
+    return NATAL_READING_BLOCK_BUILDERS.map((builder) => builder(context));
   }
 
   function interpretChart(chart) {
