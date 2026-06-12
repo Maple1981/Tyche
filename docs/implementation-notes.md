@@ -56,11 +56,15 @@ Stable plain-language maps for house topics, sign style, angularity wording, pla
 
 Public-projection conclusions should keep score calculation, level selection, contextual notes, and final localized text separate. This makes it easier to refine real-world judgments about visibility, reduction, mediation, and shared spotlight without rewriting the whole section.
 
+Public-projection reading prose should likewise build a small model for MC, 10th sign, ruler, ruler house, and planets in the 10th before composing intro, MC, ruler, and 10th-house fragments.
+
 Planetary relation judgments should build one reusable relation context for target, actor, role, aspect, superiority, reception, raw intensity, and regulated intensity. Visible judgment prose and technical relation item lists should consume that same context instead of recalculating relation geometry separately.
 
 Reception notes should keep channel noun, caution, and role-specific prose in separate helpers so reception strength changes do not require rewriting the final relationship sentence.
 
 Lot testimony should build item models before prose. Keep lot testimony geometry, reception, raw/regulating intensity, and final item text in separate helpers so Fortune/Spirit evidence can be expanded without rebuilding every audit row.
+
+Lot condition readings should build a profile for lord placement, lot place tone, support testimony, pressure testimony, and solar concern before composing the visible sentence fragments.
 
 Topic scoring should keep score-row setup, score mutation, accumulator creation, testimony families, and final sorting in helpers. New scoring rules should avoid reimplementing the house row shape or direct mutation details inline.
 

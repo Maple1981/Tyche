@@ -7508,24 +7508,66 @@
     return "Fortune and Spirit do not give a simple verdict; they show uneven planes, with some parts available and other parts conditioned, to be read through their houses and rulers.";
   }
 
-  function lotConditionReading(lot, chart) {
+  function lotPlaceTone(lot, lordPosition) {
+    if ([6, 8, 12].includes(lot.house)) {
+      return state.lang === "es" ? "un campo que pide cuidado práctico" : "a field that asks for practical care";
+    }
+    if (lordPosition?.angularity === "angular") {
+      return state.lang === "es" ? "un tema visible o activo" : "a visible or active topic";
+    }
+    return state.lang === "es" ? "un tema más indirecto" : "a more indirect topic";
+  }
+
+  function lotConditionProfile(lot, chart) {
     if (!lot) return "";
     const lordPosition = chart.positions[lot.lord];
     const beneficItems = lotTestimonyItems(lot, ["jupiter", "venus"], chart, "support");
     const maleficItems = lotTestimonyItems(lot, ["mars", "saturn"], chart, "tension");
     const solar = solarPhaseState(lot.lord, chart);
     const solarConcern = ["combust", "underBeams"].includes(solar.category);
-    const placeTone = [6, 8, 12].includes(lot.house)
-      ? (state.lang === "es" ? "un campo que pide cuidado práctico" : "a field that asks for practical care")
-      : chart.positions[lot.lord]?.angularity === "angular"
-        ? (state.lang === "es" ? "un tema visible o activo" : "a visible or active topic")
-        : (state.lang === "es" ? "un tema más indirecto" : "a more indirect topic");
-    const support = lotTestimonyPlainSummary(beneficItems, "support");
-    const pressure = lotTestimonyPlainSummary(maleficItems, "tension");
+    return {
+      lot,
+      lordPosition,
+      solar,
+      solarConcern,
+      placeTone: lotPlaceTone(lot, lordPosition),
+      support: lotTestimonyPlainSummary(beneficItems, "support"),
+      pressure: lotTestimonyPlainSummary(maleficItems, "tension"),
+    };
+  }
+
+  function lotIdentityText(lot) {
     if (state.lang === "es") {
-      return `${lotName(lot.key)} describe ${lotPlainMeaning(lot.key)}. Cae en casa ${lot.house}: ${houseReadingTopics(lot.house, "double")}. Su regente, ${planetLabel(lot.lord)}, lleva ese asunto a casa ${lordPosition.house}: ${houseReadingTopics(lordPosition.house, "double")}; allí ${placementVisibilityTone(lordPosition)}. ${conditionPlainTone(lot.lord, lordPosition, chart)} Esto vuelve el lote ${placeTone}. ${support} ${pressure}${solarConcern ? ` El regente del lote está ${solar.category === "combust" ? "combusto" : "bajo los rayos"}, así que parte del tema puede operar con menor claridad pública.` : ""}`;
+      return `${lotName(lot.key)} describe ${lotPlainMeaning(lot.key)}. Cae en casa ${lot.house}: ${houseReadingTopics(lot.house, "double")}.`;
     }
-    return `${lotName(lot.key)} describes ${lotPlainMeaning(lot.key)}. It falls in house ${lot.house}: ${houseReadingTopics(lot.house, "double")}. Its ruler, ${planetLabel(lot.lord)}, carries that matter into house ${lordPosition.house}: ${houseReadingTopics(lordPosition.house, "double")}; there it ${placementVisibilityTone(lordPosition)}. ${conditionPlainTone(lot.lord, lordPosition, chart)} This makes the lot ${placeTone}. ${support} ${pressure}${solarConcern ? ` The lot ruler is ${solar.category === "combust" ? "combust" : "under the beams"}, so part of the topic may operate with less public clarity.` : ""}`;
+    return `${lotName(lot.key)} describes ${lotPlainMeaning(lot.key)}. It falls in house ${lot.house}: ${houseReadingTopics(lot.house, "double")}.`;
+  }
+
+  function lotRulerConditionText(profile, chart) {
+    const { lot, lordPosition, placeTone } = profile;
+    if (state.lang === "es") {
+      return `Su regente, ${planetLabel(lot.lord)}, lleva ese asunto a casa ${lordPosition.house}: ${houseReadingTopics(lordPosition.house, "double")}; allí ${placementVisibilityTone(lordPosition)}. ${conditionPlainTone(lot.lord, lordPosition, chart)} Esto vuelve el lote ${placeTone}.`;
+    }
+    return `Its ruler, ${planetLabel(lot.lord)}, carries that matter into house ${lordPosition.house}: ${houseReadingTopics(lordPosition.house, "double")}; there it ${placementVisibilityTone(lordPosition)}. ${conditionPlainTone(lot.lord, lordPosition, chart)} This makes the lot ${placeTone}.`;
+  }
+
+  function lotSolarConcernText(profile) {
+    if (!profile.solarConcern) return "";
+    return state.lang === "es"
+      ? `El regente del lote está ${profile.solar.category === "combust" ? "combusto" : "bajo los rayos"}, así que parte del tema puede operar con menor claridad pública.`
+      : `The lot ruler is ${profile.solar.category === "combust" ? "combust" : "under the beams"}, so part of the topic may operate with less public clarity.`;
+  }
+
+  function lotConditionReading(lot, chart) {
+    const profile = lotConditionProfile(lot, chart);
+    if (!profile) return "";
+    return [
+      lotIdentityText(profile.lot),
+      lotRulerConditionText(profile, chart),
+      profile.support,
+      profile.pressure,
+      lotSolarConcernText(profile),
+    ].filter(Boolean).join(" ");
   }
 
   function moonNextRole(chart) {
@@ -8078,22 +8120,51 @@
     return sortTopicScoreRows(houses);
   }
 
-  function publicProjectionReading(chart) {
+  function publicProjectionReadingModel(chart) {
     const tenthSignIndex = wholeSignHouseSign(chart, 10);
     const tenthRuler = wholeSignHouseRuler(chart, 10);
     const tenthRulerPosition = chart.positions[tenthRuler];
     const planetsInTenth = VISIBLE_KEYS.filter((key) => chart.positions[key]?.house === 10);
-    const tenthHouseText = planetsInTenth.length
-      ? (state.lang === "es"
-        ? `La casa 10 contiene ${naturalList(planetsInTenth.map(planetLabel))}; esos planetas colorean directamente la forma de mostrarse, trabajar, ganar rango o asumir visibilidad.`
-        : `The 10th house contains ${naturalList(planetsInTenth.map(planetLabel))}; those planets directly color how the person shows up, works, gains rank, or becomes visible.`)
-      : (state.lang === "es"
-        ? "La casa 10 no contiene planetas visibles. Eso no borra la vida pública: significa que el peso de la interpretación pasa al regente de la casa 10 y al MC."
-        : "The 10th house contains no visible planet. That does not erase public life: it means the interpretation leans on the 10th-house ruler and the MC.");
-    if (state.lang === "es") {
-      return `La proyección pública describe cómo una persona se vuelve visible: oficio, reputación, responsabilidades, reconocimiento y papel ante otros. El MC cae en casa ${chart.mcHouse}: ${houseReadingTopics(chart.mcHouse, "double")}. La casa 10 está en ${signLabel(tenthSignIndex)} y su regente, ${planetLabel(tenthRuler)}, cae en casa ${tenthRulerPosition.house}: ${houseReadingTopics(tenthRulerPosition.house, "double")}. ${tenthHouseText}`;
+    return { chart, tenthSignIndex, tenthRuler, tenthRulerPosition, planetsInTenth };
+  }
+
+  function publicProjectionIntroText() {
+    return state.lang === "es"
+      ? "La proyección pública describe cómo una persona se vuelve visible: oficio, reputación, responsabilidades, reconocimiento y papel ante otros."
+      : "Public projection describes how a person becomes visible: craft, reputation, responsibility, recognition, and role before others.";
+  }
+
+  function publicProjectionMcText(model) {
+    return state.lang === "es"
+      ? `El MC cae en casa ${model.chart.mcHouse}: ${houseReadingTopics(model.chart.mcHouse, "double")}.`
+      : `The MC falls in house ${model.chart.mcHouse}: ${houseReadingTopics(model.chart.mcHouse, "double")}.`;
+  }
+
+  function publicProjectionRulerText(model) {
+    return state.lang === "es"
+      ? `La casa 10 está en ${signLabel(model.tenthSignIndex)} y su regente, ${planetLabel(model.tenthRuler)}, cae en casa ${model.tenthRulerPosition.house}: ${houseReadingTopics(model.tenthRulerPosition.house, "double")}.`
+      : `The 10th house is in ${signLabel(model.tenthSignIndex)} and its ruler, ${planetLabel(model.tenthRuler)}, falls in house ${model.tenthRulerPosition.house}: ${houseReadingTopics(model.tenthRulerPosition.house, "double")}.`;
+  }
+
+  function publicProjectionTenthHouseText(model) {
+    if (model.planetsInTenth.length) {
+      return state.lang === "es"
+        ? `La casa 10 contiene ${naturalList(model.planetsInTenth.map(planetLabel))}; esos planetas colorean directamente la forma de mostrarse, trabajar, ganar rango o asumir visibilidad.`
+        : `The 10th house contains ${naturalList(model.planetsInTenth.map(planetLabel))}; those planets directly color how the person shows up, works, gains rank, or becomes visible.`;
     }
-    return `Public projection describes how a person becomes visible: craft, reputation, responsibility, recognition, and role before others. The MC falls in house ${chart.mcHouse}: ${houseReadingTopics(chart.mcHouse, "double")}. The 10th house is in ${signLabel(tenthSignIndex)} and its ruler, ${planetLabel(tenthRuler)}, falls in house ${tenthRulerPosition.house}: ${houseReadingTopics(tenthRulerPosition.house, "double")}. ${tenthHouseText}`;
+    return state.lang === "es"
+      ? "La casa 10 no contiene planetas visibles. Eso no borra la vida pública: significa que el peso de la interpretación pasa al regente de la casa 10 y al MC."
+      : "The 10th house contains no visible planet. That does not erase public life: it means the interpretation leans on the 10th-house ruler and the MC.";
+  }
+
+  function publicProjectionReading(chart) {
+    const model = publicProjectionReadingModel(chart);
+    return [
+      publicProjectionIntroText(),
+      publicProjectionMcText(model),
+      publicProjectionRulerText(model),
+      publicProjectionTenthHouseText(model),
+    ].filter(Boolean).join(" ");
   }
 
   function buildNatalAnchorContext(chart) {
