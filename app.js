@@ -9727,15 +9727,26 @@
     }
   }
 
+  function handleGlossaryCloseClick() {
+    closeGlossary({ restoreFocus: true });
+  }
+
+  function handlePersonDataCloseClick() {
+    closePersonData({ restoreFocus: true });
+  }
+
+  function repositionFloatingPopovers() {
+    positionGlossary(state.glossaryReturnFocus);
+    positionPersonData(state.personDataReturnFocus);
+  }
+
   function bindFloatingPopoverEvents() {
     document.addEventListener("click", handleDocumentPopoverClick);
     document.addEventListener("keydown", handleDocumentPopoverKeydown);
-    $("#glossaryClose").addEventListener("click", () => closeGlossary({ restoreFocus: true }));
-    $("#personDataClose").addEventListener("click", () => closePersonData({ restoreFocus: true }));
-    window.addEventListener("resize", () => positionGlossary(state.glossaryReturnFocus));
-    window.addEventListener("resize", () => positionPersonData(state.personDataReturnFocus));
-    window.addEventListener("scroll", () => positionGlossary(state.glossaryReturnFocus), true);
-    window.addEventListener("scroll", () => positionPersonData(state.personDataReturnFocus), true);
+    $("#glossaryClose").addEventListener("click", handleGlossaryCloseClick);
+    $("#personDataClose").addEventListener("click", handlePersonDataCloseClick);
+    window.addEventListener("resize", repositionFloatingPopovers);
+    window.addEventListener("scroll", repositionFloatingPopovers, true);
   }
 
   function handleBirthPlaceFocus(birthPlace) {
@@ -9752,20 +9763,36 @@
     queuePlaceSearch();
   }
 
+  function handleBirthPlaceArrowDown(event) {
+    event.preventDefault();
+    if ($("#placeSuggestions").hidden) queuePlaceSearch();
+    moveActivePlace(1);
+  }
+
+  function handleBirthPlaceArrowUp(event) {
+    event.preventDefault();
+    moveActivePlace(-1);
+  }
+
+  function handleBirthPlaceEnter(event) {
+    if (!state.placeSuggestions.length) return;
+    event.preventDefault();
+    selectPlaceSuggestion(state.activePlaceIndex >= 0 ? state.activePlaceIndex : 0);
+  }
+
+  function handleBirthPlaceEscape() {
+    hidePlaceSuggestions();
+  }
+
+  const BIRTH_PLACE_KEY_HANDLERS = Object.freeze({
+    ArrowDown: handleBirthPlaceArrowDown,
+    ArrowUp: handleBirthPlaceArrowUp,
+    Enter: handleBirthPlaceEnter,
+    Escape: handleBirthPlaceEscape,
+  });
+
   function handleBirthPlaceKeydown(event) {
-    if (event.key === "ArrowDown") {
-      event.preventDefault();
-      if ($("#placeSuggestions").hidden) queuePlaceSearch();
-      moveActivePlace(1);
-    } else if (event.key === "ArrowUp") {
-      event.preventDefault();
-      moveActivePlace(-1);
-    } else if (event.key === "Enter" && state.placeSuggestions.length) {
-      event.preventDefault();
-      selectPlaceSuggestion(state.activePlaceIndex >= 0 ? state.activePlaceIndex : 0);
-    } else if (event.key === "Escape") {
-      hidePlaceSuggestions();
-    }
+    BIRTH_PLACE_KEY_HANDLERS[event.key]?.(event);
   }
 
   function handleBirthPlaceBlur() {
@@ -9793,6 +9820,14 @@
     if (button) selectPlaceSuggestion(Number(button.dataset.placeIndex));
   }
 
+  function handlePlaceSuggestionMousedown(event) {
+    event.preventDefault();
+  }
+
+  function handleDocumentPlacePointerdown(event) {
+    if (!event.target.closest(".place-field")) hidePlaceSuggestions();
+  }
+
   function bindBirthPlaceEvents() {
     const birthPlace = $("#birthPlace");
     birthPlace.addEventListener("focus", () => handleBirthPlaceFocus(birthPlace));
@@ -9800,13 +9835,9 @@
     birthPlace.addEventListener("keydown", handleBirthPlaceKeydown);
     birthPlace.addEventListener("blur", handleBirthPlaceBlur);
     $("#clearPlace").addEventListener("click", () => clearBirthPlaceFields(birthPlace));
-    $("#placeSuggestions").addEventListener("mousedown", (event) => {
-      event.preventDefault();
-    });
+    $("#placeSuggestions").addEventListener("mousedown", handlePlaceSuggestionMousedown);
     $("#placeSuggestions").addEventListener("click", handlePlaceSuggestionClick);
-    document.addEventListener("pointerdown", (event) => {
-      if (!event.target.closest(".place-field")) hidePlaceSuggestions();
-    });
+    document.addEventListener("pointerdown", handleDocumentPlacePointerdown);
   }
 
   function handleDateTimeFieldChange() {

@@ -110,7 +110,7 @@ SVG renderers should follow the same rule. The chart wheel should build a geomet
 
 UI event binding should stay grouped by responsibility. Keep preference toggles, historical-people modal behavior, floating popovers, birthplace search, and form/options submission in separate binding functions, with `bindEvents()` acting only as an orchestration point.
 
-Within each binding group, prefer named handlers for non-trivial behavior. Tab activation, preference toggles, modal clicks, popover document interactions, birthplace keyboard navigation, clearing place fields, date/time changes, and chart-form submission should live in named functions so event binding remains easy to scan.
+Within each binding group, prefer named handlers for non-trivial behavior. Tab activation, preference toggles, modal clicks, popover document interactions, birthplace keyboard navigation, clearing place fields, date/time changes, and chart-form submission should live in named functions so event binding remains easy to scan. Avoid inline event lambdas when a behavior is reused or has branching logic.
 
 Language switching should separate document metadata, static node translation, localized control labels, and dynamic content refresh. `applyI18n()` should coordinate those steps and then redecorate glossary triggers after translated content is in place. Localized control labels should be split by UI responsibility: shell landmarks, preference toggles, historical-people controls, and birthplace controls. Dynamic refresh should keep place-state refresh, historical example rendering, last-chart rerendering, and option-warning refresh as separate steps.
 
