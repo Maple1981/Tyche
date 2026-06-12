@@ -40,9 +40,13 @@ Natal reading evidence should be assembled from testimony-family helpers: focus/
 
 Complex interpretive judgments should keep testimony extraction, level/flag decisions, and localized prose separate. The malefic-mitigation reading is the reference pattern: collect factors, derive mitigation flags and level, then choose copy from that level.
 
+Essential-condition readings should keep dignity labels, judgment profile, and localized prose separate. This prevents changes to dignity grouping from being tangled with the final interpretive wording.
+
 Public-projection conclusions should keep score calculation, level selection, contextual notes, and final localized text separate. This makes it easier to refine real-world judgments about visibility, reduction, mediation, and shared spotlight without rewriting the whole section.
 
 Planetary relation judgments should build one reusable relation context for target, actor, role, aspect, superiority, reception, raw intensity, and regulated intensity. Visible judgment prose and technical relation item lists should consume that same context instead of recalculating relation geometry separately.
+
+Lot testimony should build item models before prose. Keep lot testimony geometry, reception, raw/regulating intensity, and final item text in separate helpers so Fortune/Spirit evidence can be expanded without rebuilding every audit row.
 
 Topic scoring should keep score-row setup, score mutation, accumulator creation, testimony families, and final sorting in helpers. New scoring rules should avoid reimplementing the house row shape or direct mutation details inline.
 
@@ -64,6 +68,8 @@ Top chart panels should also prefer view models where labels and values are prep
 
 Table panels should keep row construction separate from final DOM assignment. Use dedicated table models, plus header/row builders for planet, house, lot, and aspect tables, so calculation changes and markup changes remain independent. When a table can split into sections, such as traditional and modern planets, build a section model before rendering.
 
+Aspect tables should keep planet-key selection, display-mode selection, pair analysis, and sign/degree row construction in separate helpers.
+
 SVG renderers should follow the same rule. The chart wheel should build a geometry/parts model for houses, angles, aspects, and planets before composing the final SVG shell.
 
 UI event binding should stay grouped by responsibility. Keep preference toggles, historical-people modal behavior, floating popovers, birthplace search, and form/options submission in separate binding functions, with `bindEvents()` acting only as an orchestration point.
@@ -74,6 +80,8 @@ Language switching should separate document metadata, static node translation, l
 
 Floating popovers should resolve a small model before writing DOM. Glossary entries, person-data details, and similar overlays should keep lookup/formatting separate from the code that opens and positions the popover; historical source popovers should expose that split through dedicated model and render helpers.
 
+Glossary text lookup should use a static matcher table and a small lookup function. Do not rebuild matcher arrays inside render paths.
+
 Search/autocomplete surfaces should keep URL construction, response parsing, result merging, row-model preparation, and DOM writes separate. Birthplace suggestions should build row models with localized labels and metadata, then render those rows through dedicated suggestion renderers.
 
 Birthplace selection should also keep field modeling separate from DOM mutation. Build the place/coordinate/time-zone field model and calculate automatic UTC-offset updates through helper functions before applying the result to form controls.
@@ -82,7 +90,7 @@ Form input reading should normalize coherent groups before chart calculation. Ke
 
 Inline option warnings should build a small visibility/text model first, then apply it to DOM nodes. This keeps option state rules testable without depending on translated prose in event handlers.
 
-Regression-only APIs should be built through dedicated helpers. Keep the default regression input and the exposed `window.TycheTest` helper map separate from the installer that checks `?test=regression`.
+Regression-only APIs should be built through dedicated helpers. Keep the default regression input and the exposed `window.TycheTest` helper map separate from the installer that checks `?test=regression`, and group exposed helpers by calculation, historical data, lots/sect, rendering, and judgment responsibilities.
 
 When extracting architecture, keep changes incremental and covered by static contracts. Do not add a module loader, bundler, framework, backend, or runtime dependency unless the project deliberately changes its static-app constraint.
 

@@ -3516,42 +3516,43 @@
     return resolvedKey ? glossaryTerm(label, resolvedKey, extraClass) : escapeHtml(label);
   }
 
+  const GLOSSARY_TEXT_MATCHERS = Object.freeze([
+    ["noMajorDignity", ["sin dignidad mayor", "no major dignity"]],
+    ["domicile", ["domicilio", "domicile"]],
+    ["detriment", ["detrimento", "detriment"]],
+    ["exaltation", ["exaltacion", "exaltation"]],
+    ["fall", ["caida", "fall"]],
+    ["triplicity", ["triplicidad", "triplicity"]],
+    ["boundLord", ["senor del termino", "bound lord"]],
+    ["decanLord", ["senor del decanato", "decan lord"]],
+    ["bound", ["termino", "bound"]],
+    ["decan", ["decanato", "decan"]],
+    ["underBeams", ["bajo los rayos", "under the beams", "under beams", "bajo rayos"]],
+    ["combust", ["combusto", "combust"]],
+    ["cazimi", ["cazimi", "en el corazon", "in the heart"]],
+    ["morning", ["matutino", "oriental", "morning"]],
+    ["evening", ["vespertino", "occidental", "evening"]],
+    ["moonPhase", ["luna nueva", "creciente", "gibosa", "luna llena", "diseminante", "menguante", "balsamica", "new moon", "crescent", "quarter", "gibbous", "full moon", "disseminating", "balsamic"]],
+    ["conjunction", ["conjuncion", "conjunction"]],
+    ["angular", ["angular"]],
+    ["succedent", ["sucedente", "succedent"]],
+    ["cadent", ["cadente", "cadent"]],
+    ["copresence", ["copresencia", "copresence"]],
+    ["sextile", ["sextil", "sextile"]],
+    ["square", ["cuadrado", "square"]],
+    ["trine", ["trigono", "trine"]],
+    ["opposition", ["oposicion", "opposition"]],
+    ["applying", ["aplicando", "applying"]],
+    ["separating", ["separando", "separating"]],
+    ["aspects", ["por signo", "by sign", "por grado", "by degree", "signo + grado", "sign + degree"]],
+    ["overcoming", ["domina", "overcomes"]],
+    ["reception", ["recepcion", "reception", "recibe"]],
+  ]);
+
   function glossaryKeyForText(value) {
     const normalized = normalizeText(value);
     if (!normalized || normalized === "—" || normalized === "-") return "";
-    const matchers = [
-      ["noMajorDignity", ["sin dignidad mayor", "no major dignity"]],
-      ["domicile", ["domicilio", "domicile"]],
-      ["detriment", ["detrimento", "detriment"]],
-      ["exaltation", ["exaltacion", "exaltation"]],
-      ["fall", ["caida", "fall"]],
-      ["triplicity", ["triplicidad", "triplicity"]],
-      ["boundLord", ["senor del termino", "bound lord"]],
-      ["decanLord", ["senor del decanato", "decan lord"]],
-      ["bound", ["termino", "bound"]],
-      ["decan", ["decanato", "decan"]],
-      ["underBeams", ["bajo los rayos", "under the beams", "under beams", "bajo rayos"]],
-      ["combust", ["combusto", "combust"]],
-      ["cazimi", ["cazimi", "en el corazon", "in the heart"]],
-      ["morning", ["matutino", "oriental", "morning"]],
-      ["evening", ["vespertino", "occidental", "evening"]],
-      ["moonPhase", ["luna nueva", "creciente", "gibosa", "luna llena", "diseminante", "menguante", "balsamica", "new moon", "crescent", "quarter", "gibbous", "full moon", "disseminating", "balsamic"]],
-      ["conjunction", ["conjuncion", "conjunction"]],
-      ["angular", ["angular"]],
-      ["succedent", ["sucedente", "succedent"]],
-      ["cadent", ["cadente", "cadent"]],
-      ["copresence", ["copresencia", "copresence"]],
-      ["sextile", ["sextil", "sextile"]],
-      ["square", ["cuadrado", "square"]],
-      ["trine", ["trigono", "trine"]],
-      ["opposition", ["oposicion", "opposition"]],
-      ["applying", ["aplicando", "applying"]],
-      ["separating", ["separando", "separating"]],
-      ["aspects", ["por signo", "by sign", "por grado", "by degree", "signo + grado", "sign + degree"]],
-      ["overcoming", ["domina", "overcomes"]],
-      ["reception", ["recepcion", "reception", "recibe"]],
-    ];
-    return matchers.find(([, needles]) => needles.some((needle) => normalized.includes(needle)))?.[0] || "";
+    return GLOSSARY_TEXT_MATCHERS.find(([, needles]) => needles.some((needle) => normalized.includes(needle)))?.[0] || "";
   }
 
   function triplicityRoleForDignityLabel(item, chart) {
@@ -6107,45 +6108,67 @@
     return meanings[state.lang]?.[key] || planetName(key);
   }
 
-  function essentialConditionReading(position, chart = null) {
+  function essentialConditionLabels(position, chart = null) {
     const groups = dignityGroups(position.dignities || []);
-    const major = groups.major.map((item) => dignityDisplayLabel(item, chart));
-    const triplicity = groups.triplicity.map((item) => dignityDisplayLabel(item, chart));
-    const minor = groups.minor.map((item) => dignityDisplayLabel(item, chart));
-    const administration = groups.administration.map((item) => dignityDisplayLabel(item, chart));
-    const weakness = groups.weakness.map((item) => dignityDisplayLabel(item, chart));
+    return {
+      major: groups.major.map((item) => dignityDisplayLabel(item, chart)),
+      triplicity: groups.triplicity.map((item) => dignityDisplayLabel(item, chart)),
+      minor: groups.minor.map((item) => dignityDisplayLabel(item, chart)),
+      administration: groups.administration.map((item) => dignityDisplayLabel(item, chart)),
+      weakness: groups.weakness.map((item) => dignityDisplayLabel(item, chart)),
+    };
+  }
+
+  function essentialConditionProfile(labels) {
+    if (labels.major.length && labels.weakness.length) return "majorWithWeakness";
+    if (labels.major.length) return "major";
+    if (labels.triplicity.length && labels.weakness.length) return "triplicityWithWeakness";
+    if (labels.triplicity.length) return "triplicity";
+    if (labels.weakness.length) return "weakness";
+    if (labels.minor.length) return "minor";
+    if (labels.administration.length) return "administration";
+    return "unmarked";
+  }
+
+  function essentialConditionText(profile, labels) {
+    const { major, triplicity, minor, administration, weakness } = labels;
     if (state.lang === "es") {
-      if (major.length && weakness.length) {
+      if (profile === "majorWithWeakness") {
         return `Tiene recursos propios (${major.join(", ")}), pero también una dificultad de fondo (${weakness.join(", ")}).`;
       }
-      if (major.length) return `Tiene recursos propios (${major.join(", ")}), así que puede actuar con más coherencia.`;
-      if (triplicity.length && weakness.length) {
+      if (profile === "major") return `Tiene recursos propios (${major.join(", ")}), así que puede actuar con más coherencia.`;
+      if (profile === "triplicityWithWeakness") {
         return `Tiene soporte por triplicidad (${triplicity.join(", ")}), pero también una dificultad de fondo (${weakness.join(", ")}). Esa ayuda no equivale a domicilio o exaltación, aunque sí da sostén real.`;
       }
-      if (triplicity.length) return `Tiene soporte por triplicidad (${triplicity.join(", ")}): ayuda real por secta o elemento, aunque no equivale a domicilio o exaltación.`;
-      if (weakness.length) {
+      if (profile === "triplicity") return `Tiene soporte por triplicidad (${triplicity.join(", ")}): ayuda real por secta o elemento, aunque no equivale a domicilio o exaltación.`;
+      if (profile === "weakness") {
         const minorText = minor.length ? `, aunque conserva dignidad menor propia por ${minor.join(", ")}` : "";
         return `Trabaja con una dificultad de fondo (${weakness.join(", ")})${minorText}; no significa fracaso, sino más necesidad de ajuste.`;
       }
-      if (minor.length) return `No tiene domicilio ni exaltación, pero conserva dignidad menor propia por ${minor.join(", ")}.`;
-      if (administration.length) return `No tiene una dignidad mayor clara; ${administration.join(", ")} describe quién administra el grado, no un apoyo propio automático.`;
+      if (profile === "minor") return `No tiene domicilio ni exaltación, pero conserva dignidad menor propia por ${minor.join(", ")}.`;
+      if (profile === "administration") return `No tiene una dignidad mayor clara; ${administration.join(", ")} describe quién administra el grado, no un apoyo propio automático.`;
       return `No tiene una dignidad mayor clara; su importancia viene sobre todo de su lugar en la carta y de sus conexiones.`;
     }
-    if (major.length && weakness.length) {
+    if (profile === "majorWithWeakness") {
       return `It has resources of its own (${major.join(", ")}), but also a background difficulty (${weakness.join(", ")}).`;
     }
-    if (major.length) return `It has resources of its own (${major.join(", ")}), so it can act with more coherence.`;
-    if (triplicity.length && weakness.length) {
+    if (profile === "major") return `It has resources of its own (${major.join(", ")}), so it can act with more coherence.`;
+    if (profile === "triplicityWithWeakness") {
       return `It has triplicity support (${triplicity.join(", ")}), but also a background difficulty (${weakness.join(", ")}). That support is not the same as domicile or exaltation, though it is a real stabilizer.`;
     }
-    if (triplicity.length) return `It has triplicity support (${triplicity.join(", ")}): a real sect or elemental support, though not the same as domicile or exaltation.`;
-    if (weakness.length) {
+    if (profile === "triplicity") return `It has triplicity support (${triplicity.join(", ")}): a real sect or elemental support, though not the same as domicile or exaltation.`;
+    if (profile === "weakness") {
       const minorText = minor.length ? `, though it keeps own minor dignity through ${minor.join(", ")}` : "";
       return `It works with a background difficulty (${weakness.join(", ")})${minorText}; this does not mean failure, but more need for adjustment.`;
     }
-    if (minor.length) return `It has no domicile or exaltation, but keeps own minor dignity through ${minor.join(", ")}.`;
-    if (administration.length) return `It has no clear major dignity; ${administration.join(", ")} describes who administers the degree, not automatic support of its own.`;
+    if (profile === "minor") return `It has no domicile or exaltation, but keeps own minor dignity through ${minor.join(", ")}.`;
+    if (profile === "administration") return `It has no clear major dignity; ${administration.join(", ")} describes who administers the degree, not automatic support of its own.`;
     return `It has no clear major dignity; its importance comes mostly from its place in the chart and from its connections.`;
+  }
+
+  function essentialConditionReading(position, chart = null) {
+    const labels = essentialConditionLabels(position, chart);
+    return essentialConditionText(essentialConditionProfile(labels), labels);
   }
 
   function focusLabel(focus) {
@@ -7126,37 +7149,39 @@
     const lotSign = signOf(lot.lon);
     return planetKeys
       .filter((key) => VISIBLE_KEYS.includes(key))
-      .map((key) => {
-        const position = chart.positions[key];
-        const signType = signAspectType(lotSign, signOf(position.lon));
-        if (!signType) return null;
-        const degree = degreeAspect(lot.lon, position.lon, Math.max(3, chart.input.orb || 3));
-        const planetSuperior = superiorPlanet("lot", key, lot.lon, position.lon) === key;
-        const lordPosition = chart.positions[lot.lord];
-        const hasLordConfiguration = key !== lot.lord && signAspectType(signOf(position.lon), signOf(lordPosition.lon));
-        const reception = hasLordConfiguration ? receptionBetween(key, lot.lord, chart) : null;
-        const solar = solarPhaseState(key, chart);
-        const solarText = ["combust", "underBeams"].includes(solar.category)
-          ? solarPhaseTableText(key, chart)
-          : "";
-        return {
-          lotKey: lot.key,
-          lotLord: lot.lord,
-          key,
-          signType,
-          degree,
-          planetSuperior,
-          solarText,
-          reception,
-          roleText: lotPlanetRoleText(key, chart),
-          isBeneficOfSect: key === chart.beneficOfSect,
-          rawLevel: role === "tension" ? lotTensionRawLevel(key, chart, signType, degree, planetSuperior) : "",
-          angularity: position.angularity,
-          house: position.house,
-          level: lotTestimonyLevel(lot, key, chart, role, signType, degree, planetSuperior, reception),
-        };
-      })
+      .map((key) => buildLotTestimonyItem(lot, key, chart, role, lotSign))
       .filter(Boolean);
+  }
+
+  function buildLotTestimonyItem(lot, key, chart, role, lotSign = signOf(lot.lon)) {
+    const position = chart.positions[key];
+    const signType = signAspectType(lotSign, signOf(position.lon));
+    if (!signType) return null;
+    const degree = degreeAspect(lot.lon, position.lon, Math.max(3, chart.input.orb || 3));
+    const planetSuperior = superiorPlanet("lot", key, lot.lon, position.lon) === key;
+    const lordPosition = chart.positions[lot.lord];
+    const hasLordConfiguration = key !== lot.lord && signAspectType(signOf(position.lon), signOf(lordPosition.lon));
+    const reception = hasLordConfiguration ? receptionBetween(key, lot.lord, chart) : null;
+    const solar = solarPhaseState(key, chart);
+    const solarText = ["combust", "underBeams"].includes(solar.category)
+      ? solarPhaseTableText(key, chart)
+      : "";
+    return {
+      lotKey: lot.key,
+      lotLord: lot.lord,
+      key,
+      signType,
+      degree,
+      planetSuperior,
+      solarText,
+      reception,
+      roleText: lotPlanetRoleText(key, chart),
+      isBeneficOfSect: key === chart.beneficOfSect,
+      rawLevel: role === "tension" ? lotTensionRawLevel(key, chart, signType, degree, planetSuperior) : "",
+      angularity: position.angularity,
+      house: position.house,
+      level: lotTestimonyLevel(lot, key, chart, role, signType, degree, planetSuperior, reception),
+    };
   }
 
   function lotTestimonyNature(item, role) {
@@ -7175,39 +7200,51 @@
     return state.lang === "es" ? "presión por copresencia" : "pressure by copresence";
   }
 
+  function emptyLotTestimonyText(role) {
+    return role === "support"
+      ? (state.lang === "es" ? "ningún benéfico claro" : "no clear benefic")
+      : (state.lang === "es" ? "ningún maléfico claro" : "no clear malefic");
+  }
+
+  function lotTestimonyReceptionText(item, lotKey, lotLord) {
+    if (!item.reception?.hasReception) return "";
+    const lotLabel = lotKey ? lotName(lotKey) : (state.lang === "es" ? "el lote" : "the lot");
+    const lordLabel = lotLord ? planetLabel(lotLord) : (state.lang === "es" ? "su señor" : "its lord");
+    return state.lang === "es"
+      ? `${planetLabel(item.key)} testimonia a ${lotLabel} y está en recepción con ${lordLabel}, señor de ${lotLabel}: ${receptionStrengthLabel(item.reception)}`
+      : `${planetLabel(item.key)} testifies to ${lotLabel} and is in reception with ${lordLabel}, lord of ${lotLabel}: ${receptionStrengthLabel(item.reception)}`;
+  }
+
+  function lotTestimonyIntensityText(item, role) {
+    if (role === "tension" && item.rawLevel && item.rawLevel !== item.level) {
+      return state.lang === "es"
+        ? `intensidad bruta ${t(item.rawLevel)}, regulada a ${t(item.level)}`
+        : `raw intensity ${t(item.rawLevel)}, regulated to ${t(item.level)}`;
+    }
+    return `${state.lang === "es" ? "intensidad" : "intensity"} ${t(item.level)}`;
+  }
+
+  function lotTestimonyItemText(item, role, lot = null) {
+    const lotKey = lot?.key || item.lotKey;
+    const lotLord = lot?.lord || item.lotLord;
+    const details = [
+      `${planetLabel(item.key)} (${t(item.signType)}, ${lotTestimonyIntensityText(item, role)})`,
+      lotTestimonyNature(item, role),
+      item.roleText,
+      lotTestimonyReceptionText(item, lotKey, lotLord),
+      state.lang === "es" ? `casa ${item.house} · ${t(item.angularity)}` : `house ${item.house} · ${t(item.angularity)}`,
+      item.planetSuperior ? (state.lang === "es" ? "en posición superior" : "in superior position") : "",
+      item.degree ? (state.lang === "es" ? `cercano por grado: ${formatAngle(item.degree.delta)}` : `degree-close: ${formatAngle(item.degree.delta)}`) : "",
+      item.solarText ? (state.lang === "es" ? `fase solar: ${item.solarText}` : `solar phase: ${item.solarText}`) : "",
+    ].filter(Boolean);
+    return details.join(", ");
+  }
+
   function lotTestimonyText(items, role, lot = null) {
     if (!items.length) {
-      return role === "support"
-        ? (state.lang === "es" ? "ningún benéfico claro" : "no clear benefic")
-        : (state.lang === "es" ? "ningún maléfico claro" : "no clear malefic");
+      return emptyLotTestimonyText(role);
     }
-    return naturalList(items.map((item) => {
-      const lotKey = lot?.key || item.lotKey;
-      const lotLord = lot?.lord || item.lotLord;
-      const lotLabel = lotKey ? lotName(lotKey) : (state.lang === "es" ? "el lote" : "the lot");
-      const lordLabel = lotLord ? planetLabel(lotLord) : (state.lang === "es" ? "su señor" : "its lord");
-      const receptionText = item.reception?.hasReception
-        ? (state.lang === "es"
-          ? `${planetLabel(item.key)} testimonia a ${lotLabel} y está en recepción con ${lordLabel}, señor de ${lotLabel}: ${receptionStrengthLabel(item.reception)}`
-          : `${planetLabel(item.key)} testifies to ${lotLabel} and is in reception with ${lordLabel}, lord of ${lotLabel}: ${receptionStrengthLabel(item.reception)}`)
-        : "";
-      const intensityText = role === "tension" && item.rawLevel && item.rawLevel !== item.level
-        ? (state.lang === "es"
-          ? `intensidad bruta ${t(item.rawLevel)}, regulada a ${t(item.level)}`
-          : `raw intensity ${t(item.rawLevel)}, regulated to ${t(item.level)}`)
-        : `${state.lang === "es" ? "intensidad" : "intensity"} ${t(item.level)}`;
-      const details = [
-        `${planetLabel(item.key)} (${t(item.signType)}, ${intensityText})`,
-        lotTestimonyNature(item, role),
-        item.roleText,
-        receptionText,
-        state.lang === "es" ? `casa ${item.house} · ${t(item.angularity)}` : `house ${item.house} · ${t(item.angularity)}`,
-        item.planetSuperior ? (state.lang === "es" ? "en posición superior" : "in superior position") : "",
-        item.degree ? (state.lang === "es" ? `cercano por grado: ${formatAngle(item.degree.delta)}` : `degree-close: ${formatAngle(item.degree.delta)}`) : "",
-        item.solarText ? (state.lang === "es" ? `fase solar: ${item.solarText}` : `solar phase: ${item.solarText}`) : "",
-      ].filter(Boolean);
-      return details.join(", ");
-    }));
+    return naturalList(items.map((item) => lotTestimonyItemText(item, role, lot)));
   }
 
   function levelRank(level) {
@@ -8741,34 +8778,52 @@
     return escapeHtml(`${PLANETS[a].symbol} ${planetName(a)} / ${PLANETS[b].symbol} ${planetName(b)}`);
   }
 
+  function aspectTablePlanetKeys(chart) {
+    return chart.planetKeys.filter((key) => VISIBLE_KEYS.includes(key) || chart.input.includeModern);
+  }
+
+  function aspectDisplayModes(input) {
+    return {
+      showSign: input.aspectMode === "sign" || input.aspectMode === "both",
+      showDegree: input.aspectMode === "degree" || input.aspectMode === "both",
+    };
+  }
+
+  function signAspectTableRow(a, b, chart, signType) {
+    const dominance = overcomingLabel(a, b, chart.positions[a].lon, chart.positions[b].lon) || "—";
+    return [
+      aspectPairLabel(a, b),
+      glossaryMaybe(capitalizeText(t(signType)), signType, "capitalize-first"),
+      glossaryMaybe(capitalizeText(t("signBased")), "aspects", "capitalize-first"),
+      glossaryMaybe(capitalizeText(dominance), glossaryKeyForText(dominance), "capitalize-first"),
+    ];
+  }
+
+  function degreeAspectTableRow(a, b, degree) {
+    return [
+      aspectPairLabel(a, b),
+      glossaryMaybe(capitalizeText(t(degree.type)), degree.type, "capitalize-first"),
+      glossaryMaybe(capitalizeText(t("degreeBased")), "aspects", "capitalize-first"),
+      escapeHtml(`${round(degree.delta, 2)}°`),
+    ];
+  }
+
+  function aspectRowsForPair(a, b, chart, modes) {
+    const signType = signAspectType(signOf(chart.positions[a].lon), signOf(chart.positions[b].lon));
+    const degree = degreeAspect(chart.positions[a].lon, chart.positions[b].lon, chart.input.orb);
+    return [
+      modes.showSign && signType ? signAspectTableRow(a, b, chart, signType) : null,
+      modes.showDegree && degree ? degreeAspectTableRow(a, b, degree) : null,
+    ].filter(Boolean);
+  }
+
   function aspectTableRows(chart) {
     const rows = [];
-    const keys = chart.planetKeys.filter((key) => VISIBLE_KEYS.includes(key) || chart.input.includeModern);
+    const keys = aspectTablePlanetKeys(chart);
+    const modes = aspectDisplayModes(chart.input);
     for (let i = 0; i < keys.length; i += 1) {
       for (let j = i + 1; j < keys.length; j += 1) {
-        const a = keys[i];
-        const b = keys[j];
-        const signType = signAspectType(signOf(chart.positions[a].lon), signOf(chart.positions[b].lon));
-        const degree = degreeAspect(chart.positions[a].lon, chart.positions[b].lon, chart.input.orb);
-        const showSign = chart.input.aspectMode === "sign" || chart.input.aspectMode === "both";
-        const showDegree = chart.input.aspectMode === "degree" || chart.input.aspectMode === "both";
-        if (showSign && signType) {
-          const dominance = overcomingLabel(a, b, chart.positions[a].lon, chart.positions[b].lon) || "—";
-          rows.push([
-            aspectPairLabel(a, b),
-            glossaryMaybe(capitalizeText(t(signType)), signType, "capitalize-first"),
-            glossaryMaybe(capitalizeText(t("signBased")), "aspects", "capitalize-first"),
-            glossaryMaybe(capitalizeText(dominance), glossaryKeyForText(dominance), "capitalize-first"),
-          ]);
-        }
-        if (showDegree && degree) {
-          rows.push([
-            aspectPairLabel(a, b),
-            glossaryMaybe(capitalizeText(t(degree.type)), degree.type, "capitalize-first"),
-            glossaryMaybe(capitalizeText(t("degreeBased")), "aspects", "capitalize-first"),
-            escapeHtml(`${round(degree.delta, 2)}°`),
-          ]);
-        }
+        rows.push(...aspectRowsForPair(keys[i], keys[j], chart, modes));
       }
     }
     return rows;
@@ -9245,10 +9300,8 @@
     };
   }
 
-  function buildRegressionTestApi(defaultInput) {
-    return Object.freeze({
-      schemaVersion: TYCHE_TEST_SCHEMA_VERSION,
-      buildHash: TYCHE_BUILD_HASH,
+  function buildRegressionCalculationApi(defaultInput) {
+    return {
       calculateChart(overrides = {}) {
         return computeChart({ ...defaultInput, ...overrides });
       },
@@ -9256,26 +9309,8 @@
       sectBoundaryThresholdInfo,
       sectSensitivityState,
       timeContextSensitivity,
-      historicalAuditRecords,
-      lotSnapshotForSect,
-      renderBoundaryAudit,
-      renderAlternateSectLots,
-      dignityFor,
-      dignityGroups,
-      receptionBetween,
-      receptionByBoundOnly,
-      adjustIntensityForReception,
-      interpretChart,
-      lotTestimonyItems,
-      lotTestimonyLevel,
-      lotConditionReading,
-      maleficMitigationReading,
-      planetRelationJudgment,
-      renderMainLotsAudit,
       computeMoonCondition,
       scoreChartTopics,
-      lotByKey,
-      lotFormulaText,
       angleDistance,
       signOf,
       degreeInSign,
@@ -9287,6 +9322,56 @@
       lunarAspectCandidatesIterative,
       lunarAspectCandidates,
       VISIBLE_KEYS: [...VISIBLE_KEYS],
+    };
+  }
+
+  function buildRegressionHistoricalApi() {
+    return {
+      historicalAuditRecords,
+    };
+  }
+
+  function buildRegressionSectLotApi() {
+    return {
+      lotSnapshotForSect,
+      lotTestimonyItems,
+      lotTestimonyLevel,
+      lotConditionReading,
+      lotByKey,
+      lotFormulaText,
+    };
+  }
+
+  function buildRegressionRenderApi() {
+    return {
+      renderBoundaryAudit,
+      renderAlternateSectLots,
+      renderMainLotsAudit,
+    };
+  }
+
+  function buildRegressionJudgmentApi() {
+    return {
+      dignityFor,
+      dignityGroups,
+      receptionBetween,
+      receptionByBoundOnly,
+      adjustIntensityForReception,
+      interpretChart,
+      maleficMitigationReading,
+      planetRelationJudgment,
+    };
+  }
+
+  function buildRegressionTestApi(defaultInput) {
+    return Object.freeze({
+      schemaVersion: TYCHE_TEST_SCHEMA_VERSION,
+      buildHash: TYCHE_BUILD_HASH,
+      ...buildRegressionCalculationApi(defaultInput),
+      ...buildRegressionHistoricalApi(),
+      ...buildRegressionSectLotApi(),
+      ...buildRegressionRenderApi(),
+      ...buildRegressionJudgmentApi(),
     });
   }
 
