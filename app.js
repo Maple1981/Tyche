@@ -9904,13 +9904,23 @@
     }
   }
 
-  function bindFormEvents() {
+  const OPTION_WARNING_FIELD_IDS = ["calendar", "zodiac", "techniqueMode", "includeModern"];
+
+  function bindBirthDataFieldEvents() {
     $("#birthDate").addEventListener("change", handleDateTimeFieldChange);
     $("#birthTime").addEventListener("change", handleDateTimeFieldChange);
     $("#gender").addEventListener("change", clearHistoricalSelection);
-    ["calendar", "zodiac", "techniqueMode", "includeModern"].forEach((id) => {
+  }
+
+  function bindOptionWarningEvents() {
+    OPTION_WARNING_FIELD_IDS.forEach((id) => {
       $(`#${id}`).addEventListener("change", updateOptionWarnings);
     });
+  }
+
+  function bindFormEvents() {
+    bindBirthDataFieldEvents();
+    bindOptionWarningEvents();
     $("#chart-form").addEventListener("submit", submitChartForm);
   }
 
