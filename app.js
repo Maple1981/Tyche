@@ -9956,13 +9956,18 @@
     bindFormEvents();
   }
 
-  function defaultRegressionInput() {
+  function defaultRegressionBirthInput() {
     return {
       date: "1980-01-01",
       time: "12:00",
-      place: "Regression Test",
       personName: "",
       gender: "",
+    };
+  }
+
+  function defaultRegressionPlaceInput() {
+    return {
+      place: "Regression Test",
       city: null,
       latitude: 40.4168,
       longitude: -3.7038,
@@ -9970,6 +9975,11 @@
       manualOffset: "+01:00",
       zoneSource: "",
       zoneReliability: "iana",
+    };
+  }
+
+  function defaultRegressionTechniqueInput() {
+    return {
       calendar: "gregorian",
       zodiac: "tropical",
       aspectMode: "both",
@@ -9977,6 +9987,14 @@
       techniqueMode: "strict",
       includeModern: false,
       selectedLots: [],
+    };
+  }
+
+  function defaultRegressionInput() {
+    return {
+      ...defaultRegressionBirthInput(),
+      ...defaultRegressionPlaceInput(),
+      ...defaultRegressionTechniqueInput(),
     };
   }
 
