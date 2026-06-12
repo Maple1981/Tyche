@@ -5550,24 +5550,42 @@
     };
   }
 
-  function readPlaceInputFromFields() {
-    const placeValue = $("#birthPlace").value.trim();
-    const city = findCity(placeValue);
-    const latField = $("#latitude").value;
-    const lonField = $("#longitude").value;
-    const latitude = latField !== "" ? Number(latField) : city?.lat;
-    const longitude = lonField !== "" ? Number(lonField) : city?.lon;
-    const timeZone = $("#timeZone").value.trim() || city?.tz || "";
-    const zoneReliability = state.selectedPersonZoneReliability || (timeZone ? "iana" : state.selectedZoneSource ? "historical" : "manual");
+  function readPlaceFieldValues() {
     return {
-      place: city ? formatCity(city) : placeValue,
+      placeValue: $("#birthPlace").value.trim(),
+      latField: $("#latitude").value,
+      lonField: $("#longitude").value,
+      timeZoneField: $("#timeZone").value.trim(),
+      manualOffset: $("#manualOffset").value.trim(),
+    };
+  }
+
+  function placeCoordinatesFromFields(fields, city) {
+    return {
+      latitude: fields.latField !== "" ? Number(fields.latField) : city?.lat,
+      longitude: fields.lonField !== "" ? Number(fields.lonField) : city?.lon,
+    };
+  }
+
+  function placeZoneReliability(timeZone) {
+    const zoneReliability = state.selectedPersonZoneReliability || (timeZone ? "iana" : state.selectedZoneSource ? "historical" : "manual");
+    return zoneReliability;
+  }
+
+  function readPlaceInputFromFields() {
+    const fields = readPlaceFieldValues();
+    const city = findCity(fields.placeValue);
+    const { latitude, longitude } = placeCoordinatesFromFields(fields, city);
+    const timeZone = fields.timeZoneField || city?.tz || "";
+    return {
+      place: city ? formatCity(city) : fields.placeValue,
       city,
       latitude,
       longitude,
       timeZone,
-      manualOffset: $("#manualOffset").value.trim(),
+      manualOffset: fields.manualOffset,
       zoneSource: state.selectedZoneSource,
-      zoneReliability,
+      zoneReliability: placeZoneReliability(timeZone),
     };
   }
 
