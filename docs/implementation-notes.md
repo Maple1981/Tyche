@@ -86,6 +86,8 @@ The chart frame itself should use a small model for title, metadata, and wheel H
 
 Where a renderer needs calculated or audited data, prefer a small view model builder before HTML generation. For example, the main lots audit should build each lot row and its fields first, then render that model. Boundary audits should translate neutral warning codes into labeled fields before the renderer writes definition-list markup. Score breakdowns should likewise group and label score data before rendering HTML. Historical example cards should prepare natal-source, audit-status, localized label, and group data before the card renderer writes markup. This keeps testimony extraction and provenance handling separate from HTML details.
 
+Main lot audit rows should group position, lord administration, and benefic/malefic testimony fields in dedicated helpers before composing the final row model.
+
 Boundary warning calculation should stay split by testimony family. Sect, Ascendant sign, MC/IC sign, lot sign, and Egyptian-bound proximity warnings should live in dedicated detector helpers, with `boundaryWarnings()` only concatenating their neutral notices. Each warning family should build a boundary model before converting it into a neutral notice.
 
 Historical example loading should also keep responsibilities apart: update selection/audit state, build form-field values, apply those values to the DOM, then calculate the chart. Do not hide all of that work inside one click handler. Historical person cards should keep header/link, natal data list, audit badge, and action rendering in focused subrenderers.

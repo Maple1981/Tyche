@@ -8899,28 +8899,46 @@
       : solarPhaseTableText(lot.lord, chart);
   }
 
+  function mainLotPositionFields(lot, lord) {
+    const lordLabel = planetLabel(lot.lord);
+    return [
+      { label: t("lotAuditPosition"), value: `${formatDegree(lot.lon)} · ${t("tableHouse")} ${lot.house}` },
+      { label: t("lotAuditLord"), value: `${lordLabel} · ${t("tableHouse")} ${lord?.house || "—"}` },
+    ];
+  }
+
+  function mainLotAdministrationFields(lot, lord, chart) {
+    return [
+      {
+        label: t("lotAuditDirectAdministration"),
+        value: directLotAdministrationText(lot, chart),
+        valueClass: "lot-audit-role lot-direct-administration",
+        dataTest: `main-lot-${lot.key}-direct-administration`,
+      },
+      { label: t("lotAuditLordRole"), value: lotLordRoleText(lot, chart), valueClass: "lot-audit-role" },
+      { label: t("lotAuditLordCondition"), value: plainDignityText(lord?.dignities || [], chart) },
+      { label: t("lotAuditLordAngularity"), value: lord?.angularity ? t(lord.angularity) : "—" },
+      { label: t("lotAuditLordSolarPhase"), value: lotLordSolarPhaseText(lot, chart) },
+      { label: t("lotAuditFormula"), value: lotFormulaText(lot.key, chart.isDay) },
+    ];
+  }
+
+  function mainLotTestimonyFields(lot, chart) {
+    return [
+      { label: t("lotAuditBeneficTestimony"), value: lotTestimonyText(lotTestimonyItems(lot, ["jupiter", "venus"], chart, "support"), "support", lot) },
+      { label: t("lotAuditMaleficPressure"), html: lotPressureAuditHtml(lotTestimonyItems(lot, ["mars", "saturn"], chart, "tension"), lot) },
+    ];
+  }
+
   function buildMainLotAuditRow(lot, chart) {
     const lord = chart.positions[lot.lord];
-    const lordLabel = planetLabel(lot.lord);
     return {
       key: lot.key,
       name: lotName(lot.key),
       fields: [
-        { label: t("lotAuditPosition"), value: `${formatDegree(lot.lon)} · ${t("tableHouse")} ${lot.house}` },
-        { label: t("lotAuditLord"), value: `${lordLabel} · ${t("tableHouse")} ${lord?.house || "—"}` },
-        {
-          label: t("lotAuditDirectAdministration"),
-          value: directLotAdministrationText(lot, chart),
-          valueClass: "lot-audit-role lot-direct-administration",
-          dataTest: `main-lot-${lot.key}-direct-administration`,
-        },
-        { label: t("lotAuditLordRole"), value: lotLordRoleText(lot, chart), valueClass: "lot-audit-role" },
-        { label: t("lotAuditLordCondition"), value: plainDignityText(lord?.dignities || [], chart) },
-        { label: t("lotAuditLordAngularity"), value: lord?.angularity ? t(lord.angularity) : "—" },
-        { label: t("lotAuditLordSolarPhase"), value: lotLordSolarPhaseText(lot, chart) },
-        { label: t("lotAuditFormula"), value: lotFormulaText(lot.key, chart.isDay) },
-        { label: t("lotAuditBeneficTestimony"), value: lotTestimonyText(lotTestimonyItems(lot, ["jupiter", "venus"], chart, "support"), "support", lot) },
-        { label: t("lotAuditMaleficPressure"), html: lotPressureAuditHtml(lotTestimonyItems(lot, ["mars", "saturn"], chart, "tension"), lot) },
+        ...mainLotPositionFields(lot, lord),
+        ...mainLotAdministrationFields(lot, lord, chart),
+        ...mainLotTestimonyFields(lot, chart),
       ],
     };
   }
