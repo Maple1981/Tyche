@@ -128,6 +128,8 @@ Inline option warnings should build a small visibility/text model first, then ap
 
 Form event binding should group listeners by intent. Birth-data changes, option-warning refreshes, and submit handling should stay in dedicated binding helpers so adding a new field does not make the main form binder absorb unrelated rules.
 
+Table renderers should build table models first and share generic empty-note/table-note HTML helpers. Individual domain renderers should decide rows and explanatory notes, not repeat paragraph wrappers or fallback table markup.
+
 Regression-only APIs should be built through dedicated helpers. Keep the default regression input and the exposed `window.TycheTest` helper map separate from the installer that checks `?test=regression`, and group exposed helpers by calculation, historical data, lots/sect, rendering, and judgment responsibilities.
 
 When extracting architecture, keep changes incremental and covered by static contracts. Do not add a module loader, bundler, framework, backend, or runtime dependency unless the project deliberately changes its static-app constraint.

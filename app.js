@@ -9236,6 +9236,20 @@
     `;
   }
 
+  function renderTextNote(contentHtml) {
+    return `<p class="text-note">${contentHtml}</p>`;
+  }
+
+  function renderEscapedTextNote(text) {
+    return renderTextNote(escapeHtml(text));
+  }
+
+  function renderTableModelHtml(model) {
+    if (model.emptyText) return renderEscapedTextNote(model.emptyText);
+    const tableHtml = makeTable(model.headers, model.rows);
+    return model.noteHtml ? `${tableHtml}${renderTextNote(model.noteHtml)}` : tableHtml;
+  }
+
   function buildPlanetTableModel(chart) {
     const headers = planetTableHeaders();
     const traditionalKeys = chart.planetKeys.filter((key) => VISIBLE_KEYS.includes(key));
@@ -9345,12 +9359,7 @@
   }
 
   function renderLotTable(chart) {
-    const model = buildLotTableModel(chart);
-    if (model.emptyText) {
-      $("#tab-lots").innerHTML = `<p class="text-note">${escapeHtml(model.emptyText)}</p>`;
-      return;
-    }
-    $("#tab-lots").innerHTML = `${makeTable(model.headers, model.rows)}<p class="text-note">${model.noteHtml}</p>`;
+    $("#tab-lots").innerHTML = renderTableModelHtml(buildLotTableModel(chart));
   }
 
   function aspectTableHeaders() {
@@ -9428,12 +9437,7 @@
   }
 
   function renderAspectTable(chart) {
-    const model = buildAspectTableModel(chart);
-    if (model.emptyText) {
-      $("#tab-aspects").innerHTML = `<p class="text-note">${escapeHtml(model.emptyText)}</p>`;
-      return;
-    }
-    $("#tab-aspects").innerHTML = makeTable(model.headers, model.rows);
+    $("#tab-aspects").innerHTML = renderTableModelHtml(buildAspectTableModel(chart));
   }
 
   function polar(cx, cy, r, lon, asc) {
