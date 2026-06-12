@@ -42,6 +42,8 @@ Natal reading evidence should be assembled from testimony-family helpers: focus/
 
 Complex interpretive judgments should keep testimony extraction, level/flag decisions, and localized prose separate. The malefic-mitigation reading is the reference pattern: collect factors, derive mitigation flags and level, then choose copy from that level.
 
+High-level visible readings should expose profile helpers before final prose. Lead focus, life direction, solar phase, triplicity foundations, and lot testimony summaries should calculate their interpretive profile separately from the localized sentence.
+
 Essential-condition readings should keep dignity labels, judgment profile, and localized prose separate. This prevents changes to dignity grouping from being tangled with the final interpretive wording.
 
 Stable plain-language maps for house topics, sign style, angularity wording, planet meanings, lot meanings, lunar fallback labels, and mitigation copy should live as shared data constants. Lookup functions should format from those constants rather than rebuilding text maps on every call.

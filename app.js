@@ -6320,10 +6320,20 @@
     return "It looks like secondary friction: worth noting, but not dominant in the overall structure.";
   }
 
-  function focusLeadReading(focuses) {
+  function focusLeadProfile(focuses) {
     const dominant = focuses[0];
-    const house = dominant?.house || 1;
-    const hasPublicFocus = focuses.some((focus) => focus.house === 10);
+    return {
+      house: dominant?.house || 1,
+      hasPublicFocus: focuses.some((focus) => focus.house === 10),
+    };
+  }
+
+  function focusLeadReading(focuses) {
+    return focusLeadText(focusLeadProfile(focuses));
+  }
+
+  function focusLeadText(profile) {
+    const { house, hasPublicFocus } = profile;
     if (state.lang === "es") {
       if (house === 4) {
         return `El motor de la carta nace en temas de raíz: ${houseReadingTopics(4)}. ${hasPublicFocus ? "Esto no impide visibilidad pública; más bien muestra desde dónde se alimenta la proyección exterior." : "Esto muestra desde dónde se alimenta la dirección vital."}`;
@@ -6468,7 +6478,7 @@
       : `${planetTopic}, expressed through ${houseTopic}`;
   }
 
-  function lifeDirectionConclusion(ascLord, ascLordPosition, chart) {
+  function lifeDirectionProfile(ascLord, ascLordPosition, chart) {
     const score = planetJudgmentScore(ascLord, ascLordPosition, chart);
     const polarity = judgmentPolarity(score);
     const roleText = planetRoleInSectText(ascLord, chart);
@@ -6478,6 +6488,15 @@
         : " Part of the direction may need protection, privacy, or time before it shows clearly.")
       : "";
     const topic = coreTopicPhrase(ascLord, ascLordPosition.house);
+    return { score, polarity, roleText, hidden, topic };
+  }
+
+  function lifeDirectionConclusion(ascLord, ascLordPosition, chart) {
+    return lifeDirectionConclusionText(lifeDirectionProfile(ascLord, ascLordPosition, chart));
+  }
+
+  function lifeDirectionConclusionText(profile) {
+    const { polarity, roleText, hidden, topic } = profile;
     if (state.lang === "es") {
       if (polarity === "supportive") {
         return `El tópico central de la dirección vital es ${topic}. La carta da recursos suficientes para que esa dirección se vuelva visible o eficaz; no significa ausencia de problemas, sino capacidad real para construir camino desde ahí. ${roleText}${hidden}`.trim();
@@ -6807,14 +6826,24 @@
       : ` For Mercury, this phase tilts its common and variable nature toward a more ${quality} quality.`;
   }
 
-  function solarPhasePlainText(planet, chart) {
+  function solarPhasePlainProfile(planet, chart) {
     const stateInfo = solarPhaseState(planet, chart);
-    if (stateInfo.category === "luminary") return "";
+    if (stateInfo.category === "luminary") return null;
     const name = planetLabel(planet);
     const mercuryText = mercuryPhaseQualifier(planet, stateInfo);
     const sideText = stateInfo.side === "morning"
       ? (state.lang === "es" ? "matutino/oriental" : "morning/oriental")
       : (state.lang === "es" ? "vespertino/occidental" : "evening/occidental");
+    return { planet, stateInfo, name, mercuryText, sideText };
+  }
+
+  function solarPhasePlainText(planet, chart) {
+    const profile = solarPhasePlainProfile(planet, chart);
+    return profile ? solarPhasePlainTextFromProfile(profile) : "";
+  }
+
+  function solarPhasePlainTextFromProfile(profile) {
+    const { stateInfo, name, mercuryText, sideText } = profile;
     if (state.lang === "es") {
       if (stateInfo.category === "cazimi") {
         return `${name} está en el corazón del Sol: su significación se concentra y queda muy unida a visibilidad, autoridad o foco solar.${mercuryText}`;
@@ -7108,11 +7137,20 @@
     ];
   }
 
-  function triplicityFoundationConclusion(chart, entries = triplicityFoundationEntries(chart)) {
+  function triplicityFoundationProfile(chart, entries = triplicityFoundationEntries(chart)) {
     const scores = entries.map(([key]) => triplicityRulerSupportScore(key, chart));
     const primaryScore = scores[0] || 0;
     const average = scores.reduce((sum, value) => sum + value, 0) / Math.max(scores.length, 1);
     const compensation = scores.slice(1).some((score) => score > primaryScore + 0.75);
+    return { scores, primaryScore, average, compensation };
+  }
+
+  function triplicityFoundationConclusion(chart, entries = triplicityFoundationEntries(chart)) {
+    return triplicityFoundationConclusionText(triplicityFoundationProfile(chart, entries));
+  }
+
+  function triplicityFoundationConclusionText(profile) {
+    const { primaryScore, average, compensation } = profile;
     if (state.lang === "es") {
       if (primaryScore >= 1.5 && average >= 0.75) {
         return "La base de sostén es bastante amplia; no elimina los problemas, pero da continuidad, personas o circunstancias que ayudan a recomponer el rumbo.";
@@ -7376,19 +7414,43 @@
     return LOT_PLAIN_MEANINGS[state.lang]?.[key] || lotName(key).toLocaleLowerCase(state.lang === "es" ? "es-ES" : "en");
   }
 
-  function lotTestimonyPlainSummary(items, role) {
+  function lotTestimonyPlainProfile(items, role) {
     if (!items.length) {
-      return role === "support"
-        ? (state.lang === "es" ? "No aparece una ayuda planetaria clara sobre este lote." : "No clear planetary help appears for this lot.")
-        : (state.lang === "es" ? "No aparece una presión planetaria clara sobre este lote." : "No clear planetary pressure appears for this lot.");
+      return {
+        role,
+        empty: true,
+        level: "",
+        names: "",
+        hardSupport: false,
+        regulatedPressure: false,
+      };
     }
     const level = strongestLevel(items, "level");
     const names = naturalList([...new Set(items
       .filter((item) => item.level === level || levelRank(item.level) === levelRank(level))
       .slice(0, 2)
       .map((item) => planetLabel(item.key)))]);
-    const hardSupport = role === "support" && items.some((item) => ["square", "opposition"].includes(item.signType));
-    const regulatedPressure = role === "tension" && items.some((item) => item.reception?.hasReception && item.rawLevel !== item.level);
+    return {
+      role,
+      empty: false,
+      level,
+      names,
+      hardSupport: role === "support" && items.some((item) => ["square", "opposition"].includes(item.signType)),
+      regulatedPressure: role === "tension" && items.some((item) => item.reception?.hasReception && item.rawLevel !== item.level),
+    };
+  }
+
+  function lotTestimonyPlainSummary(items, role) {
+    return lotTestimonyPlainSummaryText(lotTestimonyPlainProfile(items, role));
+  }
+
+  function lotTestimonyPlainSummaryText(profile) {
+    const { role, empty, level, names, hardSupport, regulatedPressure } = profile;
+    if (empty) {
+      return role === "support"
+        ? (state.lang === "es" ? "No aparece una ayuda planetaria clara sobre este lote." : "No clear planetary help appears for this lot.")
+        : (state.lang === "es" ? "No aparece una presión planetaria clara sobre este lote." : "No clear planetary pressure appears for this lot.");
+    }
     if (state.lang === "es") {
       if (role === "support") {
         if (level === "strongLevel") return `Hay ayuda clara de ${names}; puede abrir protección, mediación o crecimiento.${hardSupport ? " No es una ayuda completamente suave: llega con fricción que hay que negociar." : ""}`;
