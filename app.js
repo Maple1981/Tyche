@@ -5589,19 +5589,36 @@
     };
   }
 
-  function readTechniqueInputFromFields() {
-    const techniqueMode = $("#techniqueMode").value;
-    const includeModern = $("#includeModern").checked || techniqueMode === "mixed";
-    const selectedLots = $$('input[name="lots"]:checked').map((item) => item.value);
+  function selectedLotValues() {
+    return $$('input[name="lots"]:checked').map((item) => item.value);
+  }
+
+  function readTechniqueFieldValues() {
     return {
       calendar: $("#calendar").value,
       zodiac: $("#zodiac").value,
       aspectMode: $("#aspectMode").value,
-      orb: Number($("#orb").value || 3),
-      techniqueMode,
-      includeModern,
-      selectedLots,
+      orbField: $("#orb").value,
+      techniqueMode: $("#techniqueMode").value,
+      includeModernChecked: $("#includeModern").checked,
+      selectedLots: selectedLotValues(),
     };
+  }
+
+  function normalizedTechniqueOptions(fields) {
+    return {
+      calendar: fields.calendar,
+      zodiac: fields.zodiac,
+      aspectMode: fields.aspectMode,
+      orb: Number(fields.orbField || 3),
+      techniqueMode: fields.techniqueMode,
+      includeModern: fields.includeModernChecked || fields.techniqueMode === "mixed",
+      selectedLots: fields.selectedLots,
+    };
+  }
+
+  function readTechniqueInputFromFields() {
+    return normalizedTechniqueOptions(readTechniqueFieldValues());
   }
 
   function readInput() {

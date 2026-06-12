@@ -122,7 +122,7 @@ Search/autocomplete surfaces should keep URL construction, response parsing, res
 
 Birthplace selection should also keep field modeling separate from DOM mutation. Build the place/coordinate/time-zone field model and calculate automatic UTC-offset updates through helper functions before applying the result to form controls.
 
-Form input reading should normalize coherent groups before chart calculation. Keep place/zone fields and technique/options fields in dedicated readers, with `readInput()` acting as the single chart-input assembler. Place input reading should separate raw DOM field reads, city fallback coordinates, and zone-reliability selection.
+Form input reading should normalize coherent groups before chart calculation. Keep place/zone fields and technique/options fields in dedicated readers, with `readInput()` acting as the single chart-input assembler. Place input reading should separate raw DOM field reads, city fallback coordinates, and zone-reliability selection. Technique input reading should separate raw option fields, selected lot collection, and normalized rules such as mixed mode forcing modern planets.
 
 Inline option warnings should build a small visibility/text model first, then apply it to DOM nodes through a dedicated model applier. This keeps option state rules testable without depending on translated prose in event handlers.
 
