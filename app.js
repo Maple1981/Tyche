@@ -5621,14 +5621,26 @@
     return normalizedTechniqueOptions(readTechniqueFieldValues());
   }
 
-  function readInput() {
+  function readBirthInputFromFields() {
     return {
       date: $("#birthDate").value,
       time: $("#birthTime").value,
+      gender: $("#gender").value,
+    };
+  }
+
+  function selectedPersonInputContext() {
+    return {
       personName: state.selectedPersonName,
       auditStatus: state.selectedPersonAuditStatus,
       timeConfidence: state.selectedPersonTimeConfidence,
-      gender: $("#gender").value,
+    };
+  }
+
+  function readInput() {
+    return {
+      ...readBirthInputFromFields(),
+      ...selectedPersonInputContext(),
       ...readPlaceInputFromFields(),
       ...readTechniqueInputFromFields(),
     };
