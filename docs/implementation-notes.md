@@ -110,7 +110,7 @@ UI event binding should stay grouped by responsibility. Keep preference toggles,
 
 Within each binding group, prefer named handlers for non-trivial behavior. Tab activation, preference toggles, modal clicks, popover document interactions, birthplace keyboard navigation, clearing place fields, date/time changes, and chart-form submission should live in named functions so event binding remains easy to scan.
 
-Language switching should separate document metadata, static node translation, localized control labels, and dynamic content refresh. `applyI18n()` should coordinate those steps and then redecorate glossary triggers after translated content is in place.
+Language switching should separate document metadata, static node translation, localized control labels, and dynamic content refresh. `applyI18n()` should coordinate those steps and then redecorate glossary triggers after translated content is in place. Localized control labels should be split by UI responsibility: shell landmarks, preference toggles, historical-people controls, and birthplace controls.
 
 Floating popovers should resolve a small model before writing DOM. Glossary entries, person-data details, and similar overlays should keep lookup/formatting separate from the code that opens and positions the popover; historical source popovers should expose that split through dedicated model and render helpers.
 

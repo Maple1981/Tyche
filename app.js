@@ -9513,22 +9513,38 @@
     );
   }
 
-  function updateLocalizedControlLabels() {
+  function updateShellControlLabels() {
     $(".toolbar").setAttribute("aria-label", state.lang === "es" ? "Preferencias" : "Preferences");
     $("#chartWheel").setAttribute("aria-label", state.lang === "es" ? "Rueda de carta natal" : "Natal chart wheel");
     $(".tabs").setAttribute("aria-label", state.lang === "es" ? "Detalles de la carta" : "Chart details");
+  }
+
+  function updatePreferenceControlLabels() {
     $("#languageToggle span").textContent = state.lang.toUpperCase();
     $("#languageToggle").setAttribute("aria-label", state.lang === "es" ? "Cambiar idioma" : "Change language");
     $("#languageToggle").title = state.lang === "es" ? "Cambiar idioma" : "Change language";
+    $("#themeToggle").setAttribute("aria-label", state.lang === "es" ? "Cambiar tema" : "Change theme");
+    $("#themeToggle").title = state.lang === "es" ? "Cambiar tema" : "Change theme";
+  }
+
+  function updatePeopleControlLabels() {
     $("#peopleToggle").setAttribute("aria-label", t("peopleButton"));
     $("#peopleToggle").title = t("peopleButton");
     $("#peopleClose").setAttribute("aria-label", t("close"));
     $("#peopleClose").title = t("close");
-    $("#themeToggle").setAttribute("aria-label", state.lang === "es" ? "Cambiar tema" : "Change theme");
-    $("#themeToggle").title = state.lang === "es" ? "Cambiar tema" : "Change theme";
+  }
+
+  function updatePlaceControlLabels() {
     $("#birthPlace").placeholder = state.lang === "es" ? "Madrid, España" : "Madrid, Spain";
     $("#clearPlace").setAttribute("aria-label", t("clearPlace"));
     $("#clearPlace").title = t("clearPlace");
+  }
+
+  function updateLocalizedControlLabels() {
+    updateShellControlLabels();
+    updatePreferenceControlLabels();
+    updatePeopleControlLabels();
+    updatePlaceControlLabels();
   }
 
   function applyI18n() {
