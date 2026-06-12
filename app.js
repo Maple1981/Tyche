@@ -3639,14 +3639,28 @@
     if ($("#personDataClose")) $("#personDataClose").title = t("close");
   }
 
-  function openGlossary(key, trigger) {
+  function buildGlossaryPopoverModel(key) {
     const entry = glossaryEntry(key);
-    if (!entry) return;
+    if (!entry) return null;
+    return {
+      title: entry.title,
+      bodyHtml: entry.body.join(""),
+    };
+  }
+
+  function renderGlossaryPopover(model) {
     const popover = $("#glossaryPopover");
-    $("#glossaryTitle").textContent = entry.title;
-    $("#glossaryBody").innerHTML = entry.body.join("");
+    $("#glossaryTitle").textContent = model.title;
+    $("#glossaryBody").innerHTML = model.bodyHtml;
     capitalizeStructuredText($("#glossaryBody"));
     popover.hidden = false;
+    return popover;
+  }
+
+  function openGlossary(key, trigger) {
+    const model = buildGlossaryPopoverModel(key);
+    if (!model) return;
+    renderGlossaryPopover(model);
     state.glossaryReturnFocus = trigger || null;
     window.requestAnimationFrame(() => positionGlossary(trigger));
   }
@@ -3934,29 +3948,48 @@
     setPlaceExpanded(false);
   }
 
+  function buildPlaceSuggestionModel(items, message = "") {
+    return {
+      message,
+      rows: items.map((item, index) => {
+        const admin = item.admin1Names?.[state.lang] || item.admin1 || "";
+        const country = item.countryNames?.[state.lang] || countryName(item.country);
+        const meta = [admin, country, item.tz].filter(Boolean).join(" · ");
+        return {
+          index,
+          label: formatCity(item),
+          meta: meta || `${round(item.lat, 4)}, ${round(item.lon, 4)}`,
+        };
+      }),
+    };
+  }
+
+  function renderPlaceSuggestionRow(row) {
+    return `
+      <button class="place-suggestion" id="place-option-${row.index}" type="button" role="option" aria-selected="false" data-place-index="${row.index}">
+        <strong>${escapeHtml(row.label)}</strong>
+        <span>${escapeHtml(row.meta)}</span>
+      </button>
+    `;
+  }
+
+  function renderPlaceSuggestionPanel(model) {
+    return `${model.message ? `<p class="place-message">${escapeHtml(model.message)}</p>` : ""}${model.rows.map(renderPlaceSuggestionRow).join("")}`;
+  }
+
   function renderPlaceSuggestions(items, message = "") {
     const panel = $("#placeSuggestions");
     state.placeSuggestions = items;
     state.activePlaceIndex = -1;
     $("#birthPlace").removeAttribute("aria-activedescendant");
+    const model = buildPlaceSuggestionModel(items, message);
 
-    if (!items.length && !message) {
+    if (!model.rows.length && !model.message) {
       hidePlaceSuggestions();
       return;
     }
 
-    const rows = items.map((item, index) => {
-      const admin = item.admin1Names?.[state.lang] || item.admin1 || "";
-      const country = item.countryNames?.[state.lang] || countryName(item.country);
-      const meta = [admin, country, item.tz].filter(Boolean).join(" · ");
-      return `
-        <button class="place-suggestion" id="place-option-${index}" type="button" role="option" aria-selected="false" data-place-index="${index}">
-          <strong>${escapeHtml(formatCity(item))}</strong>
-          <span>${escapeHtml(meta || `${round(item.lat, 4)}, ${round(item.lon, 4)}`)}</span>
-        </button>
-      `;
-    });
-    panel.innerHTML = `${message ? `<p class="place-message">${escapeHtml(message)}</p>` : ""}${rows.join("")}`;
+    panel.innerHTML = renderPlaceSuggestionPanel(model);
     setPlaceExpanded(true);
   }
 
@@ -4125,38 +4158,35 @@
     return `<a href="${escapeHtml(natalSource.url)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`;
   }
 
-  function historicalQualityRows(person) {
+  function buildHistoricalQualityDetailsModel(person) {
     const natalSource = historicalNatalSource(person);
     const audit = historicalAuditMetadata(person);
     const roddenText = natalSource.rating || t("dataRoddenPending");
     const timeText = natalSource.timeSource || t("dataTimeSourcePrepared");
     const sourceDate = localizedValue(audit.sourceDateLabel);
     const rows = [
-      `<dt>${escapeHtml(t("natalDataSource"))}</dt>`,
-      `<dd>${historicalDataSourceHtml(person)}</dd>`,
-      `<dt>${escapeHtml(t("dataRodden"))}</dt>`,
-      `<dd>${escapeHtml(roddenText)}</dd>`,
-      `<dt>${escapeHtml(t("dataTimeSource"))}</dt>`,
-      `<dd>${escapeHtml(timeText)}</dd>`,
+      { label: t("natalDataSource"), html: historicalDataSourceHtml(person) },
+      { label: t("dataRodden"), text: roddenText },
+      { label: t("dataTimeSource"), text: timeText },
     ];
     if (sourceDate) {
-      rows.push(
-        `<dt>${escapeHtml(t("dataSourceDate"))}</dt>`,
-        `<dd>${escapeHtml(sourceDate)}</dd>`,
-      );
+      rows.push({ label: t("dataSourceDate"), text: sourceDate });
     }
     const interpretiveReferences = historicalInterpretiveReferences(person);
     if (interpretiveReferences.length) {
-      rows.push(
-        `<dt>${escapeHtml(t("brennanReference"))}</dt>`,
-        `<dd>${escapeHtml(interpretiveReferences.map((reference) => reference.label).join("; "))}</dd>`
-      );
+      rows.push({ label: t("brennanReference"), text: interpretiveReferences.map((reference) => reference.label).join("; ") });
     }
-    return rows.join("");
+    return { rows };
+  }
+
+  function renderHistoricalQualityRow(row) {
+    const value = row.html || escapeHtml(row.text || "");
+    return `<dt>${escapeHtml(row.label)}</dt><dd>${value}</dd>`;
   }
 
   function historicalQualityDetailsHtml(person) {
-    return `<dl class="person-data-details">${historicalQualityRows(person)}</dl>`;
+    const model = buildHistoricalQualityDetailsModel(person);
+    return `<dl class="person-data-details">${model.rows.map(renderHistoricalQualityRow).join("")}</dl>`;
   }
 
   function openPersonData(personId, trigger) {
@@ -4233,20 +4263,39 @@
     return personAuditStatus(person) === "audited";
   }
 
-  function auditBadge(person) {
+  function auditBadgeText(person) {
     const status = personAuditStatus(person);
     if (status === "audited") return "";
-    return `<p class="person-audit-badge">${escapeHtml(t(status === "partial" ? "dataAuditPartialBadge" : "dataAuditPendingBadge"))}</p>`;
+    return t(status === "partial" ? "dataAuditPartialBadge" : "dataAuditPendingBadge");
   }
 
-  function historicalPersonCard(person) {
+  function renderAuditBadge(text) {
+    if (!text) return "";
+    return `<p class="person-audit-badge">${escapeHtml(text)}</p>`;
+  }
+
+  function buildHistoricalPersonCardModel(person) {
+    return {
+      id: person.id,
+      name: person.name,
+      image: person.image,
+      imageAlt: person.imageAlt[state.lang] || person.imageAlt.es,
+      wikipediaUrl: personWikipediaUrl(person),
+      auditBadgeText: auditBadgeText(person),
+      birthLabel: person.birthLabel[state.lang] || person.birthLabel.es,
+      placeLabel: formatCity(person.place),
+      sexLabel: t(person.sex),
+    };
+  }
+
+  function renderHistoricalPersonCard(card) {
     return `
       <article class="person-card">
-        <img src="${escapeHtml(person.image)}" alt="${escapeHtml(person.imageAlt[state.lang] || person.imageAlt.es)}" loading="lazy">
+        <img src="${escapeHtml(card.image)}" alt="${escapeHtml(card.imageAlt)}" loading="lazy">
         <div>
           <h3>
-            <span>${escapeHtml(person.name)}</span>
-            <a class="person-wiki" href="${escapeHtml(personWikipediaUrl(person))}" target="_blank" rel="noreferrer" aria-label="${escapeHtml(`${t("openWikipedia")}: ${person.name}`)}" title="${escapeHtml(t("openWikipedia"))}">
+            <span>${escapeHtml(card.name)}</span>
+            <a class="person-wiki" href="${escapeHtml(card.wikipediaUrl)}" target="_blank" rel="noreferrer" aria-label="${escapeHtml(`${t("openWikipedia")}: ${card.name}`)}" title="${escapeHtml(t("openWikipedia"))}">
               <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
                 <path d="M14 5h5v5"></path>
                 <path d="M13 11l6-6"></path>
@@ -4254,34 +4303,49 @@
               </svg>
             </a>
           </h3>
-          ${auditBadge(person)}
+          ${renderAuditBadge(card.auditBadgeText)}
           <dl>
-            <dt><button class="person-data-trigger" type="button" data-person-source-id="${escapeHtml(person.id)}" aria-haspopup="dialog" aria-label="${escapeHtml(`${t("personDataDetailsOpen")}: ${person.name}`)}">${escapeHtml(t("dataDate"))}</button></dt>
-            <dd>${escapeHtml(person.birthLabel[state.lang] || person.birthLabel.es)}</dd>
+            <dt><button class="person-data-trigger" type="button" data-person-source-id="${escapeHtml(card.id)}" aria-haspopup="dialog" aria-label="${escapeHtml(`${t("personDataDetailsOpen")}: ${card.name}`)}">${escapeHtml(t("dataDate"))}</button></dt>
+            <dd>${escapeHtml(card.birthLabel)}</dd>
             <dt>${escapeHtml(t("dataPlace"))}</dt>
-            <dd>${escapeHtml(formatCity(person.place))}</dd>
+            <dd>${escapeHtml(card.placeLabel)}</dd>
             <dt>${escapeHtml(t("dataSex"))}</dt>
-            <dd>${escapeHtml(t(person.sex))}</dd>
+            <dd>${escapeHtml(card.sexLabel)}</dd>
           </dl>
-          <button type="button" data-person-id="${escapeHtml(person.id)}">${escapeHtml(t("useExample"))}</button>
+          <button type="button" data-person-id="${escapeHtml(card.id)}">${escapeHtml(t("useExample"))}</button>
         </div>
       </article>
     `;
   }
 
-  function renderHistoricalPeople() {
+  function buildHistoricalPeopleModel() {
     const people = [...HISTORICAL_PEOPLE].sort((a, b) => a.name.localeCompare(b.name, state.lang === "es" ? "es" : "en"));
-    const audited = people.filter((person) => personAuditStatus(person) === "audited");
-    const partial = people.filter((person) => personAuditStatus(person) === "partial");
-    const pending = people.filter((person) => personAuditStatus(person) === "pending");
-    $("#peopleGrid").innerHTML = [
-      audited.length ? `<h3 class="people-group-title">${escapeHtml(t("peopleAuditedTitle"))}</h3>` : "",
-      ...audited.map(historicalPersonCard),
-      partial.length ? `<h3 class="people-group-title">${escapeHtml(t("peoplePartialTitle"))}</h3>` : "",
-      ...partial.map(historicalPersonCard),
-      pending.length ? `<h3 class="people-group-title">${escapeHtml(t("peoplePendingTitle"))}</h3>` : "",
-      ...pending.map(historicalPersonCard),
+    const groupSpecs = [
+      { status: "audited", title: t("peopleAuditedTitle") },
+      { status: "partial", title: t("peoplePartialTitle") },
+      { status: "pending", title: t("peoplePendingTitle") },
+    ];
+    const groups = groupSpecs
+      .map((group) => ({
+        title: group.title,
+        cards: people
+          .filter((person) => personAuditStatus(person) === group.status)
+          .map(buildHistoricalPersonCardModel),
+      }))
+      .filter((group) => group.cards.length);
+    return { groups };
+  }
+
+  function renderHistoricalPeopleGroup(group) {
+    return [
+      `<h3 class="people-group-title">${escapeHtml(group.title)}</h3>`,
+      ...group.cards.map(renderHistoricalPersonCard),
     ].join("");
+  }
+
+  function renderHistoricalPeople() {
+    const model = buildHistoricalPeopleModel();
+    $("#peopleGrid").innerHTML = model.groups.map(renderHistoricalPeopleGroup).join("");
     capitalizeStructuredText($("#peopleGrid"));
   }
 
@@ -4300,9 +4364,7 @@
     state.modalReturnFocus?.focus?.();
   }
 
-  function loadHistoricalPerson(id) {
-    const person = HISTORICAL_PEOPLE.find((item) => item.id === id);
-    if (!person) return;
+  function applyHistoricalSelectionState(person) {
     state.selectedCity = person.place;
     state.selectedPersonName = person.name;
     state.selectedPersonAuditStatus = personAuditStatus(person);
@@ -4310,15 +4372,39 @@
     state.selectedPersonZoneReliability = historicalZoneReliability(person);
     state.selectedZoneSource = t("historicalOffsetSource");
     state.activeCityKey = cityKey(person.place);
-    $("#birthDate").value = person.date;
-    $("#birthTime").value = person.time;
-    $("#gender").value = person.sex;
-    $("#calendar").value = person.calendar || "gregorian";
-    $("#birthPlace").value = formatCity(person.place);
-    $("#latitude").value = round(person.place.lat, 4);
-    $("#longitude").value = round(person.place.lon, 4);
-    $("#timeZone").value = person.place.tz || "";
-    $("#manualOffset").value = person.manualOffset;
+  }
+
+  function buildHistoricalPersonFieldModel(person) {
+    return {
+      date: person.date,
+      time: person.time,
+      gender: person.sex,
+      calendar: person.calendar || "gregorian",
+      place: formatCity(person.place),
+      latitude: round(person.place.lat, 4),
+      longitude: round(person.place.lon, 4),
+      timeZone: person.place.tz || "",
+      manualOffset: person.manualOffset,
+    };
+  }
+
+  function applyHistoricalPersonFields(model) {
+    $("#birthDate").value = model.date;
+    $("#birthTime").value = model.time;
+    $("#gender").value = model.gender;
+    $("#calendar").value = model.calendar;
+    $("#birthPlace").value = model.place;
+    $("#latitude").value = model.latitude;
+    $("#longitude").value = model.longitude;
+    $("#timeZone").value = model.timeZone;
+    $("#manualOffset").value = model.manualOffset;
+  }
+
+  function loadHistoricalPerson(id) {
+    const person = HISTORICAL_PEOPLE.find((item) => item.id === id);
+    if (!person) return;
+    applyHistoricalSelectionState(person);
+    applyHistoricalPersonFields(buildHistoricalPersonFieldModel(person));
     updateClearPlaceButton();
     hidePlaceSuggestions();
     closePeopleModal();
@@ -4437,44 +4523,61 @@
     return { utcMs: utc, offset };
   }
 
-  function jdFromForm(input) {
+  function parseChartDateTime(input) {
     const date = parseDate(input.date);
     const time = parseTime(input.time);
     if (!date || !time) throw new Error(t("missingDate"));
     if (date.y <= 0) throw new Error(t("invalidHistoricalYear"));
+    return { date, time };
+  }
 
+  function manualOffsetContext(input) {
     const manualOffset = parseOffset(input.manualOffset);
     if (manualOffset === null) throw new Error(t("invalidOffset"));
-    const manualZoneLabel = `UTC${formatOffset(manualOffset)}`;
+    return {
+      offset: manualOffset,
+      zoneLabel: `UTC${formatOffset(manualOffset)}`,
+    };
+  }
 
-    if (input.calendar === "julian") {
-      const day = date.d + (time.h + time.min / 60 - manualOffset / 60) / 24;
+  function julianTimeResult(date, time, manualOffset) {
+    const day = date.d + (time.h + time.min / 60 - manualOffset.offset / 60) / 24;
+    return {
+      jd: calendarToJd(date.y, date.m, day, "julian"),
+      offset: manualOffset.offset,
+      zoneLabel: manualOffset.zoneLabel,
+    };
+  }
+
+  function ianaTimeResult(date, time, timeZone) {
+    if (!timeZone) return null;
+    try {
+      const zoned = zonedTimeToUtc(date.y, date.m, date.d, time.h, time.min, timeZone);
       return {
-        jd: calendarToJd(date.y, date.m, day, "julian"),
-        offset: manualOffset,
-        zoneLabel: manualZoneLabel,
+        jd: zoned.utcMs / DAY_MS + 2440587.5,
+        offset: zoned.offset,
+        zoneLabel: `${timeZone} (UTC${formatOffset(zoned.offset)})`,
       };
+    } catch (error) {
+      $("#formStatus").textContent = t("invalidTimeZone");
+      return null;
     }
+  }
 
-    if (input.timeZone) {
-      try {
-        const zoned = zonedTimeToUtc(date.y, date.m, date.d, time.h, time.min, input.timeZone);
-        return {
-          jd: zoned.utcMs / DAY_MS + 2440587.5,
-          offset: zoned.offset,
-          zoneLabel: `${input.timeZone} (UTC${formatOffset(zoned.offset)})`,
-        };
-      } catch (error) {
-        $("#formStatus").textContent = t("invalidTimeZone");
-      }
-    }
-
-    const utcMs = Date.UTC(date.y, date.m - 1, date.d, time.h, time.min, 0) - manualOffset * 60000;
+  function manualTimeResult(date, time, manualOffset) {
+    const utcMs = Date.UTC(date.y, date.m - 1, date.d, time.h, time.min, 0) - manualOffset.offset * 60000;
     return {
       jd: utcMs / DAY_MS + 2440587.5,
-      offset: manualOffset,
-      zoneLabel: manualZoneLabel,
+      offset: manualOffset.offset,
+      zoneLabel: manualOffset.zoneLabel,
     };
+  }
+
+  function jdFromForm(input) {
+    const { date, time } = parseChartDateTime(input);
+    const manualOffset = manualOffsetContext(input);
+    if (input.calendar === "julian") return julianTimeResult(date, time, manualOffset);
+    return ianaTimeResult(date, time, input.timeZone) || manualTimeResult(date, time, manualOffset);
   }
 
   function meanObliquity(jd) {
@@ -5193,27 +5296,43 @@
     ].join(" · ");
   }
 
-  function renderAlternateSectLots(chart) {
-    if (sectSensitivityState(chart) === "stable") return "";
+  function buildAlternateSectLotsModel(chart) {
+    if (sectSensitivityState(chart) === "stable") return null;
     const currentRoles = sectRoleSnapshot(chart.isDay);
     const alternateRoles = sectRoleSnapshot(!chart.isDay);
-    const rows = ["fortune", "spirit"].map((key) => {
-      const current = lotSnapshotForSect(key, chart, chart.isDay);
-      const alternate = lotSnapshotForSect(key, chart, !chart.isDay);
-      return `
-        <li>
-          <strong>${escapeHtml(lotName(key))}</strong>
-          <span>${escapeHtml(t("lotUsedByTyche"))}: ${escapeHtml(lotSnapshotText(current))}</span>
-          <span>${escapeHtml(t("lotIfSectReversed"))}: ${escapeHtml(lotSnapshotText(alternate))}</span>
-        </li>
-      `;
-    }).join("");
+    const rows = ["fortune", "spirit"].map((key) => ({
+      name: lotName(key),
+      current: lotSnapshotText(lotSnapshotForSect(key, chart, chart.isDay)),
+      alternate: lotSnapshotText(lotSnapshotForSect(key, chart, !chart.isDay)),
+    }));
+    return {
+      title: t("alternateSectLotsTitle"),
+      currentRolesText: sectRoleSnapshotText(currentRoles),
+      alternateRolesText: sectRoleSnapshotText(alternateRoles),
+      rows,
+    };
+  }
+
+  function renderAlternateSectLotRow(row) {
+    return `
+      <li>
+        <strong>${escapeHtml(row.name)}</strong>
+        <span>${escapeHtml(t("lotUsedByTyche"))}: ${escapeHtml(row.current)}</span>
+        <span>${escapeHtml(t("lotIfSectReversed"))}: ${escapeHtml(row.alternate)}</span>
+      </li>
+    `;
+  }
+
+  function renderAlternateSectLots(chart) {
+    const model = buildAlternateSectLotsModel(chart);
+    if (!model) return "";
+    const rows = model.rows.map(renderAlternateSectLotRow).join("");
     return `
       <details class="alternate-sect-lots" data-test="alternate-sect-lots">
-        <summary>${escapeHtml(t("alternateSectLotsTitle"))}</summary>
+        <summary>${escapeHtml(model.title)}</summary>
         <div class="alternate-sect-roles" data-test="alternate-sect-roles">
-          <p><b>${escapeHtml(t("sectRolesUsedByTyche"))}</b>: ${escapeHtml(sectRoleSnapshotText(currentRoles))}</p>
-          <p><b>${escapeHtml(t("sectRolesIfReversed"))}</b>: ${escapeHtml(sectRoleSnapshotText(alternateRoles))}</p>
+          <p><b>${escapeHtml(t("sectRolesUsedByTyche"))}</b>: ${escapeHtml(model.currentRolesText)}</p>
+          <p><b>${escapeHtml(t("sectRolesIfReversed"))}</b>: ${escapeHtml(model.alternateRolesText)}</p>
         </div>
         <ul>${rows}</ul>
       </details>
@@ -5233,10 +5352,8 @@
     return names[key] || key;
   }
 
-  function computeMoonCondition(chart) {
-    const elongation = zodiacalDistance(chart.positions.sun.lon, chart.positions.moon.lon);
+  function scanLunarContacts(chart, moonSignRemaining) {
     const moon = chart.positions.moon;
-    const moonSignRemaining = 30 - degreeInSign(moon.lon);
     const contacts = [];
     let lastSeparation = null;
     let nextApplication = null;
@@ -5277,20 +5394,34 @@
       }
     });
     return {
-      phase: lunarPhaseName(elongation),
-      elongation,
       contacts,
       lastSeparation,
       nextApplication,
       nextApplicationBySign,
-      voidOfCourse: !nextApplication,
-      voidOfCourseBySign: !nextApplicationBySign,
-      moonSignRemaining,
       hasApplyingWithinOrb,
     };
   }
 
-  function readInput() {
+  function computeMoonCondition(chart) {
+    const elongation = zodiacalDistance(chart.positions.sun.lon, chart.positions.moon.lon);
+    const moon = chart.positions.moon;
+    const moonSignRemaining = 30 - degreeInSign(moon.lon);
+    const contactScan = scanLunarContacts(chart, moonSignRemaining);
+    return {
+      phase: lunarPhaseName(elongation),
+      elongation,
+      contacts: contactScan.contacts,
+      lastSeparation: contactScan.lastSeparation,
+      nextApplication: contactScan.nextApplication,
+      nextApplicationBySign: contactScan.nextApplicationBySign,
+      voidOfCourse: !contactScan.nextApplication,
+      voidOfCourseBySign: !contactScan.nextApplicationBySign,
+      moonSignRemaining,
+      hasApplyingWithinOrb: contactScan.hasApplyingWithinOrb,
+    };
+  }
+
+  function readPlaceInputFromFields() {
     const placeValue = $("#birthPlace").value.trim();
     const city = findCity(placeValue);
     const latField = $("#latitude").value;
@@ -5299,18 +5430,8 @@
     const longitude = lonField !== "" ? Number(lonField) : city?.lon;
     const timeZone = $("#timeZone").value.trim() || city?.tz || "";
     const zoneReliability = state.selectedPersonZoneReliability || (timeZone ? "iana" : state.selectedZoneSource ? "historical" : "manual");
-    const techniqueMode = $("#techniqueMode").value;
-    const includeModern = $("#includeModern").checked || techniqueMode === "mixed";
-    const selectedLots = $$('input[name="lots"]:checked').map((item) => item.value);
-
     return {
-      date: $("#birthDate").value,
-      time: $("#birthTime").value,
       place: city ? formatCity(city) : placeValue,
-      personName: state.selectedPersonName,
-      auditStatus: state.selectedPersonAuditStatus,
-      timeConfidence: state.selectedPersonTimeConfidence,
-      gender: $("#gender").value,
       city,
       latitude,
       longitude,
@@ -5318,6 +5439,14 @@
       manualOffset: $("#manualOffset").value.trim(),
       zoneSource: state.selectedZoneSource,
       zoneReliability,
+    };
+  }
+
+  function readTechniqueInputFromFields() {
+    const techniqueMode = $("#techniqueMode").value;
+    const includeModern = $("#includeModern").checked || techniqueMode === "mixed";
+    const selectedLots = $$('input[name="lots"]:checked').map((item) => item.value);
+    return {
       calendar: $("#calendar").value,
       zodiac: $("#zodiac").value,
       aspectMode: $("#aspectMode").value,
@@ -5328,16 +5457,20 @@
     };
   }
 
-  function computeChart(input) {
-    if (!input.place && (!Number.isFinite(input.latitude) || !Number.isFinite(input.longitude))) throw new Error(t("missingPlace"));
-    if (!Number.isFinite(input.latitude) || !Number.isFinite(input.longitude)) throw new Error(t("missingCoords"));
-    if (input.latitude < -66 || input.latitude > 66) {
-      $("#formStatus").textContent = state.lang === "es"
-        ? "Las latitudes extremas vuelven muy sensibles los ángulos al horizonte. Revisa cartas críticas con especial cuidado."
-        : "Extreme latitudes make horizon angles highly sensitive. Review critical charts with special care.";
-    }
+  function readInput() {
+    return {
+      date: $("#birthDate").value,
+      time: $("#birthTime").value,
+      personName: state.selectedPersonName,
+      auditStatus: state.selectedPersonAuditStatus,
+      timeConfidence: state.selectedPersonTimeConfidence,
+      gender: $("#gender").value,
+      ...readPlaceInputFromFields(),
+      ...readTechniqueInputFromFields(),
+    };
+  }
 
-    const time = jdFromForm(input);
+  function calculateChartPositions(time, input) {
     const rawPositions = tropicalPositions(time.jd, input.includeModern);
     const nextPositions = tropicalPositions(time.jd + 1, input.includeModern);
     const positions = {};
@@ -5348,15 +5481,14 @@
         speed: norm180(applyZodiac(nextPositions[key].lon, time.jd + 1, input.zodiac) - applyZodiac(rawPositions[key].lon, time.jd, input.zodiac)),
       };
     });
+    return {
+      rawPositions,
+      positions,
+      planetKeys: input.includeModern ? [...VISIBLE_KEYS, ...MODERN_KEYS] : [...VISIBLE_KEYS],
+    };
+  }
 
-    const angles = calculateAngles(time.jd, input.latitude, input.longitude, input.zodiac);
-    const sunAlt = altitudeFromLon(rawPositions.sun.lon, input.latitude, angles.lst, angles.eps);
-    const isDay = sunAlt >= 0;
-    const ascSign = signOf(angles.asc);
-    const mcHouse = houseFromSign(signOf(angles.mc), ascSign);
-    const icHouse = houseFromSign(signOf(angles.ic), ascSign);
-    const planetKeys = input.includeModern ? [...VISIBLE_KEYS, ...MODERN_KEYS] : [...VISIBLE_KEYS];
-
+  function enrichChartPositions(positions, planetKeys, ascSign, isDay) {
     planetKeys.forEach((key) => {
       positions[key].house = houseFromSign(signOf(positions[key].lon), ascSign);
       positions[key].angularity = placeQuality(positions[key].house);
@@ -5364,8 +5496,11 @@
       positions[key].majorDignities = majorDignities(key, positions[key].lon);
       positions[key].phase = solarPhaseFor(key, positions);
     });
+    return positions;
+  }
 
-    const lots = judgmentLotKeys(input.selectedLots).map((key) => {
+  function calculateChartLots(input, positions, angles, isDay, ascSign) {
+    return judgmentLotKeys(input.selectedLots).map((key) => {
       const lon = lotLongitude(key, { positions, angles, isDay });
       const sign = signOf(lon);
       const lord = SIGNS[sign].ruler;
@@ -5377,6 +5512,41 @@
         lordHouse: positions[lord]?.house,
       };
     });
+  }
+
+  function sectContext(isDay) {
+    return {
+      sectLight: isDay ? "sun" : "moon",
+      beneficOfSect: isDay ? "jupiter" : "venus",
+      maleficOfSect: isDay ? "saturn" : "mars",
+      maleficContrarySect: isDay ? "mars" : "saturn",
+    };
+  }
+
+  function validateChartInput(input) {
+    if (!input.place && (!Number.isFinite(input.latitude) || !Number.isFinite(input.longitude))) throw new Error(t("missingPlace"));
+    if (!Number.isFinite(input.latitude) || !Number.isFinite(input.longitude)) throw new Error(t("missingCoords"));
+  }
+
+  function computeChart(input) {
+    validateChartInput(input);
+    if (input.latitude < -66 || input.latitude > 66) {
+      $("#formStatus").textContent = state.lang === "es"
+        ? "Las latitudes extremas vuelven muy sensibles los ángulos al horizonte. Revisa cartas críticas con especial cuidado."
+        : "Extreme latitudes make horizon angles highly sensitive. Review critical charts with special care.";
+    }
+
+    const time = jdFromForm(input);
+    const { rawPositions, positions, planetKeys } = calculateChartPositions(time, input);
+    const angles = calculateAngles(time.jd, input.latitude, input.longitude, input.zodiac);
+    const sunAlt = altitudeFromLon(rawPositions.sun.lon, input.latitude, angles.lst, angles.eps);
+    const isDay = sunAlt >= 0;
+    const ascSign = signOf(angles.asc);
+    const mcHouse = houseFromSign(signOf(angles.mc), ascSign);
+    const icHouse = houseFromSign(signOf(angles.ic), ascSign);
+    enrichChartPositions(positions, planetKeys, ascSign, isDay);
+    const lots = calculateChartLots(input, positions, angles, isDay, ascSign);
+    const sect = sectContext(isDay);
 
     const chart = {
       input,
@@ -5390,10 +5560,7 @@
       ascSign,
       isDay,
       sunAltitude: sunAlt,
-      sectLight: isDay ? "sun" : "moon",
-      beneficOfSect: isDay ? "jupiter" : "venus",
-      maleficOfSect: isDay ? "saturn" : "mars",
-      maleficContrarySect: isDay ? "mars" : "saturn",
+      ...sect,
       mcHouse,
       icHouse,
       lots,
@@ -5402,14 +5569,25 @@
     return chart;
   }
 
-  function renderChart(chart) {
-    state.lastChart = chart;
-    $("#results").hidden = false;
-    $("#chartTitle").textContent = chart.input.personName
+  function buildChartFrameModel(chart) {
+    return {
+      title: chart.input.personName
       ? t("chartForPerson", { name: chart.input.personName })
-      : t("anonymousChart");
-    $("#chartMeta").textContent = chartMetaText(chart.input);
-    $("#chartWheel").innerHTML = renderWheel(chart);
+      : t("anonymousChart"),
+      meta: chartMetaText(chart.input),
+      wheelHtml: renderWheel(chart),
+    };
+  }
+
+  function renderChartFrame(chart) {
+    const model = buildChartFrameModel(chart);
+    $("#results").hidden = false;
+    $("#chartTitle").textContent = model.title;
+    $("#chartMeta").textContent = model.meta;
+    $("#chartWheel").innerHTML = model.wheelHtml;
+  }
+
+  function renderChartPanels(chart) {
     renderCoreSummary(chart);
     renderAnglesPanel(chart);
     renderAscLord(chart);
@@ -5420,9 +5598,19 @@
     renderLotTable(chart);
     renderAspectTable(chart);
     renderTechnicalPanel(chart);
+  }
+
+  function finishChartRender(chart) {
     capitalizeStructuredText($("#results"));
     $("#results").scrollIntoView({ behavior: "smooth", block: "start" });
     window.dispatchEvent(new CustomEvent("tyche:chart-rendered", { detail: { chart } }));
+  }
+
+  function renderChart(chart) {
+    state.lastChart = chart;
+    renderChartFrame(chart);
+    renderChartPanels(chart);
+    finishChartRender(chart);
   }
 
   function calculateCurrentChart() {
@@ -5433,57 +5621,99 @@
     renderChart(chart);
   }
 
+  function renderMetricItems(items) {
+    return items.map((item) => metric(item.label, item.value, item.valueClass || "", item.labelGlossary || "", item.valueGlossary || "")).join("");
+  }
+
+  function buildCoreSummaryModel(chart) {
+    return {
+      title: t("sect"),
+      titleGlossary: "sect",
+      metrics: [
+        { label: t("chartType"), value: chartSectLabel(chart), labelGlossary: "sect" },
+        { label: t("sectLight"), value: `${PLANETS[chart.sectLight].symbol} ${planetName(chart.sectLight)}`, labelGlossary: "sectLight" },
+        { label: t("beneficSect"), value: `${PLANETS[chart.beneficOfSect].symbol} ${planetName(chart.beneficOfSect)}`, labelGlossary: "beneficSect" },
+        { label: t("maleficSect"), value: `${PLANETS[chart.maleficOfSect].symbol} ${planetName(chart.maleficOfSect)}`, labelGlossary: "maleficSect" },
+        { label: t("maleficContrarySect"), value: `${PLANETS[chart.maleficContrarySect].symbol} ${planetName(chart.maleficContrarySect)}`, labelGlossary: "maleficContrarySect" },
+      ],
+      notes: [sectSensitivityNote(chart), sectDependencyCaution(chart)].filter(Boolean),
+      alternateLotsHtml: renderAlternateSectLots(chart),
+    };
+  }
+
   function renderCoreSummary(chart) {
+    const model = buildCoreSummaryModel(chart);
     const html = `
-      <h3>${glossaryTerm(t("sect"), "sect")}</h3>
+      <h3>${glossaryTerm(model.title, model.titleGlossary)}</h3>
       <div class="metric-grid">
-        ${metric(t("chartType"), chartSectLabel(chart), "", "sect")}
-        ${metric(t("sectLight"), `${PLANETS[chart.sectLight].symbol} ${planetName(chart.sectLight)}`, "", "sectLight")}
-        ${metric(t("beneficSect"), `${PLANETS[chart.beneficOfSect].symbol} ${planetName(chart.beneficOfSect)}`, "", "beneficSect")}
-        ${metric(t("maleficSect"), `${PLANETS[chart.maleficOfSect].symbol} ${planetName(chart.maleficOfSect)}`, "", "maleficSect")}
-        ${metric(t("maleficContrarySect"), `${PLANETS[chart.maleficContrarySect].symbol} ${planetName(chart.maleficContrarySect)}`, "", "maleficContrarySect")}
+        ${renderMetricItems(model.metrics)}
       </div>
-      ${sectSensitivityNote(chart) ? `<p class="text-note">${escapeHtml(sectSensitivityNote(chart))}</p>` : ""}
-      ${sectDependencyCaution(chart) ? `<p class="text-note">${escapeHtml(sectDependencyCaution(chart))}</p>` : ""}
-      ${renderAlternateSectLots(chart)}
+      ${model.notes.map((note) => `<p class="text-note">${escapeHtml(note)}</p>`).join("")}
+      ${model.alternateLotsHtml}
     `;
     $("#coreSummary").innerHTML = html;
   }
 
+  function buildAnglesPanelModel(chart) {
+    return {
+      title: t("anglesZoneTitle"),
+      metrics: [
+        { label: t("ascendant"), value: `${formatDegree(chart.angles.asc)} · ${t("tableHouse")} 1`, labelGlossary: "ascendant" },
+        { label: t("descendant"), value: `${formatDegree(chart.angles.desc)} · ${t("tableHouse")} 7`, labelGlossary: "descendant" },
+        { label: t("mc"), value: `${formatDegree(chart.angles.mc)} · ${t("tableHouse")} ${chart.mcHouse}`, labelGlossary: "mc" },
+        { label: t("ic"), value: `${formatDegree(chart.angles.ic)} · ${t("tableHouse")} ${chart.icHouse}`, labelGlossary: "ic" },
+        { label: t("timezoneUsed"), value: chart.zoneLabel, labelGlossary: "timezoneUsed" },
+      ],
+    };
+  }
+
   function renderAnglesPanel(chart) {
+    const model = buildAnglesPanelModel(chart);
     $("#anglesPanel").innerHTML = `
-      <h3>${escapeHtml(t("anglesZoneTitle"))}</h3>
+      <h3>${escapeHtml(model.title)}</h3>
       <div class="metric-grid">
-        ${metric(t("ascendant"), `${formatDegree(chart.angles.asc)} · ${t("tableHouse")} 1`, "", "ascendant")}
-        ${metric(t("descendant"), `${formatDegree(chart.angles.desc)} · ${t("tableHouse")} 7`, "", "descendant")}
-        ${metric(t("mc"), `${formatDegree(chart.angles.mc)} · ${t("tableHouse")} ${chart.mcHouse}`, "", "mc")}
-        ${metric(t("ic"), `${formatDegree(chart.angles.ic)} · ${t("tableHouse")} ${chart.icHouse}`, "", "ic")}
-        ${metric(t("timezoneUsed"), chart.zoneLabel, "", "timezoneUsed")}
+        ${renderMetricItems(model.metrics)}
       </div>
     `;
   }
 
-  function renderAscLord(chart) {
+  function buildAscLordModel(chart) {
     const ascSign = SIGNS[chart.ascSign];
     const lord = ascSign.ruler;
     const p = chart.positions[lord];
     const groups = dignityGroups(p.dignities);
-    $("#ascLordPanel").innerHTML = `
-      <h3>${glossaryTerm(t("ascLordTitle"), "ascLord")}</h3>
-      <p class="text-note">${escapeHtml(t("ascLordText", {
+    return {
+      title: t("ascLordTitle"),
+      titleGlossary: "ascLord",
+      note: t("ascLordText", {
         lord: `${PLANETS[lord].symbol} ${planetName(lord)}`,
         ascSign: `${ascSign.symbol} ${ascSign[state.lang]}`,
         lordPosition: formatDegree(p.lon),
         house: p.house,
         topics: houseReadingTopics(p.house, "double"),
         angularity: t(p.angularity),
-      }))}</p>
+      }),
+      conditionGroups: [
+        { label: t("dignityMajor"), glossary: "dignityMajor", values: groups.major },
+        { label: t("dignityTriplicity"), glossary: "dignityTriplicity", values: groups.triplicity },
+        { label: t("dignityMinor"), glossary: "dignityMinor", values: groups.minor },
+        { label: t("dignityAdministration"), glossary: "dignityAdministration", values: groups.administration },
+        { label: t("weaknesses"), glossary: "weaknesses", values: groups.weakness },
+      ],
+    };
+  }
+
+  function renderConditionGroup(item, chart) {
+    return `<p><strong>${glossaryTerm(item.label, item.glossary)}:</strong> ${dignityGroupText(item.values, chart)}.</p>`;
+  }
+
+  function renderAscLord(chart) {
+    const model = buildAscLordModel(chart);
+    $("#ascLordPanel").innerHTML = `
+      <h3>${glossaryTerm(model.title, model.titleGlossary)}</h3>
+      <p class="text-note">${escapeHtml(model.note)}</p>
       <div class="condition-list">
-        <p><strong>${glossaryTerm(t("dignityMajor"), "dignityMajor")}:</strong> ${dignityGroupText(groups.major, chart)}.</p>
-        <p><strong>${glossaryTerm(t("dignityTriplicity"), "dignityTriplicity")}:</strong> ${dignityGroupText(groups.triplicity, chart)}.</p>
-        <p><strong>${glossaryTerm(t("dignityMinor"), "dignityMinor")}:</strong> ${dignityGroupText(groups.minor, chart)}.</p>
-        <p><strong>${glossaryTerm(t("dignityAdministration"), "dignityAdministration")}:</strong> ${dignityGroupText(groups.administration, chart)}.</p>
-        <p><strong>${glossaryTerm(t("weaknesses"), "weaknesses")}:</strong> ${dignityGroupText(groups.weakness, chart)}.</p>
+        ${model.conditionGroups.map((item) => renderConditionGroup(item, chart)).join("")}
       </div>
     `;
   }
@@ -5495,29 +5725,40 @@
     return t("moonStatusActive");
   }
 
-  function renderMoon(chart) {
+  function buildMoonPanelModel(chart) {
     const phaseDistance = chart.moon.elongation > 180 ? 360 - chart.moon.elongation : chart.moon.elongation;
     const phaseContext = t(chart.moon.elongation > 180 ? "moonBeforeNew" : "moonAfterNew", {
       degrees: `${formatDecimal(phaseDistance, 1)}°`,
     });
     const lastSeparation = lunarContactLabel(chart.moon.lastSeparation, "separating") || t("moonNoSeparation");
     const nextApplication = lunarContactLabel(chart.moon.nextApplication, "applying") || t("moonNoApplication");
+    return {
+      title: t("moonTitle"),
+      titleGlossary: "lunarCondition",
+      metrics: [
+        { label: t("moonStatus"), value: moonStatusText(chart), valueClass: "capitalize-first", labelGlossary: "moonStatus" },
+        { label: t("moonPhase"), value: `${chart.moon.phase} · ${phaseContext}`, valueClass: "capitalize-first", labelGlossary: "moonPhase", valueGlossary: "moonPhase" },
+        { label: t("moonElongation"), value: `${formatDecimal(chart.moon.elongation, 1)}°`, labelGlossary: "moonElongation" },
+        { label: t("moonLastSeparation"), value: lastSeparation, labelGlossary: "moonLastSeparation" },
+        { label: t("moonNextApplication"), value: nextApplication, labelGlossary: "moonNextApplication" },
+        { label: t("moonVoc30"), value: chart.moon.voidOfCourse ? t("yesVoc") : t("notVoc"), labelGlossary: "moonVoc30" },
+        { label: t("moonVocSign"), value: chart.moon.voidOfCourseBySign ? t("yesVocSign") : t("notVocSign"), labelGlossary: "moonVocSign" },
+        { label: t("moonNoApplyingWithinOrb"), value: chart.moon.hasApplyingWithinOrb ? t("no") : t("yes"), labelGlossary: "moonNoApplyingWithinOrb" },
+      ],
+    };
+  }
+
+  function renderMoon(chart) {
+    const model = buildMoonPanelModel(chart);
     $("#moonPanel").innerHTML = `
-      <h3>${glossaryTerm(t("moonTitle"), "lunarCondition")}</h3>
+      <h3>${glossaryTerm(model.title, model.titleGlossary)}</h3>
       <div class="metric-grid">
-        ${metric(t("moonStatus"), moonStatusText(chart), "capitalize-first", "moonStatus")}
-        ${metric(t("moonPhase"), `${chart.moon.phase} · ${phaseContext}`, "capitalize-first", "moonPhase", "moonPhase")}
-        ${metric(t("moonElongation"), `${formatDecimal(chart.moon.elongation, 1)}°`, "", "moonElongation")}
-        ${metric(t("moonLastSeparation"), lastSeparation, "", "moonLastSeparation")}
-        ${metric(t("moonNextApplication"), nextApplication, "", "moonNextApplication")}
-        ${metric(t("moonVoc30"), chart.moon.voidOfCourse ? t("yesVoc") : t("notVoc"), "", "moonVoc30")}
-        ${metric(t("moonVocSign"), chart.moon.voidOfCourseBySign ? t("yesVocSign") : t("notVocSign"), "", "moonVocSign")}
-        ${metric(t("moonNoApplyingWithinOrb"), chart.moon.hasApplyingWithinOrb ? t("no") : t("yes"), "", "moonNoApplyingWithinOrb")}
+        ${renderMetricItems(model.metrics)}
       </div>
     `;
   }
 
-  function renderTechnicalPanel(chart) {
+  function buildTechnicalPanelModel(chart) {
     const engine = chart.ephemerisEngine === "astronomy" ? t("astronomyEngine") : t("fallbackEngine");
     const boundary = boundaryWarnings(chart);
     const aspectModeLabel = chart.input.aspectMode === "both"
@@ -5529,38 +5770,54 @@
     const zodiacLabel = chart.input.zodiac === "sidereal"
       ? `${t(chart.input.zodiac)} · ${t("zodiacBaseWarning")}`
       : t(chart.input.zodiac);
+    return {
+      title: t("technicalTitle"),
+      notes: [t("technicalLimitsCompact"), t("technicalMcIcNote")],
+      astronomyTitle: t("technicalAstronomyTitle"),
+      astronomyMetrics: [
+        { label: t("localDateTime"), value: `${formatDateLabel(chart.input.date)} · ${chart.input.time || "—"}` },
+        { label: t("utcDateTime"), value: formatUtcDateTime(chart.jd) },
+        { label: t("timezoneUsed"), value: chart.zoneLabel, labelGlossary: "timezoneUsed" },
+        { label: t("coordinates"), value: `${formatDecimal(chart.input.latitude, 4)}, ${formatDecimal(chart.input.longitude, 4)}` },
+        { label: t("calendar"), value: calendarLabel },
+        { label: t("zodiac"), value: zodiacLabel, labelGlossary: "zodiac" },
+        { label: t("sectCalculation"), value: t("sectCalculationValue", { altitude: formatSignedAngle(chart.sunAltitude) }), labelGlossary: "sect" },
+        { label: t("ephemerisEngine"), value: engine, labelGlossary: "ephemeris" },
+      ],
+      judgmentTitle: t("technicalJudgmentTitle"),
+      judgmentMetrics: [
+        { label: t("houses"), value: t("wholeSign"), labelGlossary: "wholeSign" },
+        { label: t("aspectTableMode"), value: aspectModeLabel, labelGlossary: "aspects" },
+        { label: t("judgmentFrame"), value: t("judgmentFrameSign"), labelGlossary: "aspects" },
+        { label: t("solarThresholds"), value: t("solarThresholdValues"), labelGlossary: "solarPhase" },
+        { label: t("moonVoidDefinitions"), value: t("moonVoidDefinitionsValues"), labelGlossary: "moonVoc" },
+        { label: t("techniqueMode"), value: t(chart.input.techniqueMode === "mixed" ? "mixed" : "strict"), labelGlossary: "technique" },
+        { label: t("modernDisplayed"), value: chart.input.includeModern ? t("yes") : t("no"), labelGlossary: "modernPlanets" },
+        { label: t("modernWeightedBase"), value: t("modernNotWeighted"), labelGlossary: "modernPlanets" },
+      ],
+      boundary,
+    };
+  }
+
+  function renderTechnicalPanel(chart) {
+    const model = buildTechnicalPanelModel(chart);
     $("#technicalPanel").innerHTML = `
       <details>
-        <summary><h3>${escapeHtml(t("technicalTitle"))}</h3></summary>
+        <summary><h3>${escapeHtml(model.title)}</h3></summary>
         <div class="technical-notes">
-          <p>${escapeHtml(t("technicalLimitsCompact"))}</p>
-          <p>${escapeHtml(t("technicalMcIcNote"))}</p>
+          ${model.notes.map((note) => `<p>${escapeHtml(note)}</p>`).join("")}
         </div>
         <section class="technical-section">
-          <h4>${escapeHtml(t("technicalAstronomyTitle"))}</h4>
+          <h4>${escapeHtml(model.astronomyTitle)}</h4>
           <div class="technical-grid">
-            ${metric(t("localDateTime"), `${formatDateLabel(chart.input.date)} · ${chart.input.time || "—"}`)}
-            ${metric(t("utcDateTime"), formatUtcDateTime(chart.jd))}
-            ${metric(t("timezoneUsed"), chart.zoneLabel, "", "timezoneUsed")}
-            ${metric(t("coordinates"), `${formatDecimal(chart.input.latitude, 4)}, ${formatDecimal(chart.input.longitude, 4)}`)}
-            ${metric(t("calendar"), calendarLabel)}
-            ${metric(t("zodiac"), zodiacLabel, "", "zodiac")}
-            ${metric(t("sectCalculation"), t("sectCalculationValue", { altitude: formatSignedAngle(chart.sunAltitude) }), "", "sect")}
-            ${metric(t("ephemerisEngine"), engine, "", "ephemeris")}
+            ${renderMetricItems(model.astronomyMetrics)}
           </div>
         </section>
         <section class="technical-section">
-          <h4>${escapeHtml(t("technicalJudgmentTitle"))}</h4>
+          <h4>${escapeHtml(model.judgmentTitle)}</h4>
           <div class="technical-grid">
-            ${metric(t("houses"), t("wholeSign"), "", "wholeSign")}
-            ${metric(t("aspectTableMode"), aspectModeLabel, "", "aspects")}
-            ${metric(t("judgmentFrame"), t("judgmentFrameSign"), "", "aspects")}
-            ${metric(t("solarThresholds"), t("solarThresholdValues"), "", "solarPhase")}
-            ${metric(t("moonVoidDefinitions"), t("moonVoidDefinitionsValues"), "", "moonVoc")}
-            ${metric(t("techniqueMode"), t(chart.input.techniqueMode === "mixed" ? "mixed" : "strict"), "", "technique")}
-            ${metric(t("modernDisplayed"), chart.input.includeModern ? t("yes") : t("no"), "", "modernPlanets")}
-            ${metric(t("modernWeightedBase"), t("modernNotWeighted"), "", "modernPlanets")}
-            ${renderBoundaryAudit(boundary)}
+            ${renderMetricItems(model.judgmentMetrics)}
+            ${renderBoundaryAudit(model.boundary)}
           </div>
         </section>
       </details>
@@ -7253,11 +7510,7 @@
 
   function boundaryWarningText(warning) {
     if (!warning) return "";
-    const thresholdText = Number.isFinite(warning.threshold)
-      ? (warning.sensitiveThreshold
-        ? t("boundaryThresholdSensitive", { threshold: formatAngle(warning.threshold), reasons: sensitivityReasonLabels(warning.thresholdReasonCodes).join(", ") })
-        : t("boundaryThresholdNormal", { threshold: formatAngle(warning.threshold) }))
-      : "";
+    const thresholdText = boundaryThresholdText(warning);
     const changes = boundaryChangeLabels(warning);
     const type = boundaryTypeLabel(warning);
     const action = boundaryActionLabel(warning);
@@ -7266,9 +7519,15 @@
       : `Type: ${type}. Distance: ${formatAngle(warning.distance)}.${thresholdText ? ` ${t("boundaryThreshold")}: ${thresholdText}.` : ""} May change: ${changes.join(", ")}. Recommended action: ${action}.`;
   }
 
-  function renderBoundaryAudit(warnings) {
-    if (!warnings.length) return metric(t("boundaryAudit"), t("noBoundaryNotices"));
-    const fieldLabels = state.lang === "es"
+  function boundaryThresholdText(warning) {
+    if (!Number.isFinite(warning.threshold)) return "";
+    return warning.sensitiveThreshold
+      ? t("boundaryThresholdSensitive", { threshold: formatAngle(warning.threshold), reasons: sensitivityReasonLabels(warning.thresholdReasonCodes).join(", ") })
+      : t("boundaryThresholdNormal", { threshold: formatAngle(warning.threshold) });
+  }
+
+  function boundaryAuditFieldLabels() {
+    return state.lang === "es"
       ? {
         type: "Tipo",
         distance: "Distancia",
@@ -7281,43 +7540,60 @@
         mayChange: "May change",
         action: "Action",
       };
+  }
+
+  function buildBoundaryAuditModel(warnings) {
+    const fieldLabels = boundaryAuditFieldLabels();
+    return {
+      title: t("boundaryAudit"),
+      emptyText: t("noBoundaryNotices"),
+      warnings: warnings.map((warning) => {
+        const thresholdText = boundaryThresholdText(warning);
+        return {
+          code: warning.code,
+          key: warning.key,
+          fields: [
+            { label: fieldLabels.type, value: boundaryTypeLabel(warning) },
+            { label: fieldLabels.distance, value: formatAngle(warning.distance) },
+            ...(thresholdText ? [{ label: t("boundaryThreshold"), value: thresholdText }] : []),
+            { label: fieldLabels.mayChange, items: boundaryChangeLabels(warning) },
+            { label: fieldLabels.action, value: capitalizeText(boundaryActionLabel(warning)) },
+          ],
+        };
+      }),
+    };
+  }
+
+  function renderBoundaryAuditField(field) {
+    const content = field.items
+      ? `<ul>${field.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`
+      : escapeHtml(field.value || "");
+    return `
+      <div>
+        <dt>${escapeHtml(field.label)}</dt>
+        <dd>${content}</dd>
+      </div>
+    `;
+  }
+
+  function renderBoundaryAuditWarning(warning) {
+    return `
+      <article data-test="boundary-warning" data-code="${escapeHtml(warning.code)}" data-key="${escapeHtml(warning.key)}">
+        <dl>
+          ${warning.fields.map(renderBoundaryAuditField).join("")}
+        </dl>
+      </article>
+    `;
+  }
+
+  function renderBoundaryAudit(warnings) {
+    const model = buildBoundaryAuditModel(warnings);
+    if (!model.warnings.length) return metric(model.title, model.emptyText);
     return `
       <section class="metric boundary-audit-list" data-test="boundary-audit">
-        <b>${escapeHtml(t("boundaryAudit"))}</b>
+        <b>${escapeHtml(model.title)}</b>
         <div>
-          ${warnings.map((warning) => {
-            const thresholdText = Number.isFinite(warning.threshold)
-              ? (warning.sensitiveThreshold
-                ? t("boundaryThresholdSensitive", { threshold: formatAngle(warning.threshold), reasons: sensitivityReasonLabels(warning.thresholdReasonCodes).join(", ") })
-                : t("boundaryThresholdNormal", { threshold: formatAngle(warning.threshold) }))
-              : "";
-            return `
-              <article data-test="boundary-warning" data-code="${escapeHtml(warning.code)}" data-key="${escapeHtml(warning.key)}">
-                <dl>
-                  <div>
-                    <dt>${escapeHtml(fieldLabels.type)}</dt>
-                    <dd>${escapeHtml(boundaryTypeLabel(warning))}</dd>
-                  </div>
-                  <div>
-                    <dt>${escapeHtml(fieldLabels.distance)}</dt>
-                    <dd>${escapeHtml(formatAngle(warning.distance))}</dd>
-                  </div>
-                  ${thresholdText ? `<div>
-                    <dt>${escapeHtml(t("boundaryThreshold"))}</dt>
-                    <dd>${escapeHtml(thresholdText)}</dd>
-                  </div>` : ""}
-                  <div>
-                    <dt>${escapeHtml(fieldLabels.mayChange)}</dt>
-                    <dd><ul>${boundaryChangeLabels(warning).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></dd>
-                  </div>
-                  <div>
-                    <dt>${escapeHtml(fieldLabels.action)}</dt>
-                    <dd>${escapeHtml(capitalizeText(boundaryActionLabel(warning)))}</dd>
-                  </div>
-                </dl>
-              </article>
-            `;
-          }).join("")}
+          ${model.warnings.map(renderBoundaryAuditWarning).join("")}
         </div>
       </section>
     `;
@@ -7327,41 +7603,75 @@
     return chart.lots.find((lot) => lot.key === key);
   }
 
-  function scoreChartTopics(chart) {
-    const houses = Array.from({ length: 12 }, (_, index) => ({
+  function createTopicScoreRows() {
+    return Array.from({ length: 12 }, (_, index) => ({
       house: index + 1,
       score: 0,
       reasons: [],
       scoreItems: [],
     }));
-    const add = (house, points, reason, category = "scoreCategoryLifeAxis", reasonCode = "") => {
-      if (!house) return;
-      const target = houses[house - 1];
-      target.score += points;
-      target.reasons.push(reason);
-      target.scoreItems.push({ points, reason, category, reasonCode: reasonCode || category });
-    };
+  }
+
+  function addTopicScore(houses, house, points, reason, category = "scoreCategoryLifeAxis", reasonCode = "") {
+    if (!house) return;
+    const target = houses[house - 1];
+    target.score += points;
+    target.reasons.push(reason);
+    target.scoreItems.push({ points, reason, category, reasonCode: reasonCode || category });
+  }
+
+  function createTopicScoreAdder(houses) {
+    return (house, points, reason, category = "scoreCategoryLifeAxis", reasonCode = "") => addTopicScore(houses, house, points, reason, category, reasonCode);
+  }
+
+  function sortTopicScoreRows(houses) {
+    return houses.sort((a, b) => b.score - a.score || a.house - b.house);
+  }
+
+  function addBaseTopicScores(add, chart) {
     const ascLord = SIGNS[chart.ascSign].ruler;
-    const trip = sectTriplicityRulers(chart);
     const tenthRuler = wholeSignHouseRuler(chart, 10);
     add(chart.positions[ascLord]?.house, 5, `${t("ascLordTitle")}: ${planetLabel(ascLord)}`, "scoreCategoryLifeAxis", `asc-lord:${ascLord}`);
     add(chart.positions[chart.sectLight]?.house, 2, `${t("sectLight")}: ${planetLabel(chart.sectLight)}`, "scoreCategorySect", `sect-light:${chart.sectLight}`);
     add(chart.mcHouse, 2, t("mc"), "scoreCategoryPublic", "mc-house");
     add(chart.positions[tenthRuler]?.house, 1.0, state.lang === "es" ? `Regente de casa 10: ${planetLabel(tenthRuler)}` : `10th-house ruler: ${planetLabel(tenthRuler)}`, "scoreCategoryPublic", `tenth-ruler:${tenthRuler}`);
+  }
+
+  function addAngularTopicScores(add, chart) {
     visibleAngularPlanets(chart).forEach((key) => add(chart.positions[key].house, 1.5, `${planetLabel(key)} ${t("angular")}`, "scoreCategoryAngular", `angular-planet:${key}`));
     visiblePlanetsNearAngles(chart).forEach((item) => {
       add(chart.positions[item.key].house, 0.75, `${planetLabel(item.key)} ${state.lang === "es" ? "cerca de" : "near"} ${angleDisplayName(item.angleKey)}`, "scoreCategoryAngular", `near-angle:${item.key}:${item.angleKey}`);
     });
+  }
+
+  function addLotTopicScores(add, chart) {
     add(lotByKey(chart, "fortune")?.house, 1.25, t("fortune"), "scoreCategoryLots", "lot:fortune");
     add(lotByKey(chart, "spirit")?.house, 1.25, t("spirit"), "scoreCategoryLots", "lot:spirit");
-    add(chart.positions[trip.primary]?.house, 1.0, `${t("sectLight")} ${planetLabel(trip.primary)} · ${t("scoreCategoryTriplicity")}`, "scoreCategoryTriplicity", `triplicity:active:${trip.primary}`);
-    add(chart.positions[trip.secondary]?.house, 0.6, `${t("sectLight")} ${planetLabel(trip.secondary)} · ${t("scoreCategoryTriplicity")}`, "scoreCategoryTriplicity", `triplicity:out-of-sect:${trip.secondary}`);
-    add(chart.positions[trip.cooperating]?.house, 0.4, `${t("sectLight")} ${planetLabel(trip.cooperating)} · ${t("scoreCategoryTriplicity")}`, "scoreCategoryTriplicity", `triplicity:cooperating:${trip.cooperating}`);
     ["fortune", "spirit"].forEach((key) => {
       const lot = lotByKey(chart, key);
       add(chart.positions[lot?.lord]?.house, 0.75, `${lot ? lotName(key) : key} ${t("tableRuler")}`, "scoreCategoryLots", `lot-lord:${key}:${lot?.lord || "none"}`);
     });
-    return houses.sort((a, b) => b.score - a.score || a.house - b.house);
+  }
+
+  function triplicityScoreReason(key) {
+    return `${t("sectLight")} ${planetLabel(key)} · ${t("scoreCategoryTriplicity")}`;
+  }
+
+  function addTriplicityTopicScores(add, chart) {
+    const trip = sectTriplicityRulers(chart);
+    add(chart.positions[trip.primary]?.house, 1.0, triplicityScoreReason(trip.primary), "scoreCategoryTriplicity", `triplicity:active:${trip.primary}`);
+    add(chart.positions[trip.secondary]?.house, 0.6, triplicityScoreReason(trip.secondary), "scoreCategoryTriplicity", `triplicity:out-of-sect:${trip.secondary}`);
+    add(chart.positions[trip.cooperating]?.house, 0.4, triplicityScoreReason(trip.cooperating), "scoreCategoryTriplicity", `triplicity:cooperating:${trip.cooperating}`);
+  }
+
+  function scoreChartTopics(chart) {
+    const houses = createTopicScoreRows();
+    const add = createTopicScoreAdder(houses);
+    addBaseTopicScores(add, chart);
+    addAngularTopicScores(add, chart);
+    addLotTopicScores(add, chart);
+    addTriplicityTopicScores(add, chart);
+    return sortTopicScoreRows(houses);
   }
 
   function publicProjectionReading(chart) {
@@ -7382,7 +7692,7 @@
     return `Public projection describes how a person becomes visible: craft, reputation, responsibility, recognition, and role before others. The MC falls in house ${chart.mcHouse}: ${houseReadingTopics(chart.mcHouse, "double")}. The 10th house is in ${signLabel(tenthSignIndex)} and its ruler, ${planetLabel(tenthRuler)}, falls in house ${tenthRulerPosition.house}: ${houseReadingTopics(tenthRulerPosition.house, "double")}. ${tenthHouseText}`;
   }
 
-  function interpretChart(chart) {
+  function createNatalReadingContext(chart) {
     const ascSign = SIGNS[chart.ascSign];
     const ascLord = ascSign.ruler;
     const ascLordPosition = chart.positions[ascLord];
@@ -7419,30 +7729,98 @@
         ? `Su apoyo existe, pero puede verse menos, depender de mediadores o tardar más porque está ${solarPhaseTableText(benefic, chart)}.`
         : `Its support exists, but may be less visible, more mediated, or slower because it is ${solarPhaseTableText(benefic, chart)}.`)
       : "";
+    return {
+      chart,
+      ascSign,
+      ascLord,
+      ascLordPosition,
+      ascLordSign,
+      tenthRuler,
+      tenthRulerPosition,
+      planetsInTenth,
+      focuses,
+      dominant,
+      sectLight,
+      benefic,
+      malefic,
+      beneficPosition,
+      maleficPosition,
+      angularPlanets,
+      exactAnglePlanets,
+      receptionEvidence,
+      boundaryEvidence,
+      fortune,
+      spirit,
+      sectContext,
+      sectDescription,
+      sectConfidenceNotice,
+      secondaryFocuses,
+      visibility,
+      configurations,
+      moonJudgment,
+      foundations,
+      publicProjection,
+      lotConditionTexts,
+      beneficSolarCaution,
+    };
+  }
 
-    const lead = focusLeadReading(focuses);
+  function buildNatalReadingSummary(context) {
+    const { dominant, secondaryFocuses, ascLord, ascLordPosition, sectConfidenceNotice } = context;
     const summaryBase = state.lang === "es"
       ? `La carta pone mucho peso en la casa ${dominant.house}. ${capitalizeText(houseReadingTopics(dominant.house, "double"))}. ${secondaryFocuses.length ? `También conviene mirar ${naturalList(secondaryFocuses.map((focus) => `casa ${focus.house}`))}, porque completan el dibujo general.` : ""} El hilo rector sigue siendo ${planetLabel(ascLord)}, regente del Ascendente, situado en casa ${ascLordPosition.house}; por eso la lectura parte de la dirección vital y no de una posición aislada.`
       : `The chart puts a great deal of weight on house ${dominant.house}: ${houseReadingTopics(dominant.house, "double")}. ${secondaryFocuses.length ? `It is also worth reading ${naturalList(secondaryFocuses.map((focus) => `house ${focus.house}`))}, because they complete the general pattern.` : ""} The guiding thread remains ${planetLabel(ascLord)}, lord of the Ascendant / Hour-Marker, placed in house ${ascLordPosition.house}; this is why the reading begins from life direction rather than from an isolated placement.`;
-    const summary = [summaryBase, sectConfidenceNotice].filter(Boolean).join(" ");
+    return [summaryBase, sectConfidenceNotice].filter(Boolean).join(" ");
+  }
 
-    const lifeDirection = state.lang === "es"
+  function buildLifeDirectionText(context) {
+    const { chart, ascLord, ascLordPosition, ascLordSign } = context;
+    return state.lang === "es"
       ? `El Ascendente está en ${signLabel(chart.ascSign)}, por lo que ${planetLabel(ascLord)} lleva la dirección general de la carta. ${planetLabel(ascLord)} habla de ${planetPlainMeaning(ascLord)}. Al caer en ${signLabel(signOf(ascLordPosition.lon))}, casa ${ascLordPosition.house}, esas capacidades se vinculan con ${houseReadingTopics(ascLordPosition.house, "double")}. ${signStyleReading(ascLordSign)} Al estar en una casa ${t(ascLordPosition.angularity)}, este tema se muestra ${angularityReading(ascLordPosition.angularity)}. ${essentialConditionReading(ascLordPosition, chart)}`
       : `The Ascendant / Hour-Marker is in ${signLabel(chart.ascSign)}, so ${planetLabel(ascLord)} carries the chart's general direction. ${planetLabel(ascLord)} speaks of ${planetPlainMeaning(ascLord)}. Placed in ${signLabel(signOf(ascLordPosition.lon))}, house ${ascLordPosition.house}, those capacities connect with ${houseReadingTopics(ascLordPosition.house, "double")}. ${signStyleReading(ascLordSign)} Being in a ${t(ascLordPosition.angularity)} house, this topic shows itself ${angularityReading(ascLordPosition.angularity)}. ${essentialConditionReading(ascLordPosition, chart)}`;
+  }
 
-    const resources = state.lang === "es"
+  function buildSupportText(context) {
+    const { sectContext, benefic, beneficPosition, focuses, ascLordPosition, beneficSolarCaution } = context;
+    return state.lang === "es"
       ? `Esta sección muestra de dónde puede venir ayuda real: protección, mediadores favorables, crecimiento, conciliación o margen para respirar. En esta ${sectContext}, ${planetLabel(benefic)} es el principal planeta de apoyo. Está en casa ${beneficPosition.house}: ${houseReadingTopics(beneficPosition.house, "double")}. Ahí facilita que el tema crezca, encuentre respaldo o abra oportunidades concretas. ${connectionReading(beneficPosition, focuses, ascLordPosition, "support")} ${beneficSolarCaution}`
       : `This section shows where real help can come from: protection, favorable mediators, growth, reconciliation, or room to breathe. In this ${sectContext}, ${planetLabel(benefic)} is the main support planet. It is in house ${beneficPosition.house}: ${houseReadingTopics(beneficPosition.house, "double")}. There it helps the topic grow, find backing, or open concrete opportunities. ${connectionReading(beneficPosition, focuses, ascLordPosition, "support")} ${beneficSolarCaution}`;
+  }
 
-    const tensions = state.lang === "es"
+  function buildTensionText(context) {
+    const { chart, malefic, maleficPosition, beneficPosition, focuses, ascLordPosition } = context;
+    return state.lang === "es"
       ? `${planetLabel(malefic)} señala la presión que más cuidado pide en esta carta. Está en casa ${maleficPosition.house}: ${houseReadingTopics(maleficPosition.house, "double")}. En la vida real puede sentirse como límites, conflicto, desgaste, demoras, separación o condiciones que obligan a actuar con más estrategia. ${connectionReading(maleficPosition, focuses, ascLordPosition, "tension")} ${maleficMitigationReading(maleficPosition, beneficPosition, chart)}`
       : `${planetLabel(malefic)} marks the pressure that asks for the most care in this chart. It is in house ${maleficPosition.house}: ${houseReadingTopics(maleficPosition.house, "double")}. In real life this can feel like limits, conflict, strain, delays, separation, or conditions that require more strategy. ${connectionReading(maleficPosition, focuses, ascLordPosition, "tension")} ${maleficMitigationReading(maleficPosition, beneficPosition, chart)}`;
+  }
 
-    const lotReading = state.lang === "es"
+  function buildLotReadingText(context) {
+    const { lotConditionTexts } = context;
+    return state.lang === "es"
       ? `Los lotes principales separan dos planos: Fortuna muestra lo que llega y condiciona; Espíritu muestra lo que la persona intenta orientar. ${lotConditionTexts.join(" ")}`
       : `The principal lots separate two planes: Fortune shows what arrives and conditions life; Spirit shows what the person tries to direct. ${lotConditionTexts.join(" ")}`;
+  }
 
-    const evidence = [
+  function buildNatalReadingEvidence(context) {
+    const {
+      chart,
+      focuses,
+      ascLordPosition,
+      sectLight,
+      benefic,
+      malefic,
+      sectDescription,
+      sectConfidenceNotice,
+      tenthRuler,
+      tenthRulerPosition,
+      angularPlanets,
+      exactAnglePlanets,
+      receptionEvidence,
+      boundaryEvidence,
+      fortune,
+      spirit,
+    } = context;
+    return [
       t("evidenceFocuses", {
         focuses: focusTextList(focuses),
       }),
@@ -7496,7 +7874,10 @@
         ? `Triplicidad de la luminaria de la secta: ${naturalList([sectTriplicityRulers(chart).primary, sectTriplicityRulers(chart).secondary, sectTriplicityRulers(chart).cooperating].map(planetLabel))}.`
         : `Sect-light triplicity rulers: ${naturalList([sectTriplicityRulers(chart).primary, sectTriplicityRulers(chart).secondary, sectTriplicityRulers(chart).cooperating].map(planetLabel))}.`,
     ];
+  }
 
+  function buildNatalReadingHierarchy(context) {
+    const { ascLord, ascLordPosition, chart, tenthRuler, tenthRulerPosition, angularPlanets, exactAnglePlanets, fortune, spirit } = context;
     const angularPlanetsText = angularPlanets.length ? naturalList(angularPlanets.map(planetLabel)) : capitalizeText(t("none"));
     const hierarchy = [
       state.lang === "es"
@@ -7520,92 +7901,154 @@
         ? `${t("fortune")}/${t("spirit")}: casas ${fortune.house}/${spirit.house} -> circunstancias e intención.`
         : `${t("fortune")}/${t("spirit")}: houses ${fortune.house}/${spirit.house} -> circumstance and intention.`);
     }
+    return hierarchy;
+  }
 
-    const qualities = [
+  function buildNatalReadingQualities(context) {
+    const { chart, ascLord, ascLordPosition, malefic, maleficPosition, benefic, beneficPosition, focuses } = context;
+    return [
       { label: t("prominenceLabel"), value: t(prominenceLevel(ascLordPosition)) },
       { label: t("easeLabel"), value: t(essentialEaseLevel(ascLordPosition, ascLord, chart)) },
       { label: t("tensionLabel"), value: t(tensionLevel(maleficPosition, focuses, ascLordPosition, malefic, chart)) },
       { label: t("supportLabel"), value: t(supportLevel(beneficPosition, focuses, ascLordPosition, benefic, chart)) },
     ];
+  }
+
+  function buildNatalReadingBlocks(context) {
+    const {
+      chart,
+      ascLord,
+      ascLordPosition,
+      planetsInTenth,
+      tenthRuler,
+      tenthRulerPosition,
+      visibility,
+      benefic,
+      beneficPosition,
+      malefic,
+      maleficPosition,
+      focuses,
+      configurations,
+      moonJudgment,
+      foundations,
+      publicProjection,
+      fortune,
+      spirit,
+    } = context;
+    return [
+      { title: t("lifeDirectionTitle"), text: buildLifeDirectionText(context), conclusion: lifeDirectionConclusion(ascLord, ascLordPosition, chart) },
+      { title: t("publicProjectionTitle"), text: publicProjection, conclusion: publicProjectionConclusion(chart, planetsInTenth, tenthRuler, tenthRulerPosition) },
+      { title: t("visibilityTitle"), text: visibility, conclusion: visibilityConclusion(chart) },
+      { title: t("resourcesTitle"), text: buildSupportText(context), conclusion: supportConclusion(benefic, beneficPosition, focuses, ascLordPosition, chart) },
+      { title: t("tensionsTitle"), text: buildTensionText(context), conclusion: tensionConclusion(malefic, maleficPosition, focuses, ascLordPosition, chart) },
+      { title: t("configurationsTitle"), text: configurations, conclusion: configurationsConclusion(chart) },
+      { title: t("moonJudgmentTitle"), text: moonJudgment, conclusion: moonConclusion(chart) },
+      { title: t("foundationsTitle"), text: foundations, conclusion: triplicityFoundationConclusion(chart) },
+      { title: t("lots"), text: buildLotReadingText(context), conclusion: lotsConclusion(fortune, spirit, chart) },
+    ];
+  }
+
+  function interpretChart(chart) {
+    const context = createNatalReadingContext(chart);
 
     return {
-      lead,
-      summary,
-      focuses,
-      hierarchy,
-      qualities,
-      scoreBreakdown: focuses,
-      blocks: [
-        { title: t("lifeDirectionTitle"), text: lifeDirection, conclusion: lifeDirectionConclusion(ascLord, ascLordPosition, chart) },
-        { title: t("publicProjectionTitle"), text: publicProjection, conclusion: publicProjectionConclusion(chart, planetsInTenth, tenthRuler, tenthRulerPosition) },
-        { title: t("visibilityTitle"), text: visibility, conclusion: visibilityConclusion(chart) },
-        { title: t("resourcesTitle"), text: resources, conclusion: supportConclusion(benefic, beneficPosition, focuses, ascLordPosition, chart) },
-        { title: t("tensionsTitle"), text: tensions, conclusion: tensionConclusion(malefic, maleficPosition, focuses, ascLordPosition, chart) },
-        { title: t("configurationsTitle"), text: configurations, conclusion: configurationsConclusion(chart) },
-        { title: t("moonJudgmentTitle"), text: moonJudgment, conclusion: moonConclusion(chart) },
-        { title: t("foundationsTitle"), text: foundations, conclusion: triplicityFoundationConclusion(chart) },
-        { title: t("lots"), text: lotReading, conclusion: lotsConclusion(fortune, spirit, chart) },
-      ],
-      evidence,
+      lead: focusLeadReading(context.focuses),
+      summary: buildNatalReadingSummary(context),
+      focuses: context.focuses,
+      hierarchy: buildNatalReadingHierarchy(context),
+      qualities: buildNatalReadingQualities(context),
+      scoreBreakdown: context.focuses,
+      blocks: buildNatalReadingBlocks(context),
+      evidence: buildNatalReadingEvidence(context),
     };
   }
 
-  function renderScoreBreakdown(focuses) {
-    if (!focuses?.length) return "";
-    const focusType = (items = []) => {
-      const totals = items.reduce((acc, item) => {
-        acc[item.category] = (acc[item.category] || 0) + item.points;
-        return acc;
-      }, {});
-      const total = Object.values(totals).reduce((sum, value) => sum + value, 0);
-      const labels = Object.entries(totals)
-        .filter(([, value]) => !total || value / total >= 0.3)
-        .sort((a, b) => b[1] - a[1])
-        .map(([category]) => {
-          if (category === "scoreCategoryLifeAxis") return t("focusTypeVital");
-          if (category === "scoreCategoryPublic" || category === "scoreCategoryAngular") return t("focusTypePublic");
-          if (category === "scoreCategoryLots") return t("focusTypeCircumstantial");
-          return t("focusTypeSupport");
-        });
-      return naturalList([...new Set(labels)]);
-    };
-    const groupedItems = (items) => {
-      const order = ["scoreCategoryLifeAxis", "scoreCategoryPublic", "scoreCategoryAngular", "scoreCategoryLots", "scoreCategoryTriplicity", "scoreCategorySect"];
-      const groups = new Map();
-      (items || []).forEach((item) => {
-        const key = item.category || "scoreCategoryLifeAxis";
-        if (!groups.has(key)) groups.set(key, []);
-        groups.get(key).push(item);
+  const SCORE_BREAKDOWN_CATEGORY_ORDER = Object.freeze([
+    "scoreCategoryLifeAxis",
+    "scoreCategoryPublic",
+    "scoreCategoryAngular",
+    "scoreCategoryLots",
+    "scoreCategoryTriplicity",
+    "scoreCategorySect",
+  ]);
+
+  function scoreFocusTypeLabel(items = []) {
+    const totals = items.reduce((acc, item) => {
+      acc[item.category] = (acc[item.category] || 0) + item.points;
+      return acc;
+    }, {});
+    const total = Object.values(totals).reduce((sum, value) => sum + value, 0);
+    const labels = Object.entries(totals)
+      .filter(([, value]) => !total || value / total >= 0.3)
+      .sort((a, b) => b[1] - a[1])
+      .map(([category]) => {
+        if (category === "scoreCategoryLifeAxis") return t("focusTypeVital");
+        if (category === "scoreCategoryPublic" || category === "scoreCategoryAngular") return t("focusTypePublic");
+        if (category === "scoreCategoryLots") return t("focusTypeCircumstantial");
+        return t("focusTypeSupport");
       });
-      return order
-        .filter((key) => groups.has(key))
-        .map((key) => `
-          <div class="score-breakdown-group">
-            <p>${escapeHtml(t(key))}</p>
-            <ul>
-              ${groups.get(key).map((item) => `
-                <li><strong>+${escapeHtml(scoreNumber(item.points))}</strong> ${escapeHtml(item.reason)}</li>
-              `).join("")}
-            </ul>
-          </div>
-        `).join("");
-    };
+    return naturalList([...new Set(labels)]);
+  }
+
+  function buildScoreBreakdownGroups(items = []) {
+    const groups = new Map();
+    items.forEach((item) => {
+      const key = item.category || "scoreCategoryLifeAxis";
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push({
+        points: scoreNumber(item.points),
+        reason: item.reason,
+      });
+    });
+    return SCORE_BREAKDOWN_CATEGORY_ORDER
+      .filter((key) => groups.has(key))
+      .map((key) => ({
+        label: t(key),
+        items: groups.get(key),
+      }));
+  }
+
+  function buildScoreBreakdownModel(focuses = []) {
+    return focuses.map((focus) => ({
+      label: focusLabel(focus),
+      total: scoreNumber(focus.score),
+      type: scoreFocusTypeLabel(focus.scoreItems),
+      groups: buildScoreBreakdownGroups(focus.scoreItems),
+    }));
+  }
+
+  function renderScoreBreakdownGroup(group) {
+    return `
+      <div class="score-breakdown-group">
+        <p>${escapeHtml(group.label)}</p>
+        <ul>
+          ${group.items.map((item) => `
+            <li><strong>+${escapeHtml(item.points)}</strong> ${escapeHtml(item.reason)}</li>
+          `).join("")}
+        </ul>
+      </div>
+    `;
+  }
+
+  function renderScoreBreakdown(focuses) {
+    const model = buildScoreBreakdownModel(focuses);
+    if (!model.length) return "";
     return `
       <div class="score-breakdown" data-test="score-breakdown">
         <p class="score-breakdown-title">${escapeHtml(t("scoreBreakdownTitle"))}</p>
         <p class="score-breakdown-caution">${escapeHtml(t("scoreBreakdownCaution"))}</p>
-        ${focuses.map((focus) => `
+        ${model.map((focus) => `
           <section class="score-breakdown-item">
-            <h5>${escapeHtml(focusLabel(focus))} · ${escapeHtml(t("scoreTotalLabel"))}: ${escapeHtml(scoreNumber(focus.score))} ${escapeHtml(t("scorePointsLabel"))}</h5>
-            <p class="score-focus-type">${escapeHtml(t("scoreFocusType"))}: ${escapeHtml(focusType(focus.scoreItems))}</p>
-            ${groupedItems(focus.scoreItems)}
+            <h5>${escapeHtml(focus.label)} · ${escapeHtml(t("scoreTotalLabel"))}: ${escapeHtml(focus.total)} ${escapeHtml(t("scorePointsLabel"))}</h5>
+            <p class="score-focus-type">${escapeHtml(t("scoreFocusType"))}: ${escapeHtml(focus.type)}</p>
+            ${focus.groups.map(renderScoreBreakdownGroup).join("")}
           </section>
         `).join("")}
       </div>
     `;
   }
 
-  function renderMainLotsAudit(chart) {
+  function buildMainLotsAuditModel(chart) {
     const rows = ["fortune", "spirit"]
       .map((key) => lotByKey(chart, key))
       .filter(Boolean)
@@ -7617,40 +8060,67 @@
         const beneficTestimony = lotTestimonyText(lotTestimonyItems(lot, ["jupiter", "venus"], chart, "support"), "support", lot);
         const maleficPressure = lotPressureAuditHtml(lotTestimonyItems(lot, ["mars", "saturn"], chart, "tension"), lot);
         const lordLabel = planetLabel(lot.lord);
-        return `
-          <li data-test="main-lot-${escapeHtml(lot.key)}">
-            <strong>${escapeHtml(lotName(lot.key))}</strong>
-            <dl class="lot-audit-lines">
-              <dt>${escapeHtml(t("lotAuditPosition"))}</dt>
-              <dd>${escapeHtml(formatDegree(lot.lon))} · ${escapeHtml(t("tableHouse"))} ${escapeHtml(String(lot.house))}</dd>
-              <dt>${escapeHtml(t("lotAuditLord"))}</dt>
-              <dd>${escapeHtml(lordLabel)} · ${escapeHtml(t("tableHouse"))} ${escapeHtml(String(lord?.house || "—"))}</dd>
-              <dt>${escapeHtml(t("lotAuditDirectAdministration"))}</dt>
-              <dd class="lot-audit-role lot-direct-administration" data-test="main-lot-${escapeHtml(lot.key)}-direct-administration">${escapeHtml(directLotAdministrationText(lot, chart))}</dd>
-              <dt>${escapeHtml(t("lotAuditLordRole"))}</dt>
-              <dd class="lot-audit-role">${escapeHtml(lotLordRoleText(lot, chart))}</dd>
-              <dt>${escapeHtml(t("lotAuditLordCondition"))}</dt>
-              <dd>${escapeHtml(plainDignityText(lord?.dignities || [], chart))}</dd>
-              <dt>${escapeHtml(t("lotAuditLordAngularity"))}</dt>
-              <dd>${escapeHtml(lord?.angularity ? t(lord.angularity) : "—")}</dd>
-              <dt>${escapeHtml(t("lotAuditLordSolarPhase"))}</dt>
-              <dd>${escapeHtml(lordSolar)}</dd>
-              <dt>${escapeHtml(t("lotAuditFormula"))}</dt>
-              <dd>${escapeHtml(lotFormulaText(lot.key, chart.isDay))}</dd>
-              <dt>${escapeHtml(t("lotAuditBeneficTestimony"))}</dt>
-              <dd>${escapeHtml(beneficTestimony)}</dd>
-              <dt>${escapeHtml(t("lotAuditMaleficPressure"))}</dt>
-              <dd>${maleficPressure}</dd>
-            </dl>
-          </li>
-        `;
+        return {
+          key: lot.key,
+          name: lotName(lot.key),
+          fields: [
+            { label: t("lotAuditPosition"), value: `${formatDegree(lot.lon)} · ${t("tableHouse")} ${lot.house}` },
+            { label: t("lotAuditLord"), value: `${lordLabel} · ${t("tableHouse")} ${lord?.house || "—"}` },
+            {
+              label: t("lotAuditDirectAdministration"),
+              value: directLotAdministrationText(lot, chart),
+              valueClass: "lot-audit-role lot-direct-administration",
+              dataTest: `main-lot-${lot.key}-direct-administration`,
+            },
+            { label: t("lotAuditLordRole"), value: lotLordRoleText(lot, chart), valueClass: "lot-audit-role" },
+            { label: t("lotAuditLordCondition"), value: plainDignityText(lord?.dignities || [], chart) },
+            { label: t("lotAuditLordAngularity"), value: lord?.angularity ? t(lord.angularity) : "—" },
+            { label: t("lotAuditLordSolarPhase"), value: lordSolar },
+            { label: t("lotAuditFormula"), value: lotFormulaText(lot.key, chart.isDay) },
+            { label: t("lotAuditBeneficTestimony"), value: beneficTestimony },
+            { label: t("lotAuditMaleficPressure"), html: maleficPressure },
+          ],
+        };
       });
+    return {
+      title: t("mainLotsAuditTitle"),
+      rows,
+      note: t("lotTableDisplayNote"),
+    };
+  }
+
+  function renderAuditField(field) {
+    const attrs = [
+      field.valueClass ? `class="${escapeHtml(field.valueClass)}"` : "",
+      field.dataTest ? `data-test="${escapeHtml(field.dataTest)}"` : "",
+    ].filter(Boolean).join(" ");
+    const value = field.html || escapeHtml(field.value ?? "");
+    return `
+      <dt>${escapeHtml(field.label)}</dt>
+      <dd${attrs ? ` ${attrs}` : ""}>${value}</dd>
+    `;
+  }
+
+  function renderMainLotAuditRow(row) {
+    return `
+      <li data-test="main-lot-${escapeHtml(row.key)}">
+        <strong>${escapeHtml(row.name)}</strong>
+        <dl class="lot-audit-lines">
+          ${row.fields.map(renderAuditField).join("")}
+        </dl>
+      </li>
+    `;
+  }
+
+  function renderMainLotsAudit(chart) {
+    const model = buildMainLotsAuditModel(chart);
+    const rows = model.rows.map(renderMainLotAuditRow);
     if (!rows.length) return "";
     return `
       <section class="main-lots-audit" data-test="main-lots-audit">
-        <h5>${escapeHtml(t("mainLotsAuditTitle"))}</h5>
+        <h5>${escapeHtml(model.title)}</h5>
         <ul>${rows.join("")}</ul>
-        <p>${escapeHtml(t("lotTableDisplayNote"))}</p>
+        <p>${escapeHtml(model.note)}</p>
       </section>
     `;
   }
@@ -7669,49 +8139,82 @@
     `;
   }
 
-  function renderInterpretation(chart) {
-    const interpretation = interpretChart(chart);
-    $("#interpretationPanel").innerHTML = `
+  function renderInterpretationHeading() {
+    return `
       <div class="interpretation-heading">
         <h3>${escapeHtml(t("interpretationTitle"))}</h3>
         <p>${escapeHtml(t("interpretationWhy"))}</p>
       </div>
+    `;
+  }
+
+  function renderInterpretationLead(interpretation) {
+    return `
+      <section class="interpretation-lead">
+        <h4>${escapeHtml(t("interpretationLeadTitle"))}</h4>
+        <p>${escapeHtml(interpretation.lead)}</p>
+      </section>
+    `;
+  }
+
+  function renderInterpretationSummary(interpretation) {
+    return `
+      <section class="interpretation-summary">
+        <h4>${escapeHtml(t("interpretationSummary"))}</h4>
+        <p>${escapeHtml(interpretation.summary)}</p>
+        <div class="quality-badges" aria-label="${escapeHtml(t("qualityTitle"))}">
+          ${interpretation.qualities.map((item) => `
+            <span><b>${escapeHtml(item.label)}</b>${escapeHtml(capitalizeText(item.value))}</span>
+          `).join("")}
+        </div>
+        <p class="focus-list-title">${escapeHtml(t("mainFocusTitle"))}</p>
+        <ul class="focus-list">
+          ${interpretation.focuses.map((focus) => `
+            <li>
+              <strong>${escapeHtml(focusLabel(focus))}</strong>
+              <span>${escapeHtml(t("signalsLabel"))}: ${escapeHtml(focusReasonsText(focus))}</span>
+            </li>
+          `).join("")}
+        </ul>
+      </section>
+    `;
+  }
+
+  function renderInterpretationHierarchy(interpretation) {
+    return `
+      <section class="interpretation-hierarchy">
+        <h4>${escapeHtml(t("hierarchyTitle"))}</h4>
+        <ol>
+          ${interpretation.hierarchy.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+        </ol>
+      </section>
+    `;
+  }
+
+  function renderInterpretationReading(interpretation) {
+    return `
+      <section class="interpretation-reading">
+        <h4>${escapeHtml(t("interpretationReading"))}</h4>
+        <div class="interpretation-reading-grid">
+          ${interpretation.blocks.map(renderInterpretationBlock).join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  function renderInterpretationGrid(interpretation) {
+    return `
       <div class="interpretation-grid">
-        <section class="interpretation-lead">
-          <h4>${escapeHtml(t("interpretationLeadTitle"))}</h4>
-          <p>${escapeHtml(interpretation.lead)}</p>
-        </section>
-        <section class="interpretation-summary">
-          <h4>${escapeHtml(t("interpretationSummary"))}</h4>
-          <p>${escapeHtml(interpretation.summary)}</p>
-          <div class="quality-badges" aria-label="${escapeHtml(t("qualityTitle"))}">
-            ${interpretation.qualities.map((item) => `
-              <span><b>${escapeHtml(item.label)}</b>${escapeHtml(capitalizeText(item.value))}</span>
-            `).join("")}
-          </div>
-          <p class="focus-list-title">${escapeHtml(t("mainFocusTitle"))}</p>
-          <ul class="focus-list">
-            ${interpretation.focuses.map((focus) => `
-              <li>
-                <strong>${escapeHtml(focusLabel(focus))}</strong>
-                <span>${escapeHtml(t("signalsLabel"))}: ${escapeHtml(focusReasonsText(focus))}</span>
-              </li>
-            `).join("")}
-          </ul>
-        </section>
-        <section class="interpretation-hierarchy">
-          <h4>${escapeHtml(t("hierarchyTitle"))}</h4>
-          <ol>
-            ${interpretation.hierarchy.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
-          </ol>
-        </section>
-        <section class="interpretation-reading">
-          <h4>${escapeHtml(t("interpretationReading"))}</h4>
-          <div class="interpretation-reading-grid">
-            ${interpretation.blocks.map(renderInterpretationBlock).join("")}
-          </div>
-        </section>
+        ${renderInterpretationLead(interpretation)}
+        ${renderInterpretationSummary(interpretation)}
+        ${renderInterpretationHierarchy(interpretation)}
+        ${renderInterpretationReading(interpretation)}
       </div>
+    `;
+  }
+
+  function renderInterpretationEvidence(interpretation, chart) {
+    return `
       <details class="interpretation-evidence">
         <summary>${escapeHtml(t("interpretationEvidence"))}</summary>
         <section class="evidence-section" data-test="evidence-score">
@@ -7729,12 +8232,27 @@
           </ol>
         </section>
       </details>
+    `;
+  }
+
+  function renderInterpretationTimingNote() {
+    return `
       <p class="text-note interpretation-timing"><strong>${escapeHtml(t("interpretationTimingNote"))}:</strong> ${escapeHtml(t("interpretationTimingText"))}</p>
     `;
   }
 
-  function renderPlanetTable(chart) {
-    const headers = [
+  function renderInterpretation(chart) {
+    const interpretation = interpretChart(chart);
+    $("#interpretationPanel").innerHTML = [
+      renderInterpretationHeading(),
+      renderInterpretationGrid(interpretation),
+      renderInterpretationEvidence(interpretation, chart),
+      renderInterpretationTimingNote(),
+    ].join("");
+  }
+
+  function planetTableHeaders() {
+    return [
       tableHead(t("tablePlanet"), "planet"),
       tableHead(t("tableLongitude"), "longitude"),
       tableHead(t("tableHouse"), "house"),
@@ -7742,45 +8260,57 @@
       tableHead(t("tableAngularity"), "angularity"),
       tableHead(t("tablePhase"), "solarPhase"),
     ];
-    const planetRows = (keys) => keys.map((key) => {
-      const p = chart.positions[key];
-      const condition = p.dignities?.length ? glossaryList(p.dignities, chart) : "—";
-      return [
-        `<span class="glyph">${PLANETS[key].symbol}</span> ${escapeHtml(planetName(key))}`,
-        escapeHtml(formatDegree(p.lon)),
-        escapeHtml(String(p.house)),
-        condition,
-        glossaryMaybe(capitalizeText(t(p.angularity)), p.angularity, "capitalize-first"),
-        glossaryParts(solarPhaseTableText(key, chart)),
-      ];
-    });
+  }
+
+  function planetTableRow(chart, key) {
+    const p = chart.positions[key];
+    const condition = p.dignities?.length ? glossaryList(p.dignities, chart) : "—";
+    return [
+      `<span class="glyph">${PLANETS[key].symbol}</span> ${escapeHtml(planetName(key))}`,
+      escapeHtml(formatDegree(p.lon)),
+      escapeHtml(String(p.house)),
+      condition,
+      glossaryMaybe(capitalizeText(t(p.angularity)), p.angularity, "capitalize-first"),
+      glossaryParts(solarPhaseTableText(key, chart)),
+    ];
+  }
+
+  function planetTableRows(chart, keys) {
+    return keys.map((key) => planetTableRow(chart, key));
+  }
+
+  function renderPlanetTable(chart) {
+    const headers = planetTableHeaders();
     const traditionalKeys = chart.planetKeys.filter((key) => VISIBLE_KEYS.includes(key));
     const modernKeys = chart.planetKeys.filter((key) => MODERN_KEYS.includes(key));
     if (modernKeys.length) {
       $("#tab-planets").innerHTML = `
         <section class="table-section" data-test="traditional-planets-section">
           <h3>${escapeHtml(t("traditionalPlanetsTitle"))}</h3>
-          ${makeTable(headers, planetRows(traditionalKeys))}
+          ${makeTable(headers, planetTableRows(chart, traditionalKeys))}
         </section>
         <section class="table-section" data-test="modern-planets-section">
           <h3>${escapeHtml(t("modernPlanetsTitle"))}</h3>
-          ${makeTable(headers, planetRows(modernKeys))}
+          ${makeTable(headers, planetTableRows(chart, modernKeys))}
         </section>
       `;
       return;
     }
-    $("#tab-planets").innerHTML = makeTable(headers, planetRows(chart.planetKeys));
+    $("#tab-planets").innerHTML = makeTable(headers, planetTableRows(chart, chart.planetKeys));
   }
 
-  function renderHouseTable(chart) {
-    const headers = [
+  function houseTableHeaders() {
+    return [
       tableHead(t("tablePlace"), "place"),
       tableHead(t("tableSign"), "sign"),
       tableHead(t("tableRuler"), "ruler"),
       tableHead(t("tablePlanets"), "planets"),
       tableHead(t("tableTopics"), "topics"),
     ];
-    const rows = Array.from({ length: 12 }, (_, i) => {
+  }
+
+  function houseTableRows(chart) {
+    return Array.from({ length: 12 }, (_, i) => {
       const house = i + 1;
       const sIndex = (chart.ascSign + i) % 12;
       const sign = SIGNS[sIndex];
@@ -7796,7 +8326,38 @@
         escapeHtml(capitalizeText(houseTopics(house))),
       ];
     });
-    $("#tab-houses").innerHTML = makeTable(headers, rows);
+  }
+
+  function renderHouseTable(chart) {
+    $("#tab-houses").innerHTML = makeTable(houseTableHeaders(), houseTableRows(chart));
+  }
+
+  function lotTableHeaders() {
+    return [
+      tableHead(t("tableLot"), "lots"),
+      tableHead(t("tableLongitude"), "longitude"),
+      tableHead(t("tableHouse"), "house"),
+      tableHead(t("tableLord"), "lotLord"),
+      tableHead(t("tableLordHouse"), "lotLordHouse"),
+      tableHead(t("tableFormula"), "lots"),
+    ];
+  }
+
+  function lotTableRows(lots, chart) {
+    return lots.map((lot) => [
+      glossaryTerm(capitalizeText(lotName(lot.key)), lotGlossaryKey(lot.key), "capitalize-first"),
+      escapeHtml(formatDegree(lot.lon)),
+      escapeHtml(String(lot.house)),
+      escapeHtml(`${PLANETS[lot.lord].symbol} ${planetName(lot.lord)}`),
+      escapeHtml(String(lot.lordHouse || "—")),
+      escapeHtml(lotFormulaText(lot.key, chart.isDay)),
+    ]);
+  }
+
+  function lotFormulaNote() {
+    return state.lang === "es"
+      ? `Sistema de fórmulas: ${glossaryTerm(t("fortune"), "lotFortune")} y ${glossaryTerm(t("spirit"), "lotSpirit")} se invierten por ${glossaryTerm(t("sect"), "sect")}; ${glossaryTerm("Eros", "lotEros")} y ${glossaryTerm(t("necessity"), "lotNecessity")} usan la tradición basada en ${glossaryTerm(t("fortune"), "lotFortune")} y ${glossaryTerm(t("spirit"), "lotSpirit")}; ${glossaryTerm(t("courage"), "lotCourage")}, ${glossaryTerm(t("victory"), "lotVictory")} y ${glossaryTerm("Némesis", "lotNemesis")} usan fórmulas planetarias herméticas.`
+      : `Formula system: ${glossaryTerm(t("fortune"), "lotFortune")} and ${glossaryTerm(t("spirit"), "lotSpirit")} reverse by ${glossaryTerm(t("sect"), "sect")}; ${glossaryTerm("Eros", "lotEros")} and ${glossaryTerm(t("necessity"), "lotNecessity")} use the ${glossaryTerm(t("fortune"), "lotFortune")}/${glossaryTerm(t("spirit"), "lotSpirit")}-based tradition; ${glossaryTerm(t("courage"), "lotCourage")}, ${glossaryTerm(t("victory"), "lotVictory")}, and ${glossaryTerm("Nemesis", "lotNemesis")} use hermetic planetary formulas.`;
   }
 
   function renderLotTable(chart) {
@@ -7805,29 +8366,23 @@
       $("#tab-lots").innerHTML = `<p class="text-note">${escapeHtml(t("noLots"))}</p>`;
       return;
     }
-    const headers = [
-      tableHead(t("tableLot"), "lots"),
-      tableHead(t("tableLongitude"), "longitude"),
-      tableHead(t("tableHouse"), "house"),
-      tableHead(t("tableLord"), "lotLord"),
-      tableHead(t("tableLordHouse"), "lotLordHouse"),
-      tableHead(t("tableFormula"), "lots"),
-    ];
-    const rows = lots.map((lot) => [
-      glossaryTerm(capitalizeText(lotName(lot.key)), lotGlossaryKey(lot.key), "capitalize-first"),
-      escapeHtml(formatDegree(lot.lon)),
-      escapeHtml(String(lot.house)),
-      escapeHtml(`${PLANETS[lot.lord].symbol} ${planetName(lot.lord)}`),
-      escapeHtml(String(lot.lordHouse || "—")),
-      escapeHtml(lotFormulaText(lot.key, chart.isDay)),
-    ]);
-    const lotNote = state.lang === "es"
-      ? `Sistema de fórmulas: ${glossaryTerm(t("fortune"), "lotFortune")} y ${glossaryTerm(t("spirit"), "lotSpirit")} se invierten por ${glossaryTerm(t("sect"), "sect")}; ${glossaryTerm("Eros", "lotEros")} y ${glossaryTerm(t("necessity"), "lotNecessity")} usan la tradición basada en ${glossaryTerm(t("fortune"), "lotFortune")} y ${glossaryTerm(t("spirit"), "lotSpirit")}; ${glossaryTerm(t("courage"), "lotCourage")}, ${glossaryTerm(t("victory"), "lotVictory")} y ${glossaryTerm("Némesis", "lotNemesis")} usan fórmulas planetarias herméticas.`
-      : `Formula system: ${glossaryTerm(t("fortune"), "lotFortune")} and ${glossaryTerm(t("spirit"), "lotSpirit")} reverse by ${glossaryTerm(t("sect"), "sect")}; ${glossaryTerm("Eros", "lotEros")} and ${glossaryTerm(t("necessity"), "lotNecessity")} use the ${glossaryTerm(t("fortune"), "lotFortune")}/${glossaryTerm(t("spirit"), "lotSpirit")}-based tradition; ${glossaryTerm(t("courage"), "lotCourage")}, ${glossaryTerm(t("victory"), "lotVictory")}, and ${glossaryTerm("Nemesis", "lotNemesis")} use hermetic planetary formulas.`;
-    $("#tab-lots").innerHTML = `${makeTable(headers, rows)}<p class="text-note">${lotNote}</p>`;
+    $("#tab-lots").innerHTML = `${makeTable(lotTableHeaders(), lotTableRows(lots, chart))}<p class="text-note">${lotFormulaNote()}</p>`;
   }
 
-  function renderAspectTable(chart) {
+  function aspectTableHeaders() {
+    return [
+      tableHead(t("tablePair"), "aspectPair"),
+      tableHead(t("tableAspect"), "configurations"),
+      tableHead(t("tableMode"), "mode"),
+      tableHead(t("tableOrb"), "orb"),
+    ];
+  }
+
+  function aspectPairLabel(a, b) {
+    return escapeHtml(`${PLANETS[a].symbol} ${planetName(a)} / ${PLANETS[b].symbol} ${planetName(b)}`);
+  }
+
+  function aspectTableRows(chart) {
     const rows = [];
     const keys = chart.planetKeys.filter((key) => VISIBLE_KEYS.includes(key) || chart.input.includeModern);
     for (let i = 0; i < keys.length; i += 1) {
@@ -7841,7 +8396,7 @@
         if (showSign && signType) {
           const dominance = overcomingLabel(a, b, chart.positions[a].lon, chart.positions[b].lon) || "—";
           rows.push([
-            escapeHtml(`${PLANETS[a].symbol} ${planetName(a)} / ${PLANETS[b].symbol} ${planetName(b)}`),
+            aspectPairLabel(a, b),
             glossaryMaybe(capitalizeText(t(signType)), signType, "capitalize-first"),
             glossaryMaybe(capitalizeText(t("signBased")), "aspects", "capitalize-first"),
             glossaryMaybe(capitalizeText(dominance), glossaryKeyForText(dominance), "capitalize-first"),
@@ -7849,7 +8404,7 @@
         }
         if (showDegree && degree) {
           rows.push([
-            escapeHtml(`${PLANETS[a].symbol} ${planetName(a)} / ${PLANETS[b].symbol} ${planetName(b)}`),
+            aspectPairLabel(a, b),
             glossaryMaybe(capitalizeText(t(degree.type)), degree.type, "capitalize-first"),
             glossaryMaybe(capitalizeText(t("degreeBased")), "aspects", "capitalize-first"),
             escapeHtml(`${round(degree.delta, 2)}°`),
@@ -7857,16 +8412,16 @@
         }
       }
     }
+    return rows;
+  }
+
+  function renderAspectTable(chart) {
+    const rows = aspectTableRows(chart);
     if (!rows.length) {
       $("#tab-aspects").innerHTML = `<p class="text-note">${escapeHtml(t("noAspects"))}</p>`;
       return;
     }
-    $("#tab-aspects").innerHTML = makeTable([
-      tableHead(t("tablePair"), "aspectPair"),
-      tableHead(t("tableAspect"), "configurations"),
-      tableHead(t("tableMode"), "mode"),
-      tableHead(t("tableOrb"), "orb"),
-    ], rows);
+    $("#tab-aspects").innerHTML = makeTable(aspectTableHeaders(), rows);
   }
 
   function polar(cx, cy, r, lon, asc) {
@@ -7874,17 +8429,21 @@
     return [cx + r * Math.cos(angle), cy + r * Math.sin(angle)];
   }
 
-  function renderWheel(chart) {
-    const cx = 180;
-    const cy = 180;
-    const outer = 158;
-    const signR = 144;
-    const planetR = 110;
-    const aspectR = 82;
+  function wheelGeometry() {
+    return {
+      cx: 180,
+      cy: 180,
+      outer: 158,
+      signR: 144,
+      planetR: 110,
+      aspectR: 82,
+    };
+  }
+
+  function buildWheelHouseParts(chart, geometry) {
+    const { cx, cy, outer, signR } = geometry;
     const lines = [];
     const labels = [];
-    const aspects = [];
-
     for (let i = 0; i < 12; i += 1) {
       const signIndex = (chart.ascSign + i) % 12;
       const boundary = signIndex * 30;
@@ -7896,7 +8455,13 @@
       const [hx, hy] = polar(cx, cy, 56, boundary + 15, chart.angles.asc);
       labels.push(`<text class="wheel-label" x="${hx}" y="${hy}" text-anchor="middle" dominant-baseline="central">${i + 1}</text>`);
     }
+    return { lines, labels };
+  }
 
+  function buildWheelAngleParts(chart, geometry) {
+    const { cx, cy, outer } = geometry;
+    const lines = [];
+    const labels = [];
     [
       ["ASC", chart.angles.asc],
       ["DSC", chart.angles.desc],
@@ -7909,7 +8474,12 @@
       lines.push(`<line class="wheel-angle" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"></line>`);
       labels.push(`<text class="wheel-label" x="${tx}" y="${ty}" text-anchor="middle" dominant-baseline="central">${label}</text>`);
     });
+    return { lines, labels };
+  }
 
+  function buildWheelAspectParts(chart, geometry) {
+    const { cx, cy, aspectR } = geometry;
+    const aspects = [];
     const visible = chart.planetKeys.filter((key) => VISIBLE_KEYS.includes(key));
     for (let i = 0; i < visible.length; i += 1) {
       for (let j = i + 1; j < visible.length; j += 1) {
@@ -7921,29 +8491,76 @@
         aspects.push(`<line class="wheel-aspect" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"></line>`);
       }
     }
+    return aspects;
+  }
 
+  function buildWheelPlanetLabels(chart, geometry) {
+    const { cx, cy, planetR } = geometry;
+    const labels = [];
     chart.planetKeys.forEach((key, index) => {
       const radius = planetR - (index % 3) * 9;
       const [x, y] = polar(cx, cy, radius, chart.positions[key].lon, chart.angles.asc);
       labels.push(`<text class="wheel-planet" x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central">${PLANETS[key].symbol}</text>`);
     });
+    return labels;
+  }
 
+  function buildWheelModel(chart) {
+    const geometry = wheelGeometry();
+    const houses = buildWheelHouseParts(chart, geometry);
+    const angles = buildWheelAngleParts(chart, geometry);
+    return {
+      ...geometry,
+      lines: [...houses.lines, ...angles.lines],
+      labels: [...houses.labels, ...angles.labels, ...buildWheelPlanetLabels(chart, geometry)],
+      aspects: buildWheelAspectParts(chart, geometry),
+      sectLabel: state.lang === "es" ? (chart.isDay ? "DÍA" : "NOCHE") : (chart.isDay ? "DAY" : "NIGHT"),
+    };
+  }
+
+  function renderWheel(chart) {
+    const model = buildWheelModel(chart);
     return `
       <svg viewBox="0 0 360 360" role="img" aria-label="Hellenistic chart wheel">
-        <circle cx="${cx}" cy="${cy}" r="${outer}" fill="none" stroke="currentColor" opacity="0.16" stroke-width="1.4"></circle>
-        <circle cx="${cx}" cy="${cy}" r="126" fill="none" stroke="currentColor" opacity="0.12"></circle>
-        <circle cx="${cx}" cy="${cy}" r="92" fill="none" stroke="currentColor" opacity="0.14"></circle>
-        <circle cx="${cx}" cy="${cy}" r="42" fill="none" stroke="currentColor" opacity="0.2"></circle>
-        ${lines.join("")}
-        ${aspects.join("")}
-        ${labels.join("")}
-        <text x="${cx}" y="${cy - 5}" text-anchor="middle" class="wheel-sign">Tyche</text>
-        <text x="${cx}" y="${cy + 12}" text-anchor="middle" class="wheel-label">${state.lang === "es" ? (chart.isDay ? "DÍA" : "NOCHE") : (chart.isDay ? "DAY" : "NIGHT")}</text>
+        <circle cx="${model.cx}" cy="${model.cy}" r="${model.outer}" fill="none" stroke="currentColor" opacity="0.16" stroke-width="1.4"></circle>
+        <circle cx="${model.cx}" cy="${model.cy}" r="126" fill="none" stroke="currentColor" opacity="0.12"></circle>
+        <circle cx="${model.cx}" cy="${model.cy}" r="92" fill="none" stroke="currentColor" opacity="0.14"></circle>
+        <circle cx="${model.cx}" cy="${model.cy}" r="42" fill="none" stroke="currentColor" opacity="0.2"></circle>
+        ${model.lines.join("")}
+        ${model.aspects.join("")}
+        ${model.labels.join("")}
+        <text x="${model.cx}" y="${model.cy - 5}" text-anchor="middle" class="wheel-sign">Tyche</text>
+        <text x="${model.cx}" y="${model.cy + 12}" text-anchor="middle" class="wheel-label">${model.sectLabel}</text>
       </svg>
     `;
   }
 
-  function applyI18n() {
+  function translateStaticNodes() {
+    $$("[data-i18n]").forEach((node) => {
+      node.textContent = t(node.dataset.i18n);
+    });
+    $$("[data-i18n-html]").forEach((node) => {
+      node.innerHTML = t(node.dataset.i18nHtml);
+    });
+  }
+
+  function refreshLocalizedDynamicContent() {
+    populateLists();
+    const city = findCity($("#birthPlace").value);
+    if (city) {
+      state.selectedCity = city;
+      state.activeCityKey = cityKey(city);
+      $("#birthPlace").value = formatCity(city);
+    }
+    updateClearPlaceButton();
+    hidePlaceSuggestions();
+    renderHistoricalPeople();
+    if (state.lastChart?.input?.city) state.lastChart.input.place = formatCity(state.lastChart.input.city);
+    if (state.lastChart) renderChart(state.lastChart);
+    updateOptionWarnings();
+  }
+
+  function applyDocumentI18n() {
     document.documentElement.lang = state.lang;
     document.title = state.lang === "es" ? "Tyche · Carta natal helenística" : "Tyche · Hellenistic Natal Chart";
     $("meta[name='description']")?.setAttribute(
@@ -7952,12 +8569,9 @@
         ? "Tyche calcula cartas natales helenísticas con Ascendente, casas de signos enteros, secta, condición esencial y lotes, procesadas localmente en el navegador."
         : "Tyche calculates Hellenistic natal charts with the Hour-Marker, Whole Sign Houses, sect, essential condition, and lots, processed locally in the browser."
     );
-    $$("[data-i18n]").forEach((node) => {
-      node.textContent = t(node.dataset.i18n);
-    });
-    $$("[data-i18n-html]").forEach((node) => {
-      node.innerHTML = t(node.dataset.i18nHtml);
-    });
+  }
+
+  function updateLocalizedControlLabels() {
     $(".toolbar").setAttribute("aria-label", state.lang === "es" ? "Preferencias" : "Preferences");
     $("#chartWheel").setAttribute("aria-label", state.lang === "es" ? "Rueda de carta natal" : "Natal chart wheel");
     $(".tabs").setAttribute("aria-label", state.lang === "es" ? "Detalles de la carta" : "Chart details");
@@ -7973,19 +8587,13 @@
     $("#birthPlace").placeholder = state.lang === "es" ? "Madrid, España" : "Madrid, Spain";
     $("#clearPlace").setAttribute("aria-label", t("clearPlace"));
     $("#clearPlace").title = t("clearPlace");
-    populateLists();
-    const city = findCity($("#birthPlace").value);
-    if (city) {
-      state.selectedCity = city;
-      state.activeCityKey = cityKey(city);
-      $("#birthPlace").value = formatCity(city);
-    }
-    updateClearPlaceButton();
-    hidePlaceSuggestions();
-    renderHistoricalPeople();
-    if (state.lastChart?.input?.city) state.lastChart.input.place = formatCity(state.lastChart.input.city);
-    if (state.lastChart) renderChart(state.lastChart);
-    updateOptionWarnings();
+  }
+
+  function applyI18n() {
+    applyDocumentI18n();
+    translateStaticNodes();
+    updateLocalizedControlLabels();
+    refreshLocalizedDynamicContent();
     decorateGlossaryTriggers();
   }
 
@@ -8010,187 +8618,242 @@
     applyCityToFields(city, cityChanged);
   }
 
+  function buildOptionWarningsModel() {
+    const techniqueMode = $("#techniqueMode").value;
+    const includeModern = $("#includeModern").checked;
+    const strictWithModern = techniqueMode === "strict" && includeModern;
+    return {
+      calendarHidden: $("#calendar").value !== "julian",
+      zodiacHidden: $("#zodiac").value !== "sidereal",
+      technique: {
+        text: strictWithModern ? t("modernStrictInlineWarning") : t("mixedInlineWarning"),
+        test: strictWithModern ? "modern-strict-warning" : "modern-mixed-warning",
+        hidden: techniqueMode !== "mixed" && !includeModern,
+      },
+    };
+  }
+
   function updateOptionWarnings() {
+    const model = buildOptionWarningsModel();
     const calendarWarning = $("#calendarWarning");
     const zodiacWarning = $("#zodiacWarning");
     const techniqueWarning = $("#techniqueWarning");
-    if (calendarWarning) calendarWarning.hidden = $("#calendar").value !== "julian";
-    if (zodiacWarning) zodiacWarning.hidden = $("#zodiac").value !== "sidereal";
+    if (calendarWarning) calendarWarning.hidden = model.calendarHidden;
+    if (zodiacWarning) zodiacWarning.hidden = model.zodiacHidden;
     if (techniqueWarning) {
-      const techniqueMode = $("#techniqueMode").value;
-      const includeModern = $("#includeModern").checked;
-      techniqueWarning.textContent = techniqueMode === "strict" && includeModern
-        ? t("modernStrictInlineWarning")
-        : t("mixedInlineWarning");
-      techniqueWarning.dataset.test = techniqueMode === "strict" && includeModern
-        ? "modern-strict-warning"
-        : "modern-mixed-warning";
-      techniqueWarning.hidden = techniqueMode !== "mixed" && !includeModern;
+      techniqueWarning.textContent = model.technique.text;
+      techniqueWarning.dataset.test = model.technique.test;
+      techniqueWarning.hidden = model.technique.hidden;
     }
+  }
+
+  function activateTab(button) {
+    $$(".tab").forEach((tab) => {
+      tab.classList.toggle("is-active", tab === button);
+      tab.setAttribute("aria-selected", String(tab === button));
+    });
+    $$(".tab-panel").forEach((panel) => {
+      panel.hidden = panel.id !== `tab-${button.dataset.tab}`;
+    });
   }
 
   function bindTabs() {
     $$(".tab").forEach((button) => {
-      button.addEventListener("click", () => {
-        $$(".tab").forEach((tab) => {
-          tab.classList.toggle("is-active", tab === button);
-          tab.setAttribute("aria-selected", String(tab === button));
-        });
-        $$(".tab-panel").forEach((panel) => {
-          panel.hidden = panel.id !== `tab-${button.dataset.tab}`;
-        });
-      });
+      button.addEventListener("click", () => activateTab(button));
     });
   }
 
-  function bindEvents() {
-    const birthPlace = $("#birthPlace");
-    $("#languageToggle").addEventListener("click", () => {
-      state.lang = state.lang === "es" ? "en" : "es";
-      localStorage.setItem("tyche-lang", state.lang);
-      applyI18n();
-    });
+  function handleLanguageToggle() {
+    state.lang = state.lang === "es" ? "en" : "es";
+    localStorage.setItem("tyche-lang", state.lang);
+    applyI18n();
+  }
+
+  function handleThemeToggle() {
+    state.theme = state.theme === "night" ? "day" : "night";
+    localStorage.setItem("tyche-theme", state.theme);
+    applyTheme();
+  }
+
+  function bindPreferenceEvents() {
+    $("#languageToggle").addEventListener("click", handleLanguageToggle);
+    $("#themeToggle").addEventListener("click", handleThemeToggle);
+  }
+
+  function handlePeopleModalBackdropClick(event) {
+    if (event.target === $("#peopleModal")) closePeopleModal();
+  }
+
+  function handlePeopleGridClick(event) {
+    const dataTrigger = event.target.closest("[data-person-source-id]");
+    if (dataTrigger) {
+      event.preventDefault();
+      event.stopPropagation();
+      openPersonData(dataTrigger.dataset.personSourceId, dataTrigger);
+      return;
+    }
+    const button = event.target.closest("[data-person-id]");
+    if (button) loadHistoricalPerson(button.dataset.personId);
+  }
+
+  function bindPeopleModalEvents() {
     $("#peopleToggle").addEventListener("click", openPeopleModal);
     $("#peopleClose").addEventListener("click", closePeopleModal);
-    $("#peopleModal").addEventListener("click", (event) => {
-      if (event.target === $("#peopleModal")) closePeopleModal();
-    });
-    $("#peopleGrid").addEventListener("click", (event) => {
-      const dataTrigger = event.target.closest("[data-person-source-id]");
-      if (dataTrigger) {
-        event.preventDefault();
-        event.stopPropagation();
-        openPersonData(dataTrigger.dataset.personSourceId, dataTrigger);
+    $("#peopleModal").addEventListener("click", handlePeopleModalBackdropClick);
+    $("#peopleGrid").addEventListener("click", handlePeopleGridClick);
+  }
+
+  function handleDocumentPopoverClick(event) {
+    const trigger = event.target.closest("[data-glossary]");
+    if (trigger) {
+      event.preventDefault();
+      event.stopPropagation();
+      openGlossary(trigger.dataset.glossary, trigger);
+      return;
+    }
+    if (!event.target.closest("#glossaryPopover")) closeGlossary();
+    if (!event.target.closest("#personDataPopover") && !event.target.closest("[data-person-source-id]")) closePersonData();
+  }
+
+  function handleDocumentPopoverKeydown(event) {
+    const trigger = event.target.closest("[data-glossary]");
+    if (trigger && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      openGlossary(trigger.dataset.glossary, trigger);
+      return;
+    }
+    if (event.key === "Escape") {
+      if (!$("#glossaryPopover").hidden) {
+        closeGlossary({ restoreFocus: true });
         return;
       }
-      const button = event.target.closest("[data-person-id]");
-      if (button) loadHistoricalPerson(button.dataset.personId);
-    });
-    document.addEventListener("click", (event) => {
-      const trigger = event.target.closest("[data-glossary]");
-      if (trigger) {
-        event.preventDefault();
-        event.stopPropagation();
-        openGlossary(trigger.dataset.glossary, trigger);
+      if (!$("#personDataPopover").hidden) {
+        closePersonData({ restoreFocus: true });
         return;
       }
-      if (!event.target.closest("#glossaryPopover")) closeGlossary();
-      if (!event.target.closest("#personDataPopover") && !event.target.closest("[data-person-source-id]")) closePersonData();
-    });
-    document.addEventListener("keydown", (event) => {
-      const trigger = event.target.closest("[data-glossary]");
-      if (trigger && (event.key === "Enter" || event.key === " ")) {
-        event.preventDefault();
-        openGlossary(trigger.dataset.glossary, trigger);
-        return;
-      }
-      if (event.key === "Escape") {
-        if (!$("#glossaryPopover").hidden) {
-          closeGlossary({ restoreFocus: true });
-          return;
-        }
-        if (!$("#personDataPopover").hidden) {
-          closePersonData({ restoreFocus: true });
-          return;
-        }
-        if (!$("#peopleModal").hidden) closePeopleModal();
-      }
-    });
+      if (!$("#peopleModal").hidden) closePeopleModal();
+    }
+  }
+
+  function bindFloatingPopoverEvents() {
+    document.addEventListener("click", handleDocumentPopoverClick);
+    document.addEventListener("keydown", handleDocumentPopoverKeydown);
     $("#glossaryClose").addEventListener("click", () => closeGlossary({ restoreFocus: true }));
     $("#personDataClose").addEventListener("click", () => closePersonData({ restoreFocus: true }));
     window.addEventListener("resize", () => positionGlossary(state.glossaryReturnFocus));
     window.addEventListener("resize", () => positionPersonData(state.personDataReturnFocus));
     window.addEventListener("scroll", () => positionGlossary(state.glossaryReturnFocus), true);
     window.addEventListener("scroll", () => positionPersonData(state.personDataReturnFocus), true);
-    $("#themeToggle").addEventListener("click", () => {
-      state.theme = state.theme === "night" ? "day" : "night";
-      localStorage.setItem("tyche-theme", state.theme);
-      applyTheme();
-    });
-    birthPlace.addEventListener("focus", () => {
-      if (state.selectedCity && normalizeText(birthPlace.value) === normalizeText(formatCity(state.selectedCity))) {
-        birthPlace.select();
-      }
-      queuePlaceSearch();
-    });
-    birthPlace.addEventListener("input", () => {
-      clearHistoricalSelection();
-      state.selectedCity = null;
-      state.activeCityKey = "";
-      queuePlaceSearch();
-    });
-    birthPlace.addEventListener("keydown", (event) => {
-      if (event.key === "ArrowDown") {
-        event.preventDefault();
-        if ($("#placeSuggestions").hidden) queuePlaceSearch();
-        moveActivePlace(1);
-      } else if (event.key === "ArrowUp") {
-        event.preventDefault();
-        moveActivePlace(-1);
-      } else if (event.key === "Enter" && state.placeSuggestions.length) {
-        event.preventDefault();
-        selectPlaceSuggestion(state.activePlaceIndex >= 0 ? state.activePlaceIndex : 0);
-      } else if (event.key === "Escape") {
-        hidePlaceSuggestions();
-      }
-    });
-    birthPlace.addEventListener("blur", () => {
-      window.setTimeout(() => {
-        updatePlaceFields();
-        hidePlaceSuggestions();
-      }, 120);
-    });
-    $("#clearPlace").addEventListener("click", () => {
-      clearHistoricalSelection();
-      state.selectedCity = null;
-      state.activeCityKey = "";
-      birthPlace.value = "";
-      $("#latitude").value = "";
-      $("#longitude").value = "";
-      $("#timeZone").value = "";
-      updateClearPlaceButton();
+  }
+
+  function handleBirthPlaceFocus(birthPlace) {
+    if (state.selectedCity && normalizeText(birthPlace.value) === normalizeText(formatCity(state.selectedCity))) {
+      birthPlace.select();
+    }
+    queuePlaceSearch();
+  }
+
+  function handleBirthPlaceInput() {
+    clearHistoricalSelection();
+    state.selectedCity = null;
+    state.activeCityKey = "";
+    queuePlaceSearch();
+  }
+
+  function handleBirthPlaceKeydown(event) {
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      if ($("#placeSuggestions").hidden) queuePlaceSearch();
+      moveActivePlace(1);
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      moveActivePlace(-1);
+    } else if (event.key === "Enter" && state.placeSuggestions.length) {
+      event.preventDefault();
+      selectPlaceSuggestion(state.activePlaceIndex >= 0 ? state.activePlaceIndex : 0);
+    } else if (event.key === "Escape") {
       hidePlaceSuggestions();
-      birthPlace.focus();
-    });
+    }
+  }
+
+  function handleBirthPlaceBlur() {
+    window.setTimeout(() => {
+      updatePlaceFields();
+      hidePlaceSuggestions();
+    }, 120);
+  }
+
+  function clearBirthPlaceFields(birthPlace) {
+    clearHistoricalSelection();
+    state.selectedCity = null;
+    state.activeCityKey = "";
+    birthPlace.value = "";
+    $("#latitude").value = "";
+    $("#longitude").value = "";
+    $("#timeZone").value = "";
+    updateClearPlaceButton();
+    hidePlaceSuggestions();
+    birthPlace.focus();
+  }
+
+  function handlePlaceSuggestionClick(event) {
+    const button = event.target.closest("[data-place-index]");
+    if (button) selectPlaceSuggestion(Number(button.dataset.placeIndex));
+  }
+
+  function bindBirthPlaceEvents() {
+    const birthPlace = $("#birthPlace");
+    birthPlace.addEventListener("focus", () => handleBirthPlaceFocus(birthPlace));
+    birthPlace.addEventListener("input", handleBirthPlaceInput);
+    birthPlace.addEventListener("keydown", handleBirthPlaceKeydown);
+    birthPlace.addEventListener("blur", handleBirthPlaceBlur);
+    $("#clearPlace").addEventListener("click", () => clearBirthPlaceFields(birthPlace));
     $("#placeSuggestions").addEventListener("mousedown", (event) => {
       event.preventDefault();
     });
-    $("#placeSuggestions").addEventListener("click", (event) => {
-      const button = event.target.closest("[data-place-index]");
-      if (button) selectPlaceSuggestion(Number(button.dataset.placeIndex));
-    });
+    $("#placeSuggestions").addEventListener("click", handlePlaceSuggestionClick);
     document.addEventListener("pointerdown", (event) => {
       if (!event.target.closest(".place-field")) hidePlaceSuggestions();
     });
-    $("#birthDate").addEventListener("change", () => {
-      clearHistoricalSelection();
-      updatePlaceFields();
-    });
-    $("#birthTime").addEventListener("change", () => {
-      clearHistoricalSelection();
-      updatePlaceFields();
-    });
+  }
+
+  function handleDateTimeFieldChange() {
+    clearHistoricalSelection();
+    updatePlaceFields();
+  }
+
+  function submitChartForm(event) {
+    event.preventDefault();
+    try {
+      calculateCurrentChart();
+    } catch (error) {
+      $("#formStatus").textContent = error.message || String(error);
+      window.dispatchEvent(new CustomEvent("tyche:chart-error", {
+        detail: { message: error.message || String(error) },
+      }));
+    }
+  }
+
+  function bindFormEvents() {
+    $("#birthDate").addEventListener("change", handleDateTimeFieldChange);
+    $("#birthTime").addEventListener("change", handleDateTimeFieldChange);
     $("#gender").addEventListener("change", clearHistoricalSelection);
     ["calendar", "zodiac", "techniqueMode", "includeModern"].forEach((id) => {
       $(`#${id}`).addEventListener("change", updateOptionWarnings);
     });
-    $("#chart-form").addEventListener("submit", (event) => {
-      event.preventDefault();
-      try {
-        calculateCurrentChart();
-      } catch (error) {
-        $("#formStatus").textContent = error.message || String(error);
-        window.dispatchEvent(new CustomEvent("tyche:chart-error", {
-          detail: { message: error.message || String(error) },
-        }));
-      }
-    });
+    $("#chart-form").addEventListener("submit", submitChartForm);
   }
 
-  function installTestApi() {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("test") !== "regression") return;
-    const defaultInput = {
+  function bindEvents() {
+    bindPreferenceEvents();
+    bindPeopleModalEvents();
+    bindFloatingPopoverEvents();
+    bindBirthPlaceEvents();
+    bindFormEvents();
+  }
+
+  function defaultRegressionInput() {
+    return {
       date: "1980-01-01",
       time: "12:00",
       place: "Regression Test",
@@ -8211,7 +8874,10 @@
       includeModern: false,
       selectedLots: [],
     };
-    window.TycheTest = Object.freeze({
+  }
+
+  function buildRegressionTestApi(defaultInput) {
+    return Object.freeze({
       schemaVersion: TYCHE_TEST_SCHEMA_VERSION,
       buildHash: TYCHE_BUILD_HASH,
       calculateChart(overrides = {}) {
@@ -8253,6 +8919,12 @@
       lunarAspectCandidates,
       VISIBLE_KEYS: [...VISIBLE_KEYS],
     });
+  }
+
+  function installTestApi() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("test") !== "regression") return;
+    window.TycheTest = buildRegressionTestApi(defaultRegressionInput());
     console.info("Tyche regression test API enabled.");
   }
 

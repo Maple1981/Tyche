@@ -13,6 +13,61 @@ The project is intentionally small:
 
 No backend, bundler, package manager, or build pipeline is required.
 
+## Internal Application Layers
+
+Because Tyche is a static browser app, architecture should improve separation inside the existing files before introducing new loading mechanics. Prefer small internal boundaries that keep the runtime simple:
+
+- Domain/calculation helpers: pure chart math, dignities, lots, sect, lunar condition, boundaries, and testimony scoring.
+- Use-case builders: functions that collect chart context and produce interpretation models, evidence, hierarchy, qualities, and blocks.
+- Renderers: functions that turn prepared view models into HTML.
+- UI shell: form state, event binding, tabs, modals, language/theme toggles, and persistence.
+
+For chart calculation, `computeChart()` should stay an orchestration function. Input validation, position calculation, house/condition enrichment, lot construction, and sect context should remain in dedicated helpers so later changes to one rule do not require editing the whole chart builder.
+
+Date/time conversion should keep validation, manual UTC offset handling, Julian-calendar conversion, IANA time-zone conversion, and manual fallback in separate helpers. `jdFromForm()` should coordinate those paths and return the final Julian Date, offset, and displayed zone label.
+
+Lunar condition should keep the contact scan separate from the final condition object. The scan owns last separation, next application, sign-exit application, and close applying contact; `computeMoonCondition()` should assemble phase, void flags, and summary fields from that scan.
+
+For the natal interpretation panel, `interpretChart()` should remain an orchestrator. It should collect a context, call dedicated builders for summary, evidence, hierarchy, qualities, and reading blocks, and return a view model. It should not render HTML directly or own all prose-building responsibility in one long function.
+
+Topic scoring should keep score-row setup, score mutation, accumulator creation, testimony families, and final sorting in helpers. New scoring rules should avoid reimplementing the house row shape or direct mutation details inline.
+
+For chart rendering, keep frame setup, panel rendering, and completion side effects separate: the shell prepares title/meta/wheel, the panel renderer owns panel order, and the completion step handles capitalization, scrolling, and chart-rendered events.
+
+The chart frame itself should use a small model for title, metadata, and wheel HTML before touching DOM nodes. This keeps shell rendering consistent with panel rendering.
+
+Where a renderer needs calculated or audited data, prefer a small view model builder before HTML generation. For example, the main lots audit should build row/field data first, then render that model. Boundary audits should translate neutral warning codes into labeled fields before the renderer writes definition-list markup. Score breakdowns should likewise group and label score data before rendering HTML. Historical example cards should prepare natal-source, audit-status, localized label, and group data before the card renderer writes markup. This keeps testimony extraction and provenance handling separate from HTML details.
+
+Historical example loading should also keep responsibilities apart: update selection/audit state, build form-field values, apply those values to the DOM, then calculate the chart. Do not hide all of that work inside one click handler.
+
+Sect-sensitive alternate lot displays should follow the same model-first rule. Build current/alternate role text and Fortune/Spirit snapshots first, then render the disclosure block.
+
+Large panel renderers should be decomposed into subrenderers for their stable regions. The interpretation panel is the reference pattern: heading, lead, summary, hierarchy, reading blocks, evidence, and timing note are separate rendering functions.
+
+Top chart panels should also prefer view models where labels and values are prepared before rendering. The core summary, angle panel, Ascendant lord panel, Moon panel, and technical notes panel should stay as small model builders plus focused renderers rather than large mixed UI functions.
+
+Table panels should keep row construction separate from final DOM assignment. Use dedicated header/row builders for planet, house, lot, and aspect tables so calculation changes and markup changes remain independent.
+
+SVG renderers should follow the same rule. The chart wheel should build a geometry/parts model for houses, angles, aspects, and planets before composing the final SVG shell.
+
+UI event binding should stay grouped by responsibility. Keep preference toggles, historical-people modal behavior, floating popovers, birthplace search, and form/options submission in separate binding functions, with `bindEvents()` acting only as an orchestration point.
+
+Within each binding group, prefer named handlers for non-trivial behavior. Tab activation, preference toggles, modal clicks, popover document interactions, birthplace keyboard navigation, clearing place fields, date/time changes, and chart-form submission should live in named functions so event binding remains easy to scan.
+
+Language switching should separate document metadata, static node translation, localized control labels, and dynamic content refresh. `applyI18n()` should coordinate those steps and then redecorate glossary triggers after translated content is in place.
+
+Floating popovers should resolve a small model before writing DOM. Glossary entries, person-data details, and similar overlays should keep lookup/formatting separate from the code that opens and positions the popover.
+
+Search/autocomplete surfaces should keep result preparation separate from DOM writes. Birthplace suggestions should build row models with localized labels and metadata, then render those rows through dedicated suggestion renderers.
+
+Form input reading should normalize coherent groups before chart calculation. Keep place/zone fields and technique/options fields in dedicated readers, with `readInput()` acting as the single chart-input assembler.
+
+Inline option warnings should build a small visibility/text model first, then apply it to DOM nodes. This keeps option state rules testable without depending on translated prose in event handlers.
+
+Regression-only APIs should be built through dedicated helpers. Keep the default regression input and the exposed `window.TycheTest` helper map separate from the installer that checks `?test=regression`.
+
+When extracting architecture, keep changes incremental and covered by static contracts. Do not add a module loader, bundler, framework, backend, or runtime dependency unless the project deliberately changes its static-app constraint.
+
 ## Astronomical Precision
 
 The browser engine uses vendored Astronomy Engine 2.1.19 for Sun, Moon, and planetary positions. It is MIT-licensed, runs locally in the browser, and declares approximate +/-1 arcminute accuracy. This is a major improvement over the previous compact orbital fallback, but still not a replacement for professional ephemerides in critical work.
