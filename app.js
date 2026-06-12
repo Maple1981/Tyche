@@ -5412,6 +5412,40 @@
     return names[key] || key;
   }
 
+  function lunarContactPlanetKeys() {
+    return VISIBLE_KEYS.filter((key) => key !== "moon" && key !== "sun");
+  }
+
+  function lunarCandidatesForPlanet(moon, planet, chart, key, direction) {
+    return lunarAspectCandidates(moon, planet, direction, 30, chart, key)
+      .map((candidate) => ({ ...candidate, planet: key }));
+  }
+
+  function closestFutureLunarCandidate(current, candidate) {
+    return !current || candidate.days < current.days ? candidate : current;
+  }
+
+  function latestPastLunarCandidate(current, candidate) {
+    return !current || candidate.days > current.days ? candidate : current;
+  }
+
+  function lunarOrbContact(moon, planet, key) {
+    const near = degreeAspect(moon.lon, planet.lon, 12);
+    if (!near) return null;
+    const nextMoon = norm360(moon.lon + moon.speed);
+    const nextPlanet = norm360(planet.lon + planet.speed);
+    const exact = { copresence: 0, sextile: 60, square: 90, trine: 120, opposition: 180 }[near.type];
+    const nowDelta = Math.abs(angleDistance(moon.lon, planet.lon) - exact);
+    const nextDelta = Math.abs(angleDistance(nextMoon, nextPlanet) - exact);
+    const motion = nextDelta < nowDelta ? "applying" : "separating";
+    return {
+      planet: key,
+      type: near.type === "copresence" ? "conjunction" : near.type,
+      motion,
+      delta: near.delta,
+    };
+  }
+
   function scanLunarContacts(chart, moonSignRemaining) {
     const moon = chart.positions.moon;
     const contacts = [];
@@ -5419,39 +5453,22 @@
     let nextApplication = null;
     let nextApplicationBySign = null;
     let hasApplyingWithinOrb = false;
-    VISIBLE_KEYS.filter((key) => key !== "moon" && key !== "sun").forEach((key) => {
+    lunarContactPlanetKeys().forEach((key) => {
       const planet = chart.positions[key];
-      const nextCandidates = lunarAspectCandidates(moon, planet, 1, 30, chart, key)
-        .map((candidate) => ({ ...candidate, planet: key }));
-      const previousCandidates = lunarAspectCandidates(moon, planet, -1, 30, chart, key)
-        .map((candidate) => ({ ...candidate, planet: key }));
-      nextCandidates.forEach((candidate) => {
-        if (!nextApplication || candidate.days < nextApplication.days) nextApplication = candidate;
-        if (candidate.moonTravel <= moonSignRemaining + 0.0001
-          && (!nextApplicationBySign || candidate.days < nextApplicationBySign.days)) {
-          nextApplicationBySign = candidate;
+      lunarCandidatesForPlanet(moon, planet, chart, key, 1).forEach((candidate) => {
+        nextApplication = closestFutureLunarCandidate(nextApplication, candidate);
+        if (candidate.moonTravel <= moonSignRemaining + 0.0001) {
+          nextApplicationBySign = closestFutureLunarCandidate(nextApplicationBySign, candidate);
         }
       });
-      previousCandidates.forEach((candidate) => {
-        if (!lastSeparation || candidate.days > lastSeparation.days) lastSeparation = candidate;
+      lunarCandidatesForPlanet(moon, planet, chart, key, -1).forEach((candidate) => {
+        lastSeparation = latestPastLunarCandidate(lastSeparation, candidate);
       });
 
-      const near = degreeAspect(moon.lon, planet.lon, 12);
-      if (near) {
-        const nextMoon = norm360(moon.lon + moon.speed);
-        const nextPlanet = norm360(planet.lon + planet.speed);
-        const exact = { copresence: 0, sextile: 60, square: 90, trine: 120, opposition: 180 }[near.type];
-        const nowDelta = Math.abs(angleDistance(moon.lon, planet.lon) - exact);
-        const nextDelta = Math.abs(angleDistance(nextMoon, nextPlanet) - exact);
-        const motion = nextDelta < nowDelta ? "applying" : "separating";
-        if (motion === "applying") hasApplyingWithinOrb = true;
-        contacts.push({
-          planet: key,
-          type: near.type === "copresence" ? "conjunction" : near.type,
-          motion,
-          delta: near.delta,
-        });
-      }
+      const contact = lunarOrbContact(moon, planet, key);
+      if (!contact) return;
+      if (contact.motion === "applying") hasApplyingWithinOrb = true;
+      contacts.push(contact);
     });
     return {
       contacts,
@@ -5588,14 +5605,17 @@
     if (!Number.isFinite(input.latitude) || !Number.isFinite(input.longitude)) throw new Error(t("missingCoords"));
   }
 
-  function computeChart(input) {
-    validateChartInput(input);
+  function chartInputWarningText(input) {
     if (input.latitude < -66 || input.latitude > 66) {
-      $("#formStatus").textContent = state.lang === "es"
+      return state.lang === "es"
         ? "Las latitudes extremas vuelven muy sensibles los ángulos al horizonte. Revisa cartas críticas con especial cuidado."
         : "Extreme latitudes make horizon angles highly sensitive. Review critical charts with special care.";
     }
+    return "";
+  }
 
+  function computeChart(input) {
+    validateChartInput(input);
     const time = jdFromForm(input);
     const { rawPositions, positions, planetKeys } = calculateChartPositions(time, input);
     const angles = calculateAngles(time.jd, input.latitude, input.longitude, input.zodiac);
@@ -5679,13 +5699,22 @@
     hidePlaceSuggestions();
   }
 
-  function buildCurrentChart() {
-    return computeChart(readInput());
+  function buildCurrentChartCalculation() {
+    const input = readInput();
+    return {
+      chart: computeChart(input),
+      warningText: chartInputWarningText(input),
+    };
+  }
+
+  function renderCurrentChartCalculation(model) {
+    $("#formStatus").textContent = model.warningText;
+    renderChart(model.chart);
   }
 
   function calculateCurrentChart() {
     prepareChartCalculationUi();
-    renderChart(buildCurrentChart());
+    renderCurrentChartCalculation(buildCurrentChartCalculation());
   }
 
   function renderMetricItems(items) {
@@ -5825,44 +5854,62 @@
     `;
   }
 
+  function ephemerisEngineLabel(chart) {
+    return chart.ephemerisEngine === "astronomy" ? t("astronomyEngine") : t("fallbackEngine");
+  }
+
+  function aspectModeLabel(input) {
+    if (input.aspectMode === "both") return t("signAndDegree");
+    return input.aspectMode === "degree" ? t("byDegree") : t("bySign");
+  }
+
+  function calendarModeLabel(input) {
+    return input.calendar === "julian"
+      ? `${t(input.calendar)} · ${t("calendarJulianWarning")}`
+      : t(input.calendar);
+  }
+
+  function zodiacModeLabel(input) {
+    return input.zodiac === "sidereal"
+      ? `${t(input.zodiac)} · ${t("zodiacBaseWarning")}`
+      : t(input.zodiac);
+  }
+
+  function buildTechnicalAstronomyMetrics(chart) {
+    return [
+      { label: t("localDateTime"), value: `${formatDateLabel(chart.input.date)} · ${chart.input.time || "—"}` },
+      { label: t("utcDateTime"), value: formatUtcDateTime(chart.jd) },
+      { label: t("timezoneUsed"), value: chart.zoneLabel, labelGlossary: "timezoneUsed" },
+      { label: t("coordinates"), value: `${formatDecimal(chart.input.latitude, 4)}, ${formatDecimal(chart.input.longitude, 4)}` },
+      { label: t("calendar"), value: calendarModeLabel(chart.input) },
+      { label: t("zodiac"), value: zodiacModeLabel(chart.input), labelGlossary: "zodiac" },
+      { label: t("sectCalculation"), value: t("sectCalculationValue", { altitude: formatSignedAngle(chart.sunAltitude) }), labelGlossary: "sect" },
+      { label: t("ephemerisEngine"), value: ephemerisEngineLabel(chart), labelGlossary: "ephemeris" },
+    ];
+  }
+
+  function buildTechnicalJudgmentMetrics(chart) {
+    return [
+      { label: t("houses"), value: t("wholeSign"), labelGlossary: "wholeSign" },
+      { label: t("aspectTableMode"), value: aspectModeLabel(chart.input), labelGlossary: "aspects" },
+      { label: t("judgmentFrame"), value: t("judgmentFrameSign"), labelGlossary: "aspects" },
+      { label: t("solarThresholds"), value: t("solarThresholdValues"), labelGlossary: "solarPhase" },
+      { label: t("moonVoidDefinitions"), value: t("moonVoidDefinitionsValues"), labelGlossary: "moonVoc" },
+      { label: t("techniqueMode"), value: t(chart.input.techniqueMode === "mixed" ? "mixed" : "strict"), labelGlossary: "technique" },
+      { label: t("modernDisplayed"), value: chart.input.includeModern ? t("yes") : t("no"), labelGlossary: "modernPlanets" },
+      { label: t("modernWeightedBase"), value: t("modernNotWeighted"), labelGlossary: "modernPlanets" },
+    ];
+  }
+
   function buildTechnicalPanelModel(chart) {
-    const engine = chart.ephemerisEngine === "astronomy" ? t("astronomyEngine") : t("fallbackEngine");
-    const boundary = boundaryWarnings(chart);
-    const aspectModeLabel = chart.input.aspectMode === "both"
-      ? t("signAndDegree")
-      : chart.input.aspectMode === "degree" ? t("byDegree") : t("bySign");
-    const calendarLabel = chart.input.calendar === "julian"
-      ? `${t(chart.input.calendar)} · ${t("calendarJulianWarning")}`
-      : t(chart.input.calendar);
-    const zodiacLabel = chart.input.zodiac === "sidereal"
-      ? `${t(chart.input.zodiac)} · ${t("zodiacBaseWarning")}`
-      : t(chart.input.zodiac);
     return {
       title: t("technicalTitle"),
       notes: [t("technicalLimitsCompact"), t("technicalMcIcNote")],
       astronomyTitle: t("technicalAstronomyTitle"),
-      astronomyMetrics: [
-        { label: t("localDateTime"), value: `${formatDateLabel(chart.input.date)} · ${chart.input.time || "—"}` },
-        { label: t("utcDateTime"), value: formatUtcDateTime(chart.jd) },
-        { label: t("timezoneUsed"), value: chart.zoneLabel, labelGlossary: "timezoneUsed" },
-        { label: t("coordinates"), value: `${formatDecimal(chart.input.latitude, 4)}, ${formatDecimal(chart.input.longitude, 4)}` },
-        { label: t("calendar"), value: calendarLabel },
-        { label: t("zodiac"), value: zodiacLabel, labelGlossary: "zodiac" },
-        { label: t("sectCalculation"), value: t("sectCalculationValue", { altitude: formatSignedAngle(chart.sunAltitude) }), labelGlossary: "sect" },
-        { label: t("ephemerisEngine"), value: engine, labelGlossary: "ephemeris" },
-      ],
+      astronomyMetrics: buildTechnicalAstronomyMetrics(chart),
       judgmentTitle: t("technicalJudgmentTitle"),
-      judgmentMetrics: [
-        { label: t("houses"), value: t("wholeSign"), labelGlossary: "wholeSign" },
-        { label: t("aspectTableMode"), value: aspectModeLabel, labelGlossary: "aspects" },
-        { label: t("judgmentFrame"), value: t("judgmentFrameSign"), labelGlossary: "aspects" },
-        { label: t("solarThresholds"), value: t("solarThresholdValues"), labelGlossary: "solarPhase" },
-        { label: t("moonVoidDefinitions"), value: t("moonVoidDefinitionsValues"), labelGlossary: "moonVoc" },
-        { label: t("techniqueMode"), value: t(chart.input.techniqueMode === "mixed" ? "mixed" : "strict"), labelGlossary: "technique" },
-        { label: t("modernDisplayed"), value: chart.input.includeModern ? t("yes") : t("no"), labelGlossary: "modernPlanets" },
-        { label: t("modernWeightedBase"), value: t("modernNotWeighted"), labelGlossary: "modernPlanets" },
-      ],
-      boundary,
+      judgmentMetrics: buildTechnicalJudgmentMetrics(chart),
+      boundary: boundaryWarnings(chart),
     };
   }
 
@@ -6785,7 +6832,7 @@
     return adjustIntensityForReception("lowLevel", role, reception);
   }
 
-  function planetRelationJudgment(target, actor, chart, role) {
+  function buildPlanetRelationContext(target, actor, chart, role) {
     if (target === actor) return "";
     if (!VISIBLE_KEYS.includes(target) || !VISIBLE_KEYS.includes(actor)) return "";
     const targetPos = chart.positions[target];
@@ -6802,34 +6849,70 @@
     const actorName = planetLabel(actor);
     const reception = receptionBetween(actor, target, chart);
     const intensity = relationIntensity(actor, target, chart, role, signType, degree, actorSuperior, targetSuperior, reception);
-    const receptionText = receptionNote(target, actor, reception, role);
-    const copresenceText = signType === "copresence"
-      ? (state.lang === "es"
-        ? " Al compartir el mismo Lugar/Casa, ambos temas conviven de forma intensa; el resultado depende de la condición de los planetas."
-        : " Because both share the same Place/House, the topics live together intensely; the result depends on the planets' condition.")
-      : "";
+    const rawIntensity = relationIntensity(actor, target, chart, role, signType, degree, actorSuperior, targetSuperior, null);
+    return {
+      target,
+      actor,
+      role,
+      signType,
+      degree,
+      acute,
+      actorSuperior,
+      targetSuperior,
+      relation,
+      targetName,
+      actorName,
+      reception,
+      intensity,
+      rawIntensity,
+    };
+  }
+
+  function relationCopresenceText(signType) {
+    if (signType !== "copresence") return "";
+    return state.lang === "es"
+      ? " Al compartir el mismo Lugar/Casa, ambos temas conviven de forma intensa; el resultado depende de la condición de los planetas."
+      : " Because both share the same Place/House, the topics live together intensely; the result depends on the planets' condition.";
+  }
+
+  function relationSuperiorityText(context) {
+    const { role, actorSuperior, targetSuperior } = context;
     if (state.lang === "es") {
       if (role === "support") {
-        const superiority = actorSuperior
-          ? " Ese apoyo llega con ventaja y puede imponerse más fácilmente."
-          : targetSuperior ? " El tema principal conserva ventaja mientras recibe ayuda." : "";
+        if (actorSuperior) return " Ese apoyo llega con ventaja y puede imponerse más fácilmente.";
+        return targetSuperior ? " El tema principal conserva ventaja mientras recibe ayuda." : "";
+      }
+      if (actorSuperior) return ", y llega con ventaja sobre ese tema";
+      return targetSuperior ? ", aunque el tema principal conserva ventaja frente a esa presión" : "";
+    }
+    if (role === "support") {
+      if (actorSuperior) return " The support comes with leverage and can assert itself more easily.";
+      return targetSuperior ? " The main topic keeps leverage while receiving help." : "";
+    }
+    if (actorSuperior) return ", and comes with leverage over that topic";
+    return targetSuperior ? ", though the main topic keeps leverage against that pressure" : "";
+  }
+
+  function planetRelationJudgmentText(context) {
+    const { target, actor, role, signType, acute, relation, targetName, actorName, reception, intensity } = context;
+    const receptionText = receptionNote(target, actor, reception, role);
+    const copresenceText = relationCopresenceText(signType);
+    const superiority = relationSuperiorityText(context);
+    if (state.lang === "es") {
+      if (role === "support") {
         return `${actorName} ayuda a ${targetName} mediante una relación de ${relation}${acute ? " muy cercana por grado" : " por signo"}; la ayuda es de intensidad ${t(intensity)}.${superiority}${receptionText}${copresenceText}`;
       }
-      const superiority = actorSuperior
-        ? ", y llega con ventaja sobre ese tema"
-        : targetSuperior ? ", aunque el tema principal conserva ventaja frente a esa presión" : "";
       return `${actorName} presiona a ${targetName} mediante una relación de ${relation}${acute ? " muy cercana por grado" : " por signo"}${superiority}; la presión es de intensidad ${t(intensity)}.${receptionText}${copresenceText}`;
     }
     if (role === "support") {
-      const superiority = actorSuperior
-        ? " The support comes with leverage and can assert itself more easily."
-        : targetSuperior ? " The main topic keeps leverage while receiving help." : "";
       return `${actorName} helps ${targetName} through a ${relation} relationship${acute ? " very close by degree" : " by sign"}; the help is ${t(intensity)}.${superiority}${receptionText}${copresenceText}`;
     }
-    const superiority = actorSuperior
-      ? ", and comes with leverage over that topic"
-      : targetSuperior ? ", though the main topic keeps leverage against that pressure" : "";
     return `${actorName} presses ${targetName} through a ${relation} relationship${acute ? " very close by degree" : " by sign"}${superiority}; the pressure is ${t(intensity)}.${receptionText}${copresenceText}`;
+  }
+
+  function planetRelationJudgment(target, actor, chart, role) {
+    const context = buildPlanetRelationContext(target, actor, chart, role);
+    return context ? planetRelationJudgmentText(context) : "";
   }
 
   function configuredRelationItems(chart) {
@@ -6843,29 +6926,8 @@
     const items = [];
     targets.forEach((target) => {
       actors.forEach(({ key: actor, role }) => {
-        if (target === actor || !VISIBLE_KEYS.includes(target) || !VISIBLE_KEYS.includes(actor)) return;
-        const targetPos = chart.positions[target];
-        const actorPos = chart.positions[actor];
-        const signType = signAspectType(signOf(targetPos.lon), signOf(actorPos.lon));
-        if (!signType) return;
-        const degree = degreeAspect(targetPos.lon, actorPos.lon, Math.max(3, chart.input.orb || 3));
-        const superior = superiorPlanet(actor, target, actorPos.lon, targetPos.lon);
-        const actorSuperior = superior === actor;
-        const targetSuperior = superior === target;
-        const reception = receptionBetween(actor, target, chart);
-        const rawIntensity = relationIntensity(actor, target, chart, role, signType, degree, actorSuperior, targetSuperior, null);
-        items.push({
-          target,
-          actor,
-          role,
-          signType,
-          degree,
-          actorSuperior,
-          targetSuperior,
-          reception,
-          rawIntensity,
-          intensity: relationIntensity(actor, target, chart, role, signType, degree, actorSuperior, targetSuperior, reception),
-        });
+        const context = buildPlanetRelationContext(target, actor, chart, role);
+        if (context) items.push(context);
       });
     });
     return items;

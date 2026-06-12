@@ -24,11 +24,11 @@ Because Tyche is a static browser app, architecture should improve separation in
 
 For chart calculation, `computeChart()` should stay an orchestration function. Input validation, position calculation, house/condition enrichment, lot construction, and sect context should remain in dedicated helpers so later changes to one rule do not require editing the whole chart builder.
 
-Current chart calculation from the form should keep UI preparation, chart construction, and rendering as separate steps. `calculateCurrentChart()` should coordinate those calls rather than reading fields, clearing UI state, and rendering panels directly.
+Current chart calculation from the form should keep UI preparation, chart construction, warnings, and rendering as separate steps. `calculateCurrentChart()` should coordinate those calls rather than reading fields, clearing UI state, and rendering panels directly. Input warnings that write to `#formStatus` belong to the form use case, not to `computeChart()`.
 
 Date/time conversion should keep validation, manual UTC offset handling, Julian-calendar conversion, IANA time-zone conversion, and manual fallback in separate helpers. `jdFromForm()` should coordinate those paths and return the final Julian Date, offset, and displayed zone label.
 
-Lunar condition should keep the contact scan separate from the final condition object. The scan owns last separation, next application, sign-exit application, and close applying contact; `computeMoonCondition()` should assemble phase, void flags, and summary fields from that scan.
+Lunar condition should keep the contact scan separate from the final condition object. The scan owns last separation, next application, sign-exit application, and close applying contact; `computeMoonCondition()` should assemble phase, void flags, and summary fields from that scan. Candidate generation, nearest-past/future selection, and within-orb contact classification should remain separate helpers inside the scan layer.
 
 For the natal interpretation panel, `interpretChart()` should remain an orchestrator. It should collect a context, call dedicated builders for summary, evidence, hierarchy, qualities, and reading blocks, and return a view model. It should not render HTML directly or own all prose-building responsibility in one long function.
 
@@ -39,6 +39,8 @@ Natal reading evidence should be assembled from testimony-family helpers: focus/
 Complex interpretive judgments should keep testimony extraction, level/flag decisions, and localized prose separate. The malefic-mitigation reading is the reference pattern: collect factors, derive mitigation flags and level, then choose copy from that level.
 
 Public-projection conclusions should keep score calculation, level selection, contextual notes, and final localized text separate. This makes it easier to refine real-world judgments about visibility, reduction, mediation, and shared spotlight without rewriting the whole section.
+
+Planetary relation judgments should build one reusable relation context for target, actor, role, aspect, superiority, reception, raw intensity, and regulated intensity. Visible judgment prose and technical relation item lists should consume that same context instead of recalculating relation geometry separately.
 
 Topic scoring should keep score-row setup, score mutation, accumulator creation, testimony families, and final sorting in helpers. New scoring rules should avoid reimplementing the house row shape or direct mutation details inline.
 
@@ -56,7 +58,7 @@ Sect-sensitive alternate lot displays should follow the same model-first rule. B
 
 Large panel renderers should be decomposed into subrenderers for their stable regions. The interpretation panel is the reference pattern: heading, lead, summary, hierarchy, reading blocks, evidence, and timing note are separate rendering functions.
 
-Top chart panels should also prefer view models where labels and values are prepared before rendering. The core summary, angle panel, Ascendant lord panel, Moon panel, and technical notes panel should stay as small model builders plus focused renderers rather than large mixed UI functions.
+Top chart panels should also prefer view models where labels and values are prepared before rendering. The core summary, angle panel, Ascendant lord panel, Moon panel, and technical notes panel should stay as small model builders plus focused renderers rather than large mixed UI functions. Technical notes should keep astronomy metrics and judgment/settings metrics in separate helper builders.
 
 Table panels should keep row construction separate from final DOM assignment. Use dedicated table models, plus header/row builders for planet, house, lot, and aspect tables, so calculation changes and markup changes remain independent. When a table can split into sections, such as traditional and modern planets, build a section model before rendering.
 
