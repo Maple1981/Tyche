@@ -38,6 +38,8 @@ The natal reading context should be composed from focused context builders: anch
 
 Visible natal reading sections should be built through one helper per section and collected through an ordered builder list. Adding or reordering a section should not require editing every block object in one large array.
 
+The prose inside each visible section should also be assembled from focused fragment helpers. Life direction, support, tension, and lots should each separate intro/topic/condition or management fragments before joining the final paragraph.
+
 Natal reading hierarchy and summary qualities should follow the same ordered-builder pattern. Each priority line or quality badge should have one helper, with the public builder only mapping and filtering those helpers.
 
 The natal reading summary should keep dominant focus, secondary focus, and Ascendant-lord guidance in separate text helpers before joining them with any sect-confidence notice.

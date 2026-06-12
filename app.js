@@ -8234,32 +8234,123 @@
     return [natalSummaryBaseText(context), context.sectConfidenceNotice].filter(Boolean).join(" ");
   }
 
-  function buildLifeDirectionText(context) {
-    const { chart, ascLord, ascLordPosition, ascLordSign } = context;
+  function lifeDirectionIntroText(context) {
+    const { chart, ascLord } = context;
     return state.lang === "es"
-      ? `El Ascendente está en ${signLabel(chart.ascSign)}, por lo que ${planetLabel(ascLord)} lleva la dirección general de la carta. ${planetLabel(ascLord)} habla de ${planetPlainMeaning(ascLord)}. Al caer en ${signLabel(signOf(ascLordPosition.lon))}, casa ${ascLordPosition.house}, esas capacidades se vinculan con ${houseReadingTopics(ascLordPosition.house, "double")}. ${signStyleReading(ascLordSign)} Al estar en una casa ${t(ascLordPosition.angularity)}, este tema se muestra ${angularityReading(ascLordPosition.angularity)}. ${essentialConditionReading(ascLordPosition, chart)}`
-      : `The Ascendant / Hour-Marker is in ${signLabel(chart.ascSign)}, so ${planetLabel(ascLord)} carries the chart's general direction. ${planetLabel(ascLord)} speaks of ${planetPlainMeaning(ascLord)}. Placed in ${signLabel(signOf(ascLordPosition.lon))}, house ${ascLordPosition.house}, those capacities connect with ${houseReadingTopics(ascLordPosition.house, "double")}. ${signStyleReading(ascLordSign)} Being in a ${t(ascLordPosition.angularity)} house, this topic shows itself ${angularityReading(ascLordPosition.angularity)}. ${essentialConditionReading(ascLordPosition, chart)}`;
+      ? `El Ascendente está en ${signLabel(chart.ascSign)}, por lo que ${planetLabel(ascLord)} lleva la dirección general de la carta.`
+      : `The Ascendant / Hour-Marker is in ${signLabel(chart.ascSign)}, so ${planetLabel(ascLord)} carries the chart's general direction.`;
+  }
+
+  function lifeDirectionTopicText(context) {
+    const { ascLord, ascLordPosition } = context;
+    return state.lang === "es"
+      ? `${planetLabel(ascLord)} habla de ${planetPlainMeaning(ascLord)}. Al caer en ${signLabel(signOf(ascLordPosition.lon))}, casa ${ascLordPosition.house}, esas capacidades se vinculan con ${houseReadingTopics(ascLordPosition.house, "double")}.`
+      : `${planetLabel(ascLord)} speaks of ${planetPlainMeaning(ascLord)}. Placed in ${signLabel(signOf(ascLordPosition.lon))}, house ${ascLordPosition.house}, those capacities connect with ${houseReadingTopics(ascLordPosition.house, "double")}.`;
+  }
+
+  function lifeDirectionPlacementText(context) {
+    const { ascLordPosition, ascLordSign } = context;
+    return state.lang === "es"
+      ? `${signStyleReading(ascLordSign)} Al estar en una casa ${t(ascLordPosition.angularity)}, este tema se muestra ${angularityReading(ascLordPosition.angularity)}.`
+      : `${signStyleReading(ascLordSign)} Being in a ${t(ascLordPosition.angularity)} house, this topic shows itself ${angularityReading(ascLordPosition.angularity)}.`;
+  }
+
+  function lifeDirectionConditionText(context) {
+    const { chart, ascLordPosition } = context;
+    return essentialConditionReading(ascLordPosition, chart);
+  }
+
+  function buildLifeDirectionText(context) {
+    return [
+      lifeDirectionIntroText(context),
+      lifeDirectionTopicText(context),
+      lifeDirectionPlacementText(context),
+      lifeDirectionConditionText(context),
+    ].filter(Boolean).join(" ");
+  }
+
+  function supportIntroText() {
+    return state.lang === "es"
+      ? "Esta sección muestra de dónde puede venir ayuda real: protección, mediadores favorables, crecimiento, conciliación o margen para respirar."
+      : "This section shows where real help can come from: protection, favorable mediators, growth, reconciliation, or room to breathe.";
+  }
+
+  function supportActorText(context) {
+    const { sectContext, benefic } = context;
+    return state.lang === "es"
+      ? `En esta ${sectContext}, ${planetLabel(benefic)} es el principal planeta de apoyo.`
+      : `In this ${sectContext}, ${planetLabel(benefic)} is the main support planet.`;
+  }
+
+  function supportTopicText(context) {
+    const { beneficPosition } = context;
+    return state.lang === "es"
+      ? `Está en casa ${beneficPosition.house}: ${houseReadingTopics(beneficPosition.house, "double")}. Ahí facilita que el tema crezca, encuentre respaldo o abra oportunidades concretas.`
+      : `It is in house ${beneficPosition.house}: ${houseReadingTopics(beneficPosition.house, "double")}. There it helps the topic grow, find backing, or open concrete opportunities.`;
+  }
+
+  function supportConnectionText(context) {
+    return connectionReading(context.beneficPosition, context.focuses, context.ascLordPosition, "support");
   }
 
   function buildSupportText(context) {
-    const { sectContext, benefic, beneficPosition, focuses, ascLordPosition, beneficSolarCaution } = context;
+    return [
+      supportIntroText(),
+      supportActorText(context),
+      supportTopicText(context),
+      supportConnectionText(context),
+      context.beneficSolarCaution,
+    ].filter(Boolean).join(" ");
+  }
+
+  function tensionActorText(context) {
     return state.lang === "es"
-      ? `Esta sección muestra de dónde puede venir ayuda real: protección, mediadores favorables, crecimiento, conciliación o margen para respirar. En esta ${sectContext}, ${planetLabel(benefic)} es el principal planeta de apoyo. Está en casa ${beneficPosition.house}: ${houseReadingTopics(beneficPosition.house, "double")}. Ahí facilita que el tema crezca, encuentre respaldo o abra oportunidades concretas. ${connectionReading(beneficPosition, focuses, ascLordPosition, "support")} ${beneficSolarCaution}`
-      : `This section shows where real help can come from: protection, favorable mediators, growth, reconciliation, or room to breathe. In this ${sectContext}, ${planetLabel(benefic)} is the main support planet. It is in house ${beneficPosition.house}: ${houseReadingTopics(beneficPosition.house, "double")}. There it helps the topic grow, find backing, or open concrete opportunities. ${connectionReading(beneficPosition, focuses, ascLordPosition, "support")} ${beneficSolarCaution}`;
+      ? `${planetLabel(context.malefic)} señala la presión que más cuidado pide en esta carta.`
+      : `${planetLabel(context.malefic)} marks the pressure that asks for the most care in this chart.`;
+  }
+
+  function tensionTopicText(context) {
+    const { maleficPosition } = context;
+    return state.lang === "es"
+      ? `Está en casa ${maleficPosition.house}: ${houseReadingTopics(maleficPosition.house, "double")}.`
+      : `It is in house ${maleficPosition.house}: ${houseReadingTopics(maleficPosition.house, "double")}.`;
+  }
+
+  function tensionPracticalText() {
+    return state.lang === "es"
+      ? "En la vida real puede sentirse como límites, conflicto, desgaste, demoras, separación o condiciones que obligan a actuar con más estrategia."
+      : "In real life this can feel like limits, conflict, strain, delays, separation, or conditions that require more strategy.";
+  }
+
+  function tensionManagementText(context) {
+    const { chart, maleficPosition, beneficPosition, focuses, ascLordPosition } = context;
+    return [
+      connectionReading(maleficPosition, focuses, ascLordPosition, "tension"),
+      maleficMitigationReading(maleficPosition, beneficPosition, chart),
+    ].filter(Boolean).join(" ");
   }
 
   function buildTensionText(context) {
-    const { chart, malefic, maleficPosition, beneficPosition, focuses, ascLordPosition } = context;
+    return [
+      tensionActorText(context),
+      tensionTopicText(context),
+      tensionPracticalText(),
+      tensionManagementText(context),
+    ].filter(Boolean).join(" ");
+  }
+
+  function lotReadingIntroText() {
     return state.lang === "es"
-      ? `${planetLabel(malefic)} señala la presión que más cuidado pide en esta carta. Está en casa ${maleficPosition.house}: ${houseReadingTopics(maleficPosition.house, "double")}. En la vida real puede sentirse como límites, conflicto, desgaste, demoras, separación o condiciones que obligan a actuar con más estrategia. ${connectionReading(maleficPosition, focuses, ascLordPosition, "tension")} ${maleficMitigationReading(maleficPosition, beneficPosition, chart)}`
-      : `${planetLabel(malefic)} marks the pressure that asks for the most care in this chart. It is in house ${maleficPosition.house}: ${houseReadingTopics(maleficPosition.house, "double")}. In real life this can feel like limits, conflict, strain, delays, separation, or conditions that require more strategy. ${connectionReading(maleficPosition, focuses, ascLordPosition, "tension")} ${maleficMitigationReading(maleficPosition, beneficPosition, chart)}`;
+      ? "Los lotes principales separan dos planos: Fortuna muestra lo que llega y condiciona; Espíritu muestra lo que la persona intenta orientar."
+      : "The principal lots separate two planes: Fortune shows what arrives and conditions life; Spirit shows what the person tries to direct.";
+  }
+
+  function lotReadingConditionText(context) {
+    return context.lotConditionTexts.join(" ");
   }
 
   function buildLotReadingText(context) {
-    const { lotConditionTexts } = context;
-    return state.lang === "es"
-      ? `Los lotes principales separan dos planos: Fortuna muestra lo que llega y condiciona; Espíritu muestra lo que la persona intenta orientar. ${lotConditionTexts.join(" ")}`
-      : `The principal lots separate two planes: Fortune shows what arrives and conditions life; Spirit shows what the person tries to direct. ${lotConditionTexts.join(" ")}`;
+    return [lotReadingIntroText(), lotReadingConditionText(context)].filter(Boolean).join(" ");
   }
 
   function buildFocusAscEvidence(context) {
