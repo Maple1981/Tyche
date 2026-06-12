@@ -7039,6 +7039,11 @@
     return `${actorName} presses ${targetName} through a ${relation} relationship${acute ? " very close by degree" : " by sign"}${superiority}; the pressure is ${t(intensity)}.${receptionText}${copresenceText}`;
   }
 
+  function planetRelationJudgment(target, actor, chart, role) {
+    const context = buildPlanetRelationContext(target, actor, chart, role);
+    return context ? planetRelationJudgmentText(context) : "";
+  }
+
   function primaryRelationTargets(chart) {
     const ascLord = SIGNS[chart.ascSign].ruler;
     return [...new Set([ascLord, chart.sectLight, lotByKey(chart, "fortune")?.lord, lotByKey(chart, "spirit")?.lord])]
