@@ -7520,10 +7520,10 @@
       .join(" ");
   }
 
-  function lotPressureAuditHtml(items, lot) {
+  function renderLotPressureAudit(parts) {
     return `
       <ul class="lot-pressure-lines">
-        ${lotPressureAuditParts(items, lot).map((item) => `<li><b>${escapeHtml(item.label)}:</b> ${escapeHtml(item.value)}</li>`).join("")}
+        ${parts.map((item) => `<li><b>${escapeHtml(item.label)}:</b> ${escapeHtml(item.value)}</li>`).join("")}
       </ul>
     `;
   }
@@ -9032,9 +9032,10 @@
   }
 
   function mainLotTestimonyFields(lot, chart) {
+    const pressureItems = lotTestimonyItems(lot, ["mars", "saturn"], chart, "tension");
     return [
       { label: t("lotAuditBeneficTestimony"), value: lotTestimonyText(lotTestimonyItems(lot, ["jupiter", "venus"], chart, "support"), "support", lot) },
-      { label: t("lotAuditMaleficPressure"), html: lotPressureAuditHtml(lotTestimonyItems(lot, ["mars", "saturn"], chart, "tension"), lot) },
+      { label: t("lotAuditMaleficPressure"), pressureParts: lotPressureAuditParts(pressureItems, lot) },
     ];
   }
 
@@ -9068,7 +9069,7 @@
       field.valueClass ? `class="${escapeHtml(field.valueClass)}"` : "",
       field.dataTest ? `data-test="${escapeHtml(field.dataTest)}"` : "",
     ].filter(Boolean).join(" ");
-    const value = field.html || escapeHtml(field.value ?? "");
+    const value = field.pressureParts ? renderLotPressureAudit(field.pressureParts) : escapeHtml(field.value ?? "");
     return `
       <dt>${escapeHtml(field.label)}</dt>
       <dd${attrs ? ` ${attrs}` : ""}>${value}</dd>
