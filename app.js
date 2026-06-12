@@ -6876,17 +6876,29 @@
       .filter((key) => VISIBLE_KEYS.includes(key));
   }
 
-  function visibilityReading(chart) {
-    const priority = keyPlanetList(chart)
+  function keyPlanetSolarItems(chart) {
+    return keyPlanetList(chart)
       .map((key) => ({ key, stateInfo: solarPhaseState(key, chart) }))
       .filter((item) => item.stateInfo.category !== "luminary");
+  }
+
+  function visibilityReadingProfile(chart) {
+    const priority = keyPlanetSolarItems(chart);
     const hidden = priority.filter((item) => ["cazimi", "combust", "underBeams"].includes(item.stateInfo.category));
     let selected = (hidden.length ? hidden : priority.slice(0, 2)).slice(0, 3);
     const mercury = priority.find((item) => item.key === "mercury");
     if (mercury && !selected.some((item) => item.key === "mercury")) {
       selected = [...selected.slice(0, 2), mercury].slice(0, 3);
     }
-    const sentences = selected.map((item) => solarPhasePlainText(item.key, chart)).filter(Boolean);
+    return { priority, hidden, selected };
+  }
+
+  function visibilityReading(chart) {
+    return visibilityReadingText(visibilityReadingProfile(chart), chart);
+  }
+
+  function visibilityReadingText(profile, chart) {
+    const sentences = profile.selected.map((item) => solarPhasePlainText(item.key, chart)).filter(Boolean);
     if (sentences.length) return sentences.join(" ");
     return state.lang === "es"
       ? "Los planetas clave no están bajo una ocultación solar fuerte; sus temas pueden leerse principalmente por casa, condición esencial, secta y configuraciones."
@@ -6894,9 +6906,7 @@
   }
 
   function visibilityConclusionProfile(chart) {
-    const priority = keyPlanetList(chart)
-      .map((key) => ({ key, stateInfo: solarPhaseState(key, chart) }))
-      .filter((item) => item.stateInfo.category !== "luminary");
+    const priority = keyPlanetSolarItems(chart);
     return {
       priority,
       hidden: priority.filter((item) => ["combust", "underBeams"].includes(item.stateInfo.category) && !item.stateInfo.chariot),
@@ -7054,7 +7064,7 @@
 
   function configurationsReading(chart, focuses, ascLordPosition) {
     const judgments = configuredRelationItems(chart)
-      .map((item) => planetRelationJudgment(item.target, item.actor, chart, item.role))
+      .map(planetRelationJudgmentText)
       .filter(Boolean);
     if (judgments.length) return [...new Set(judgments)].slice(0, 4).join(" ");
     const angular = visibleAngularPlanets(chart).filter((key) => isConnectedWithFocus(chart.positions[key], focuses, ascLordPosition));
@@ -7068,7 +7078,7 @@
       : "No dominant planetary relationship appears on the main points; the reading therefore leans more on rulers, houses, sect, and essential condition.";
   }
 
-  function configurationsConclusion(chart) {
+  function configurationsConclusionProfile(chart) {
     const items = configuredRelationItems(chart);
     const supportItems = items.filter((item) => item.role === "support");
     const pressureItems = items.filter((item) => item.role === "tension");
@@ -7077,6 +7087,15 @@
     const regulatedPressure = pressureItems.some((item) => item.reception?.hasReception && item.intensity !== item.rawIntensity);
     const hardPressure = pressureItems.some((item) => levelRank(item.intensity) >= 3 || item.actorSuperior || ["square", "opposition"].includes(item.signType));
     const directSupport = supportItems.some((item) => levelRank(item.intensity) >= 2 || item.actorSuperior || ["trine", "sextile"].includes(item.signType));
+    return { items, supportItems, pressureItems, supportRank, pressureRank, regulatedPressure, hardPressure, directSupport };
+  }
+
+  function configurationsConclusion(chart) {
+    return configurationsConclusionText(configurationsConclusionProfile(chart));
+  }
+
+  function configurationsConclusionText(profile) {
+    const { items, supportRank, pressureRank, regulatedPressure, hardPressure, directSupport, pressureItems } = profile;
     if (state.lang === "es") {
       if (!items.length) return "No hay una configuración dominante que decida todo el juicio; la carta se lee mejor por regentes, casas y secta, sin forzar un único drama planetario.";
       if (supportRank > pressureRank) return "La ayuda pesa más que la fricción en los significadores principales; esto no vuelve fácil toda la carta, pero sí da vías reales para resolver, negociar o crecer.";

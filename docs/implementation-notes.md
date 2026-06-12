@@ -52,6 +52,8 @@ High-level visible readings should expose profile helpers before final prose. Le
 
 Visible conclusions should use the same profile/text split when they contain branching judgment. Visibility, lots, and Moon conclusions should expose a profile helper and a final localized text helper.
 
+Visibility readings should share one key-planet solar item builder between the visible reading and the conclusion, then select and verbalize the profile separately.
+
 Essential-condition readings should keep dignity labels, judgment profile, and localized prose separate. This prevents changes to dignity grouping from being tangled with the final interpretive wording.
 
 Stable plain-language maps for house topics, sign style, angularity wording, planet meanings, lot meanings, lunar fallback labels, and mitigation copy should live as shared data constants. Lookup functions should format from those constants rather than rebuilding text maps on every call.
@@ -61,6 +63,8 @@ Public-projection conclusions should keep score calculation, level selection, co
 Public-projection reading prose should likewise build a small model for MC, 10th sign, ruler, ruler house, and planets in the 10th before composing intro, MC, ruler, and 10th-house fragments.
 
 Planetary relation judgments should build one reusable relation context for target, actor, role, aspect, superiority, reception, raw intensity, and regulated intensity. Visible judgment prose and technical relation item lists should consume that same context instead of recalculating relation geometry separately.
+
+Configuration readings should turn relation contexts directly into prose and should split conclusion profile from conclusion text.
 
 Reception notes should keep channel noun, caution, and role-specific prose in separate helpers so reception strength changes do not require rewriting the final relationship sentence.
 
