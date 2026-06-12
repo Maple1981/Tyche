@@ -4669,8 +4669,7 @@
         zoneLabel: `${timeZone} (UTC${formatOffset(zoned.offset)})`,
       };
     } catch (error) {
-      $("#formStatus").textContent = t("invalidTimeZone");
-      return null;
+      return { failed: true, warningCode: "invalidTimeZone" };
     }
   }
 
@@ -4687,7 +4686,9 @@
     const { date, time } = parseChartDateTime(input);
     const manualOffset = manualOffsetContext(input);
     if (input.calendar === "julian") return julianTimeResult(date, time, manualOffset);
-    return ianaTimeResult(date, time, input.timeZone) || manualTimeResult(date, time, manualOffset);
+    const ianaResult = ianaTimeResult(date, time, input.timeZone);
+    if (ianaResult?.failed) return { ...manualTimeResult(date, time, manualOffset), warningCode: ianaResult.warningCode };
+    return ianaResult || manualTimeResult(date, time, manualOffset);
   }
 
   function meanObliquity(jd) {
@@ -5741,13 +5742,15 @@
     if (!Number.isFinite(input.latitude) || !Number.isFinite(input.longitude)) throw new Error(t("missingCoords"));
   }
 
-  function chartInputWarningText(input) {
+  function chartInputWarningText(input, chart = null) {
+    const warnings = [];
+    if (chart?.timeWarningCode) warnings.push(t(chart.timeWarningCode));
     if (input.latitude < -66 || input.latitude > 66) {
-      return state.lang === "es"
+      warnings.push(state.lang === "es"
         ? "Las latitudes extremas vuelven muy sensibles los ángulos al horizonte. Revisa cartas críticas con especial cuidado."
-        : "Extreme latitudes make horizon angles highly sensitive. Review critical charts with special care.";
+        : "Extreme latitudes make horizon angles highly sensitive. Review critical charts with special care.");
     }
-    return "";
+    return warnings.join(" ");
   }
 
   function computeChart(input) {
@@ -5769,6 +5772,7 @@
       jd: time.jd,
       zoneLabel: time.zoneLabel,
       offset: time.offset,
+      timeWarningCode: time.warningCode || "",
       ephemerisEngine: state.ephemerisEngine,
       positions,
       planetKeys,
@@ -5849,9 +5853,10 @@
 
   function buildCurrentChartCalculation() {
     const input = readInput();
+    const chart = computeChart(input);
     return {
-      chart: computeChart(input),
-      warningText: chartInputWarningText(input),
+      chart,
+      warningText: chartInputWarningText(input, chart),
     };
   }
 

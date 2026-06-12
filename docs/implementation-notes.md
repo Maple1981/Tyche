@@ -28,6 +28,8 @@ Current chart calculation from the form should keep UI preparation, chart constr
 
 Date/time conversion should keep validation, manual UTC offset handling, Julian-calendar conversion, IANA time-zone conversion, and manual fallback in separate helpers. `jdFromForm()` should coordinate those paths and return the final Julian Date, offset, and displayed zone label.
 
+Date/time conversion helpers should not write DOM status. If IANA time-zone conversion fails and the manual offset fallback is used, return a structured warning code and let the chart-calculation renderer display it.
+
 Lunar condition should keep the contact scan separate from the final condition object. The scan owns last separation, next application, sign-exit application, and close applying contact; `computeMoonCondition()` should assemble phase, void flags, and summary fields from that scan. Candidate generation, nearest-past/future selection, and within-orb contact classification should remain separate helpers inside the scan layer.
 
 Lunar judgment prose should keep contact fallback labels, next-contact role, sign-exit void judgment, close-orb application, and the 30-degree void rule in separate helpers. This keeps both lunar void criteria explicit in the visible reading.
