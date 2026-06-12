@@ -46,7 +46,7 @@ Large panel renderers should be decomposed into subrenderers for their stable re
 
 Top chart panels should also prefer view models where labels and values are prepared before rendering. The core summary, angle panel, Ascendant lord panel, Moon panel, and technical notes panel should stay as small model builders plus focused renderers rather than large mixed UI functions.
 
-Table panels should keep row construction separate from final DOM assignment. Use dedicated header/row builders for planet, house, lot, and aspect tables so calculation changes and markup changes remain independent.
+Table panels should keep row construction separate from final DOM assignment. Use dedicated table models, plus header/row builders for planet, house, lot, and aspect tables, so calculation changes and markup changes remain independent. When a table can split into sections, such as traditional and modern planets, build a section model before rendering.
 
 SVG renderers should follow the same rule. The chart wheel should build a geometry/parts model for houses, angles, aspects, and planets before composing the final SVG shell.
 

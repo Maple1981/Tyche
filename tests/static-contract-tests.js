@@ -151,9 +151,15 @@ assert("Modern planets are blocked from judgment helpers", app.includes("!VISIBL
 ["planetTableRows", "houseTableRows", "lotTableRows", "aspectTableRows"].forEach((name) => {
   assert(`Table renderer uses ${name}`, app.includes(`function ${name}`));
 });
-const planetRenderBlock = sectionBetween(app, "function renderPlanetTable(chart)", "function renderHouseTable(chart)");
+const planetRenderBlock = sectionBetween(app, "function buildPlanetTableModel(chart)", "function renderHouseTable(chart)");
 assert("Modern planets are visually separated from traditional visible planets", planetRenderBlock.includes("traditional-planets-section") && planetRenderBlock.includes("modern-planets-section") && app.includes("traditionalPlanetsTitle") && app.includes("modernPlanetsTitle"));
 assert("Planet table renderer consumes row builders", planetRenderBlock.includes("planetTableHeaders()") && planetRenderBlock.includes("planetTableRows(chart"));
+const planetTableModelBlock = sectionBetween(app, "function buildPlanetTableModel(chart)", "function renderHouseTable(chart)");
+assert("Planet table separates section model from DOM assignment", app.includes("function renderTableSection(section)") && app.includes("function buildPlanetTableModel(chart)") && planetTableModelBlock.includes("sections: [") && sectionBetween(app, "function renderPlanetTable(chart)", "function houseTableHeaders()").includes("const model = buildPlanetTableModel(chart)"));
+["buildHouseTableModel", "buildLotTableModel", "buildAspectTableModel"].forEach((name) => {
+  assert(`Table panel uses ${name}`, app.includes(`function ${name}`));
+});
+assert("House lot and aspect renderers consume table models", sectionBetween(app, "function renderHouseTable(chart)", "function lotTableHeaders()").includes("const model = buildHouseTableModel(chart)") && sectionBetween(app, "function renderLotTable(chart)", "function aspectTableHeaders()").includes("const model = buildLotTableModel(chart)") && sectionBetween(app, "function renderAspectTable(chart)", "function polar(").includes("const model = buildAspectTableModel(chart)"));
 const wheelBuilders = ["buildWheelHouseParts", "buildWheelAngleParts", "buildWheelAspectParts", "buildWheelPlanetLabels", "buildWheelModel"];
 assert("Wheel rendering separates geometry model from SVG shell", wheelBuilders.every((name) => app.includes(`function ${name}`)) && sectionBetween(app, "function renderWheel(chart)", "function applyI18n()").includes("const model = buildWheelModel(chart)"));
 const placeSuggestionBlock = sectionBetween(app, "function buildPlaceSuggestionModel(items, message = \"\")", "async function fetchPlaceSuggestions(query)");

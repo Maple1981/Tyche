@@ -8279,24 +8279,39 @@
     return keys.map((key) => planetTableRow(chart, key));
   }
 
-  function renderPlanetTable(chart) {
+  function renderTableSection(section) {
+    return `
+      <section class="table-section"${section.test ? ` data-test="${escapeHtml(section.test)}"` : ""}>
+        ${section.title ? `<h3>${escapeHtml(section.title)}</h3>` : ""}
+        ${makeTable(section.headers, section.rows)}
+      </section>
+    `;
+  }
+
+  function buildPlanetTableModel(chart) {
     const headers = planetTableHeaders();
     const traditionalKeys = chart.planetKeys.filter((key) => VISIBLE_KEYS.includes(key));
     const modernKeys = chart.planetKeys.filter((key) => MODERN_KEYS.includes(key));
     if (modernKeys.length) {
-      $("#tab-planets").innerHTML = `
-        <section class="table-section" data-test="traditional-planets-section">
-          <h3>${escapeHtml(t("traditionalPlanetsTitle"))}</h3>
-          ${makeTable(headers, planetTableRows(chart, traditionalKeys))}
-        </section>
-        <section class="table-section" data-test="modern-planets-section">
-          <h3>${escapeHtml(t("modernPlanetsTitle"))}</h3>
-          ${makeTable(headers, planetTableRows(chart, modernKeys))}
-        </section>
-      `;
-      return;
+      return {
+        sections: [
+          { title: t("traditionalPlanetsTitle"), test: "traditional-planets-section", headers, rows: planetTableRows(chart, traditionalKeys) },
+          { title: t("modernPlanetsTitle"), test: "modern-planets-section", headers, rows: planetTableRows(chart, modernKeys) },
+        ],
+      };
     }
-    $("#tab-planets").innerHTML = makeTable(headers, planetTableRows(chart, chart.planetKeys));
+    return {
+      sections: [
+        { title: "", test: "", headers, rows: planetTableRows(chart, chart.planetKeys) },
+      ],
+    };
+  }
+
+  function renderPlanetTable(chart) {
+    const model = buildPlanetTableModel(chart);
+    $("#tab-planets").innerHTML = model.sections.length === 1 && !model.sections[0].title
+      ? makeTable(model.sections[0].headers, model.sections[0].rows)
+      : model.sections.map(renderTableSection).join("");
   }
 
   function houseTableHeaders() {
@@ -8328,8 +8343,16 @@
     });
   }
 
+  function buildHouseTableModel(chart) {
+    return {
+      headers: houseTableHeaders(),
+      rows: houseTableRows(chart),
+    };
+  }
+
   function renderHouseTable(chart) {
-    $("#tab-houses").innerHTML = makeTable(houseTableHeaders(), houseTableRows(chart));
+    const model = buildHouseTableModel(chart);
+    $("#tab-houses").innerHTML = makeTable(model.headers, model.rows);
   }
 
   function lotTableHeaders() {
@@ -8360,13 +8383,26 @@
       : `Formula system: ${glossaryTerm(t("fortune"), "lotFortune")} and ${glossaryTerm(t("spirit"), "lotSpirit")} reverse by ${glossaryTerm(t("sect"), "sect")}; ${glossaryTerm("Eros", "lotEros")} and ${glossaryTerm(t("necessity"), "lotNecessity")} use the ${glossaryTerm(t("fortune"), "lotFortune")}/${glossaryTerm(t("spirit"), "lotSpirit")}-based tradition; ${glossaryTerm(t("courage"), "lotCourage")}, ${glossaryTerm(t("victory"), "lotVictory")}, and ${glossaryTerm("Nemesis", "lotNemesis")} use hermetic planetary formulas.`;
   }
 
-  function renderLotTable(chart) {
+  function buildLotTableModel(chart) {
     const lots = visibleLots(chart);
     if (!lots.length) {
-      $("#tab-lots").innerHTML = `<p class="text-note">${escapeHtml(t("noLots"))}</p>`;
+      return { emptyText: t("noLots"), headers: [], rows: [], noteHtml: "" };
+    }
+    return {
+      emptyText: "",
+      headers: lotTableHeaders(),
+      rows: lotTableRows(lots, chart),
+      noteHtml: lotFormulaNote(),
+    };
+  }
+
+  function renderLotTable(chart) {
+    const model = buildLotTableModel(chart);
+    if (model.emptyText) {
+      $("#tab-lots").innerHTML = `<p class="text-note">${escapeHtml(model.emptyText)}</p>`;
       return;
     }
-    $("#tab-lots").innerHTML = `${makeTable(lotTableHeaders(), lotTableRows(lots, chart))}<p class="text-note">${lotFormulaNote()}</p>`;
+    $("#tab-lots").innerHTML = `${makeTable(model.headers, model.rows)}<p class="text-note">${model.noteHtml}</p>`;
   }
 
   function aspectTableHeaders() {
@@ -8415,13 +8451,23 @@
     return rows;
   }
 
-  function renderAspectTable(chart) {
+  function buildAspectTableModel(chart) {
     const rows = aspectTableRows(chart);
-    if (!rows.length) {
-      $("#tab-aspects").innerHTML = `<p class="text-note">${escapeHtml(t("noAspects"))}</p>`;
+    if (!rows.length) return { emptyText: t("noAspects"), headers: [], rows: [] };
+    return {
+      emptyText: "",
+      headers: aspectTableHeaders(),
+      rows,
+    };
+  }
+
+  function renderAspectTable(chart) {
+    const model = buildAspectTableModel(chart);
+    if (model.emptyText) {
+      $("#tab-aspects").innerHTML = `<p class="text-note">${escapeHtml(model.emptyText)}</p>`;
       return;
     }
-    $("#tab-aspects").innerHTML = makeTable(aspectTableHeaders(), rows);
+    $("#tab-aspects").innerHTML = makeTable(model.headers, model.rows);
   }
 
   function polar(cx, cy, r, lon, asc) {
