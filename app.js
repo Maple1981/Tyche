@@ -6052,27 +6052,34 @@
     };
   }
 
+  function renderTechnicalNotes(notes) {
+    return `
+      <div class="technical-notes">
+        ${notes.map((note) => `<p>${escapeHtml(note)}</p>`).join("")}
+      </div>
+    `;
+  }
+
+  function renderTechnicalMetricSection(title, metrics, extraHtml = "") {
+    return `
+      <section class="technical-section">
+        <h4>${escapeHtml(title)}</h4>
+        <div class="technical-grid">
+          ${renderMetricItems(metrics)}
+          ${extraHtml}
+        </div>
+      </section>
+    `;
+  }
+
   function renderTechnicalPanel(chart) {
     const model = buildTechnicalPanelModel(chart);
     $("#technicalPanel").innerHTML = `
       <details>
         <summary><h3>${escapeHtml(model.title)}</h3></summary>
-        <div class="technical-notes">
-          ${model.notes.map((note) => `<p>${escapeHtml(note)}</p>`).join("")}
-        </div>
-        <section class="technical-section">
-          <h4>${escapeHtml(model.astronomyTitle)}</h4>
-          <div class="technical-grid">
-            ${renderMetricItems(model.astronomyMetrics)}
-          </div>
-        </section>
-        <section class="technical-section">
-          <h4>${escapeHtml(model.judgmentTitle)}</h4>
-          <div class="technical-grid">
-            ${renderMetricItems(model.judgmentMetrics)}
-            ${renderBoundaryAudit(model.boundary)}
-          </div>
-        </section>
+        ${renderTechnicalNotes(model.notes)}
+        ${renderTechnicalMetricSection(model.astronomyTitle, model.astronomyMetrics)}
+        ${renderTechnicalMetricSection(model.judgmentTitle, model.judgmentMetrics, renderBoundaryAudit(model.boundary))}
       </details>
     `;
   }

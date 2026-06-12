@@ -134,6 +134,8 @@ Table renderers should build table models first and share generic empty-note/tab
 
 Metric panels should share the same heading-and-grid renderer once a panel has a `{ title, titleGlossary, metrics }` model. Domain panels may append notes or audits after that shared metric block.
 
+Technical panel rendering should keep notes and metric sections in dedicated helpers. The panel renderer should compose the model, not duplicate section wrappers for astronomy and judgment details.
+
 Chart render completion should keep final text cleanup, viewport scrolling, and rendered-event dispatch in named helpers. Preserve their order, but avoid hiding all post-render side effects in one mixed block.
 
 Chart submission errors should pass through a small error flow: derive a display message, render it, then dispatch the regression-friendly error event. Keep that out of the form submit catch block.
