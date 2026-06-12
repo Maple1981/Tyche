@@ -124,6 +124,8 @@ Birthplace selection should also keep field modeling separate from DOM mutation.
 
 Historical-person selection should keep selected-person metadata in a small helper layer. Clearing a manual edit and loading an archived figure should both pass through the same metadata applier instead of writing audit, time-confidence, and zone-source fields independently.
 
+Historical data popovers should carry row/link data in their model, not pre-rendered row HTML. Render anchor tags only in the popover renderer.
+
 Form input reading should normalize coherent groups before chart calculation. Keep birth fields, selected-person context, place/zone fields, and technique/options fields in dedicated readers, with `readInput()` acting as the single chart-input assembler. Place input reading should separate raw DOM field reads, city fallback coordinates, and zone-reliability selection. Technique input reading should separate raw option fields, selected lot collection, and normalized rules such as mixed mode forcing modern planets.
 
 Inline option warnings should build a small visibility/text model first, then apply it to DOM nodes through a dedicated model applier. This keeps option state rules testable without depending on translated prose in event handlers.

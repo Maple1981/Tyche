@@ -4225,11 +4225,13 @@
     return historicalNatalSource(person).label || t("dataSourceGeneral");
   }
 
-  function historicalDataSourceHtml(person) {
+  function historicalDataSourceRow(person) {
     const natalSource = historicalNatalSource(person);
-    const label = natalSource.label || t("dataSourceGeneral");
-    if (!natalSource.url) return escapeHtml(label);
-    return `<a href="${escapeHtml(natalSource.url)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`;
+    return {
+      label: t("natalDataSource"),
+      text: natalSource.label || t("dataSourceGeneral"),
+      url: natalSource.url || "",
+    };
   }
 
   function buildHistoricalQualityDetailsModel(person) {
@@ -4239,7 +4241,7 @@
     const timeText = natalSource.timeSource || t("dataTimeSourcePrepared");
     const sourceDate = localizedValue(audit.sourceDateLabel);
     const rows = [
-      { label: t("natalDataSource"), html: historicalDataSourceHtml(person) },
+      historicalDataSourceRow(person),
       { label: t("dataRodden"), text: roddenText },
       { label: t("dataTimeSource"), text: timeText },
     ];
@@ -4253,13 +4255,16 @@
     return { rows };
   }
 
-  function renderHistoricalQualityRow(row) {
-    const value = row.html || escapeHtml(row.text || "");
-    return `<dt>${escapeHtml(row.label)}</dt><dd>${value}</dd>`;
+  function renderHistoricalQualityValue(row) {
+    if (row.url) return `<a href="${escapeHtml(row.url)}" target="_blank" rel="noreferrer">${escapeHtml(row.text || "")}</a>`;
+    return escapeHtml(row.text || "");
   }
 
-  function historicalQualityDetailsHtml(person) {
-    const model = buildHistoricalQualityDetailsModel(person);
+  function renderHistoricalQualityRow(row) {
+    return `<dt>${escapeHtml(row.label)}</dt><dd>${renderHistoricalQualityValue(row)}</dd>`;
+  }
+
+  function renderHistoricalQualityDetails(model) {
     return `<dl class="person-data-details">${model.rows.map(renderHistoricalQualityRow).join("")}</dl>`;
   }
 
@@ -4273,14 +4278,14 @@
     if (!person) return null;
     return {
       title: `${t("personDataDetailsTitle")}: ${person.name}`,
-      bodyHtml: historicalQualityDetailsHtml(person),
+      details: buildHistoricalQualityDetailsModel(person),
     };
   }
 
   function renderPersonDataPopover(model) {
     const popover = $("#personDataPopover");
     $("#personDataTitle").textContent = model.title;
-    $("#personDataBody").innerHTML = model.bodyHtml;
+    $("#personDataBody").innerHTML = renderHistoricalQualityDetails(model.details);
     capitalizeStructuredText($("#personDataBody"));
     popover.hidden = false;
     return popover;
