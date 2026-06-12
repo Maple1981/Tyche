@@ -8203,12 +8203,35 @@
     };
   }
 
+  function dominantFocusSummaryText(dominant) {
+    return state.lang === "es"
+      ? `La carta pone mucho peso en la casa ${dominant.house}. ${capitalizeText(houseReadingTopics(dominant.house, "double"))}.`
+      : `The chart puts a great deal of weight on house ${dominant.house}: ${houseReadingTopics(dominant.house, "double")}.`;
+  }
+
+  function secondaryFocusSummaryText(secondaryFocuses) {
+    if (!secondaryFocuses.length) return "";
+    return state.lang === "es"
+      ? `También conviene mirar ${naturalList(secondaryFocuses.map((focus) => `casa ${focus.house}`))}, porque completan el dibujo general.`
+      : `It is also worth reading ${naturalList(secondaryFocuses.map((focus) => `house ${focus.house}`))}, because they complete the general pattern.`;
+  }
+
+  function ascLordSummaryText(ascLord, ascLordPosition) {
+    return state.lang === "es"
+      ? `El hilo rector sigue siendo ${planetLabel(ascLord)}, regente del Ascendente, situado en casa ${ascLordPosition.house}; por eso la lectura parte de la dirección vital y no de una posición aislada.`
+      : `The guiding thread remains ${planetLabel(ascLord)}, lord of the Ascendant / Hour-Marker, placed in house ${ascLordPosition.house}; this is why the reading begins from life direction rather than from an isolated placement.`;
+  }
+
+  function natalSummaryBaseText(context) {
+    return [
+      dominantFocusSummaryText(context.dominant),
+      secondaryFocusSummaryText(context.secondaryFocuses),
+      ascLordSummaryText(context.ascLord, context.ascLordPosition),
+    ].filter(Boolean).join(" ");
+  }
+
   function buildNatalReadingSummary(context) {
-    const { dominant, secondaryFocuses, ascLord, ascLordPosition, sectConfidenceNotice } = context;
-    const summaryBase = state.lang === "es"
-      ? `La carta pone mucho peso en la casa ${dominant.house}. ${capitalizeText(houseReadingTopics(dominant.house, "double"))}. ${secondaryFocuses.length ? `También conviene mirar ${naturalList(secondaryFocuses.map((focus) => `casa ${focus.house}`))}, porque completan el dibujo general.` : ""} El hilo rector sigue siendo ${planetLabel(ascLord)}, regente del Ascendente, situado en casa ${ascLordPosition.house}; por eso la lectura parte de la dirección vital y no de una posición aislada.`
-      : `The chart puts a great deal of weight on house ${dominant.house}: ${houseReadingTopics(dominant.house, "double")}. ${secondaryFocuses.length ? `It is also worth reading ${naturalList(secondaryFocuses.map((focus) => `house ${focus.house}`))}, because they complete the general pattern.` : ""} The guiding thread remains ${planetLabel(ascLord)}, lord of the Ascendant / Hour-Marker, placed in house ${ascLordPosition.house}; this is why the reading begins from life direction rather than from an isolated placement.`;
-    return [summaryBase, sectConfidenceNotice].filter(Boolean).join(" ");
+    return [natalSummaryBaseText(context), context.sectConfidenceNotice].filter(Boolean).join(" ");
   }
 
   function buildLifeDirectionText(context) {

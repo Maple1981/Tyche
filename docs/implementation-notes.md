@@ -40,6 +40,8 @@ Visible natal reading sections should be built through one helper per section an
 
 Natal reading hierarchy and summary qualities should follow the same ordered-builder pattern. Each priority line or quality badge should have one helper, with the public builder only mapping and filtering those helpers.
 
+The natal reading summary should keep dominant focus, secondary focus, and Ascendant-lord guidance in separate text helpers before joining them with any sect-confidence notice.
+
 Natal reading evidence should be assembled from testimony-family helpers: focus/Ascendant, sect, public prominence, reception/boundaries, lots, solar phase, Moon, and triplicity support. New evidence should enter through the smallest relevant family helper rather than extending one monolithic evidence array.
 
 Complex interpretive judgments should keep testimony extraction, level/flag decisions, and localized prose separate. The malefic-mitigation reading is the reference pattern: collect factors, derive mitigation flags and level, then choose copy from that level.
