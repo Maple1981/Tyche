@@ -9936,15 +9936,32 @@
     updatePlaceFields();
   }
 
+  function chartErrorMessage(error) {
+    return error.message || String(error);
+  }
+
+  function renderChartError(message) {
+    $("#formStatus").textContent = message;
+  }
+
+  function dispatchChartErrorEvent(message) {
+    window.dispatchEvent(new CustomEvent("tyche:chart-error", {
+      detail: { message },
+    }));
+  }
+
+  function handleChartSubmitError(error) {
+    const message = chartErrorMessage(error);
+    renderChartError(message);
+    dispatchChartErrorEvent(message);
+  }
+
   function submitChartForm(event) {
     event.preventDefault();
     try {
       calculateCurrentChart();
     } catch (error) {
-      $("#formStatus").textContent = error.message || String(error);
-      window.dispatchEvent(new CustomEvent("tyche:chart-error", {
-        detail: { message: error.message || String(error) },
-      }));
+      handleChartSubmitError(error);
     }
   }
 
