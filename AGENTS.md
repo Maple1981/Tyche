@@ -115,6 +115,30 @@ The interface should feel mobile-first, calm, scholarly, and usable:
 - `tests/browser-regression-runner.js` is an optional local smoke runner. It may use Playwright and an installed browser for verification, but Tyche itself must not gain a build step or runtime dependency from it.
 - Hard rule: do not run `git push`, publish, deploy, or update GitHub Pages unless the user explicitly asks for that exact action in the current turn.
 
+## Agent Operating Rules
+
+Publication:
+
+- The hard publication rule is literal. A previous "Publica" does not authorize later pushes after additional fixes. After any post-publication bugfix, stop at local verification and commit unless the newest user message explicitly asks to publish/push/deploy again.
+- Do not treat an emergency hotfix as implicit publish permission. Ask for a fresh publish instruction.
+
+Browser smoke testing:
+
+- Normal local browser URL: assume the app is served by VS Code Live Server at `http://127.0.0.1:5500/index.html`.
+- Normal smoke URL: use `http://127.0.0.1:5500/tests/regression.html?v=<tag>`.
+- If `http://127.0.0.1:5500/index.html` is not available, ask the user explicitly to start VS Code Live Server before browser testing.
+- Do not repeatedly start ad hoc Python servers, Edge/Chrome headless sessions, or random debugging ports unless the user explicitly approves that approach for the current turn.
+- If Live Server is not available and browser verification is essential, ask once for permission to use a specific fallback path. Prefer the existing `tests/browser-regression-runner.js` if its dependencies are available; otherwise state the limitation instead of trying multiple launcher combinations.
+- Keep smoke checks focused: first capture console exceptions and the regression summary, then verify the critical rendered surfaces (`#interpretationPanel`, `#tab-planets`, `#tab-houses`, `#tab-lots`, `#tab-aspects`) only as needed.
+
+Text encoding and line endings:
+
+- Project text files are UTF-8 without BOM.
+- Repository text files should use LF line endings. Keep `.gitattributes` and `.editorconfig` aligned with this.
+- Avoid PowerShell `Set-Content` / `Out-File` for code rewrites because they can alter encoding, add BOMs, or churn line endings. Use `apply_patch` for manual edits.
+- For mechanical rewrites that cannot reasonably use `apply_patch`, use Node or another binary-safe tool, explicitly strip a leading BOM, and inspect the diff before committing.
+- If a terminal displays mojibake, do not "fix" source text blindly. Confirm bytes/file encoding or inspect through a UTF-8-aware tool first.
+
 ## Historical Examples
 
 - Use only public historical figures with a documented exact date, clock time, birthplace, and sex.
