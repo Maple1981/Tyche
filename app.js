@@ -5213,14 +5213,14 @@
     if (!reception?.hasReception) return "";
     const score = reception.effectiveScore ?? reception.strongest;
     if (score >= 3) {
-      return state.lang === "es" ? "fuerte (domicilio/exaltación)" : "strong (domicile/exaltation)";
+      return state.lang === "es" ? "fuerte —domicilio/exaltación—" : "strong —domicile/exaltation—";
     }
     if (score >= 2) {
-      return state.lang === "es" ? "media (término o triplicidad activa)" : "medium (bound or active triplicity)";
+      return state.lang === "es" ? "media —término o triplicidad activa—" : "medium —bound or active triplicity—";
     }
     return state.lang === "es"
-      ? "débil (triplicidad fuera de secta o cooperante)"
-      : "weak (out-of-sect or cooperating triplicity)";
+      ? "débil —triplicidad fuera de secta o cooperante—"
+      : "weak —out-of-sect or cooperating triplicity—";
   }
 
   function receptionAuthority(receiver, guestLon, chart) {
@@ -6778,6 +6778,7 @@
     return {
       maleficStrength,
       beneficStrength,
+      beneficAngularity: beneficPosition.angularity,
       beneficAspect,
       beneficContact,
       closeContact,
@@ -6790,6 +6791,7 @@
     const {
       maleficStrength,
       beneficStrength,
+      beneficAngularity,
       beneficAspect,
       beneficContact,
       closeContact,
@@ -6801,8 +6803,8 @@
     const favorableAspect = ["sextile", "trine"].includes(beneficAspect) || (beneficAspect === "copresence" && closeContact);
     const hardAspect = ["square", "opposition"].includes(beneficAspect);
     const regulatedHardSupport = beneficContact && hardAspect && mediumReception;
-    const beneficHasWeight = beneficStrength.strong || beneficPosition.angularity === "angular";
-    const beneficHasSomeWeight = beneficHasWeight || beneficStrength.triplicityStrong || beneficStrength.ownMinor || beneficPosition.angularity === "succedent";
+    const beneficHasWeight = beneficStrength.strong || beneficAngularity === "angular";
+    const beneficHasSomeWeight = beneficHasWeight || beneficStrength.triplicityStrong || beneficStrength.ownMinor || beneficAngularity === "succedent";
     const maleficHasOwnResources = maleficStrength.strong || maleficStrength.triplicityStrong || maleficStrength.ownMinor;
     const strongMitigation = beneficContact && !beneficObscured && (favorableAspect || strongReception) && beneficHasWeight && (maleficHasOwnResources || closeContact || strongReception);
     const mediumMitigation = (
