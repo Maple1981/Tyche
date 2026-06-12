@@ -66,6 +66,8 @@ Planetary relation judgments should build one reusable relation context for targ
 
 Configuration readings should turn relation contexts directly into prose and should split conclusion profile from conclusion text.
 
+Primary relation targets and actors should be shared by configuration and reception-evidence helpers. Reception evidence should filter relation contexts with reception rather than doing its own sign-aspect and reception calculations.
+
 Reception notes should keep channel noun, caution, and role-specific prose in separate helpers so reception strength changes do not require rewriting the final relationship sentence.
 
 Lot testimony should build item models before prose. Keep lot testimony geometry, reception, raw/regulating intensity, and final item text in separate helpers so Fortune/Spirit evidence can be expanded without rebuilding every audit row.

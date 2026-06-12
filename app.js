@@ -7039,22 +7039,23 @@
     return `${actorName} presses ${targetName} through a ${relation} relationship${acute ? " very close by degree" : " by sign"}${superiority}; the pressure is ${t(intensity)}.${receptionText}${copresenceText}`;
   }
 
-  function planetRelationJudgment(target, actor, chart, role) {
-    const context = buildPlanetRelationContext(target, actor, chart, role);
-    return context ? planetRelationJudgmentText(context) : "";
+  function primaryRelationTargets(chart) {
+    const ascLord = SIGNS[chart.ascSign].ruler;
+    return [...new Set([ascLord, chart.sectLight, lotByKey(chart, "fortune")?.lord, lotByKey(chart, "spirit")?.lord])]
+      .filter(Boolean);
   }
 
-  function configuredRelationItems(chart) {
-    const ascLord = SIGNS[chart.ascSign].ruler;
-    const targets = [...new Set([ascLord, chart.sectLight, lotByKey(chart, "fortune")?.lord, lotByKey(chart, "spirit")?.lord])]
-      .filter(Boolean);
-    const actors = [
+  function primaryRelationActors(chart) {
+    return [
       { key: chart.beneficOfSect, role: "support" },
       { key: chart.maleficContrarySect, role: "tension" },
     ];
+  }
+
+  function configuredRelationItems(chart) {
     const items = [];
-    targets.forEach((target) => {
-      actors.forEach(({ key: actor, role }) => {
+    primaryRelationTargets(chart).forEach((target) => {
+      primaryRelationActors(chart).forEach(({ key: actor, role }) => {
         const context = buildPlanetRelationContext(target, actor, chart, role);
         if (context) items.push(context);
       });
@@ -7110,28 +7111,28 @@
     return "The planetary relationships add nuance rather than a closed verdict; the main weight remains with the condition of the rulers and the places they occupy.";
   }
 
-  function receptionEvidenceItems(chart) {
-    const ascLord = SIGNS[chart.ascSign].ruler;
-    const targets = [...new Set([ascLord, chart.sectLight, lotByKey(chart, "fortune")?.lord, lotByKey(chart, "spirit")?.lord])]
-      .filter(Boolean);
-    const actors = [...new Set([chart.beneficOfSect, chart.maleficContrarySect])];
+  function receptionEvidenceContexts(chart) {
     const items = [];
-    targets.forEach((target) => {
-      actors.forEach((actor) => {
-        if (target === actor) return;
-        const signType = signAspectType(signOf(chart.positions[target].lon), signOf(chart.positions[actor].lon));
-        if (!signType) return;
-        const reception = receptionBetween(actor, target, chart);
-        if (!reception.hasReception) return;
-        const role = actor === chart.beneficOfSect ? "support" : "tension";
-        const phrase = receptionPhrase(target, actor, reception);
-        const strength = receptionStrengthLabel(reception);
-        items.push(state.lang === "es"
-          ? `${reception.isMutual ? "Recepción mutua" : "Recepción"} ${strength} (${role === "support" ? "apoyo" : "mitigación"}): ${phrase}.`
-          : `${capitalizeText(strength)} ${reception.isMutual ? "mutual reception" : "reception"} (${role === "support" ? "support" : "mitigation"}): ${phrase}.`);
+    primaryRelationTargets(chart).forEach((target) => {
+      primaryRelationActors(chart).forEach(({ key: actor, role }) => {
+        const context = buildPlanetRelationContext(target, actor, chart, role);
+        if (context?.reception?.hasReception) items.push(context);
       });
     });
-    return [...new Set(items)].slice(0, 4);
+    return items;
+  }
+
+  function receptionEvidenceItemText(context) {
+    const { target, actor, reception, role } = context;
+    const phrase = receptionPhrase(target, actor, reception);
+    const strength = receptionStrengthLabel(reception);
+    return state.lang === "es"
+      ? `${reception.isMutual ? "Recepción mutua" : "Recepción"} ${strength} (${role === "support" ? "apoyo" : "mitigación"}): ${phrase}.`
+      : `${capitalizeText(strength)} ${reception.isMutual ? "mutual reception" : "reception"} (${role === "support" ? "support" : "mitigation"}): ${phrase}.`;
+  }
+
+  function receptionEvidenceItems(chart) {
+    return [...new Set(receptionEvidenceContexts(chart).map(receptionEvidenceItemText))].slice(0, 4);
   }
 
   function triplicityRulerSupportScore(key, chart) {
