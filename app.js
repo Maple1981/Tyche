@@ -7705,18 +7705,33 @@
       : "By the broad Hellenistic 30° rule it is void of course: immediate action disperses or is less directed.";
   }
 
-  function moonJudgmentReading(chart) {
+  function moonJudgmentProfile(chart) {
     const nextText = moonContactText(chart.moon.nextApplication, "applying", "next");
     const lastText = moonContactText(chart.moon.lastSeparation, "separating", "last");
     const bySignText = moonContactText(chart.moon.nextApplicationBySign, "applying", "sign");
     const nextRole = moonNextRole(chart);
-    const immediateText = chart.moon.voidOfCourse ? moonVoidJudgmentText() : moonRoleJudgmentText(nextRole);
-    const signVocText = moonSignExitJudgmentText(chart, bySignText);
-    const closeText = moonCloseApplicationText(chart);
+    return {
+      phase: chart.moon.phase,
+      nextText,
+      lastText,
+      bySignText,
+      nextRole,
+      immediateText: chart.moon.voidOfCourse ? moonVoidJudgmentText() : moonRoleJudgmentText(nextRole),
+      signVocText: moonSignExitJudgmentText(chart, bySignText),
+      closeText: moonCloseApplicationText(chart),
+    };
+  }
+
+  function moonJudgmentReading(chart) {
+    return moonJudgmentText(moonJudgmentProfile(chart));
+  }
+
+  function moonJudgmentText(profile) {
+    const { phase, lastText, nextText, immediateText, signVocText, closeText } = profile;
     if (state.lang === "es") {
-      return `La Luna muestra el ritmo de los acontecimientos, el cuerpo y la continuidad cotidiana. Está en fase ${chart.moon.phase}. Viene de ${lastText} y se dirige a ${nextText}. ${immediateText} ${signVocText} ${closeText}`;
+      return `La Luna muestra el ritmo de los acontecimientos, el cuerpo y la continuidad cotidiana. Está en fase ${phase}. Viene de ${lastText} y se dirige a ${nextText}. ${immediateText} ${signVocText} ${closeText}`;
     }
-    return `The Moon shows the rhythm of events, the body, and daily continuity. It is in ${chart.moon.phase} phase. It comes from ${lastText} and moves toward ${nextText}. ${immediateText} ${signVocText} ${closeText}`;
+    return `The Moon shows the rhythm of events, the body, and daily continuity. It is in ${phase} phase. It comes from ${lastText} and moves toward ${nextText}. ${immediateText} ${signVocText} ${closeText}`;
   }
 
   function visibleAngularPlanets(chart) {
@@ -8568,16 +8583,27 @@
     ];
   }
 
-  function buildReceptionBoundaryEvidence(context) {
-    const { receptionEvidence, boundaryEvidence } = context;
-    return [
-      ...(receptionEvidence.length ? receptionEvidence : [state.lang === "es"
+  function receptionEvidenceTextItems(receptionEvidence) {
+    return receptionEvidence.length
+      ? receptionEvidence
+      : [state.lang === "es"
         ? "Recepción: no destaca entre los significadores principales configurados."
-        : "Reception: none stands out among the configured main significators."]),
-      ...(boundaryEvidence.length ? [state.lang === "es"
-        ? `Avisos de frontera: ${boundaryEvidence.map(boundaryWarningText).join(" ")}`
-        : `Boundary notices: ${boundaryEvidence.map(boundaryWarningText).join(" ")}`] : []),
-    ];
+        : "Reception: none stands out among the configured main significators."];
+  }
+
+  function boundaryEvidenceTextItem(boundaryEvidence) {
+    if (!boundaryEvidence.length) return "";
+    const text = boundaryEvidence.map(boundaryWarningText).join(" ");
+    return state.lang === "es"
+      ? `Avisos de frontera: ${text}`
+      : `Boundary notices: ${text}`;
+  }
+
+  function buildReceptionBoundaryEvidence(context) {
+    return [
+      ...receptionEvidenceTextItems(context.receptionEvidence),
+      boundaryEvidenceTextItem(context.boundaryEvidence),
+    ].filter(Boolean);
   }
 
   function buildLotEvidence(context) {

@@ -32,6 +32,8 @@ Lunar condition should keep the contact scan separate from the final condition o
 
 Lunar judgment prose should keep contact fallback labels, next-contact role, sign-exit void judgment, close-orb application, and the 30-degree void rule in separate helpers. This keeps both lunar void criteria explicit in the visible reading.
 
+The final lunar visible reading should build a profile from those lunar fragments before composing the localized paragraph.
+
 For the natal interpretation panel, `interpretChart()` should remain an orchestrator. It should collect a context, call dedicated builders for summary, evidence, hierarchy, qualities, and reading blocks, and return a view model. It should not render HTML directly or own all prose-building responsibility in one long function.
 
 The natal reading context should be composed from focused context builders: anchors, topic focus, sect actors, prominence/evidence, lots, and derived reading fragments. Keep `createNatalReadingContext()` as a merger of those pieces so future interpretive factors can be added without turning context assembly into a hidden use case.
@@ -45,6 +47,8 @@ Natal reading hierarchy and summary qualities should follow the same ordered-bui
 The natal reading summary should keep dominant focus, secondary focus, and Ascendant-lord guidance in separate text helpers before joining them with any sect-confidence notice.
 
 Natal reading evidence should be assembled from testimony-family helpers: focus/Ascendant, sect, public prominence, reception/boundaries, lots, solar phase, Moon, and triplicity support. New evidence should enter through the smallest relevant family helper rather than extending one monolithic evidence array.
+
+Reception and boundary evidence should keep fallback reception text and boundary-notice formatting in separate helpers before joining the evidence family.
 
 Complex interpretive judgments should keep testimony extraction, level/flag decisions, and localized prose separate. The malefic-mitigation reading is the reference pattern: collect factors, derive mitigation flags and level, then choose copy from that level.
 
