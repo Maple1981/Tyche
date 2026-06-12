@@ -14,6 +14,7 @@ The priority transcripts support these implementation changes:
 
 - Check data reliability early: if birth time is rounded or the Ascendant is very early/late, warn that the rising sign and house layout are sensitive.
 - Preserve the first-pass reading order: Ascendant, Ascendant lord, sect, sect light, angular planets, benefic of sect, malefic contrary to sect, then configurations and lots.
+- Treat the visible interpretation as a life narrative built from testimony clusters. Each section should close with a practical conclusion that describes support, pressure, visibility, delay, mediation, or mixed conditions rather than a bare technical restatement.
 - Treat close contact with exact angles as extra prominence. This does not replace Whole Sign House angularity; it marks a planet as especially visible when it is near the Ascendant, Descendant, MC, or IC degree.
 - Keep Whole Sign Houses as the default framework and keep MC/IC as movable astronomical points that can fall outside the 10th/4th whole-sign places.
 - Keep place topics traditional and do not derive them from Aries = house 1, Taurus = house 2, and so on.
@@ -174,7 +175,7 @@ These are supported by the source map but should remain separate modules:
 
 Use the official public transcript directory as the starting point: <https://theastrologypodcast.com/transcripts/>. The directory notes that transcripts can contain errors, so any fine doctrinal point should be checked against audio or video before it becomes a hard rule in Tyche.
 
-These ten episodes are the current priority layer for Tyche:
+These eleven episodes are the current priority layer for Tyche:
 
 | Episode | Transcript URL | Tyche use |
 |---:|---|---|
@@ -187,6 +188,7 @@ These ten episodes are the current priority layer for Tyche:
 | 287 | <https://theastrologypodcast.com/transcripts/ep-287-transcript-reception-a-mitigating-factor-in-birth-charts/> | Reception as a formal mitigating condition, now implemented in Tyche as a visible basic layer for configured main significators. |
 | 302 | <https://theastrologypodcast.com/transcripts/ep-302-transcript-the-sun-in-astrology-meanings-and-techniques/> | Solar phase, under the beams, combustion, cazimi/in the heart, and visibility. |
 | 433 | <https://theastrologypodcast.com/transcripts/tap-ep-433-transcript-the-lot-of-fortune-and-spirit-in-astrology/> | Fortune and Spirit as principal lots, with lot lords and topical context. |
+| 532 | <https://theastrologypodcast.com/transcripts/tap-ep-532-transcript-the-birth-chart-as-a-story-fate-and-the-life-narrative/> | Big-picture synthesis: chart as life narrative, distinguishing supportive conditions, challenges, fortune, and lived storyline. |
 | 153 | <https://theastrologypodcast.com/transcripts/ep-153-annual-profections-an-ancient-time-lord-technique/> | Future annual profections module: profected place, lord of the year, and activated natal testimonies. |
 
 ## Secondary Transcript Map

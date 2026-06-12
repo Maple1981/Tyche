@@ -192,6 +192,10 @@
         assert("Encabezado de carta no muestra sexo no usado", chartMetaText.includes("Fecha:") && chartMetaText.includes("Lugar de nacimiento:") && !chartMetaText.includes("Sexo"));
         assert("Notas tecnicas y limites quedan al final del resultado", technicalPanelText.includes("Notas técnicas y límites") && technicalPanelText.includes("Astronomy Engine") && $("#technicalPanel").previousElementSibling?.classList.contains("tab-panels") && $("#technicalPanel summary h3")?.textContent.includes("Notas técnicas y límites"));
         assert("Titulo de direccion vital queda formalizado", $("#interpretationPanel").textContent.includes("Dirección vital") && !$("#interpretationPanel").textContent.includes("Hacia dónde tira"));
+        const interpretationBlocks = $$("#interpretationPanel .interpretation-block");
+        const interpretationConclusions = $$("#interpretationPanel .interpretation-conclusion");
+        assert("Cada bloque de lectura natal tiene conclusion separada", interpretationBlocks.length >= 9 && interpretationConclusions.length === interpretationBlocks.length && interpretationConclusions.every((node) => node.querySelector("strong")?.textContent.trim() === "Conclusión:"));
+        assert("La lectura visible evita parentesis dobles", !/\([^()]*\([^()]*\)[^()]*\)/.test($("#interpretationPanel").textContent));
         assert("Condicion lunar muestra estado resumido", $("#moonPanel").textContent.includes("Estado lunar"));
         const firstAlphaIsUpper = (value) => {
           const char = Array.from(value || "").find((letter) => letter.toLocaleLowerCase("es-ES") !== letter.toLocaleUpperCase("es-ES"));

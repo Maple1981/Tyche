@@ -6,6 +6,19 @@ The natal reading is built from accumulated testimonies. A testimony is a techni
 
 The visible report should use plain language. The evidence layer may preserve technical terms.
 
+## Plain-Language Conclusions
+
+Each interpretation block must close with a practical conclusion. That conclusion should be rendered separately from the descriptive paragraph and should be based on the strongest accumulated testimonies for the topic.
+
+Use graded judgment rather than a binary positive/negative label:
+
+- Supported: the main significator has enough dignity, angularity, sect support, benefic testimony, or usable rulership to act effectively.
+- Demanding: difficult houses, debility, solar concealment, contrary-sect malefic pressure, or weak administration outweigh immediate support.
+- Mixed: support and pressure both touch the topic, or the topic is usable only through mediation, time, other people, protection, or careful management.
+- Indirect/reduced/hidden: the topic is not absent, but its ruler, solar phase, cadency, or house transfer makes it less public or less direct.
+
+Avoid filling conclusions with technical labels alone. Translate the result into ordinary life language: visible, mediated, delayed, supported, pressured, protected, exposed, requiring discipline, or needing external help.
+
 ## Weighting Order
 
 Central testimonies:

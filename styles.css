@@ -1105,6 +1105,14 @@ td {
   line-height: 1.62;
 }
 
+.interpretation-conclusion {
+  margin-top: 10px;
+}
+
+.interpretation-conclusion strong {
+  color: var(--blue-deep);
+}
+
 .interpretation-evidence {
   border-top: 1px solid var(--line);
   padding-top: 10px;

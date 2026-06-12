@@ -12,9 +12,11 @@ Each visible reading block should do three things:
 
 - Define the life area in plain language before giving chart mechanics.
 - Translate the calculated factors into lived possibilities such as visibility, support, pressure, delay, mediation, shared focus, protection, or practical management.
-- End with a short conclusion that states whether the topic looks amplified, indirect, reduced, mixed, demanding, or supported.
+- End with a short conclusion that states whether the topic looks amplified, indirect, reduced, mixed, demanding, or supported. The label `Conclusión` / `Conclusion` must be rendered in bold at the start of a new paragraph, not buried inside the technical sentence.
 
 Do not open a block by saying that it is read separately; the separate section already communicates that. Explain what the section is about instead. Empty places should never be phrased as absence by default. State that the place is read through its ruler, and then interpret whether the result is direct, indirect, mediated, or reduced.
+
+The conclusion is a judgment from accumulated testimony, not a simple positive/negative switch. It should say whether the topic has usable support, is pressured, is delayed, needs mediation, becomes public, stays protected or hidden, or remains mixed because testimonies compete.
 
 ## Reading Order
 

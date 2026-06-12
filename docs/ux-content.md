@@ -88,6 +88,8 @@ The interpretation panel should read like a clear human explanation first. Use t
 
 Visible interpretation sections should not merely restate the calculation. Start by naming the life area in ordinary language, then say what the chart does with that area, and close with a short practical conclusion. Examples of conclusion language: amplified, visible, mediated by other people, reduced, indirect, hidden, mixed, supported, demanding, or requiring deliberate management.
 
+Render each practical conclusion as its own paragraph. The word `Conclusión` / `Conclusion` should appear in bold at the start of that paragraph, followed by the plain-language judgment.
+
 When a house is empty, do not write as if nothing is happening there. Say that the topic is read through its ruler and explain whether that makes the topic more direct, indirect, dependent on another life area, or less publicly visible.
 
 Do not erase traditional difficult topics from technical tables or glossary entries. In the plain reading, contextualize them so they do not sound like a fatalistic sentence.
