@@ -132,6 +132,8 @@ Form event binding should group listeners by intent. Birth-data changes, option-
 
 Table renderers should build table models first and share generic empty-note/table-note HTML helpers. Individual domain renderers should decide rows and explanatory notes, not repeat paragraph wrappers or fallback table markup.
 
+Metric panels should share the same heading-and-grid renderer once a panel has a `{ title, titleGlossary, metrics }` model. Domain panels may append notes or audits after that shared metric block.
+
 Chart render completion should keep final text cleanup, viewport scrolling, and rendered-event dispatch in named helpers. Preserve their order, but avoid hiding all post-render side effects in one mixed block.
 
 Chart submission errors should pass through a small error flow: derive a display message, render it, then dispatch the regression-friendly error event. Keep that out of the form submit catch block.

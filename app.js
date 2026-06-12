@@ -5860,6 +5860,19 @@
     return items.map((item) => metric(item.label, item.value, item.valueClass || "", item.labelGlossary || "", item.valueGlossary || "")).join("");
   }
 
+  function metricPanelTitleHtml(model) {
+    return model.titleGlossary ? glossaryTerm(model.title, model.titleGlossary) : escapeHtml(model.title);
+  }
+
+  function renderMetricPanel(model, gridClass = "metric-grid") {
+    return `
+      <h3>${metricPanelTitleHtml(model)}</h3>
+      <div class="${escapeHtml(gridClass)}">
+        ${renderMetricItems(model.metrics)}
+      </div>
+    `;
+  }
+
   function buildCoreSummaryModel(chart) {
     return {
       title: t("sect"),
@@ -5879,10 +5892,7 @@
   function renderCoreSummary(chart) {
     const model = buildCoreSummaryModel(chart);
     const html = `
-      <h3>${glossaryTerm(model.title, model.titleGlossary)}</h3>
-      <div class="metric-grid">
-        ${renderMetricItems(model.metrics)}
-      </div>
+      ${renderMetricPanel(model)}
       ${model.notes.map((note) => `<p class="text-note">${escapeHtml(note)}</p>`).join("")}
       ${model.alternateLotsHtml}
     `;
@@ -5904,12 +5914,7 @@
 
   function renderAnglesPanel(chart) {
     const model = buildAnglesPanelModel(chart);
-    $("#anglesPanel").innerHTML = `
-      <h3>${escapeHtml(model.title)}</h3>
-      <div class="metric-grid">
-        ${renderMetricItems(model.metrics)}
-      </div>
-    `;
+    $("#anglesPanel").innerHTML = renderMetricPanel(model);
   }
 
   function buildAscLordModel(chart) {
@@ -5985,12 +5990,7 @@
 
   function renderMoon(chart) {
     const model = buildMoonPanelModel(chart);
-    $("#moonPanel").innerHTML = `
-      <h3>${glossaryTerm(model.title, model.titleGlossary)}</h3>
-      <div class="metric-grid">
-        ${renderMetricItems(model.metrics)}
-      </div>
-    `;
+    $("#moonPanel").innerHTML = renderMetricPanel(model);
   }
 
   function ephemerisEngineLabel(chart) {
