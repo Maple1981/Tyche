@@ -5807,10 +5807,22 @@
     renderTechnicalPanel(chart);
   }
 
-  function finishChartRender(chart) {
+  function finalizeRenderedChartText() {
     capitalizeStructuredText($("#results"));
+  }
+
+  function scrollChartResultsIntoView() {
     $("#results").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function dispatchChartRenderedEvent(chart) {
     window.dispatchEvent(new CustomEvent("tyche:chart-rendered", { detail: { chart } }));
+  }
+
+  function finishChartRender(chart) {
+    finalizeRenderedChartText();
+    scrollChartResultsIntoView();
+    dispatchChartRenderedEvent(chart);
   }
 
   function renderChart(chart) {

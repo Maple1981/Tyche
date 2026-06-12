@@ -132,6 +132,8 @@ Form event binding should group listeners by intent. Birth-data changes, option-
 
 Table renderers should build table models first and share generic empty-note/table-note HTML helpers. Individual domain renderers should decide rows and explanatory notes, not repeat paragraph wrappers or fallback table markup.
 
+Chart render completion should keep final text cleanup, viewport scrolling, and rendered-event dispatch in named helpers. Preserve their order, but avoid hiding all post-render side effects in one mixed block.
+
 Regression-only APIs should be built through dedicated helpers. Keep the default regression input and the exposed `window.TycheTest` helper map separate from the installer that checks `?test=regression`, and group exposed helpers by calculation, historical data, lots/sect, rendering, and judgment responsibilities. The default regression input should mirror production input assembly by composing birth, place, and technique defaults.
 
 Locale-sensitive formatting should use shared locale helpers. Capitalization, lowercasing, sorting, and date formatting should call `activeLocale()` or `activeSortLocale()` instead of repeating language ternaries.
