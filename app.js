@@ -4138,12 +4138,36 @@
     $("#birthPlace").blur();
   }
 
+  function emptySelectedPersonMetadata() {
+    return {
+      name: "",
+      auditStatus: "",
+      timeConfidence: "",
+      zoneReliability: "",
+      zoneSource: "",
+    };
+  }
+
+  function selectedPersonMetadataFromPerson(person) {
+    return {
+      name: person.name,
+      auditStatus: personAuditStatus(person),
+      timeConfidence: historicalTimeConfidence(person),
+      zoneReliability: historicalZoneReliability(person),
+      zoneSource: t("historicalOffsetSource"),
+    };
+  }
+
+  function applySelectedPersonMetadata(metadata) {
+    state.selectedPersonName = metadata.name;
+    state.selectedPersonAuditStatus = metadata.auditStatus;
+    state.selectedPersonTimeConfidence = metadata.timeConfidence;
+    state.selectedPersonZoneReliability = metadata.zoneReliability;
+    state.selectedZoneSource = metadata.zoneSource;
+  }
+
   function clearHistoricalSelection() {
-    state.selectedPersonName = "";
-    state.selectedPersonAuditStatus = "";
-    state.selectedPersonTimeConfidence = "";
-    state.selectedPersonZoneReliability = "";
-    state.selectedZoneSource = "";
+    applySelectedPersonMetadata(emptySelectedPersonMetadata());
   }
 
   function localizedValue(value) {
@@ -4443,11 +4467,7 @@
 
   function applyHistoricalSelectionState(person) {
     state.selectedCity = person.place;
-    state.selectedPersonName = person.name;
-    state.selectedPersonAuditStatus = personAuditStatus(person);
-    state.selectedPersonTimeConfidence = historicalTimeConfidence(person);
-    state.selectedPersonZoneReliability = historicalZoneReliability(person);
-    state.selectedZoneSource = t("historicalOffsetSource");
+    applySelectedPersonMetadata(selectedPersonMetadataFromPerson(person));
     state.activeCityKey = cityKey(person.place);
   }
 
