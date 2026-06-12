@@ -3993,33 +3993,45 @@
     setPlaceExpanded(true);
   }
 
-  async function fetchPlaceSuggestions(query) {
-    state.placeSearchController?.abort();
-    const controller = new AbortController();
-    state.placeSearchController = controller;
-    renderPlaceSuggestions([], t("placeSearchLoading"));
-
+  function buildGeocodingUrl(query) {
     const url = new URL(GEOCODING_ENDPOINT);
     url.searchParams.set("name", query);
     url.searchParams.set("count", String(PLACE_RESULT_LIMIT));
     url.searchParams.set("language", state.lang);
     url.searchParams.set("format", "json");
+    return url;
+  }
+
+  function remoteCitySuggestionsFromResponse(data) {
+    return (data.results || [])
+      .map(normalizeRemoteCity)
+      .filter((item) => item.city && Number.isFinite(item.lat) && Number.isFinite(item.lon));
+  }
+
+  function mergePlaceSuggestions(remote, local, limit = PLACE_RESULT_LIMIT) {
+    const seen = new Set();
+    return [...remote, ...local].filter((item) => {
+      const key = cityKey(item);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).slice(0, limit);
+  }
+
+  async function fetchPlaceSuggestions(query) {
+    state.placeSearchController?.abort();
+    const controller = new AbortController();
+    state.placeSearchController = controller;
+    renderPlaceSuggestions([], t("placeSearchLoading"));
+    const url = buildGeocodingUrl(query);
 
     try {
       const response = await fetch(url, { signal: controller.signal });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
-      const remote = (data.results || [])
-        .map(normalizeRemoteCity)
-        .filter((item) => item.city && Number.isFinite(item.lat) && Number.isFinite(item.lon));
+      const remote = remoteCitySuggestionsFromResponse(data);
       const local = localCitySuggestions(query, 3);
-      const seen = new Set();
-      const combined = [...remote, ...local].filter((item) => {
-        const key = cityKey(item);
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      }).slice(0, PLACE_RESULT_LIMIT);
+      const combined = mergePlaceSuggestions(remote, local);
       renderPlaceSuggestions(combined, combined.length ? "" : t("placeSearchEmpty"));
     } catch (error) {
       if (error.name === "AbortError") return;
@@ -4062,27 +4074,56 @@
     updateActivePlace();
   }
 
-  function updateOffsetForCity(city) {
-    if (!city?.tz) return;
+  function currentDateTimeFields() {
+    return {
+      date: parseDate($("#birthDate").value),
+      time: parseTime($("#birthTime").value),
+    };
+  }
+
+  function cityOffsetFromDateTime(city, { date, time }) {
+    if (!city?.tz || !date || !time) return null;
     try {
-      const date = parseDate($("#birthDate").value);
-      const time = parseTime($("#birthTime").value);
-      if (date && time) {
-        const zoned = zonedTimeToUtc(date.y, date.m, date.d, time.h, time.min, city.tz);
-        $("#manualOffset").value = formatOffset(zoned.offset);
-      }
+      const zoned = zonedTimeToUtc(date.y, date.m, date.d, time.h, time.min, city.tz);
+      return formatOffset(zoned.offset);
     } catch {
-      $("#manualOffset").value = "+00:00";
+      return "+00:00";
     }
+  }
+
+  function updateOffsetForCity(city) {
+    const offset = cityOffsetFromDateTime(city, currentDateTimeFields());
+    if (offset) $("#manualOffset").value = offset;
+  }
+
+  function currentPlaceFieldState() {
+    return {
+      latitude: $("#latitude").value,
+      longitude: $("#longitude").value,
+      timeZone: $("#timeZone").value,
+    };
+  }
+
+  function buildCityFieldModel(city, fieldState, force = true) {
+    return {
+      birthPlace: formatCity(city),
+      latitude: force || !fieldState.latitude ? round(city.lat, 4) : null,
+      longitude: force || !fieldState.longitude ? round(city.lon, 4) : null,
+      timeZone: city.tz && (force || !fieldState.timeZone) ? city.tz : null,
+    };
+  }
+
+  function applyCityFieldModel(model) {
+    $("#birthPlace").value = model.birthPlace;
+    if (model.latitude !== null) $("#latitude").value = model.latitude;
+    if (model.longitude !== null) $("#longitude").value = model.longitude;
+    if (model.timeZone !== null) $("#timeZone").value = model.timeZone;
   }
 
   function applyCityToFields(city, force = true) {
     state.selectedCity = city;
     state.activeCityKey = cityKey(city);
-    $("#birthPlace").value = formatCity(city);
-    if (force || !$("#latitude").value) $("#latitude").value = round(city.lat, 4);
-    if (force || !$("#longitude").value) $("#longitude").value = round(city.lon, 4);
-    if (city.tz && (force || !$("#timeZone").value)) $("#timeZone").value = city.tz;
+    applyCityFieldModel(buildCityFieldModel(city, currentPlaceFieldState(), force));
     updateClearPlaceButton();
     updateOffsetForCity(city);
   }
@@ -4189,14 +4230,33 @@
     return `<dl class="person-data-details">${model.rows.map(renderHistoricalQualityRow).join("")}</dl>`;
   }
 
-  function openPersonData(personId, trigger) {
+  function findHistoricalPerson(personId) {
     const person = HISTORICAL_PEOPLE.find((item) => item.id === personId);
-    if (!person) return;
+    return person || null;
+  }
+
+  function buildPersonDataPopoverModel(personId) {
+    const person = findHistoricalPerson(personId);
+    if (!person) return null;
+    return {
+      title: `${t("personDataDetailsTitle")}: ${person.name}`,
+      bodyHtml: historicalQualityDetailsHtml(person),
+    };
+  }
+
+  function renderPersonDataPopover(model) {
     const popover = $("#personDataPopover");
-    $("#personDataTitle").textContent = `${t("personDataDetailsTitle")}: ${person.name}`;
-    $("#personDataBody").innerHTML = historicalQualityDetailsHtml(person);
+    $("#personDataTitle").textContent = model.title;
+    $("#personDataBody").innerHTML = model.bodyHtml;
     capitalizeStructuredText($("#personDataBody"));
     popover.hidden = false;
+    return popover;
+  }
+
+  function openPersonData(personId, trigger) {
+    const model = buildPersonDataPopoverModel(personId);
+    if (!model) return;
+    renderPersonDataPopover(model);
     state.personDataReturnFocus = trigger || null;
     window.requestAnimationFrame(() => positionPersonData(trigger));
   }
@@ -5613,12 +5673,19 @@
     finishChartRender(chart);
   }
 
-  function calculateCurrentChart() {
+  function prepareChartCalculationUi() {
     $("#formStatus").textContent = "";
     updatePlaceFields();
     hidePlaceSuggestions();
-    const chart = computeChart(readInput());
-    renderChart(chart);
+  }
+
+  function buildCurrentChart() {
+    return computeChart(readInput());
+  }
+
+  function calculateCurrentChart() {
+    prepareChartCalculationUi();
+    renderChart(buildCurrentChart());
   }
 
   function renderMetricItems(items) {
@@ -7345,9 +7412,8 @@
     };
   }
 
-  function boundaryWarnings(chart) {
-    const warnings = [];
-    const notice = (key, typeCode, distance, changeCodes, actionCode, extra = {}) => ({
+  function boundaryNotice(key, typeCode, distance, changeCodes, actionCode, extra = {}) {
+    return {
       key,
       code: key,
       typeCode,
@@ -7355,11 +7421,14 @@
       changeCodes,
       actionCode,
       ...extra,
-    });
+    };
+  }
+
+  function sectBoundaryWarnings(chart) {
     const sunHorizonDistance = Math.abs(chart.sunAltitude);
     const sectThreshold = sectBoundaryThresholdInfo(chart);
-    if (sunHorizonDistance <= sectThreshold.threshold) {
-      warnings.push(notice(
+    return sunHorizonDistance <= sectThreshold.threshold
+      ? [boundaryNotice(
         "sect-boundary",
         "sect",
         sunHorizonDistance,
@@ -7370,50 +7439,58 @@
           sensitiveThreshold: sectThreshold.sensitive,
           thresholdReasonCodes: sectThreshold.reasons,
         }
-      ));
-    }
+      )]
+      : [];
+  }
+
+  function ascBoundaryWarnings(chart) {
     const ascDistance = distanceToSignBoundary(chart.angles.asc);
-    if (ascDistance <= 1) {
-      warnings.push(notice(
+    return ascDistance <= 1
+      ? [boundaryNotice(
         "asc-sign-boundary",
         "asc",
         ascDistance,
         ["ascendant-lord", "whole-sign-houses", "lots", "main-focuses"],
         "review-time-source-rectification"
-      ));
-    }
-    [
+      )]
+      : [];
+  }
+
+  function angleBoundaryWarnings(chart) {
+    return [
       { key: "mc", lon: chart.angles.mc },
       { key: "ic", lon: chart.angles.ic },
-    ].forEach((angle) => {
+    ].flatMap((angle) => {
       const distance = distanceToSignBoundary(angle.lon);
-      if (distance <= 1) {
-        const currentSign = signOf(angle.lon);
-        const degree = degreeInSign(angle.lon);
-        const possibleSign = degree < 1 ? (currentSign + 11) % 12 : (currentSign + 1) % 12;
-        const currentHouse = houseFromSign(currentSign, chart.ascSign);
-        const possibleHouse = houseFromSign(possibleSign, chart.ascSign);
-        const boundarySideCode = degree < 1 ? "previous" : "next";
-        warnings.push(notice(
-          `${angle.key}-sign-boundary`,
-          angle.key,
-          distance,
-          [`${angle.key}-whole-sign-house`, "chart-projection-foundation", "secondary-focuses"],
-          "verify-time-coordinates-zone",
-          {
-            boundarySideCode,
-            currentSign,
-            possibleSign,
-            currentHouse,
-            possibleHouse,
-          }
-        ));
-      }
+      if (distance > 1) return [];
+      const currentSign = signOf(angle.lon);
+      const degree = degreeInSign(angle.lon);
+      const possibleSign = degree < 1 ? (currentSign + 11) % 12 : (currentSign + 1) % 12;
+      const currentHouse = houseFromSign(currentSign, chart.ascSign);
+      const possibleHouse = houseFromSign(possibleSign, chart.ascSign);
+      const boundarySideCode = degree < 1 ? "previous" : "next";
+      return [boundaryNotice(
+        `${angle.key}-sign-boundary`,
+        angle.key,
+        distance,
+        [`${angle.key}-whole-sign-house`, "chart-projection-foundation", "secondary-focuses"],
+        "verify-time-coordinates-zone",
+        {
+          boundarySideCode,
+          currentSign,
+          possibleSign,
+          currentHouse,
+          possibleHouse,
+        }
+      )];
     });
-    chart.lots.forEach((lot) => {
+  }
+
+  function lotBoundaryWarnings(chart) {
+    return chart.lots.flatMap((lot) => {
       const distance = distanceToSignBoundary(lot.lon);
-      if (distance <= 1) {
-        warnings.push(notice(
+      return distance <= 1
+        ? [boundaryNotice(
           `lot-boundary:${lot.key}`,
           "lot",
           distance,
@@ -7422,14 +7499,17 @@
           {
             lotKey: lot.key,
           }
-        ));
-      }
+        )]
+        : [];
     });
-    VISIBLE_KEYS.forEach((key) => {
+  }
+
+  function planetBoundBoundaryWarnings(chart) {
+    return VISIBLE_KEYS.flatMap((key) => {
       const position = chart.positions[key];
       const distance = distanceToBoundBoundary(position.lon);
-      if (distance <= 0.5) {
-        warnings.push(notice(
+      return distance <= 0.5
+        ? [boundaryNotice(
           `planet-bound-boundary:${key}`,
           "planet-bound",
           distance,
@@ -7438,10 +7518,19 @@
           {
             planetKey: key,
           }
-        ));
-      }
+        )]
+        : [];
     });
-    return warnings;
+  }
+
+  function boundaryWarnings(chart) {
+    return [
+      ...sectBoundaryWarnings(chart),
+      ...ascBoundaryWarnings(chart),
+      ...angleBoundaryWarnings(chart),
+      ...lotBoundaryWarnings(chart),
+      ...planetBoundBoundaryWarnings(chart),
+    ];
   }
 
   const BOUNDARY_CHANGE_LABEL_KEYS = Object.freeze({

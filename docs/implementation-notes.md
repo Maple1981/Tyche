@@ -24,6 +24,8 @@ Because Tyche is a static browser app, architecture should improve separation in
 
 For chart calculation, `computeChart()` should stay an orchestration function. Input validation, position calculation, house/condition enrichment, lot construction, and sect context should remain in dedicated helpers so later changes to one rule do not require editing the whole chart builder.
 
+Current chart calculation from the form should keep UI preparation, chart construction, and rendering as separate steps. `calculateCurrentChart()` should coordinate those calls rather than reading fields, clearing UI state, and rendering panels directly.
+
 Date/time conversion should keep validation, manual UTC offset handling, Julian-calendar conversion, IANA time-zone conversion, and manual fallback in separate helpers. `jdFromForm()` should coordinate those paths and return the final Julian Date, offset, and displayed zone label.
 
 Lunar condition should keep the contact scan separate from the final condition object. The scan owns last separation, next application, sign-exit application, and close applying contact; `computeMoonCondition()` should assemble phase, void flags, and summary fields from that scan.
@@ -37,6 +39,8 @@ For chart rendering, keep frame setup, panel rendering, and completion side effe
 The chart frame itself should use a small model for title, metadata, and wheel HTML before touching DOM nodes. This keeps shell rendering consistent with panel rendering.
 
 Where a renderer needs calculated or audited data, prefer a small view model builder before HTML generation. For example, the main lots audit should build row/field data first, then render that model. Boundary audits should translate neutral warning codes into labeled fields before the renderer writes definition-list markup. Score breakdowns should likewise group and label score data before rendering HTML. Historical example cards should prepare natal-source, audit-status, localized label, and group data before the card renderer writes markup. This keeps testimony extraction and provenance handling separate from HTML details.
+
+Boundary warning calculation should stay split by testimony family. Sect, Ascendant sign, MC/IC sign, lot sign, and Egyptian-bound proximity warnings should live in dedicated detector helpers, with `boundaryWarnings()` only concatenating their neutral notices.
 
 Historical example loading should also keep responsibilities apart: update selection/audit state, build form-field values, apply those values to the DOM, then calculate the chart. Do not hide all of that work inside one click handler.
 
@@ -56,9 +60,11 @@ Within each binding group, prefer named handlers for non-trivial behavior. Tab a
 
 Language switching should separate document metadata, static node translation, localized control labels, and dynamic content refresh. `applyI18n()` should coordinate those steps and then redecorate glossary triggers after translated content is in place.
 
-Floating popovers should resolve a small model before writing DOM. Glossary entries, person-data details, and similar overlays should keep lookup/formatting separate from the code that opens and positions the popover.
+Floating popovers should resolve a small model before writing DOM. Glossary entries, person-data details, and similar overlays should keep lookup/formatting separate from the code that opens and positions the popover; historical source popovers should expose that split through dedicated model and render helpers.
 
-Search/autocomplete surfaces should keep result preparation separate from DOM writes. Birthplace suggestions should build row models with localized labels and metadata, then render those rows through dedicated suggestion renderers.
+Search/autocomplete surfaces should keep URL construction, response parsing, result merging, row-model preparation, and DOM writes separate. Birthplace suggestions should build row models with localized labels and metadata, then render those rows through dedicated suggestion renderers.
+
+Birthplace selection should also keep field modeling separate from DOM mutation. Build the place/coordinate/time-zone field model and calculate automatic UTC-offset updates through helper functions before applying the result to form controls.
 
 Form input reading should normalize coherent groups before chart calculation. Keep place/zone fields and technique/options fields in dedicated readers, with `readInput()` acting as the single chart-input assembler.
 

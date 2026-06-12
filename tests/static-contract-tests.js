@@ -57,6 +57,9 @@ assert("Historical visible card omits repeated quality rows", !sectionBetween(ap
 assert("Historical Wikipedia links follow active UI language", app.includes("function localizeWikipediaUrl") && sectionBetween(app, "function personWikipediaUrl(person)", "function capitalizeText").includes("localizeWikipediaUrl") && regression.includes("Wikipedia historica usa enlace ingles en interfaz EN"));
 const historicalPeopleBlock = sectionBetween(app, "function buildHistoricalQualityDetailsModel(person)", "function openPeopleModal()");
 assert("Historical people rendering uses view models", ["buildHistoricalQualityDetailsModel", "buildHistoricalPersonCardModel", "buildHistoricalPeopleModel", "renderHistoricalPeopleGroup"].every((name) => app.includes(`function ${name}`)) && historicalPeopleBlock.indexOf("function buildHistoricalPeopleModel") < historicalPeopleBlock.indexOf("function renderHistoricalPeople()") && sectionBetween(app, "function renderHistoricalPeople()", "function openPeopleModal()").includes("const model = buildHistoricalPeopleModel()"));
+const personDataPopoverBlock = sectionBetween(app, "function buildPersonDataPopoverModel(personId)", "function closePersonData");
+const openPersonDataBlock = sectionBetween(app, "function openPersonData(personId, trigger)", "function closePersonData");
+assert("Person data popover resolves model before rendering", ["findHistoricalPerson", "buildPersonDataPopoverModel", "renderPersonDataPopover"].every((name) => app.includes(`function ${name}`)) && personDataPopoverBlock.includes("function renderPersonDataPopover(model)") && openPersonDataBlock.includes("buildPersonDataPopoverModel(personId)") && openPersonDataBlock.includes("renderPersonDataPopover(model)") && !openPersonDataBlock.includes("personDataBody"));
 const historicalLoadBlock = sectionBetween(app, "function applyHistoricalSelectionState(person)", "function formatDateLabel(value)");
 assert("Historical example loading separates state fields and calculation", ["applyHistoricalSelectionState", "buildHistoricalPersonFieldModel", "applyHistoricalPersonFields"].every((name) => app.includes(`function ${name}`)) && sectionBetween(app, "function loadHistoricalPerson(id)", "function formatDateLabel(value)").includes("applyHistoricalSelectionState(person)") && sectionBetween(app, "function loadHistoricalPerson(id)", "function formatDateLabel(value)").includes("applyHistoricalPersonFields(buildHistoricalPersonFieldModel(person))") && historicalLoadBlock.includes("calculateCurrentChart()"));
 const coreSummaryModelBlock = sectionBetween(app, "function buildCoreSummaryModel(chart)", "function renderCoreSummary(chart)");
@@ -78,6 +81,8 @@ const renderChartPanelsBlock = sectionBetween(app, "function renderChartPanels(c
 const renderChartBlock = sectionBetween(app, "function renderChart(chart)", "function calculateCurrentChart()");
 assert("Chart rendering is split into shell panels and completion", ["renderChartFrame(chart)", "renderChartPanels(chart)", "finishChartRender(chart)"].every((call) => renderChartBlock.includes(call)));
 assert("Chart frame uses a prepared view model", app.includes("function buildChartFrameModel(chart)") && sectionBetween(app, "function renderChartFrame(chart)", "function renderChartPanels(chart)").includes("const model = buildChartFrameModel(chart)") && app.includes("wheelHtml: renderWheel(chart)"));
+const calculateCurrentBlock = sectionBetween(app, "function calculateCurrentChart()", "function renderMetricItems(items)");
+assert("Current chart calculation separates UI prep from chart construction", ["prepareChartCalculationUi", "buildCurrentChart"].every((name) => app.includes(`function ${name}`)) && calculateCurrentBlock.includes("prepareChartCalculationUi()") && calculateCurrentBlock.includes("renderChart(buildCurrentChart())"));
 const inputReaderBlock = sectionBetween(app, "function readInput()", "function computeChart(input)");
 assert("Form input reading separates place and technique options", app.includes("function readPlaceInputFromFields()") && app.includes("function readTechniqueInputFromFields()") && inputReaderBlock.includes("readPlaceInputFromFields()") && inputReaderBlock.includes("readTechniqueInputFromFields()") && !inputReaderBlock.includes("findCity(placeValue)"));
 const timeConversionBlock = sectionBetween(app, "function parseChartDateTime(input)", "function meanObliquity(jd)");
@@ -129,11 +134,13 @@ assert("BCE limitation is documented", docs.some(([, content]) => content.includ
 assert("Year zero is covered by regression tests", regression.includes("0000-01-01") && regression.includes("fechas BCE ambiguas"));
 
 const boundaryWarningsBlock = sectionBetween(app, "function boundaryWarnings(chart)", "const BOUNDARY_CHANGE_LABEL_KEYS");
-assert("Boundary warnings carry neutral typeCode", boundaryWarningsBlock.includes("typeCode"));
-assert("Boundary warnings carry changeCodes", boundaryWarningsBlock.includes("changeCodes"));
-assert("Boundary warnings carry actionCode", boundaryWarningsBlock.includes("actionCode"));
+const boundaryNoticeBlock = sectionBetween(app, "function boundaryNotice(", "function sectBoundaryWarnings(chart)");
+assert("Boundary warnings carry neutral typeCode", boundaryNoticeBlock.includes("typeCode"));
+assert("Boundary warnings carry changeCodes", boundaryNoticeBlock.includes("changeCodes"));
+assert("Boundary warnings carry actionCode", boundaryNoticeBlock.includes("actionCode"));
 assert("Boundary warning calculation does not translate copy", !boundaryWarningsBlock.includes("state.lang"));
 assert("MC/IC warnings carry boundarySideCode", app.includes("boundarySideCode"));
+assert("Boundary warning calculation delegates to family detectors", ["sectBoundaryWarnings", "ascBoundaryWarnings", "angleBoundaryWarnings", "lotBoundaryWarnings", "planetBoundBoundaryWarnings"].every((name) => app.includes(`function ${name}`)) && ["sectBoundaryWarnings(chart)", "ascBoundaryWarnings(chart)", "angleBoundaryWarnings(chart)", "lotBoundaryWarnings(chart)", "planetBoundBoundaryWarnings(chart)"].every((call) => boundaryWarningsBlock.includes(call)) && !boundaryWarningsBlock.includes("forEach"));
 assert("Score items carry reasonCode", app.includes("reasonCode: reasonCode || category"));
 assert("Score focus type can show mixed categories", app.includes("value / total >= 0.3") && app.includes("naturalList([...new Set(labels)])"));
 const topicScoringBlock = sectionBetween(app, "function createTopicScoreRows()", "function publicProjectionReading(chart)");
@@ -164,6 +171,11 @@ const wheelBuilders = ["buildWheelHouseParts", "buildWheelAngleParts", "buildWhe
 assert("Wheel rendering separates geometry model from SVG shell", wheelBuilders.every((name) => app.includes(`function ${name}`)) && sectionBetween(app, "function renderWheel(chart)", "function applyI18n()").includes("const model = buildWheelModel(chart)"));
 const placeSuggestionBlock = sectionBetween(app, "function buildPlaceSuggestionModel(items, message = \"\")", "async function fetchPlaceSuggestions(query)");
 assert("Place suggestions separate list model from DOM rendering", ["buildPlaceSuggestionModel", "renderPlaceSuggestionRow", "renderPlaceSuggestionPanel"].every((name) => app.includes(`function ${name}`)) && sectionBetween(app, "function renderPlaceSuggestions(items, message = \"\")", "async function fetchPlaceSuggestions(query)").includes("const model = buildPlaceSuggestionModel(items, message)") && placeSuggestionBlock.includes("renderPlaceSuggestionPanel(model)"));
+const placeFetchBlock = sectionBetween(app, "function buildGeocodingUrl(query)", "function queuePlaceSearch()");
+assert("Place search separates URL response parsing and merge logic", ["buildGeocodingUrl", "remoteCitySuggestionsFromResponse", "mergePlaceSuggestions"].every((name) => app.includes(`function ${name}`)) && sectionBetween(app, "async function fetchPlaceSuggestions(query)", "function queuePlaceSearch()").includes("buildGeocodingUrl(query)") && placeFetchBlock.includes("mergePlaceSuggestions(remote, local)"));
+const cityFieldBlock = sectionBetween(app, "function currentDateTimeFields()", "function selectPlaceSuggestion(index)");
+const applyCityBlock = sectionBetween(app, "function applyCityToFields(city, force = true)", "function selectPlaceSuggestion(index)");
+assert("City field application separates offset calculation and DOM updates", ["currentDateTimeFields", "cityOffsetFromDateTime", "currentPlaceFieldState", "buildCityFieldModel", "applyCityFieldModel"].every((name) => app.includes(`function ${name}`)) && cityFieldBlock.includes("cityOffsetFromDateTime(city, currentDateTimeFields())") && applyCityBlock.includes("applyCityFieldModel(buildCityFieldModel(city, currentPlaceFieldState(), force))") && !applyCityBlock.includes("$(\"#latitude\")"));
 const i18nBlock = sectionBetween(app, "function applyI18n()", "function applyTheme()");
 assert("I18n application separates document controls static translation and dynamic refresh", ["applyDocumentI18n", "translateStaticNodes", "updateLocalizedControlLabels", "refreshLocalizedDynamicContent"].every((name) => app.includes(`function ${name}`)) && ["applyDocumentI18n()", "translateStaticNodes()", "updateLocalizedControlLabels()", "refreshLocalizedDynamicContent()"].every((call) => i18nBlock.includes(call)) && !i18nBlock.includes("document.title"));
 const glossaryPopoverBlock = sectionBetween(app, "function buildGlossaryPopoverModel(key)", "function closeGlossary(");
