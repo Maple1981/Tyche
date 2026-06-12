@@ -5450,8 +5450,7 @@
     `;
   }
 
-  function renderAlternateSectLots(chart) {
-    const model = buildAlternateSectLotsModel(chart);
+  function renderAlternateSectLotsModel(model) {
     if (!model) return "";
     const rows = model.rows.map(renderAlternateSectLotRow).join("");
     return `
@@ -5464,6 +5463,11 @@
         <ul>${rows}</ul>
       </details>
     `;
+  }
+
+  function renderAlternateSectLots(chart) {
+    const model = buildAlternateSectLotsModel(chart);
+    return renderAlternateSectLotsModel(model);
   }
 
   const LOT_NAME_KEYS = Object.freeze({
@@ -5885,7 +5889,7 @@
         { label: t("maleficContrarySect"), value: `${PLANETS[chart.maleficContrarySect].symbol} ${planetName(chart.maleficContrarySect)}`, labelGlossary: "maleficContrarySect" },
       ],
       notes: [sectSensitivityNote(chart), sectDependencyCaution(chart)].filter(Boolean),
-      alternateLotsHtml: renderAlternateSectLots(chart),
+      alternateLots: buildAlternateSectLotsModel(chart),
     };
   }
 
@@ -5894,7 +5898,7 @@
     const html = `
       ${renderMetricPanel(model)}
       ${model.notes.map((note) => `<p class="text-note">${escapeHtml(note)}</p>`).join("")}
-      ${model.alternateLotsHtml}
+      ${renderAlternateSectLotsModel(model.alternateLots)}
     `;
     $("#coreSummary").innerHTML = html;
   }
