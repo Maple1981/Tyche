@@ -136,6 +136,8 @@ Metric panels should share the same heading-and-grid renderer once a panel has a
 
 Panel view models should not store pre-rendered HTML when a nested model is enough. For example, the core sect summary should carry the alternate-sect lot model and let the renderer turn it into markup.
 
+The chart frame should carry the wheel model, not a pre-rendered SVG string. Keep `renderWheel(chart)` as a compatibility wrapper when tests need direct SVG output, but frame rendering should call `renderWheelModel(model.wheel)`.
+
 Technical panel rendering should keep notes and metric sections in dedicated helpers. The panel renderer should compose the model, not duplicate section wrappers for astronomy and judgment details.
 
 Chart render completion should keep final text cleanup, viewport scrolling, and rendered-event dispatch in named helpers. Preserve their order, but avoid hiding all post-render side effects in one mixed block.

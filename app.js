@@ -5786,7 +5786,7 @@
       ? t("chartForPerson", { name: chart.input.personName })
       : t("anonymousChart"),
       meta: chartMetaText(chart.input),
-      wheelHtml: renderWheel(chart),
+      wheel: buildWheelModel(chart),
     };
   }
 
@@ -5795,7 +5795,7 @@
     $("#results").hidden = false;
     $("#chartTitle").textContent = model.title;
     $("#chartMeta").textContent = model.meta;
-    $("#chartWheel").innerHTML = model.wheelHtml;
+    $("#chartWheel").innerHTML = renderWheelModel(model.wheel);
   }
 
   function renderChartPanels(chart) {
@@ -9585,8 +9585,7 @@
     };
   }
 
-  function renderWheel(chart) {
-    const model = buildWheelModel(chart);
+  function renderWheelModel(model) {
     return `
       <svg viewBox="0 0 360 360" role="img" aria-label="Hellenistic chart wheel">
         <circle cx="${model.cx}" cy="${model.cy}" r="${model.outer}" fill="none" stroke="currentColor" opacity="0.16" stroke-width="1.4"></circle>
@@ -9600,6 +9599,10 @@
         <text x="${model.cx}" y="${model.cy + 12}" text-anchor="middle" class="wheel-label">${model.sectLabel}</text>
       </svg>
     `;
+  }
+
+  function renderWheel(chart) {
+    return renderWheelModel(buildWheelModel(chart));
   }
 
   function translateStaticNodes() {
