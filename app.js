@@ -9005,25 +9005,37 @@
     `;
   }
 
+  function renderQualityBadges(qualities) {
+    return `
+      <div class="quality-badges" aria-label="${escapeHtml(t("qualityTitle"))}">
+        ${qualities.map((item) => `
+          <span><b>${escapeHtml(item.label)}</b>${escapeHtml(capitalizeText(item.value))}</span>
+        `).join("")}
+      </div>
+    `;
+  }
+
+  function renderFocusList(focuses) {
+    return `
+      <p class="focus-list-title">${escapeHtml(t("mainFocusTitle"))}</p>
+      <ul class="focus-list">
+        ${focuses.map((focus) => `
+          <li>
+            <strong>${escapeHtml(focusLabel(focus))}</strong>
+            <span>${escapeHtml(t("signalsLabel"))}: ${escapeHtml(focusReasonsText(focus))}</span>
+          </li>
+        `).join("")}
+      </ul>
+    `;
+  }
+
   function renderInterpretationSummary(interpretation) {
     return `
       <section class="interpretation-summary">
         <h4>${escapeHtml(t("interpretationSummary"))}</h4>
         <p>${escapeHtml(interpretation.summary)}</p>
-        <div class="quality-badges" aria-label="${escapeHtml(t("qualityTitle"))}">
-          ${interpretation.qualities.map((item) => `
-            <span><b>${escapeHtml(item.label)}</b>${escapeHtml(capitalizeText(item.value))}</span>
-          `).join("")}
-        </div>
-        <p class="focus-list-title">${escapeHtml(t("mainFocusTitle"))}</p>
-        <ul class="focus-list">
-          ${interpretation.focuses.map((focus) => `
-            <li>
-              <strong>${escapeHtml(focusLabel(focus))}</strong>
-              <span>${escapeHtml(t("signalsLabel"))}: ${escapeHtml(focusReasonsText(focus))}</span>
-            </li>
-          `).join("")}
-        </ul>
+        ${renderQualityBadges(interpretation.qualities)}
+        ${renderFocusList(interpretation.focuses)}
       </section>
     `;
   }
@@ -9061,24 +9073,42 @@
     `;
   }
 
+  function renderEvidenceScoreSection(interpretation) {
+    return `
+      <section class="evidence-section" data-test="evidence-score">
+        <h5>${escapeHtml(t("evidenceFocusSection"))}</h5>
+        ${renderScoreBreakdown(interpretation.scoreBreakdown)}
+      </section>
+    `;
+  }
+
+  function renderEvidenceMainLotsSection(chart) {
+    return `
+      <section class="evidence-section" data-test="evidence-main-lots">
+        <h5>${escapeHtml(t("evidenceLotsSection"))}</h5>
+        ${renderMainLotsAudit(chart)}
+      </section>
+    `;
+  }
+
+  function renderEvidenceGeneralSection(interpretation) {
+    return `
+      <section class="evidence-section" data-test="evidence-general">
+        <h5>${escapeHtml(t("evidenceGeneralSection"))}</h5>
+        <ol>
+          ${interpretation.evidence.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+        </ol>
+      </section>
+    `;
+  }
+
   function renderInterpretationEvidence(interpretation, chart) {
     return `
       <details class="interpretation-evidence">
         <summary>${escapeHtml(t("interpretationEvidence"))}</summary>
-        <section class="evidence-section" data-test="evidence-score">
-          <h5>${escapeHtml(t("evidenceFocusSection"))}</h5>
-          ${renderScoreBreakdown(interpretation.scoreBreakdown)}
-        </section>
-        <section class="evidence-section" data-test="evidence-main-lots">
-          <h5>${escapeHtml(t("evidenceLotsSection"))}</h5>
-          ${renderMainLotsAudit(chart)}
-        </section>
-        <section class="evidence-section" data-test="evidence-general">
-          <h5>${escapeHtml(t("evidenceGeneralSection"))}</h5>
-          <ol>
-            ${interpretation.evidence.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
-          </ol>
-        </section>
+        ${renderEvidenceScoreSection(interpretation)}
+        ${renderEvidenceMainLotsSection(chart)}
+        ${renderEvidenceGeneralSection(interpretation)}
       </details>
     `;
   }

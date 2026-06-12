@@ -94,6 +94,8 @@ Sect-sensitive alternate lot displays should follow the same model-first rule. B
 
 Large panel renderers should be decomposed into subrenderers for their stable regions. The interpretation panel is the reference pattern: heading, lead, summary, hierarchy, reading blocks, evidence, and timing note are separate rendering functions.
 
+Within the interpretation renderer, summary badges, focus lists, and each evidence subsection should remain separate subrenderers rather than inline HTML inside the parent section.
+
 Top chart panels should also prefer view models where labels and values are prepared before rendering. The core summary, angle panel, Ascendant lord panel, Moon panel, and technical notes panel should stay as small model builders plus focused renderers rather than large mixed UI functions. Technical notes should keep astronomy metrics and judgment/settings metrics in separate helper builders.
 
 Table panels should keep row construction separate from final DOM assignment. Use dedicated table models, plus header/row builders for planet, house, lot, and aspect tables, so calculation changes and markup changes remain independent. When a table can split into sections, such as traditional and modern planets, build a section model before rendering.
