@@ -38,6 +38,8 @@ The natal reading context should be composed from focused context builders: anch
 
 Visible natal reading sections should be built through one helper per section and collected through an ordered builder list. Adding or reordering a section should not require editing every block object in one large array.
 
+Natal reading hierarchy and summary qualities should follow the same ordered-builder pattern. Each priority line or quality badge should have one helper, with the public builder only mapping and filtering those helpers.
+
 Natal reading evidence should be assembled from testimony-family helpers: focus/Ascendant, sect, public prominence, reception/boundaries, lots, solar phase, Moon, and triplicity support. New evidence should enter through the smallest relevant family helper rather than extending one monolithic evidence array.
 
 Complex interpretive judgments should keep testimony extraction, level/flag decisions, and localized prose separate. The malefic-mitigation reading is the reference pattern: collect factors, derive mitigation flags and level, then choose copy from that level.

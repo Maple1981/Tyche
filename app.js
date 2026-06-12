@@ -8366,42 +8366,86 @@
     ];
   }
 
-  function buildNatalReadingHierarchy(context) {
-    const { ascLord, ascLordPosition, chart, tenthRuler, tenthRulerPosition, angularPlanets, exactAnglePlanets, fortune, spirit } = context;
-    const angularPlanetsText = angularPlanets.length ? naturalList(angularPlanets.map(planetLabel)) : capitalizeText(t("none"));
-    const hierarchy = [
-      state.lang === "es"
-        ? `${t("ascLordTitle")}: ${planetLabel(ascLord)} en casa ${ascLordPosition.house} -> dirección vital.`
-        : `${t("ascLordTitle")}: ${planetLabel(ascLord)} in house ${ascLordPosition.house} -> life direction.`,
-      state.lang === "es"
-        ? `${t("mc")}: casa ${chart.mcHouse} -> proyección pública y acción visible.`
-        : `${t("mc")}: house ${chart.mcHouse} -> public projection and visible action.`,
-      state.lang === "es"
-        ? `Regente de casa 10: ${planetLabel(tenthRuler)} en casa ${tenthRulerPosition.house} -> administración de la reputación y el oficio.`
-        : `10th-house ruler: ${planetLabel(tenthRuler)} in house ${tenthRulerPosition.house} -> administration of reputation and craft.`,
-      state.lang === "es"
-        ? `Planetas visibles angulares: ${angularPlanetsText} -> lo que más se nota.`
-        : `Angular visible planets: ${angularPlanetsText} -> what stands out most.`,
-      ...(exactAnglePlanets.length ? [state.lang === "es"
-        ? `Cercanía a ángulos exactos: ${exactAngleListText(exactAnglePlanets)} -> prominencia adicional.`
-        : `Near exact angles: ${exactAngleListText(exactAnglePlanets)} -> additional prominence.`] : []),
-    ];
-    if (fortune && spirit) {
-      hierarchy.push(state.lang === "es"
-        ? `${t("fortune")}/${t("spirit")}: casas ${fortune.house}/${spirit.house} -> circunstancias e intención.`
-        : `${t("fortune")}/${t("spirit")}: houses ${fortune.house}/${spirit.house} -> circumstance and intention.`);
-    }
-    return hierarchy;
+  function ascLordHierarchyLine(context) {
+    const { ascLord, ascLordPosition } = context;
+    return state.lang === "es"
+      ? `${t("ascLordTitle")}: ${planetLabel(ascLord)} en casa ${ascLordPosition.house} -> dirección vital.`
+      : `${t("ascLordTitle")}: ${planetLabel(ascLord)} in house ${ascLordPosition.house} -> life direction.`;
   }
 
+  function mcHierarchyLine(context) {
+    return state.lang === "es"
+      ? `${t("mc")}: casa ${context.chart.mcHouse} -> proyección pública y acción visible.`
+      : `${t("mc")}: house ${context.chart.mcHouse} -> public projection and visible action.`;
+  }
+
+  function tenthRulerHierarchyLine(context) {
+    const { tenthRuler, tenthRulerPosition } = context;
+    return state.lang === "es"
+      ? `Regente de casa 10: ${planetLabel(tenthRuler)} en casa ${tenthRulerPosition.house} -> administración de la reputación y el oficio.`
+      : `10th-house ruler: ${planetLabel(tenthRuler)} in house ${tenthRulerPosition.house} -> administration of reputation and craft.`;
+  }
+
+  function angularPlanetsHierarchyLine(context) {
+    const angularPlanetsText = context.angularPlanets.length ? naturalList(context.angularPlanets.map(planetLabel)) : capitalizeText(t("none"));
+    return state.lang === "es"
+      ? `Planetas visibles angulares: ${angularPlanetsText} -> lo que más se nota.`
+      : `Angular visible planets: ${angularPlanetsText} -> what stands out most.`;
+  }
+
+  function exactAngleHierarchyLine(context) {
+    if (!context.exactAnglePlanets.length) return "";
+    return state.lang === "es"
+      ? `Cercanía a ángulos exactos: ${exactAngleListText(context.exactAnglePlanets)} -> prominencia adicional.`
+      : `Near exact angles: ${exactAngleListText(context.exactAnglePlanets)} -> additional prominence.`;
+  }
+
+  function lotsHierarchyLine(context) {
+    const { fortune, spirit } = context;
+    if (!fortune || !spirit) return "";
+    return state.lang === "es"
+      ? `${t("fortune")}/${t("spirit")}: casas ${fortune.house}/${spirit.house} -> circunstancias e intención.`
+      : `${t("fortune")}/${t("spirit")}: houses ${fortune.house}/${spirit.house} -> circumstance and intention.`;
+  }
+
+  const NATAL_HIERARCHY_LINE_BUILDERS = Object.freeze([
+    ascLordHierarchyLine,
+    mcHierarchyLine,
+    tenthRulerHierarchyLine,
+    angularPlanetsHierarchyLine,
+    exactAngleHierarchyLine,
+    lotsHierarchyLine,
+  ]);
+
+  function buildNatalReadingHierarchy(context) {
+    return NATAL_HIERARCHY_LINE_BUILDERS.map((builder) => builder(context)).filter(Boolean);
+  }
+
+  function prominenceQuality(context) {
+    return { label: t("prominenceLabel"), value: t(prominenceLevel(context.ascLordPosition)) };
+  }
+
+  function easeQuality(context) {
+    return { label: t("easeLabel"), value: t(essentialEaseLevel(context.ascLordPosition, context.ascLord, context.chart)) };
+  }
+
+  function tensionQuality(context) {
+    return { label: t("tensionLabel"), value: t(tensionLevel(context.maleficPosition, context.focuses, context.ascLordPosition, context.malefic, context.chart)) };
+  }
+
+  function supportQuality(context) {
+    return { label: t("supportLabel"), value: t(supportLevel(context.beneficPosition, context.focuses, context.ascLordPosition, context.benefic, context.chart)) };
+  }
+
+  const NATAL_QUALITY_BUILDERS = Object.freeze([
+    prominenceQuality,
+    easeQuality,
+    tensionQuality,
+    supportQuality,
+  ]);
+
   function buildNatalReadingQualities(context) {
-    const { chart, ascLord, ascLordPosition, malefic, maleficPosition, benefic, beneficPosition, focuses } = context;
-    return [
-      { label: t("prominenceLabel"), value: t(prominenceLevel(ascLordPosition)) },
-      { label: t("easeLabel"), value: t(essentialEaseLevel(ascLordPosition, ascLord, chart)) },
-      { label: t("tensionLabel"), value: t(tensionLevel(maleficPosition, focuses, ascLordPosition, malefic, chart)) },
-      { label: t("supportLabel"), value: t(supportLevel(beneficPosition, focuses, ascLordPosition, benefic, chart)) },
-    ];
+    return NATAL_QUALITY_BUILDERS.map((builder) => builder(context));
   }
 
   function buildLifeDirectionBlock(context) {
