@@ -7822,36 +7822,56 @@
     };
   }
 
-  function sectBoundaryWarnings(chart) {
+  function sectBoundaryModel(chart) {
     const sunHorizonDistance = Math.abs(chart.sunAltitude);
     const sectThreshold = sectBoundaryThresholdInfo(chart);
-    return sunHorizonDistance <= sectThreshold.threshold
-      ? [boundaryNotice(
-        "sect-boundary",
-        "sect",
-        sunHorizonDistance,
-        ["sect", "sect-light", "benefic-malefic-of-sect", "contrary-malefic", "fortune-spirit-formulas", "general-judgment"],
-        "verify-time-coordinates-zone-rectification",
-        {
-          threshold: sectThreshold.threshold,
-          sensitiveThreshold: sectThreshold.sensitive,
-          thresholdReasonCodes: sectThreshold.reasons,
-        }
-      )]
-      : [];
+    if (sunHorizonDistance > sectThreshold.threshold) return null;
+    return {
+      distance: sunHorizonDistance,
+      threshold: sectThreshold.threshold,
+      sensitiveThreshold: sectThreshold.sensitive,
+      thresholdReasonCodes: sectThreshold.reasons,
+    };
+  }
+
+  function sectBoundaryNotice(model) {
+    return boundaryNotice(
+      "sect-boundary",
+      "sect",
+      model.distance,
+      ["sect", "sect-light", "benefic-malefic-of-sect", "contrary-malefic", "fortune-spirit-formulas", "general-judgment"],
+      "verify-time-coordinates-zone-rectification",
+      {
+        threshold: model.threshold,
+        sensitiveThreshold: model.sensitiveThreshold,
+        thresholdReasonCodes: model.thresholdReasonCodes,
+      }
+    );
+  }
+
+  function sectBoundaryWarnings(chart) {
+    const model = sectBoundaryModel(chart);
+    return model ? [sectBoundaryNotice(model)] : [];
+  }
+
+  function ascBoundaryModel(chart) {
+    const ascDistance = distanceToSignBoundary(chart.angles.asc);
+    return ascDistance <= 1 ? { distance: ascDistance } : null;
+  }
+
+  function ascBoundaryNotice(model) {
+    return boundaryNotice(
+      "asc-sign-boundary",
+      "asc",
+      model.distance,
+      ["ascendant-lord", "whole-sign-houses", "lots", "main-focuses"],
+      "review-time-source-rectification"
+    );
   }
 
   function ascBoundaryWarnings(chart) {
-    const ascDistance = distanceToSignBoundary(chart.angles.asc);
-    return ascDistance <= 1
-      ? [boundaryNotice(
-        "asc-sign-boundary",
-        "asc",
-        ascDistance,
-        ["ascendant-lord", "whole-sign-houses", "lots", "main-focuses"],
-        "review-time-source-rectification"
-      )]
-      : [];
+    const model = ascBoundaryModel(chart);
+    return model ? [ascBoundaryNotice(model)] : [];
   }
 
   function angleBoundaryModel(angle, chart) {
@@ -7897,41 +7917,49 @@
       .map(angleBoundaryNotice);
   }
 
+  function lotBoundaryModel(lot) {
+    const distance = distanceToSignBoundary(lot.lon);
+    return distance <= 1 ? { lotKey: lot.key, distance } : null;
+  }
+
+  function lotBoundaryNotice(model) {
+    return boundaryNotice(
+      `lot-boundary:${model.lotKey}`,
+      "lot",
+      model.distance,
+      ["lot-house", "lot-lord", "topic-reading"],
+      "review-time-coordinates",
+      {
+        lotKey: model.lotKey,
+      }
+    );
+  }
+
   function lotBoundaryWarnings(chart) {
-    return chart.lots.flatMap((lot) => {
-      const distance = distanceToSignBoundary(lot.lon);
-      return distance <= 1
-        ? [boundaryNotice(
-          `lot-boundary:${lot.key}`,
-          "lot",
-          distance,
-          ["lot-house", "lot-lord", "topic-reading"],
-          "review-time-coordinates",
-          {
-            lotKey: lot.key,
-          }
-        )]
-        : [];
-    });
+    return chart.lots.map(lotBoundaryModel).filter(Boolean).map(lotBoundaryNotice);
+  }
+
+  function planetBoundBoundaryModel(key, chart) {
+    const position = chart.positions[key];
+    const distance = distanceToBoundBoundary(position.lon);
+    return distance <= 0.5 ? { planetKey: key, distance } : null;
+  }
+
+  function planetBoundBoundaryNotice(model) {
+    return boundaryNotice(
+      `planet-bound-boundary:${model.planetKey}`,
+      "planet-bound",
+      model.distance,
+      ["degree-administration", "own-minor-dignity", "bound-reception"],
+      "review-birth-time-minutes-planetary-precision",
+      {
+        planetKey: model.planetKey,
+      }
+    );
   }
 
   function planetBoundBoundaryWarnings(chart) {
-    return VISIBLE_KEYS.flatMap((key) => {
-      const position = chart.positions[key];
-      const distance = distanceToBoundBoundary(position.lon);
-      return distance <= 0.5
-        ? [boundaryNotice(
-          `planet-bound-boundary:${key}`,
-          "planet-bound",
-          distance,
-          ["degree-administration", "own-minor-dignity", "bound-reception"],
-          "review-birth-time-minutes-planetary-precision",
-          {
-            planetKey: key,
-          }
-        )]
-        : [];
-    });
+    return VISIBLE_KEYS.map((key) => planetBoundBoundaryModel(key, chart)).filter(Boolean).map(planetBoundBoundaryNotice);
   }
 
   function boundaryWarnings(chart) {
