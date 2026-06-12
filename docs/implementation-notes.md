@@ -30,6 +30,8 @@ Date/time conversion should keep validation, manual UTC offset handling, Julian-
 
 Lunar condition should keep the contact scan separate from the final condition object. The scan owns last separation, next application, sign-exit application, and close applying contact; `computeMoonCondition()` should assemble phase, void flags, and summary fields from that scan. Candidate generation, nearest-past/future selection, and within-orb contact classification should remain separate helpers inside the scan layer.
 
+Lunar judgment prose should keep contact fallback labels, next-contact role, sign-exit void judgment, close-orb application, and the 30-degree void rule in separate helpers. This keeps both lunar void criteria explicit in the visible reading.
+
 For the natal interpretation panel, `interpretChart()` should remain an orchestrator. It should collect a context, call dedicated builders for summary, evidence, hierarchy, qualities, and reading blocks, and return a view model. It should not render HTML directly or own all prose-building responsibility in one long function.
 
 The natal reading context should be composed from focused context builders: anchors, topic focus, sect actors, prominence/evidence, lots, and derived reading fragments. Keep `createNatalReadingContext()` as a merger of those pieces so future interpretive factors can be added without turning context assembly into a hidden use case.
@@ -48,7 +50,7 @@ For chart rendering, keep frame setup, panel rendering, and completion side effe
 
 The chart frame itself should use a small model for title, metadata, and wheel HTML before touching DOM nodes. This keeps shell rendering consistent with panel rendering.
 
-Where a renderer needs calculated or audited data, prefer a small view model builder before HTML generation. For example, the main lots audit should build row/field data first, then render that model. Boundary audits should translate neutral warning codes into labeled fields before the renderer writes definition-list markup. Score breakdowns should likewise group and label score data before rendering HTML. Historical example cards should prepare natal-source, audit-status, localized label, and group data before the card renderer writes markup. This keeps testimony extraction and provenance handling separate from HTML details.
+Where a renderer needs calculated or audited data, prefer a small view model builder before HTML generation. For example, the main lots audit should build each lot row and its fields first, then render that model. Boundary audits should translate neutral warning codes into labeled fields before the renderer writes definition-list markup. Score breakdowns should likewise group and label score data before rendering HTML. Historical example cards should prepare natal-source, audit-status, localized label, and group data before the card renderer writes markup. This keeps testimony extraction and provenance handling separate from HTML details.
 
 Boundary warning calculation should stay split by testimony family. Sect, Ascendant sign, MC/IC sign, lot sign, and Egyptian-bound proximity warnings should live in dedicated detector helpers, with `boundaryWarnings()` only concatenating their neutral notices.
 

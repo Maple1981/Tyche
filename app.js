@@ -7393,46 +7393,77 @@
     return "The Moon keeps moving, but the final tone depends on the planet it approaches and that planet's condition.";
   }
 
-  function moonJudgmentReading(chart) {
-    const next = chart.moon.nextApplication;
-    const last = chart.moon.lastSeparation;
-    const nextBySign = chart.moon.nextApplicationBySign;
-    const nextText = next
-      ? lunarContactLabel(next, "applying")
-      : (state.lang === "es" ? "ningún planeta en los próximos 30°" : "no planet in the next 30°");
-    const lastText = last
-      ? lunarContactLabel(last, "separating")
-      : (state.lang === "es" ? "ningún planeta en los últimos 30°" : "no planet in the last 30°");
-    const bySignText = nextBySign
-      ? lunarContactLabel(nextBySign, "applying")
-      : (state.lang === "es" ? "ningún planeta antes de salir del signo" : "no planet before sign exit");
-    const nextRole = moonNextRole(chart);
+  function moonContactFallbackText(kind) {
+    const text = {
+      es: {
+        next: "ningún planeta en los próximos 30°",
+        last: "ningún planeta en los últimos 30°",
+        sign: "ningún planeta antes de salir del signo",
+      },
+      en: {
+        next: "no planet in the next 30°",
+        last: "no planet in the last 30°",
+        sign: "no planet before sign exit",
+      },
+    };
+    return text[state.lang === "es" ? "es" : "en"][kind];
+  }
+
+  function moonContactText(contact, motion, fallbackKind) {
+    return contact ? lunarContactLabel(contact, motion) : moonContactFallbackText(fallbackKind);
+  }
+
+  function moonRoleJudgmentText(nextRole) {
     if (state.lang === "es") {
-      const roleText = nextRole === "support"
-        ? "El próximo contacto va hacia el planeta de apoyo, así que el ritmo inmediato puede encontrar ayuda, conciliación o una salida más amable."
-        : nextRole === "tension"
-          ? "El próximo contacto va hacia el planeta de presión, así que el ritmo inmediato puede traer más fricción, demora o necesidad de resolver algo incómodo."
-          : "El próximo contacto no va al principal planeta de apoyo ni al principal planeta de presión; se lee por la naturaleza concreta del planeta implicado.";
-      const signVocText = chart.moon.voidOfCourseBySign
+      if (nextRole === "support") return "El próximo contacto va hacia el planeta de apoyo, así que el ritmo inmediato puede encontrar ayuda, conciliación o una salida más amable.";
+      if (nextRole === "tension") return "El próximo contacto va hacia el planeta de presión, así que el ritmo inmediato puede traer más fricción, demora o necesidad de resolver algo incómodo.";
+      return "El próximo contacto no va al principal planeta de apoyo ni al principal planeta de presión; se lee por la naturaleza concreta del planeta implicado.";
+    }
+    if (nextRole === "support") return "The next contact goes to the support planet, so the immediate rhythm can find help, reconciliation, or a gentler outlet.";
+    if (nextRole === "tension") return "The next contact goes to the pressure planet, so the immediate rhythm can bring more friction, delay, or the need to resolve something uncomfortable.";
+    return "The next contact goes neither to the main support planet nor to the main pressure planet; read it through the concrete nature of the planet involved.";
+  }
+
+  function moonSignExitJudgmentText(chart, bySignText) {
+    if (state.lang === "es") {
+      return chart.moon.voidOfCourseBySign
         ? "Antes de abandonar el signo tampoco completa un contacto mayor; eso deja el desarrollo más abierto o menos rematado."
         : `Antes de abandonar el signo todavía completa un contacto con ${bySignText}; eso da más continuidad al proceso.`;
-      const closeText = chart.moon.hasApplyingWithinOrb
-        ? "Además hay aplicación cercana dentro de 12°, por lo que el asunto se vuelve más concreto y reconocible."
-        : "No hay aplicación cercana dentro de 12°, así que el asunto se siente más amplio, difuso o dependiente del contexto.";
-      return `La Luna muestra el ritmo de los acontecimientos, el cuerpo y la continuidad cotidiana. Está en fase ${chart.moon.phase}. Viene de ${lastText} y se dirige a ${nextText}. ${chart.moon.voidOfCourse ? "Según la regla helenística amplia de 30°, está vacía de curso: la acción inmediata se dispersa o queda menos encaminada." : roleText} ${signVocText} ${closeText}`;
     }
-    const roleText = nextRole === "support"
-      ? "The next contact goes to the support planet, so the immediate rhythm can find help, reconciliation, or a gentler outlet."
-      : nextRole === "tension"
-        ? "The next contact goes to the pressure planet, so the immediate rhythm can bring more friction, delay, or the need to resolve something uncomfortable."
-        : "The next contact goes neither to the main support planet nor to the main pressure planet; read it through the concrete nature of the planet involved.";
-    const signVocText = chart.moon.voidOfCourseBySign
+    return chart.moon.voidOfCourseBySign
       ? "Before leaving the sign it also completes no major contact; that leaves the development more open or less resolved."
       : `Before leaving the sign it still completes a contact with ${bySignText}; that gives the process more continuity.`;
-    const closeText = chart.moon.hasApplyingWithinOrb
+  }
+
+  function moonCloseApplicationText(chart) {
+    if (state.lang === "es") {
+      return chart.moon.hasApplyingWithinOrb
+        ? "Además hay aplicación cercana dentro de 12°, por lo que el asunto se vuelve más concreto y reconocible."
+        : "No hay aplicación cercana dentro de 12°, así que el asunto se siente más amplio, difuso o dependiente del contexto.";
+    }
+    return chart.moon.hasApplyingWithinOrb
       ? "There is also a close application within 12°, making the matter more concrete and recognizable."
       : "There is no close application within 12°, so the matter feels broader, more diffuse, or more dependent on context.";
-    return `The Moon shows the rhythm of events, the body, and daily continuity. It is in ${chart.moon.phase} phase. It comes from ${lastText} and moves toward ${nextText}. ${chart.moon.voidOfCourse ? "By the broad Hellenistic 30° rule it is void of course: immediate action disperses or is less directed." : roleText} ${signVocText} ${closeText}`;
+  }
+
+  function moonVoidJudgmentText() {
+    return state.lang === "es"
+      ? "Según la regla helenística amplia de 30°, está vacía de curso: la acción inmediata se dispersa o queda menos encaminada."
+      : "By the broad Hellenistic 30° rule it is void of course: immediate action disperses or is less directed.";
+  }
+
+  function moonJudgmentReading(chart) {
+    const nextText = moonContactText(chart.moon.nextApplication, "applying", "next");
+    const lastText = moonContactText(chart.moon.lastSeparation, "separating", "last");
+    const bySignText = moonContactText(chart.moon.nextApplicationBySign, "applying", "sign");
+    const nextRole = moonNextRole(chart);
+    const immediateText = chart.moon.voidOfCourse ? moonVoidJudgmentText() : moonRoleJudgmentText(nextRole);
+    const signVocText = moonSignExitJudgmentText(chart, bySignText);
+    const closeText = moonCloseApplicationText(chart);
+    if (state.lang === "es") {
+      return `La Luna muestra el ritmo de los acontecimientos, el cuerpo y la continuidad cotidiana. Está en fase ${chart.moon.phase}. Viene de ${lastText} y se dirige a ${nextText}. ${immediateText} ${signVocText} ${closeText}`;
+    }
+    return `The Moon shows the rhythm of events, the body, and daily continuity. It is in ${chart.moon.phase} phase. It comes from ${lastText} and moves toward ${nextText}. ${immediateText} ${signVocText} ${closeText}`;
   }
 
   function visibleAngularPlanets(chart) {
@@ -8337,40 +8368,43 @@
     `;
   }
 
+  function lotLordSolarPhaseText(lot, chart) {
+    return solarPhaseState(lot.lord, chart).category === "luminary"
+      ? (state.lang === "es" ? "luminaria" : "luminary")
+      : solarPhaseTableText(lot.lord, chart);
+  }
+
+  function buildMainLotAuditRow(lot, chart) {
+    const lord = chart.positions[lot.lord];
+    const lordLabel = planetLabel(lot.lord);
+    return {
+      key: lot.key,
+      name: lotName(lot.key),
+      fields: [
+        { label: t("lotAuditPosition"), value: `${formatDegree(lot.lon)} · ${t("tableHouse")} ${lot.house}` },
+        { label: t("lotAuditLord"), value: `${lordLabel} · ${t("tableHouse")} ${lord?.house || "—"}` },
+        {
+          label: t("lotAuditDirectAdministration"),
+          value: directLotAdministrationText(lot, chart),
+          valueClass: "lot-audit-role lot-direct-administration",
+          dataTest: `main-lot-${lot.key}-direct-administration`,
+        },
+        { label: t("lotAuditLordRole"), value: lotLordRoleText(lot, chart), valueClass: "lot-audit-role" },
+        { label: t("lotAuditLordCondition"), value: plainDignityText(lord?.dignities || [], chart) },
+        { label: t("lotAuditLordAngularity"), value: lord?.angularity ? t(lord.angularity) : "—" },
+        { label: t("lotAuditLordSolarPhase"), value: lotLordSolarPhaseText(lot, chart) },
+        { label: t("lotAuditFormula"), value: lotFormulaText(lot.key, chart.isDay) },
+        { label: t("lotAuditBeneficTestimony"), value: lotTestimonyText(lotTestimonyItems(lot, ["jupiter", "venus"], chart, "support"), "support", lot) },
+        { label: t("lotAuditMaleficPressure"), html: lotPressureAuditHtml(lotTestimonyItems(lot, ["mars", "saturn"], chart, "tension"), lot) },
+      ],
+    };
+  }
+
   function buildMainLotsAuditModel(chart) {
     const rows = ["fortune", "spirit"]
       .map((key) => lotByKey(chart, key))
       .filter(Boolean)
-      .map((lot) => {
-        const lord = chart.positions[lot.lord];
-        const lordSolar = solarPhaseState(lot.lord, chart).category === "luminary"
-          ? (state.lang === "es" ? "luminaria" : "luminary")
-          : solarPhaseTableText(lot.lord, chart);
-        const beneficTestimony = lotTestimonyText(lotTestimonyItems(lot, ["jupiter", "venus"], chart, "support"), "support", lot);
-        const maleficPressure = lotPressureAuditHtml(lotTestimonyItems(lot, ["mars", "saturn"], chart, "tension"), lot);
-        const lordLabel = planetLabel(lot.lord);
-        return {
-          key: lot.key,
-          name: lotName(lot.key),
-          fields: [
-            { label: t("lotAuditPosition"), value: `${formatDegree(lot.lon)} · ${t("tableHouse")} ${lot.house}` },
-            { label: t("lotAuditLord"), value: `${lordLabel} · ${t("tableHouse")} ${lord?.house || "—"}` },
-            {
-              label: t("lotAuditDirectAdministration"),
-              value: directLotAdministrationText(lot, chart),
-              valueClass: "lot-audit-role lot-direct-administration",
-              dataTest: `main-lot-${lot.key}-direct-administration`,
-            },
-            { label: t("lotAuditLordRole"), value: lotLordRoleText(lot, chart), valueClass: "lot-audit-role" },
-            { label: t("lotAuditLordCondition"), value: plainDignityText(lord?.dignities || [], chart) },
-            { label: t("lotAuditLordAngularity"), value: lord?.angularity ? t(lord.angularity) : "—" },
-            { label: t("lotAuditLordSolarPhase"), value: lordSolar },
-            { label: t("lotAuditFormula"), value: lotFormulaText(lot.key, chart.isDay) },
-            { label: t("lotAuditBeneficTestimony"), value: beneficTestimony },
-            { label: t("lotAuditMaleficPressure"), html: maleficPressure },
-          ],
-        };
-      });
+      .map((lot) => buildMainLotAuditRow(lot, chart));
     return {
       title: t("mainLotsAuditTitle"),
       rows,
