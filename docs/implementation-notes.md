@@ -42,6 +42,8 @@ Complex interpretive judgments should keep testimony extraction, level/flag deci
 
 Essential-condition readings should keep dignity labels, judgment profile, and localized prose separate. This prevents changes to dignity grouping from being tangled with the final interpretive wording.
 
+Stable plain-language maps for house topics, sign style, angularity wording, planet meanings, lot meanings, lunar fallback labels, and mitigation copy should live as shared data constants. Lookup functions should format from those constants rather than rebuilding text maps on every call.
+
 Public-projection conclusions should keep score calculation, level selection, contextual notes, and final localized text separate. This makes it easier to refine real-world judgments about visibility, reduction, mediation, and shared spotlight without rewriting the whole section.
 
 Planetary relation judgments should build one reusable relation context for target, actor, role, aspect, superiority, reception, raw intensity, and regulated intensity. Visible judgment prose and technical relation item lists should consume that same context instead of recalculating relation geometry separately.
@@ -69,6 +71,8 @@ Top chart panels should also prefer view models where labels and values are prep
 Table panels should keep row construction separate from final DOM assignment. Use dedicated table models, plus header/row builders for planet, house, lot, and aspect tables, so calculation changes and markup changes remain independent. When a table can split into sections, such as traditional and modern planets, build a section model before rendering.
 
 Aspect tables should keep planet-key selection, display-mode selection, pair analysis, and sign/degree row construction in separate helpers.
+
+Aspect geometry lookup tables should also live as constants: sign-aspect distance maps, degree-aspect targets, and lunar within-orb exact angles should not be recreated inside calculation helpers.
 
 SVG renderers should follow the same rule. The chart wheel should build a geometry/parts model for houses, angles, aspects, and planets before composing the final SVG shell.
 

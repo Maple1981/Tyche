@@ -4949,23 +4949,34 @@
     return t("balsamic");
   }
 
+  const SIGN_ASPECT_BY_DISTANCE = Object.freeze({
+    0: "copresence",
+    2: "sextile",
+    3: "square",
+    4: "trine",
+    6: "opposition",
+    8: "trine",
+    9: "square",
+    10: "sextile",
+  });
+
+  const DEGREE_ASPECTS = Object.freeze([
+    ["copresence", 0],
+    ["sextile", 60],
+    ["square", 90],
+    ["trine", 120],
+    ["opposition", 180],
+  ]);
+
   function signAspectType(aSign, bSign) {
     const distance = (bSign - aSign + 12) % 12;
-    const map = { 0: "copresence", 2: "sextile", 3: "square", 4: "trine", 6: "opposition", 8: "trine", 9: "square", 10: "sextile" };
-    return map[distance] || null;
+    return SIGN_ASPECT_BY_DISTANCE[distance] || null;
   }
 
   function degreeAspect(a, b, orb) {
     const distance = angleDistance(a, b);
-    const aspects = [
-      ["copresence", 0],
-      ["sextile", 60],
-      ["square", 90],
-      ["trine", 120],
-      ["opposition", 180],
-    ];
     let best = null;
-    aspects.forEach(([type, exact]) => {
+    DEGREE_ASPECTS.forEach(([type, exact]) => {
       const delta = Math.abs(distance - exact);
       if (delta <= orb && (!best || delta < best.delta)) best = { type, delta };
     });
@@ -5400,17 +5411,22 @@
     `;
   }
 
+  const LOT_NAME_KEYS = Object.freeze({
+    fortune: "fortune",
+    spirit: "spirit",
+    necessity: "necessity",
+    courage: "courage",
+    victory: "victory",
+  });
+
+  const LOT_FIXED_NAMES = Object.freeze({
+    eros: "Eros",
+    nemesis: "Némesis",
+  });
+
   function lotName(key) {
-    const names = {
-      fortune: t("fortune"),
-      spirit: t("spirit"),
-      eros: "Eros",
-      necessity: t("necessity"),
-      courage: t("courage"),
-      victory: t("victory"),
-      nemesis: "Némesis",
-    };
-    return names[key] || key;
+    if (LOT_NAME_KEYS[key]) return t(LOT_NAME_KEYS[key]);
+    return LOT_FIXED_NAMES[key] || key;
   }
 
   function lunarContactPlanetKeys() {
@@ -5430,12 +5446,20 @@
     return !current || candidate.days > current.days ? candidate : current;
   }
 
+  const LUNAR_ORB_EXACT_ANGLE = Object.freeze({
+    copresence: 0,
+    sextile: 60,
+    square: 90,
+    trine: 120,
+    opposition: 180,
+  });
+
   function lunarOrbContact(moon, planet, key) {
     const near = degreeAspect(moon.lon, planet.lon, 12);
     if (!near) return null;
     const nextMoon = norm360(moon.lon + moon.speed);
     const nextPlanet = norm360(planet.lon + planet.speed);
-    const exact = { copresence: 0, sextile: 60, square: 90, trine: 120, opposition: 180 }[near.type];
+    const exact = LUNAR_ORB_EXACT_ANGLE[near.type];
     const nowDelta = Math.abs(angleDistance(moon.lon, planet.lon) - exact);
     const nextDelta = Math.abs(angleDistance(nextMoon, nextPlanet) - exact);
     const motion = nextDelta < nowDelta ? "applying" : "separating";
@@ -5977,54 +6001,56 @@
     return t("testimonyLow");
   }
 
+  const ANGULARITY_READING_TEXT = Object.freeze({
+    es: {
+      angular: "con fuerza, visibilidad y capacidad de hacerse notar",
+      succedent: "de manera sostenida, con efectos que se acumulan",
+      cadent: "de manera más indirecta o menos visible",
+    },
+    en: {
+      angular: "with strength, visibility, and the ability to stand out",
+      succedent: "in a sustained way, with effects that accumulate",
+      cadent: "in a more indirect or less visible way",
+    },
+  });
+
   function angularityReading(angularity) {
-    const texts = {
-      es: {
-        angular: "con fuerza, visibilidad y capacidad de hacerse notar",
-        succedent: "de manera sostenida, con efectos que se acumulan",
-        cadent: "de manera más indirecta o menos visible",
-      },
-      en: {
-        angular: "with strength, visibility, and the ability to stand out",
-        succedent: "in a sustained way, with effects that accumulate",
-        cadent: "in a more indirect or less visible way",
-      },
-    };
-    return texts[state.lang]?.[angularity] || texts.es[angularity] || angularity;
+    return ANGULARITY_READING_TEXT[state.lang]?.[angularity] || ANGULARITY_READING_TEXT.es[angularity] || angularity;
   }
 
+  const PLAIN_HOUSE_TOPICS = Object.freeze({
+    es: {
+      1: "cuerpo, salud, apariencia, constitución y presencia personal",
+      2: "recursos, dinero y medios de vida",
+      3: "aprendizaje, escritura, mensajes, hermanos y entorno cercano",
+      4: "raíces, hogar, familia, mundo privado y finales",
+      5: "creatividad, hijos, placer, regalos y alegría",
+      6: "salud, trabajo duro, obligaciones, servicio y dificultades prácticas",
+      7: "pareja, acuerdos, cooperación, rivales y otras personas",
+      8: "crisis, pérdidas, deudas, miedo y recursos compartidos",
+      9: "viajes, estudios superiores, religión, filosofía y búsqueda de sentido",
+      10: "vida pública, oficio, reputación, reconocimiento y visibilidad",
+      11: "amistades, alianzas, protectores, esperanzas y apoyo social",
+      12: "aislamiento, cargas, pérdidas, encierros y situaciones difíciles de controlar",
+    },
+    en: {
+      1: "body, health, appearance, constitution, and personal presence",
+      2: "resources, money, and livelihood",
+      3: "learning, writing, messages, siblings, and the nearby environment",
+      4: "roots, home, family, private life, and endings",
+      5: "creativity, children, pleasure, gifts, and joy",
+      6: "health, hard work, obligations, service, and practical difficulties",
+      7: "partners, agreements, cooperation, rivals, and other people",
+      8: "crises, losses, debts, fear, and shared resources",
+      9: "travel, higher learning, religion, philosophy, and the search for meaning",
+      10: "public life, craft, reputation, recognition, and visibility",
+      11: "friends, alliances, patrons, hopes, and social support",
+      12: "isolation, burdens, losses, confinement, and situations hard to control",
+    },
+  });
+
   function plainHouseTopics(house) {
-    const topics = {
-      es: {
-        1: "cuerpo, salud, apariencia, constitución y presencia personal",
-        2: "recursos, dinero y medios de vida",
-        3: "aprendizaje, escritura, mensajes, hermanos y entorno cercano",
-        4: "raíces, hogar, familia, mundo privado y finales",
-        5: "creatividad, hijos, placer, regalos y alegría",
-        6: "salud, trabajo duro, obligaciones, servicio y dificultades prácticas",
-        7: "pareja, acuerdos, cooperación, rivales y otras personas",
-        8: "crisis, pérdidas, deudas, miedo y recursos compartidos",
-        9: "viajes, estudios superiores, religión, filosofía y búsqueda de sentido",
-        10: "vida pública, oficio, reputación, reconocimiento y visibilidad",
-        11: "amistades, alianzas, protectores, esperanzas y apoyo social",
-        12: "aislamiento, cargas, pérdidas, encierros y situaciones difíciles de controlar",
-      },
-      en: {
-        1: "body, health, appearance, constitution, and personal presence",
-        2: "resources, money, and livelihood",
-        3: "learning, writing, messages, siblings, and the nearby environment",
-        4: "roots, home, family, private life, and endings",
-        5: "creativity, children, pleasure, gifts, and joy",
-        6: "health, hard work, obligations, service, and practical difficulties",
-        7: "partners, agreements, cooperation, rivals, and other people",
-        8: "crises, losses, debts, fear, and shared resources",
-        9: "travel, higher learning, religion, philosophy, and the search for meaning",
-        10: "public life, craft, reputation, recognition, and visibility",
-        11: "friends, alliances, patrons, hopes, and social support",
-        12: "isolation, burdens, losses, confinement, and situations hard to control",
-      },
-    };
-    return topics[state.lang]?.[house] || houseTopics(house);
+    return PLAIN_HOUSE_TOPICS[state.lang]?.[house] || houseTopics(house);
   }
 
   function isDifficultHouse(house) {
@@ -6047,65 +6073,67 @@
       : "It should not be read as a literal prediction by itself: it depends on the place ruler, its condition, configurations, sect, and timing activation.";
   }
 
+  const SIGN_STYLE_TEXT = Object.freeze({
+    es: {
+      aries: "más directa, rápida e iniciadora",
+      taurus: "constante, concreta y orientada a sostener",
+      gemini: "curiosa, móvil y comunicativa",
+      cancer: "receptiva, corporal y protectora",
+      leo: "visible, afirmativa y expresiva",
+      virgo: "analítica, práctica y atenta al detalle",
+      libra: "relacional, equilibradora y diplomática",
+      scorpio: "intensa, reservada y resistente",
+      sagittarius: "expansiva, exploradora y orientada al sentido",
+      capricorn: "sobria, estratégica y disciplinada",
+      aquarius: "intelectual, firme y orientada a estructuras compartidas",
+      pisces: "imaginativa, sensible y permeable",
+    },
+    en: {
+      aries: "more direct, fast, and initiating",
+      taurus: "steady, concrete, and oriented toward sustaining",
+      gemini: "curious, mobile, and communicative",
+      cancer: "receptive, bodily, and protective",
+      leo: "visible, affirmative, and expressive",
+      virgo: "analytical, practical, and attentive to detail",
+      libra: "relational, balancing, and diplomatic",
+      scorpio: "intense, reserved, and resilient",
+      sagittarius: "expansive, exploratory, and meaning-oriented",
+      capricorn: "sober, strategic, and disciplined",
+      aquarius: "intellectual, firm, and oriented toward shared structures",
+      pisces: "imaginative, sensitive, and permeable",
+    },
+  });
+
   function signStyleReading(sign) {
-    const style = {
-      es: {
-        aries: "más directa, rápida e iniciadora",
-        taurus: "constante, concreta y orientada a sostener",
-        gemini: "curiosa, móvil y comunicativa",
-        cancer: "receptiva, corporal y protectora",
-        leo: "visible, afirmativa y expresiva",
-        virgo: "analítica, práctica y atenta al detalle",
-        libra: "relacional, equilibradora y diplomática",
-        scorpio: "intensa, reservada y resistente",
-        sagittarius: "expansiva, exploradora y orientada al sentido",
-        capricorn: "sobria, estratégica y disciplinada",
-        aquarius: "intelectual, firme y orientada a estructuras compartidas",
-        pisces: "imaginativa, sensible y permeable",
-      },
-      en: {
-        aries: "more direct, fast, and initiating",
-        taurus: "steady, concrete, and oriented toward sustaining",
-        gemini: "curious, mobile, and communicative",
-        cancer: "receptive, bodily, and protective",
-        leo: "visible, affirmative, and expressive",
-        virgo: "analytical, practical, and attentive to detail",
-        libra: "relational, balancing, and diplomatic",
-        scorpio: "intense, reserved, and resilient",
-        sagittarius: "expansive, exploratory, and meaning-oriented",
-        capricorn: "sober, strategic, and disciplined",
-        aquarius: "intellectual, firm, and oriented toward shared structures",
-        pisces: "imaginative, sensitive, and permeable",
-      },
-    };
-    const styleText = style[state.lang]?.[sign.key] || sign[state.lang];
+    const styleText = SIGN_STYLE_TEXT[state.lang]?.[sign.key] || sign[state.lang];
     return state.lang === "es"
       ? `${sign[state.lang]} da a este planeta una manera de actuar ${styleText}.`
       : `${sign[state.lang]} gives this planet a ${styleText} way of acting.`;
   }
 
+  const PLANET_PLAIN_MEANINGS = Object.freeze({
+    es: {
+      sun: "identidad, autoridad, visibilidad y coherencia personal",
+      moon: "cuerpo, ritmo, cambio, necesidades y vida cotidiana",
+      mercury: "pensamiento, lenguaje, cálculo, escritura e intercambio",
+      venus: "vínculo, placer, arte, deseo y conciliación",
+      mars: "acción, conflicto, corte, impulso y defensa",
+      jupiter: "crecimiento, protección, sentido, confianza y maestros",
+      saturn: "límites, tiempo, carga, estructura, soledad y disciplina",
+    },
+    en: {
+      sun: "identity, authority, visibility, and personal coherence",
+      moon: "body, rhythm, change, needs, and daily life",
+      mercury: "thinking, language, calculation, writing, and exchange",
+      venus: "bonding, pleasure, art, desire, and reconciliation",
+      mars: "action, conflict, impulse, defense, and decisive cuts",
+      jupiter: "growth, protection, meaning, trust, and teachers",
+      saturn: "limits, time, burden, structure, solitude, and discipline",
+    },
+  });
+
   function planetPlainMeaning(key) {
-    const meanings = {
-      es: {
-        sun: "identidad, autoridad, visibilidad y coherencia personal",
-        moon: "cuerpo, ritmo, cambio, necesidades y vida cotidiana",
-        mercury: "pensamiento, lenguaje, cálculo, escritura e intercambio",
-        venus: "vínculo, placer, arte, deseo y conciliación",
-        mars: "acción, conflicto, corte, impulso y defensa",
-        jupiter: "crecimiento, protección, sentido, confianza y maestros",
-        saturn: "límites, tiempo, carga, estructura, soledad y disciplina",
-      },
-      en: {
-        sun: "identity, authority, visibility, and personal coherence",
-        moon: "body, rhythm, change, needs, and daily life",
-        mercury: "thinking, language, calculation, writing, and exchange",
-        venus: "bonding, pleasure, art, desire, and reconciliation",
-        mars: "action, conflict, impulse, defense, and decisive cuts",
-        jupiter: "growth, protection, meaning, trust, and teachers",
-        saturn: "limits, time, burden, structure, solitude, and discipline",
-      },
-    };
-    return meanings[state.lang]?.[key] || planetName(key);
+    return PLANET_PLAIN_MEANINGS[state.lang]?.[key] || planetName(key);
   }
 
   function essentialConditionLabels(position, chart = null) {
@@ -6644,30 +6672,31 @@
     return "unmarked";
   }
 
+  const MALEFIC_MITIGATION_TEXT = Object.freeze({
+    es: {
+      strongRegulated: "Hay una salida fuerte pero negociada: el contacto no es suave, pero existe un canal claro para que el planeta de apoyo intervenga.",
+      strongDirect: "Hay una salida fuerte y directa: el planeta de apoyo puede intervenir con claridad, por cercanía, relación favorable o fuerza propia.",
+      mediumRegulated: "Hay un manejo intermedio y regulado: la presión no desaparece, pero el contacto difícil tiene una vía más tratable. La lectura debe mantener ambas señales.",
+      medium: "Hay un manejo intermedio: la presión no desaparece, pero aparecen recursos, ayuda o fuerza propia suficientes para trabajarla. La lectura debe mantener ambas señales.",
+      weakObscured: "La ayuda es débil o dudosa: existe contacto con el planeta de apoyo, pero está oculto por el Sol sin protección clara.",
+      weak: "La ayuda es débil: aparece algún recurso, pero de forma indirecta o poco dominante.",
+      raw: "Al no verse claramente compensada, esta tensión puede sentirse más cruda o menos integrada.",
+      unmarked: "No aparece una salida fuerte, pero tampoco una debilidad mayor clara; conviene leerla por su casa y por sus relaciones.",
+    },
+    en: {
+      strongRegulated: "There is a strong but negotiated outlet: the contact is not smooth, but there is a clear channel for the support planet to intervene.",
+      strongDirect: "There is a strong and direct outlet: the support planet can intervene clearly through closeness, a favorable relationship, or its own strength.",
+      mediumRegulated: "There is moderate, regulated handling: the pressure does not disappear, but the difficult contact has a more workable route. Keep both signals in the reading.",
+      medium: "There is moderate handling: the pressure does not disappear, but enough resources, help, or strength of its own appear to work with it. Keep both signals in the reading.",
+      weakObscured: "Help is weak or uncertain: contact with the support planet exists, but that planet is hidden by the Sun without clear protection.",
+      weak: "Help is weak: some resource appears, but indirectly or without dominance.",
+      raw: "Without clear compensation, this tension can feel rawer or less integrated.",
+      unmarked: "No strong outlet appears, but no clear major weakness appears either; read it through its house and relationships.",
+    },
+  });
+
   function maleficMitigationText(level) {
-    const text = {
-      es: {
-        strongRegulated: "Hay una salida fuerte pero negociada: el contacto no es suave, pero existe un canal claro para que el planeta de apoyo intervenga.",
-        strongDirect: "Hay una salida fuerte y directa: el planeta de apoyo puede intervenir con claridad, por cercanía, relación favorable o fuerza propia.",
-        mediumRegulated: "Hay un manejo intermedio y regulado: la presión no desaparece, pero el contacto difícil tiene una vía más tratable. La lectura debe mantener ambas señales.",
-        medium: "Hay un manejo intermedio: la presión no desaparece, pero aparecen recursos, ayuda o fuerza propia suficientes para trabajarla. La lectura debe mantener ambas señales.",
-        weakObscured: "La ayuda es débil o dudosa: existe contacto con el planeta de apoyo, pero está oculto por el Sol sin protección clara.",
-        weak: "La ayuda es débil: aparece algún recurso, pero de forma indirecta o poco dominante.",
-        raw: "Al no verse claramente compensada, esta tensión puede sentirse más cruda o menos integrada.",
-        unmarked: "No aparece una salida fuerte, pero tampoco una debilidad mayor clara; conviene leerla por su casa y por sus relaciones.",
-      },
-      en: {
-        strongRegulated: "There is a strong but negotiated outlet: the contact is not smooth, but there is a clear channel for the support planet to intervene.",
-        strongDirect: "There is a strong and direct outlet: the support planet can intervene clearly through closeness, a favorable relationship, or its own strength.",
-        mediumRegulated: "There is moderate, regulated handling: the pressure does not disappear, but the difficult contact has a more workable route. Keep both signals in the reading.",
-        medium: "There is moderate handling: the pressure does not disappear, but enough resources, help, or strength of its own appear to work with it. Keep both signals in the reading.",
-        weakObscured: "Help is weak or uncertain: contact with the support planet exists, but that planet is hidden by the Sun without clear protection.",
-        weak: "Help is weak: some resource appears, but indirectly or without dominance.",
-        raw: "Without clear compensation, this tension can feel rawer or less integrated.",
-        unmarked: "No strong outlet appears, but no clear major weakness appears either; read it through its house and relationships.",
-      },
-    };
-    return text[state.lang === "es" ? "es" : "en"][level];
+    return MALEFIC_MITIGATION_TEXT[state.lang === "es" ? "es" : "en"][level];
   }
 
   function maleficMitigationReading(maleficPosition, beneficPosition, chart) {
@@ -7295,28 +7324,29 @@
     `;
   }
 
+  const LOT_PLAIN_MEANINGS = Object.freeze({
+    es: {
+      fortune: "lo que llega por cuerpo, circunstancias, entorno y sucesos que no se controlan del todo",
+      spirit: "lo que la persona intenta dirigir con intención, decisión y acción consciente",
+      eros: "atracción, deseo, vínculo y aquello que mueve el corazón hacia algo",
+      necessity: "obligaciones, presiones inevitables y condiciones que estrechan el margen de elección",
+      courage: "respuesta ante el riesgo, defensa, impulso y capacidad de afrontar",
+      victory: "ayudas para vencer obstáculos, ganar favor o salir adelante",
+      nemesis: "límites, corrección, pérdida de exceso y consecuencias de lo no resuelto",
+    },
+    en: {
+      fortune: "what arrives through body, circumstances, surroundings, and events not fully under control",
+      spirit: "what the person tries to direct through intention, decision, and conscious action",
+      eros: "attraction, desire, bonding, and what moves the heart toward something",
+      necessity: "obligations, unavoidable pressures, and conditions that narrow choice",
+      courage: "response to risk, defense, drive, and the capacity to face things",
+      victory: "help in overcoming obstacles, gaining favor, or moving ahead",
+      nemesis: "limits, correction, loss of excess, and consequences of what remains unresolved",
+    },
+  });
+
   function lotPlainMeaning(key) {
-    const meanings = {
-      es: {
-        fortune: "lo que llega por cuerpo, circunstancias, entorno y sucesos que no se controlan del todo",
-        spirit: "lo que la persona intenta dirigir con intención, decisión y acción consciente",
-        eros: "atracción, deseo, vínculo y aquello que mueve el corazón hacia algo",
-        necessity: "obligaciones, presiones inevitables y condiciones que estrechan el margen de elección",
-        courage: "respuesta ante el riesgo, defensa, impulso y capacidad de afrontar",
-        victory: "ayudas para vencer obstáculos, ganar favor o salir adelante",
-        nemesis: "límites, corrección, pérdida de exceso y consecuencias de lo no resuelto",
-      },
-      en: {
-        fortune: "what arrives through body, circumstances, surroundings, and events not fully under control",
-        spirit: "what the person tries to direct through intention, decision, and conscious action",
-        eros: "attraction, desire, bonding, and what moves the heart toward something",
-        necessity: "obligations, unavoidable pressures, and conditions that narrow choice",
-        courage: "response to risk, defense, drive, and the capacity to face things",
-        victory: "help in overcoming obstacles, gaining favor, or moving ahead",
-        nemesis: "limits, correction, loss of excess, and consequences of what remains unresolved",
-      },
-    };
-    return meanings[state.lang]?.[key] || lotName(key).toLocaleLowerCase(state.lang === "es" ? "es-ES" : "en");
+    return LOT_PLAIN_MEANINGS[state.lang]?.[key] || lotName(key).toLocaleLowerCase(state.lang === "es" ? "es-ES" : "en");
   }
 
   function lotTestimonyPlainSummary(items, role) {
@@ -7430,20 +7460,21 @@
     return "The Moon keeps moving, but the final tone depends on the planet it approaches and that planet's condition.";
   }
 
+  const MOON_CONTACT_FALLBACK_TEXT = Object.freeze({
+    es: {
+      next: "ningún planeta en los próximos 30°",
+      last: "ningún planeta en los últimos 30°",
+      sign: "ningún planeta antes de salir del signo",
+    },
+    en: {
+      next: "no planet in the next 30°",
+      last: "no planet in the last 30°",
+      sign: "no planet before sign exit",
+    },
+  });
+
   function moonContactFallbackText(kind) {
-    const text = {
-      es: {
-        next: "ningún planeta en los próximos 30°",
-        last: "ningún planeta en los últimos 30°",
-        sign: "ningún planeta antes de salir del signo",
-      },
-      en: {
-        next: "no planet in the next 30°",
-        last: "no planet in the last 30°",
-        sign: "no planet before sign exit",
-      },
-    };
-    return text[state.lang === "es" ? "es" : "en"][kind];
+    return MOON_CONTACT_FALLBACK_TEXT[state.lang === "es" ? "es" : "en"][kind];
   }
 
   function moonContactText(contact, motion, fallbackKind) {
