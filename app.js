@@ -3432,6 +3432,14 @@
     return (table[key] || fallback).replace(/\{(\w+)\}/g, (_, name) => params[name] ?? "");
   }
 
+  function activeLocale() {
+    return state.lang === "es" ? "es-ES" : "en";
+  }
+
+  function activeSortLocale() {
+    return state.lang === "es" ? "es" : "en";
+  }
+
   function escapeHtml(value) {
     return String(value)
       .replaceAll("&", "&amp;")
@@ -3468,7 +3476,7 @@
     const chars = Array.from(String(value ?? ""));
     const index = chars.findIndex((char) => char.toLowerCase() !== char.toUpperCase());
     if (index === -1) return chars.join("");
-    chars[index] = chars[index].toLocaleUpperCase(state.lang === "es" ? "es-ES" : "en");
+    chars[index] = chars[index].toLocaleUpperCase(activeLocale());
     return chars.join("");
   }
 
@@ -3857,7 +3865,7 @@
     const stateKey = sectSensitivityState(chart);
     if (stateKey === "stable") return "";
     const sect = chart.isDay ? t("dayChart") : t("nightChart");
-    const sectLower = sect.toLocaleLowerCase(state.lang === "es" ? "es-ES" : "en");
+    const sectLower = sect.toLocaleLowerCase(activeLocale());
     return t(stateKey === "liminal" ? "sectLiminalNote" : "sectSensitiveNote", { sect: sectLower });
   }
 
@@ -4420,7 +4428,7 @@
   }
 
   function buildHistoricalPeopleModel() {
-    const people = [...HISTORICAL_PEOPLE].sort((a, b) => a.name.localeCompare(b.name, state.lang === "es" ? "es" : "en"));
+    const people = [...HISTORICAL_PEOPLE].sort((a, b) => a.name.localeCompare(b.name, activeSortLocale()));
     const groupSpecs = [
       { status: "audited", title: t("peopleAuditedTitle") },
       { status: "partial", title: t("peoplePartialTitle") },
@@ -4511,7 +4519,7 @@
   function formatDateLabel(value) {
     const date = parseDate(value);
     if (!date) return value || "—";
-    return new Intl.DateTimeFormat(state.lang === "es" ? "es-ES" : "en", {
+    return new Intl.DateTimeFormat(activeLocale(), {
       day: "numeric",
       month: "long",
       year: "numeric",
@@ -4530,7 +4538,7 @@
   }
 
   function formatUtcDateTime(jd) {
-    return new Intl.DateTimeFormat(state.lang === "es" ? "es-ES" : "en", {
+    return new Intl.DateTimeFormat(activeLocale(), {
       day: "numeric",
       month: "long",
       year: "numeric",
@@ -7514,7 +7522,7 @@
   });
 
   function lotPlainMeaning(key) {
-    return LOT_PLAIN_MEANINGS[state.lang]?.[key] || lotName(key).toLocaleLowerCase(state.lang === "es" ? "es-ES" : "en");
+    return LOT_PLAIN_MEANINGS[state.lang]?.[key] || lotName(key).toLocaleLowerCase(activeLocale());
   }
 
   function lotTestimonyPlainProfile(items, role) {
@@ -8372,7 +8380,7 @@
     const beneficPosition = chart.positions[benefic];
     const maleficPosition = chart.positions[malefic];
     const sectLabel = chart.isDay ? t("dayChart") : t("nightChart");
-    const sectContext = sectLabel.toLocaleLowerCase(state.lang === "es" ? "es-ES" : "en");
+    const sectContext = sectLabel.toLocaleLowerCase(activeLocale());
     const sectDescription = state.lang === "es" ? `una ${sectContext}` : `a ${sectContext}`;
     const sectConfidenceNotice = sectSensitivityState(chart) === "stable" ? "" : t("sectLowConfidenceJudgment");
     return {

@@ -134,6 +134,8 @@ Table renderers should build table models first and share generic empty-note/tab
 
 Regression-only APIs should be built through dedicated helpers. Keep the default regression input and the exposed `window.TycheTest` helper map separate from the installer that checks `?test=regression`, and group exposed helpers by calculation, historical data, lots/sect, rendering, and judgment responsibilities. The default regression input should mirror production input assembly by composing birth, place, and technique defaults.
 
+Locale-sensitive formatting should use shared locale helpers. Capitalization, lowercasing, sorting, and date formatting should call `activeLocale()` or `activeSortLocale()` instead of repeating language ternaries.
+
 When extracting architecture, keep changes incremental and covered by static contracts. Do not add a module loader, bundler, framework, backend, or runtime dependency unless the project deliberately changes its static-app constraint.
 
 ## Astronomical Precision
