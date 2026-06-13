@@ -10924,11 +10924,25 @@
     bindWindowEvent("scroll", repositionFloatingPopovers, true);
   }
 
-  function handleBirthPlaceFocus(birthPlace) {
-    if (state.selectedCity && normalizeText(birthPlace.value) === normalizeText(formatCity(state.selectedCity))) {
-      selectNodeText(birthPlace);
+  function shouldSelectBirthPlaceText(city, value, format = formatCity, normalize = normalizeText) {
+    return Boolean(city && normalize(value) === normalize(format(city)));
+  }
+
+  function birthPlaceFocusPorts() {
+    return {
+      readSelectedCity: () => state.selectedCity,
+      formatCity,
+      normalize: normalizeText,
+      selectText: selectNodeText,
+      queueSearch: queuePlaceSearch,
+    };
+  }
+
+  function handleBirthPlaceFocus(birthPlace, ports = birthPlaceFocusPorts()) {
+    if (shouldSelectBirthPlaceText(ports.readSelectedCity(), birthPlace.value, ports.formatCity, ports.normalize)) {
+      ports.selectText(birthPlace);
     }
-    queuePlaceSearch();
+    ports.queueSearch();
   }
 
   function handleBirthPlaceFocusEvent(event) {
