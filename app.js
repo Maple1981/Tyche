@@ -3672,21 +3672,46 @@
     return popover;
   }
 
-  function openGlossary(key, trigger) {
-    const model = buildGlossaryPopoverModel(key);
-    if (!model) return;
-    renderGlossaryPopover(model);
+  function setGlossaryReturnFocus(trigger) {
     state.glossaryReturnFocus = trigger || null;
-    window.requestAnimationFrame(() => positionGlossary(trigger));
   }
 
-  function closeGlossary({ restoreFocus = false } = {}) {
-    const popover = $("#glossaryPopover");
+  function restoreGlossaryReturnFocus(restoreFocus) {
+    if (restoreFocus && state.glossaryReturnFocus) state.glossaryReturnFocus.focus();
+  }
+
+  function clearGlossaryReturnFocus() {
+    state.glossaryReturnFocus = null;
+  }
+
+  function glossaryPopoverPorts() {
+    return {
+      buildModel: buildGlossaryPopoverModel,
+      renderPopover: renderGlossaryPopover,
+      setReturnFocus: setGlossaryReturnFocus,
+      requestFrame: (callback) => window.requestAnimationFrame(callback),
+      position: positionGlossary,
+      readPopover: () => $("#glossaryPopover"),
+      restoreReturnFocus: restoreGlossaryReturnFocus,
+      clearReturnFocus: clearGlossaryReturnFocus,
+    };
+  }
+
+  function openGlossary(key, trigger, ports = glossaryPopoverPorts()) {
+    const model = ports.buildModel(key);
+    if (!model) return;
+    ports.renderPopover(model);
+    ports.setReturnFocus(trigger);
+    ports.requestFrame(() => ports.position(trigger));
+  }
+
+  function closeGlossary({ restoreFocus = false } = {}, ports = glossaryPopoverPorts()) {
+    const popover = ports.readPopover();
     if (!popover || popover.hidden) return;
     popover.hidden = true;
     popover.removeAttribute("style");
-    if (restoreFocus && state.glossaryReturnFocus) state.glossaryReturnFocus.focus();
-    state.glossaryReturnFocus = null;
+    ports.restoreReturnFocus(restoreFocus);
+    ports.clearReturnFocus();
   }
 
   function positionFloatingPopover(popover, trigger) {

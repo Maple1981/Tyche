@@ -120,7 +120,7 @@ Language switching should separate document metadata, static node translation, l
 
 Preference state should enter through a small initializer rather than direct `localStorage` reads inside the global state literal. Preference toggles should separate next-state selection, state write, persistence, and view application. Keep language/theme storage and render application behind small ports so preference handlers remain event adapters rather than business logic.
 
-Floating popovers should resolve a small model before writing DOM. Glossary entries, person-data details, and similar overlays should keep lookup/formatting separate from the code that opens and positions the popover; historical source popovers should expose that split through dedicated model and render helpers.
+Floating popovers should resolve a small model before writing DOM. Glossary entries, person-data details, and similar overlays should keep lookup/formatting separate from the code that opens and positions the popover; historical source popovers should expose that split through dedicated model and render helpers. Opening/closing popovers should route render, focus-return, animation-frame positioning, and popover lookup through ports rather than mutating focus state inline.
 
 Glossary text lookup should use a static matcher table and a small lookup function. Do not rebuild matcher arrays inside render paths.
 
