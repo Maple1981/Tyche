@@ -11194,8 +11194,23 @@
     event.preventDefault();
   }
 
-  function handleDocumentPlacePointerdown(event) {
-    if (!event.target.closest(".place-field")) hidePlaceSuggestions();
+  function documentPlacePointerAction(event, closest = eventTargetClosest) {
+    return closest(event, ".place-field") ? { type: "keepSuggestions" } : { type: "hideSuggestions" };
+  }
+
+  function documentPlacePointerPorts() {
+    return {
+      closest: eventTargetClosest,
+      hideSuggestions: hidePlaceSuggestions,
+    };
+  }
+
+  function applyDocumentPlacePointerAction(action, ports) {
+    if (action.type === "hideSuggestions") ports.hideSuggestions();
+  }
+
+  function handleDocumentPlacePointerdown(event, ports = documentPlacePointerPorts()) {
+    applyDocumentPlacePointerAction(documentPlacePointerAction(event, ports.closest), ports);
   }
 
   function bindBirthPlaceEvents() {
