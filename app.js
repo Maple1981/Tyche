@@ -4047,9 +4047,24 @@
     return response.json();
   }
 
+  function abortPlaceSearchController() {
+    state.placeSearchController?.abort();
+  }
+
+  function setPlaceSearchController(controller) {
+    state.placeSearchController = controller;
+  }
+
+  function clearPlaceSearchController(controller) {
+    if (state.placeSearchController === controller) state.placeSearchController = null;
+  }
+
   function placeSearchPorts() {
     return {
       createController: () => new AbortController(),
+      abortCurrent: abortPlaceSearchController,
+      setController: setPlaceSearchController,
+      clearController: clearPlaceSearchController,
       requestJson: fetchJson,
       renderSuggestions: renderPlaceSuggestions,
       localSuggestions: localCitySuggestions,
@@ -4064,9 +4079,9 @@
   }
 
   async function fetchPlaceSuggestions(query, ports = placeSearchPorts()) {
-    state.placeSearchController?.abort();
+    ports.abortCurrent();
     const controller = ports.createController();
-    state.placeSearchController = controller;
+    ports.setController(controller);
     ports.renderSuggestions([], ports.loadingText());
     const url = ports.buildUrl(query);
 
@@ -4081,7 +4096,7 @@
       const local = ports.localSuggestions(query);
       ports.renderSuggestions(local, local.length ? ports.errorText() : ports.emptyText());
     } finally {
-      if (state.placeSearchController === controller) state.placeSearchController = null;
+      ports.clearController(controller);
     }
   }
 
@@ -4089,7 +4104,7 @@
     const query = $("#birthPlace").value.trim();
     updateClearPlaceButton();
     window.clearTimeout(state.placeSearchTimer);
-    state.placeSearchController?.abort();
+    ports.abortCurrent();
 
     if (query.length < 2) {
       ports.renderSuggestions([], query ? ports.shortText() : "");
