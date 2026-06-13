@@ -140,6 +140,8 @@ Form event binding should group listeners by intent. Birth-data changes, option-
 
 Chart submit handling should coordinate calculation and error reporting through ports. Keep message extraction, warning render, and error event dispatch injectable so the submit handler is not tied to one DOM surface or test harness.
 
+Application startup should be a composition root. `init()` should receive startup ports for list population, theme/i18n application, binding, regression API installation, and readiness marking, while preserving the explicit startup order.
+
 Table renderers should build table models first and share generic empty-note/table-note HTML helpers. Individual domain renderers should decide rows and explanatory notes, not repeat paragraph wrappers or fallback table markup.
 
 Metric panels should share the same heading-and-grid renderer once a panel has a `{ title, titleGlossary, metrics }` model. Domain panels may append notes or audits after that shared metric block.

@@ -10270,14 +10270,26 @@
     console.info("Tyche regression test API enabled.");
   }
 
-  function init() {
-    populateLists();
-    applyTheme();
-    applyI18n();
-    bindTabs();
-    bindEvents();
-    installTestApi();
-    window.__TYCHE_READY__ = true;
+  function appStartupPorts() {
+    return {
+      populateLists,
+      applyTheme,
+      applyI18n,
+      bindTabs,
+      bindEvents,
+      installTestApi,
+      markReady: () => { window.__TYCHE_READY__ = true; },
+    };
+  }
+
+  function init(ports = appStartupPorts()) {
+    ports.populateLists();
+    ports.applyTheme();
+    ports.applyI18n();
+    ports.bindTabs();
+    ports.bindEvents();
+    ports.installTestApi();
+    ports.markReady();
   }
 
   init();
