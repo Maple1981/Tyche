@@ -6017,9 +6017,15 @@
     };
   }
 
-  function placeZoneReliability(timeZone) {
-    const zoneReliability = state.selectedPersonZoneReliability || (timeZone ? "iana" : state.selectedZoneSource ? "historical" : "manual");
-    return zoneReliability;
+  function selectedZoneContext() {
+    return {
+      source: state.selectedZoneSource,
+      personReliability: state.selectedPersonZoneReliability,
+    };
+  }
+
+  function placeZoneReliability(timeZone, context = selectedZoneContext()) {
+    return context.personReliability || (timeZone ? "iana" : context.source ? "historical" : "manual");
   }
 
   function readPlaceInputFromFields() {
@@ -6027,6 +6033,7 @@
     const city = findCity(fields.placeValue);
     const { latitude, longitude } = placeCoordinatesFromFields(fields, city);
     const timeZone = fields.timeZoneField || city?.tz || "";
+    const zoneContext = selectedZoneContext();
     return {
       place: city ? formatCity(city) : fields.placeValue,
       city,
@@ -6034,8 +6041,8 @@
       longitude,
       timeZone,
       manualOffset: fields.manualOffset,
-      zoneSource: state.selectedZoneSource,
-      zoneReliability: placeZoneReliability(timeZone),
+      zoneSource: zoneContext.source,
+      zoneReliability: placeZoneReliability(timeZone, zoneContext),
     };
   }
 
