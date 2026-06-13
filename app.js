@@ -4161,10 +4161,25 @@
     });
   }
 
-  function moveActivePlace(delta) {
-    if (!state.placeSuggestions.length) return;
-    state.activePlaceIndex = (state.activePlaceIndex + delta + state.placeSuggestions.length) % state.placeSuggestions.length;
-    updateActivePlace();
+  function nextActivePlaceIndex(currentIndex, count, delta) {
+    if (!count) return currentIndex;
+    return (currentIndex + delta + count) % count;
+  }
+
+  function activePlaceNavigationPorts() {
+    return {
+      suggestionCount: () => state.placeSuggestions.length,
+      readActiveIndex: () => state.activePlaceIndex,
+      writeActiveIndex: (index) => { state.activePlaceIndex = index; },
+      updateActive: updateActivePlace,
+    };
+  }
+
+  function moveActivePlace(delta, ports = activePlaceNavigationPorts()) {
+    const count = ports.suggestionCount();
+    if (!count) return;
+    ports.writeActiveIndex(nextActivePlaceIndex(ports.readActiveIndex(), count, delta));
+    ports.updateActive();
   }
 
   function currentDateTimeFields() {
