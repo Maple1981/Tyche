@@ -10404,10 +10404,30 @@
     };
   }
 
-  function applyDocumentI18nModel(model) {
-    document.documentElement.lang = model.lang;
-    document.title = model.title;
-    $("meta[name='description']")?.setAttribute("content", model.description);
+  function setDocumentLanguage(lang) {
+    document.documentElement.lang = lang;
+  }
+
+  function setDocumentTitle(title) {
+    document.title = title;
+  }
+
+  function setMetaDescription(description) {
+    $("meta[name='description']")?.setAttribute("content", description);
+  }
+
+  function documentMetadataPorts() {
+    return {
+      setLanguage: setDocumentLanguage,
+      setTitle: setDocumentTitle,
+      setDescription: setMetaDescription,
+    };
+  }
+
+  function applyDocumentI18nModel(model, ports = documentMetadataPorts()) {
+    ports.setLanguage(model.lang);
+    ports.setTitle(model.title);
+    ports.setDescription(model.description);
   }
 
   function documentI18nPorts() {
