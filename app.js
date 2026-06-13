@@ -11198,8 +11198,15 @@
     ports.focus();
   }
 
-  function handleClearBirthPlaceClick() {
-    clearBirthPlaceFields($("#birthPlace"));
+  function clearBirthPlaceClickPorts() {
+    return {
+      readBirthPlace: () => $("#birthPlace"),
+      clearFields: clearBirthPlaceFields,
+    };
+  }
+
+  function handleClearBirthPlaceClick(_event, ports = clearBirthPlaceClickPorts()) {
+    ports.clearFields(ports.readBirthPlace());
   }
 
   function placeSuggestionClickAction(event, closest = eventTargetClosest) {
