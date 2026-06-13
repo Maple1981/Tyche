@@ -10921,12 +10921,19 @@
     applyPeopleGridClickAction(event, peopleGridClickAction(event, ports.closest), ports);
   }
 
-  function handlePeopleToggleClick() {
-    openPeopleModal();
+  function peopleModalCommandPorts() {
+    return {
+      openModal: openPeopleModal,
+      closeModal: closePeopleModal,
+    };
   }
 
-  function handlePeopleCloseClick() {
-    closePeopleModal();
+  function handlePeopleToggleClick(_event, ports = peopleModalCommandPorts()) {
+    ports.openModal();
+  }
+
+  function handlePeopleCloseClick(_event, ports = peopleModalCommandPorts()) {
+    ports.closeModal();
   }
 
   function bindPeopleModalEvents() {
@@ -11008,12 +11015,19 @@
     applyDocumentPopoverKeyAction(event, documentPopoverKeyAction(event, ports), ports);
   }
 
-  function handleGlossaryCloseClick() {
-    closeGlossary({ restoreFocus: true });
+  function floatingPopoverClosePorts() {
+    return {
+      closeGlossary,
+      closePersonData,
+    };
   }
 
-  function handlePersonDataCloseClick() {
-    closePersonData({ restoreFocus: true });
+  function handleGlossaryCloseClick(_event, ports = floatingPopoverClosePorts()) {
+    ports.closeGlossary({ restoreFocus: true });
+  }
+
+  function handlePersonDataCloseClick(_event, ports = floatingPopoverClosePorts()) {
+    ports.closePersonData({ restoreFocus: true });
   }
 
   function floatingPopoverRepositionPorts() {
