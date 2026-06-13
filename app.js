@@ -11267,9 +11267,18 @@
     dispatch("tyche:chart-error", { message });
   }
 
+  function readDefaultChartSubmitTrigger() {
+    return $("#chart-form button[type='submit']");
+  }
+
+  function chartSubmitTrigger(event, readDefaultTrigger = readDefaultChartSubmitTrigger) {
+    return event.submitter || readDefaultTrigger();
+  }
+
   function chartSubmitPorts() {
     return {
       calculate: calculateCurrentChart,
+      submitTrigger: chartSubmitTrigger,
       errorMessage: chartErrorMessage,
       renderError: renderChartError,
       dispatchError: dispatchChartErrorEvent,
@@ -11282,16 +11291,12 @@
     ports.dispatchError(message);
   }
 
-  function chartSubmitTrigger(event) {
-    return event.submitter || $("#chart-form button[type='submit']");
-  }
-
   async function submitChartForm(event, ports = chartSubmitPorts()) {
     event.preventDefault();
     await runCalculationTask(
       () => ports.calculate(),
       {
-        trigger: chartSubmitTrigger(event),
+        trigger: ports.submitTrigger(event),
         loadingText: t("calculationLoading"),
         onError: (error) => handleChartSubmitError(error, ports),
       }
