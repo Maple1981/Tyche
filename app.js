@@ -5855,23 +5855,41 @@
     hidePlaceSuggestions();
   }
 
-  function buildCurrentChartCalculation() {
-    const input = readInput();
-    const chart = computeChart(input);
+  function renderChartCalculationWarning(warningText) {
+    $("#formStatus").textContent = warningText;
+  }
+
+  function currentChartCalculationPorts() {
     return {
-      chart,
-      warningText: chartInputWarningText(input, chart),
+      readInput,
+      computeChart,
+      warningText: chartInputWarningText,
+      renderWarningText: renderChartCalculationWarning,
+      renderChart,
     };
   }
 
-  function renderCurrentChartCalculation(model) {
-    $("#formStatus").textContent = model.warningText;
-    renderChart(model.chart);
+  function buildCurrentChartCalculation(ports = currentChartCalculationPorts()) {
+    const input = ports.readInput();
+    const chart = ports.computeChart(input);
+    return {
+      chart,
+      warningText: ports.warningText(input, chart),
+    };
   }
 
-  function calculateCurrentChart() {
+  function renderCurrentChartCalculation(model, ports = currentChartCalculationPorts()) {
+    ports.renderWarningText(model.warningText);
+    ports.renderChart(model.chart);
+  }
+
+  function runCurrentChartCalculation(ports = currentChartCalculationPorts()) {
+    renderCurrentChartCalculation(buildCurrentChartCalculation(ports), ports);
+  }
+
+  function calculateCurrentChart(ports = currentChartCalculationPorts()) {
     prepareChartCalculationUi();
-    renderCurrentChartCalculation(buildCurrentChartCalculation());
+    runCurrentChartCalculation(ports);
   }
 
   function renderMetricItems(items) {

@@ -24,7 +24,7 @@ Because Tyche is a static browser app, architecture should improve separation in
 
 For chart calculation, `computeChart()` should stay an orchestration function. Input validation, position calculation, house/condition enrichment, lot construction, and sect context should remain in dedicated helpers so later changes to one rule do not require editing the whole chart builder.
 
-Current chart calculation from the form should keep UI preparation, chart construction, warnings, and rendering as separate steps. `calculateCurrentChart()` should coordinate those calls rather than reading fields, clearing UI state, and rendering panels directly. Input warnings that write to `#formStatus` belong to the form use case, not to `computeChart()`.
+Current chart calculation from the form should keep UI preparation, chart construction, warnings, and rendering as separate steps. `calculateCurrentChart()` should coordinate those calls rather than reading fields, clearing UI state, and rendering panels directly. Input warnings that write to `#formStatus` belong to the form use case, not to `computeChart()`. The current-chart use case should expose a small ports object for input reading, chart computation, warning construction, warning rendering, and chart rendering so tests and future UI flows can inject dependencies without touching calculation code.
 
 Date/time conversion should keep validation, manual UTC offset handling, Julian-calendar conversion, IANA time-zone conversion, and manual fallback in separate helpers. `jdFromForm()` should coordinate those paths and return the final Julian Date, offset, and displayed zone label.
 
