@@ -4059,12 +4059,22 @@
     if (state.placeSearchController === controller) state.placeSearchController = null;
   }
 
+  function clearPlaceSearchTimer() {
+    window.clearTimeout(state.placeSearchTimer);
+  }
+
+  function schedulePlaceSearch(callback) {
+    state.placeSearchTimer = window.setTimeout(callback, PLACE_SEARCH_DELAY);
+  }
+
   function placeSearchPorts() {
     return {
       createController: () => new AbortController(),
       abortCurrent: abortPlaceSearchController,
       setController: setPlaceSearchController,
       clearController: clearPlaceSearchController,
+      clearTimer: clearPlaceSearchTimer,
+      scheduleSearch: schedulePlaceSearch,
       requestJson: fetchJson,
       renderSuggestions: renderPlaceSuggestions,
       localSuggestions: localCitySuggestions,
@@ -4103,7 +4113,7 @@
   function queuePlaceSearch(searchSuggestions = fetchPlaceSuggestions, ports = placeSearchPorts()) {
     const query = $("#birthPlace").value.trim();
     updateClearPlaceButton();
-    window.clearTimeout(state.placeSearchTimer);
+    ports.clearTimer();
     ports.abortCurrent();
 
     if (query.length < 2) {
@@ -4111,7 +4121,7 @@
       return;
     }
 
-    state.placeSearchTimer = window.setTimeout(() => searchSuggestions(query, ports), PLACE_SEARCH_DELAY);
+    ports.scheduleSearch(() => searchSuggestions(query, ports));
   }
 
   function updateActivePlace() {
