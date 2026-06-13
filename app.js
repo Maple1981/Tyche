@@ -11064,10 +11064,18 @@
     handleBirthPlaceFocus(event.currentTarget);
   }
 
-  function handleBirthPlaceInput() {
-    clearHistoricalSelection();
-    setSelectedCityState(null);
-    queuePlaceSearch();
+  function birthPlaceInputPorts() {
+    return {
+      clearHistorical: clearHistoricalSelection,
+      clearSelectedCity: clearSelectedCityState,
+      queueSearch: queuePlaceSearch,
+    };
+  }
+
+  function handleBirthPlaceInput(_event, ports = birthPlaceInputPorts()) {
+    ports.clearHistorical();
+    ports.clearSelectedCity();
+    ports.queueSearch();
   }
 
   function handleBirthPlaceArrowDown(event) {
@@ -11162,9 +11170,24 @@
     clearBirthPlaceFields($("#birthPlace"));
   }
 
-  function handlePlaceSuggestionClick(event) {
-    const button = event.target.closest("[data-place-index]");
-    if (button) selectPlaceSuggestion(Number(button.dataset.placeIndex));
+  function placeSuggestionClickAction(event, closest = eventTargetClosest) {
+    const button = closest(event, "[data-place-index]");
+    return button ? { type: "selectSuggestion", index: Number(button.dataset.placeIndex) } : { type: "none" };
+  }
+
+  function placeSuggestionClickPorts() {
+    return {
+      closest: eventTargetClosest,
+      selectSuggestion: selectPlaceSuggestion,
+    };
+  }
+
+  function applyPlaceSuggestionClickAction(action, ports) {
+    if (action.type === "selectSuggestion") ports.selectSuggestion(action.index);
+  }
+
+  function handlePlaceSuggestionClick(event, ports = placeSuggestionClickPorts()) {
+    applyPlaceSuggestionClickAction(placeSuggestionClickAction(event, ports.closest), ports);
   }
 
   function handlePlaceSuggestionMousedown(event) {
