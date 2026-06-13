@@ -60,7 +60,11 @@
   ]);
   const ZONE_RELIABILITY_VALUES = Object.freeze(["iana", "manual", "lmt", "historical", "unknown"]);
 
-  function initialPreferenceState(storage = localStorage) {
+  function browserPreferenceStorage() {
+    return localStorage;
+  }
+
+  function initialPreferenceState(storage = browserPreferenceStorage()) {
     return {
       lang: storage.getItem("tyche-lang") || "es",
       theme: storage.getItem("tyche-theme") || "day",
@@ -10761,8 +10765,8 @@
     state.theme = theme;
   }
 
-  function savePreferenceValue(key, value) {
-    localStorage.setItem(key, value);
+  function savePreferenceValue(key, value, storage = browserPreferenceStorage()) {
+    storage.setItem(key, value);
   }
 
   function preferencePorts() {
