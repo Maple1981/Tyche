@@ -118,6 +118,8 @@ Within each binding group, prefer named handlers for non-trivial behavior. Tab a
 
 Language switching should separate document metadata, static node translation, localized control labels, and dynamic content refresh. `applyI18n()` should coordinate those steps and then redecorate glossary triggers after translated content is in place. Localized control labels should be split by UI responsibility: shell landmarks, preference toggles, historical-people controls, and birthplace controls. Dynamic refresh should keep place-state refresh, historical example rendering, last-chart rerendering, and option-warning refresh as separate steps.
 
+Preference toggles should separate next-state selection, state write, persistence, and view application. Keep language/theme storage and render application behind small ports so preference handlers remain event adapters rather than business logic.
+
 Floating popovers should resolve a small model before writing DOM. Glossary entries, person-data details, and similar overlays should keep lookup/formatting separate from the code that opens and positions the popover; historical source popovers should expose that split through dedicated model and render helpers.
 
 Glossary text lookup should use a static matcher table and a small lookup function. Do not rebuild matcher arrays inside render paths.

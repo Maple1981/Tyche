@@ -9856,16 +9856,46 @@
     });
   }
 
+  function nextLanguage(lang) {
+    return lang === "es" ? "en" : "es";
+  }
+
+  function nextTheme(theme) {
+    return theme === "night" ? "day" : "night";
+  }
+
+  function preferencePorts() {
+    return {
+      readLanguage: () => state.lang,
+      writeLanguage: (lang) => { state.lang = lang; },
+      readTheme: () => state.theme,
+      writeTheme: (theme) => { state.theme = theme; },
+      save: (key, value) => localStorage.setItem(key, value),
+      applyLanguage: applyI18n,
+      applyTheme,
+    };
+  }
+
+  function toggleLanguagePreference(ports = preferencePorts()) {
+    const lang = nextLanguage(ports.readLanguage());
+    ports.writeLanguage(lang);
+    ports.save("tyche-lang", lang);
+    ports.applyLanguage();
+  }
+
+  function toggleThemePreference(ports = preferencePorts()) {
+    const theme = nextTheme(ports.readTheme());
+    ports.writeTheme(theme);
+    ports.save("tyche-theme", theme);
+    ports.applyTheme();
+  }
+
   function handleLanguageToggle() {
-    state.lang = state.lang === "es" ? "en" : "es";
-    localStorage.setItem("tyche-lang", state.lang);
-    applyI18n();
+    toggleLanguagePreference();
   }
 
   function handleThemeToggle() {
-    state.theme = state.theme === "night" ? "day" : "night";
-    localStorage.setItem("tyche-theme", state.theme);
-    applyTheme();
+    toggleThemePreference();
   }
 
   function bindPreferenceEvents() {
