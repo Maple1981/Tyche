@@ -84,7 +84,7 @@ Topic scoring should keep score-row setup, score mutation, accumulator creation,
 
 For chart rendering, keep frame setup, panel rendering, and completion side effects separate: the shell prepares title/meta/wheel, the panel renderer owns panel order, and the completion step handles capitalization, scrolling, and chart-rendered events through injectable ports. The chart panel order should live as renderer data so it can be tested or overridden without editing the panel loop. Persisting the last rendered chart should happen through a writer helper in the render-content step.
 
-The chart frame itself should use a small model for title, metadata, and wheel HTML before touching DOM nodes. This keeps shell rendering consistent with panel rendering. Final text and HTML writes should go through the shared DOM writer helpers.
+The chart frame itself should use a small model for title, metadata, and wheel HTML before touching DOM nodes. This keeps shell rendering consistent with panel rendering. Final text, HTML, and visibility writes should go through the shared DOM writer helpers.
 
 Interpretation rendering should keep the reading use case, HTML composition, and DOM write behind explicit render ports. `renderInterpretation()` should coordinate those dependencies rather than calling interpretation logic and writing `innerHTML` in the same block.
 

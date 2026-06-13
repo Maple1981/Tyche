@@ -3440,12 +3440,20 @@
     node.innerHTML = html;
   }
 
+  function setNodeHidden(node, hidden) {
+    node.hidden = hidden;
+  }
+
   function writeElementText(selector, text) {
     writeNodeText($(selector), text);
   }
 
   function writePanelHtml(selector, html) {
     writeNodeHtml($(selector), html);
+  }
+
+  function setElementHidden(selector, hidden) {
+    setNodeHidden($(selector), hidden);
   }
 
   function t(key, params = {}) {
@@ -3684,7 +3692,7 @@
     writeElementText("#glossaryTitle", model.title);
     writePanelHtml("#glossaryBody", model.bodyHtml);
     capitalizeStructuredText($("#glossaryBody"));
-    popover.hidden = false;
+    setNodeHidden(popover, false);
     return popover;
   }
 
@@ -3724,7 +3732,7 @@
   function closeGlossary({ restoreFocus = false } = {}, ports = glossaryPopoverPorts()) {
     const popover = ports.readPopover();
     if (!popover || popover.hidden) return;
-    popover.hidden = true;
+    setNodeHidden(popover, true);
     popover.removeAttribute("style");
     ports.restoreReturnFocus(restoreFocus);
     ports.clearReturnFocus();
@@ -3987,7 +3995,7 @@
 
   function setPlaceExpanded(expanded) {
     $("#birthPlace").setAttribute("aria-expanded", String(expanded));
-    $("#placeSuggestions").hidden = !expanded;
+    setElementHidden("#placeSuggestions", !expanded);
     if (!expanded) {
       $("#birthPlace").removeAttribute("aria-activedescendant");
       resetActivePlaceIndex();
@@ -4004,7 +4012,7 @@
   }
 
   function updateClearPlaceButton() {
-    $("#clearPlace").hidden = !$("#birthPlace").value.trim();
+    setElementHidden("#clearPlace", !$("#birthPlace").value.trim());
   }
 
   function hidePlaceSuggestions() {
@@ -4415,7 +4423,7 @@
     writeElementText("#personDataTitle", model.title);
     writePanelHtml("#personDataBody", renderHistoricalQualityDetails(model.details));
     capitalizeStructuredText($("#personDataBody"));
-    popover.hidden = false;
+    setNodeHidden(popover, false);
     return popover;
   }
 
@@ -4455,7 +4463,7 @@
   function closePersonData({ restoreFocus = false } = {}, ports = personDataPopoverPorts()) {
     const popover = ports.readPopover();
     if (!popover || popover.hidden) return;
-    popover.hidden = true;
+    setNodeHidden(popover, true);
     popover.removeAttribute("style");
     ports.restoreReturnFocus(restoreFocus);
     ports.clearReturnFocus();
@@ -4633,8 +4641,8 @@
       readActiveElement: () => document.activeElement,
       setReturnFocus: setPeopleModalReturnFocus,
       renderPeople: renderHistoricalPeople,
-      openModal: () => { $("#peopleModal").hidden = false; },
-      closeModal: () => { $("#peopleModal").hidden = true; },
+      openModal: () => setElementHidden("#peopleModal", false),
+      closeModal: () => setElementHidden("#peopleModal", true),
       addBodyClass: () => document.body.classList.add("modal-open"),
       removeBodyClass: () => document.body.classList.remove("modal-open"),
       focusCloseButton: () => $("#peopleClose").focus(),
@@ -5999,7 +6007,7 @@
 
   function renderChartFrame(chart) {
     const model = buildChartFrameModel(chart);
-    $("#results").hidden = false;
+    setElementHidden("#results", false);
     writeElementText("#chartTitle", model.title);
     writeElementText("#chartMeta", model.meta);
     writePanelHtml("#chartWheel", renderWheelModel(model.wheel));
@@ -10051,12 +10059,12 @@
     const calendarWarning = $("#calendarWarning");
     const zodiacWarning = $("#zodiacWarning");
     const techniqueWarning = $("#techniqueWarning");
-    if (calendarWarning) calendarWarning.hidden = model.calendarHidden;
-    if (zodiacWarning) zodiacWarning.hidden = model.zodiacHidden;
+    if (calendarWarning) setNodeHidden(calendarWarning, model.calendarHidden);
+    if (zodiacWarning) setNodeHidden(zodiacWarning, model.zodiacHidden);
     if (techniqueWarning) {
       writeNodeText(techniqueWarning, model.technique.text);
       techniqueWarning.dataset.test = model.technique.test;
-      techniqueWarning.hidden = model.technique.hidden;
+      setNodeHidden(techniqueWarning, model.technique.hidden);
     }
   }
 
@@ -10078,7 +10086,7 @@
       tab.setAttribute("aria-selected", String(tab === button));
     });
     $$(".tab-panel").forEach((panel) => {
-      panel.hidden = panel.id !== `tab-${button.dataset.tab}`;
+      setNodeHidden(panel, panel.id !== `tab-${button.dataset.tab}`);
     });
   }
 
