@@ -6206,14 +6206,16 @@
     };
   }
 
-  function renderCoreSummary(chart) {
-    const model = buildCoreSummaryModel(chart);
-    const html = `
+  function renderCoreSummaryModel(model) {
+    return `
       ${renderMetricPanel(model)}
       ${model.notes.map((note) => `<p class="text-note">${escapeHtml(note)}</p>`).join("")}
       ${renderAlternateSectLotsModel(model.alternateLots)}
     `;
-    writePanelHtml("#coreSummary", html);
+  }
+
+  function renderCoreSummary(chart) {
+    writePanelHtml("#coreSummary", renderCoreSummaryModel(buildCoreSummaryModel(chart)));
   }
 
   function buildAnglesPanelModel(chart) {
@@ -6264,15 +6266,18 @@
     return `<p><strong>${glossaryTerm(item.label, item.glossary)}:</strong> ${dignityGroupText(item.values, chart)}.</p>`;
   }
 
-  function renderAscLord(chart) {
-    const model = buildAscLordModel(chart);
-    writePanelHtml("#ascLordPanel", `
+  function renderAscLordModel(model, chart) {
+    return `
       <h3>${glossaryTerm(model.title, model.titleGlossary)}</h3>
       <p class="text-note">${escapeHtml(model.note)}</p>
       <div class="condition-list">
         ${model.conditionGroups.map((item) => renderConditionGroup(item, chart)).join("")}
       </div>
-    `);
+    `;
+  }
+
+  function renderAscLord(chart) {
+    writePanelHtml("#ascLordPanel", renderAscLordModel(buildAscLordModel(chart), chart));
   }
 
   function moonStatusText(chart) {
@@ -6389,16 +6394,19 @@
     `;
   }
 
-  function renderTechnicalPanel(chart) {
-    const model = buildTechnicalPanelModel(chart);
-    writePanelHtml("#technicalPanel", `
+  function renderTechnicalPanelModel(model) {
+    return `
       <details>
         <summary><h3>${escapeHtml(model.title)}</h3></summary>
         ${renderTechnicalNotes(model.notes)}
         ${renderTechnicalMetricSection(model.astronomyTitle, model.astronomyMetrics)}
         ${renderTechnicalMetricSection(model.judgmentTitle, model.judgmentMetrics, renderBoundaryAudit(model.boundary))}
       </details>
-    `);
+    `;
+  }
+
+  function renderTechnicalPanel(chart) {
+    writePanelHtml("#technicalPanel", renderTechnicalPanelModel(buildTechnicalPanelModel(chart)));
   }
 
   function planetLabel(key) {

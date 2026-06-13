@@ -102,7 +102,7 @@ Large panel renderers should be decomposed into subrenderers for their stable re
 
 Within the interpretation renderer, summary badges, focus lists, and each evidence subsection should remain separate subrenderers rather than inline HTML inside the parent section.
 
-Top chart panels should also prefer view models where labels and values are prepared before rendering. The core summary, angle panel, Ascendant lord panel, Moon panel, and technical notes panel should stay as small model builders plus focused renderers rather than large mixed UI functions. Technical notes should keep astronomy metrics and judgment/settings metrics in separate helper builders. Final panel assignment should use the shared HTML writer, not ad hoc `innerHTML` calls.
+Top chart panels should also prefer view models where labels and values are prepared before rendering. The core summary, angle panel, Ascendant lord panel, Moon panel, and technical notes panel should stay as small model builders plus focused model renderers rather than large mixed UI functions. Technical notes should keep astronomy metrics and judgment/settings metrics in separate helper builders. Final panel assignment should use the shared HTML writer, not ad hoc `innerHTML` calls.
 
 Table panels should keep row construction separate from final DOM assignment. Use dedicated table models, plus header/row builders for planet, house, lot, and aspect tables, so calculation changes and markup changes remain independent. When a table can split into sections, such as traditional and modern planets, build a section model before rendering.
 
