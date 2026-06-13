@@ -29,9 +29,15 @@
   ]);
   const ZONE_RELIABILITY_VALUES = Object.freeze(["iana", "manual", "lmt", "historical", "unknown"]);
 
+  function initialPreferenceState(storage = localStorage) {
+    return {
+      lang: storage.getItem("tyche-lang") || "es",
+      theme: storage.getItem("tyche-theme") || "day",
+    };
+  }
+
   const state = {
-    lang: localStorage.getItem("tyche-lang") || "es",
-    theme: localStorage.getItem("tyche-theme") || "day",
+    ...initialPreferenceState(),
     lastChart: null,
     activeCityKey: "",
     selectedCity: null,
