@@ -4586,19 +4586,48 @@
     capitalizeStructuredText($("#peopleGrid"));
   }
 
-  function openPeopleModal() {
-    state.modalReturnFocus = document.activeElement;
-    renderHistoricalPeople();
-    $("#peopleModal").hidden = false;
-    document.body.classList.add("modal-open");
-    $("#peopleClose").focus();
+  function setPeopleModalReturnFocus(element) {
+    state.modalReturnFocus = element || null;
   }
 
-  function closePeopleModal() {
-    closePersonData();
-    $("#peopleModal").hidden = true;
-    document.body.classList.remove("modal-open");
+  function restorePeopleModalReturnFocus() {
     state.modalReturnFocus?.focus?.();
+  }
+
+  function clearPeopleModalReturnFocus() {
+    state.modalReturnFocus = null;
+  }
+
+  function peopleModalPorts() {
+    return {
+      readActiveElement: () => document.activeElement,
+      setReturnFocus: setPeopleModalReturnFocus,
+      renderPeople: renderHistoricalPeople,
+      openModal: () => { $("#peopleModal").hidden = false; },
+      closeModal: () => { $("#peopleModal").hidden = true; },
+      addBodyClass: () => document.body.classList.add("modal-open"),
+      removeBodyClass: () => document.body.classList.remove("modal-open"),
+      focusCloseButton: () => $("#peopleClose").focus(),
+      closePersonData,
+      restoreReturnFocus: restorePeopleModalReturnFocus,
+      clearReturnFocus: clearPeopleModalReturnFocus,
+    };
+  }
+
+  function openPeopleModal(ports = peopleModalPorts()) {
+    ports.setReturnFocus(ports.readActiveElement());
+    ports.renderPeople();
+    ports.openModal();
+    ports.addBodyClass();
+    ports.focusCloseButton();
+  }
+
+  function closePeopleModal(ports = peopleModalPorts()) {
+    ports.closePersonData();
+    ports.closeModal();
+    ports.removeBodyClass();
+    ports.restoreReturnFocus();
+    ports.clearReturnFocus();
   }
 
   function applyHistoricalSelectionState(person) {
