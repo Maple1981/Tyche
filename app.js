@@ -10068,15 +10068,31 @@
     updateOptionWarnings();
   }
 
-  function applyDocumentI18n() {
-    document.documentElement.lang = state.lang;
-    document.title = state.lang === "es" ? "Tyche · Carta natal helenística" : "Tyche · Hellenistic Natal Chart";
-    $("meta[name='description']")?.setAttribute(
-      "content",
-      state.lang === "es"
+  function buildDocumentI18nModel(lang = state.lang) {
+    return {
+      lang,
+      title: lang === "es" ? "Tyche · Carta natal helenística" : "Tyche · Hellenistic Natal Chart",
+      description: lang === "es"
         ? "Tyche calcula cartas natales helenísticas con Ascendente, casas de signos enteros, secta, condición esencial y lotes, procesadas localmente en el navegador."
-        : "Tyche calculates Hellenistic natal charts with the Hour-Marker, Whole Sign Houses, sect, essential condition, and lots, processed locally in the browser."
-    );
+        : "Tyche calculates Hellenistic natal charts with the Hour-Marker, Whole Sign Houses, sect, essential condition, and lots, processed locally in the browser.",
+    };
+  }
+
+  function applyDocumentI18nModel(model) {
+    document.documentElement.lang = model.lang;
+    document.title = model.title;
+    $("meta[name='description']")?.setAttribute("content", model.description);
+  }
+
+  function documentI18nPorts() {
+    return {
+      buildModel: buildDocumentI18nModel,
+      applyModel: applyDocumentI18nModel,
+    };
+  }
+
+  function applyDocumentI18n(ports = documentI18nPorts()) {
+    ports.applyModel(ports.buildModel());
   }
 
   function updateShellControlLabels() {
@@ -10121,9 +10137,27 @@
     decorateGlossaryTriggers();
   }
 
-  function applyTheme() {
-    document.body.classList.toggle("night", state.theme === "night");
-    writeElementText("#themeToggle span", state.theme === "night" ? "☉" : "☾");
+  function buildThemeModel(theme = state.theme) {
+    return {
+      isNight: theme === "night",
+      toggleIcon: theme === "night" ? "☉" : "☾",
+    };
+  }
+
+  function applyThemeModel(model) {
+    document.body.classList.toggle("night", model.isNight);
+    writeElementText("#themeToggle span", model.toggleIcon);
+  }
+
+  function themeRenderPorts() {
+    return {
+      buildModel: buildThemeModel,
+      applyModel: applyThemeModel,
+    };
+  }
+
+  function applyTheme(ports = themeRenderPorts()) {
+    ports.applyModel(ports.buildModel());
   }
 
   function populateLists() {
