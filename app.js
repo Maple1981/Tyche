@@ -4389,21 +4389,46 @@
     return popover;
   }
 
-  function openPersonData(personId, trigger) {
-    const model = buildPersonDataPopoverModel(personId);
-    if (!model) return;
-    renderPersonDataPopover(model);
+  function setPersonDataReturnFocus(trigger) {
     state.personDataReturnFocus = trigger || null;
-    window.requestAnimationFrame(() => positionPersonData(trigger));
   }
 
-  function closePersonData({ restoreFocus = false } = {}) {
-    const popover = $("#personDataPopover");
+  function restorePersonDataReturnFocus(restoreFocus) {
+    if (restoreFocus && state.personDataReturnFocus) state.personDataReturnFocus.focus();
+  }
+
+  function clearPersonDataReturnFocus() {
+    state.personDataReturnFocus = null;
+  }
+
+  function personDataPopoverPorts() {
+    return {
+      buildModel: buildPersonDataPopoverModel,
+      renderPopover: renderPersonDataPopover,
+      setReturnFocus: setPersonDataReturnFocus,
+      requestFrame: (callback) => window.requestAnimationFrame(callback),
+      position: positionPersonData,
+      readPopover: () => $("#personDataPopover"),
+      restoreReturnFocus: restorePersonDataReturnFocus,
+      clearReturnFocus: clearPersonDataReturnFocus,
+    };
+  }
+
+  function openPersonData(personId, trigger, ports = personDataPopoverPorts()) {
+    const model = ports.buildModel(personId);
+    if (!model) return;
+    ports.renderPopover(model);
+    ports.setReturnFocus(trigger);
+    ports.requestFrame(() => ports.position(trigger));
+  }
+
+  function closePersonData({ restoreFocus = false } = {}, ports = personDataPopoverPorts()) {
+    const popover = ports.readPopover();
     if (!popover || popover.hidden) return;
     popover.hidden = true;
     popover.removeAttribute("style");
-    if (restoreFocus && state.personDataReturnFocus) state.personDataReturnFocus.focus();
-    state.personDataReturnFocus = null;
+    ports.restoreReturnFocus(restoreFocus);
+    ports.clearReturnFocus();
   }
 
   function personAuditStatus(person) {
