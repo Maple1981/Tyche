@@ -4364,8 +4364,14 @@
     return t("placeSearchShort");
   }
 
+  function readPlaceSearchQuery() {
+    return readBirthPlaceValue().trim();
+  }
+
   function placeSearchPorts() {
     return {
+      readQuery: readPlaceSearchQuery,
+      updateClearButton: updateClearPlaceButton,
       createController: createPlaceSearchController,
       abortCurrent: abortPlaceSearchController,
       setController: setPlaceSearchController,
@@ -4408,8 +4414,8 @@
   }
 
   function queuePlaceSearch(searchSuggestions = fetchPlaceSuggestions, ports = placeSearchPorts()) {
-    const query = $("#birthPlace").value.trim();
-    updateClearPlaceButton();
+    const query = ports.readQuery();
+    ports.updateClearButton();
     ports.clearTimer();
     ports.abortCurrent();
 
