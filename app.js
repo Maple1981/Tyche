@@ -11255,6 +11255,16 @@
     ports.updatePlaceFields();
   }
 
+  function genderFieldChangePorts() {
+    return {
+      clearHistorical: clearHistoricalSelection,
+    };
+  }
+
+  function handleGenderFieldChange(_event, ports = genderFieldChangePorts()) {
+    ports.clearHistorical();
+  }
+
   function chartErrorMessage(error) {
     return error.message || String(error);
   }
@@ -11318,7 +11328,7 @@
   function bindBirthDataFieldEvents() {
     bindElementEvent("#birthDate", "change", handleDateTimeFieldChange);
     bindElementEvent("#birthTime", "change", handleDateTimeFieldChange);
-    bindElementEvent("#gender", "change", clearHistoricalSelection);
+    bindElementEvent("#gender", "change", handleGenderFieldChange);
   }
 
   function bindOptionWarningEvents() {
