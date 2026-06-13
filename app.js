@@ -4123,9 +4123,29 @@
     setPlaceSearchTimer(window.setTimeout(callback, PLACE_SEARCH_DELAY));
   }
 
+  function createPlaceSearchController() {
+    return new AbortController();
+  }
+
+  function placeSearchLoadingText() {
+    return t("placeSearchLoading");
+  }
+
+  function placeSearchEmptyText() {
+    return t("placeSearchEmpty");
+  }
+
+  function placeSearchErrorText() {
+    return t("placeSearchError");
+  }
+
+  function placeSearchShortText() {
+    return t("placeSearchShort");
+  }
+
   function placeSearchPorts() {
     return {
-      createController: () => new AbortController(),
+      createController: createPlaceSearchController,
       abortCurrent: abortPlaceSearchController,
       setController: setPlaceSearchController,
       clearController: clearPlaceSearchController,
@@ -4137,10 +4157,10 @@
       buildUrl: buildGeocodingUrl,
       parseRemote: remoteCitySuggestionsFromResponse,
       mergeSuggestions: mergePlaceSuggestions,
-      loadingText: () => t("placeSearchLoading"),
-      emptyText: () => t("placeSearchEmpty"),
-      errorText: () => t("placeSearchError"),
-      shortText: () => t("placeSearchShort"),
+      loadingText: placeSearchLoadingText,
+      emptyText: placeSearchEmptyText,
+      errorText: placeSearchErrorText,
+      shortText: placeSearchShortText,
     };
   }
 
@@ -4644,16 +4664,40 @@
     state.modalReturnFocus = null;
   }
 
+  function readActiveElement() {
+    return document.activeElement;
+  }
+
+  function openPeopleModalElement() {
+    setElementHidden("#peopleModal", false);
+  }
+
+  function closePeopleModalElement() {
+    setElementHidden("#peopleModal", true);
+  }
+
+  function addModalOpenBodyClass() {
+    document.body.classList.add("modal-open");
+  }
+
+  function removeModalOpenBodyClass() {
+    document.body.classList.remove("modal-open");
+  }
+
+  function focusPeopleCloseButton() {
+    $("#peopleClose").focus();
+  }
+
   function peopleModalPorts() {
     return {
-      readActiveElement: () => document.activeElement,
+      readActiveElement,
       setReturnFocus: setPeopleModalReturnFocus,
       renderPeople: renderHistoricalPeople,
-      openModal: () => setElementHidden("#peopleModal", false),
-      closeModal: () => setElementHidden("#peopleModal", true),
-      addBodyClass: () => document.body.classList.add("modal-open"),
-      removeBodyClass: () => document.body.classList.remove("modal-open"),
-      focusCloseButton: () => $("#peopleClose").focus(),
+      openModal: openPeopleModalElement,
+      closeModal: closePeopleModalElement,
+      addBodyClass: addModalOpenBodyClass,
+      removeBodyClass: removeModalOpenBodyClass,
+      focusCloseButton: focusPeopleCloseButton,
       closePersonData,
       restoreReturnFocus: restorePeopleModalReturnFocus,
       clearReturnFocus: clearPeopleModalReturnFocus,
