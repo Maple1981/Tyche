@@ -6029,8 +6029,12 @@
     ports.dispatchRendered(chart);
   }
 
-  function renderChartContent(chart) {
+  function setLastChart(chart) {
     state.lastChart = chart;
+  }
+
+  function renderChartContent(chart, writeLastChart = setLastChart) {
+    writeLastChart(chart);
     renderChartFrame(chart);
     renderChartPanels(chart);
   }
