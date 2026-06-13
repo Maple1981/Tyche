@@ -71,6 +71,7 @@
     placeSearchTimer: 0,
     placeSearchController: null,
     activePlaceIndex: -1,
+    calculationBusy: false,
     modalReturnFocus: null,
     glossaryReturnFocus: null,
     personDataReturnFocus: null,
@@ -129,6 +130,8 @@
       modernPlanetsTitle: "Planetas modernos como capa adicional",
       places: "Lugares/Casas",
       configurations: "Configuraciones",
+      calculationLoading: "Calculando carta...",
+      exampleCalculationLoading: "Cargando carta de ejemplo...",
       missingDate: "Añade fecha y hora de nacimiento.",
       invalidHistoricalYear: "Tyche aún no admite años BCE/a. C. en el formulario. Para evitar ambigüedades entre año histórico y año astronómico, usa solo años CE/d. C. por ahora.",
       missingPlace: "Elige una ciudad sugerida o introduce latitud, longitud y zona horaria.",
@@ -546,6 +549,8 @@
       modernPlanetsTitle: "Modern planets as an additional layer",
       places: "Places/Houses",
       configurations: "Configurations",
+      calculationLoading: "Calculating chart...",
+      exampleCalculationLoading: "Loading example chart...",
       missingDate: "Add birth date and time.",
       invalidHistoricalYear: "Tyche does not yet support BCE years in the form. To avoid ambiguity between historical and astronomical year numbering, use CE years only for now.",
       missingPlace: "Choose a suggested city or enter latitude, longitude, and time zone.",
@@ -3485,6 +3490,10 @@
     node.tabIndex = tabIndex;
   }
 
+  function setNodeDisabled(node, disabled) {
+    node.disabled = disabled;
+  }
+
   function writeElementText(selector, text) {
     writeNodeText($(selector), text);
   }
@@ -3814,6 +3823,12 @@
 
   function requestAnimationFrameAdapter(callback) {
     window.requestAnimationFrame(callback);
+  }
+
+  function nextAnimationFrame(requestFrame = requestAnimationFrameAdapter) {
+    return new Promise((resolve) => {
+      requestFrame(resolve);
+    });
   }
 
   function bindNodeEvent(node, type, handler, options) {
@@ -4968,6 +4983,60 @@
     writeFieldValue("#manualOffset", model.manualOffset);
   }
 
+  function readCalculationBusy() {
+    return state.calculationBusy;
+  }
+
+  function setCalculationBusy(busy) {
+    state.calculationBusy = busy;
+  }
+
+  function showCalculationProgress(text = t("calculationLoading")) {
+    writeElementText("#calculationProgressText", text);
+    setElementHidden("#calculationProgress", false);
+  }
+
+  function hideCalculationProgress() {
+    setElementHidden("#calculationProgress", true);
+  }
+
+  function setCalculationTriggerBusy(trigger, busy) {
+    if (!trigger) return;
+    trigger.classList.toggle("is-loading", busy);
+    setNodeDisabled(trigger, busy);
+    setNodeAttribute(trigger, "aria-busy", String(busy));
+  }
+
+  function calculationTaskPorts() {
+    return {
+      isBusy: readCalculationBusy,
+      setBusy: setCalculationBusy,
+      showProgress: showCalculationProgress,
+      hideProgress: hideCalculationProgress,
+      setTriggerBusy: setCalculationTriggerBusy,
+      nextFrame: nextAnimationFrame,
+    };
+  }
+
+  async function runCalculationTask(task, options = {}, ports = calculationTaskPorts()) {
+    if (ports.isBusy()) return;
+    ports.setBusy(true);
+    ports.showProgress(options.loadingText || t("calculationLoading"));
+    ports.setTriggerBusy(options.trigger, true);
+    try {
+      options.prepare?.();
+      await ports.nextFrame();
+      task();
+    } catch (error) {
+      if (options.onError) options.onError(error);
+      else throw error;
+    } finally {
+      ports.setTriggerBusy(options.trigger, false);
+      ports.hideProgress();
+      ports.setBusy(false);
+    }
+  }
+
   function historicalPersonLoadPorts() {
     return {
       findPerson: findHistoricalPerson,
@@ -4978,18 +5047,28 @@
       hideSuggestions: hidePlaceSuggestions,
       closeModal: closePeopleModal,
       calculateChart: calculateCurrentChart,
+      handleError: handleChartSubmitError,
     };
   }
 
-  function loadHistoricalPerson(id, ports = historicalPersonLoadPorts()) {
+  async function loadHistoricalPerson(id, trigger = null, ports = historicalPersonLoadPorts()) {
     const person = ports.findPerson(id);
     if (!person) return;
-    ports.applySelectionState(person);
-    ports.applyFields(ports.buildFieldModel(person));
-    ports.updateClearButton();
-    ports.hideSuggestions();
-    ports.closeModal();
-    ports.calculateChart();
+    await runCalculationTask(
+      () => ports.calculateChart(),
+      {
+        trigger,
+        loadingText: t("exampleCalculationLoading"),
+        prepare: () => {
+          ports.applySelectionState(person);
+          ports.applyFields(ports.buildFieldModel(person));
+          ports.updateClearButton();
+          ports.hideSuggestions();
+          ports.closeModal();
+        },
+        onError: ports.handleError,
+      }
+    );
   }
 
   function formatDateLabel(value) {
@@ -10594,7 +10673,7 @@
       return;
     }
     const button = event.target.closest("[data-person-id]");
-    if (button) loadHistoricalPerson(button.dataset.personId);
+    if (button) void loadHistoricalPerson(button.dataset.personId, button);
   }
 
   function handlePeopleToggleClick() {
@@ -10832,13 +10911,20 @@
     ports.dispatchError(message);
   }
 
-  function submitChartForm(event, ports = chartSubmitPorts()) {
+  function chartSubmitTrigger(event) {
+    return event.submitter || $("#chart-form button[type='submit']");
+  }
+
+  async function submitChartForm(event, ports = chartSubmitPorts()) {
     event.preventDefault();
-    try {
-      ports.calculate();
-    } catch (error) {
-      handleChartSubmitError(error, ports);
-    }
+    await runCalculationTask(
+      () => ports.calculate(),
+      {
+        trigger: chartSubmitTrigger(event),
+        loadingText: t("calculationLoading"),
+        onError: (error) => handleChartSubmitError(error, ports),
+      }
+    );
   }
 
   const OPTION_WARNING_FIELD_IDS = ["calendar", "zodiac", "techniqueMode", "includeModern"];

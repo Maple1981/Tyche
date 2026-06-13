@@ -190,6 +190,12 @@
 
             <div class="form-actions">
               <p id="formStatus" class="form-status" role="status" aria-live="polite"></p>
+              <div id="calculationProgress" class="calculation-progress" role="status" aria-live="polite" hidden>
+                <span id="calculationProgressText" data-i18n="calculationLoading">Calculando carta...</span>
+                <div class="progress-track" role="progressbar" aria-labelledby="calculationProgressText">
+                  <span class="progress-bar"></span>
+                </div>
+              </div>
               <button class="primary-button" type="submit">
                 <span aria-hidden="true">☉</span>
                 <span data-i18n="calculate">Calcular carta</span>

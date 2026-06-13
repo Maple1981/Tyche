@@ -26,6 +26,8 @@ For chart calculation, `computeChart()` should stay an orchestration function. I
 
 Current chart calculation from the form should keep UI preparation, chart construction, warnings, and rendering as separate steps. `calculateCurrentChart()` should coordinate those calls rather than reading fields, clearing UI state, and rendering panels directly. Input warnings that write to `#formStatus` belong to the form use case, not to `computeChart()`, and should use shared DOM writer helpers. The current-chart use case should expose a small ports object for input reading, chart computation, warning construction, warning rendering, and chart rendering so tests and future UI flows can inject dependencies without touching calculation code.
 
+Chart calculation triggers should show a visible loading/progress state before entering synchronous calculation work. The form submit path and historical-example path should both use the shared calculation task flow: set busy state, show the progress indicator, mark the triggering button busy/disabled, await one animation frame so the UI can paint, then run calculation and clean up the loading state.
+
 Date/time conversion should keep validation, manual UTC offset handling, Julian-calendar conversion, IANA time-zone conversion, and manual fallback in separate helpers. `jdFromForm()` should coordinate those paths and return the final Julian Date, offset, and displayed zone label.
 
 Date/time conversion helpers should not write DOM status. If IANA time-zone conversion fails and the manual offset fallback is used, return a structured warning code and let the chart-calculation renderer display it.
