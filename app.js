@@ -10256,6 +10256,14 @@
     };
   }
 
+  function wheelLinePart(className, x1, y1, x2, y2) {
+    return { className, x1, y1, x2, y2 };
+  }
+
+  function wheelTextPart(className, x, y, text) {
+    return { className, x, y, text };
+  }
+
   function buildWheelHouseParts(chart, geometry) {
     const { cx, cy, outer, signR } = geometry;
     const lines = [];
@@ -10265,11 +10273,11 @@
       const boundary = signIndex * 30;
       const [x1, y1] = polar(cx, cy, 42, boundary, chart.angles.asc);
       const [x2, y2] = polar(cx, cy, outer, boundary, chart.angles.asc);
-      lines.push(`<line class="wheel-line" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"></line>`);
+      lines.push(wheelLinePart("wheel-line", x1, y1, x2, y2));
       const [sx, sy] = polar(cx, cy, signR, boundary + 15, chart.angles.asc);
-      labels.push(`<text class="wheel-sign" x="${sx}" y="${sy}" text-anchor="middle" dominant-baseline="central">${SIGNS[signIndex].symbol}</text>`);
+      labels.push(wheelTextPart("wheel-sign", sx, sy, SIGNS[signIndex].symbol));
       const [hx, hy] = polar(cx, cy, 56, boundary + 15, chart.angles.asc);
-      labels.push(`<text class="wheel-label" x="${hx}" y="${hy}" text-anchor="middle" dominant-baseline="central">${i + 1}</text>`);
+      labels.push(wheelTextPart("wheel-label", hx, hy, String(i + 1)));
     }
     return { lines, labels };
   }
@@ -10287,8 +10295,8 @@
       const [x1, y1] = polar(cx, cy, 36, lon, chart.angles.asc);
       const [x2, y2] = polar(cx, cy, outer + 4, lon, chart.angles.asc);
       const [tx, ty] = polar(cx, cy, outer + 13, lon, chart.angles.asc);
-      lines.push(`<line class="wheel-angle" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"></line>`);
-      labels.push(`<text class="wheel-label" x="${tx}" y="${ty}" text-anchor="middle" dominant-baseline="central">${label}</text>`);
+      lines.push(wheelLinePart("wheel-angle", x1, y1, x2, y2));
+      labels.push(wheelTextPart("wheel-label", tx, ty, label));
     });
     return { lines, labels };
   }
@@ -10304,7 +10312,7 @@
         if (!signAspectType(signOf(chart.positions[a].lon), signOf(chart.positions[b].lon))) continue;
         const [x1, y1] = polar(cx, cy, aspectR, chart.positions[a].lon, chart.angles.asc);
         const [x2, y2] = polar(cx, cy, aspectR, chart.positions[b].lon, chart.angles.asc);
-        aspects.push(`<line class="wheel-aspect" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"></line>`);
+        aspects.push(wheelLinePart("wheel-aspect", x1, y1, x2, y2));
       }
     }
     return aspects;
@@ -10316,7 +10324,7 @@
     chart.planetKeys.forEach((key, index) => {
       const radius = planetR - (index % 3) * 9;
       const [x, y] = polar(cx, cy, radius, chart.positions[key].lon, chart.angles.asc);
-      labels.push(`<text class="wheel-planet" x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central">${PLANETS[key].symbol}</text>`);
+      labels.push(wheelTextPart("wheel-planet", x, y, PLANETS[key].symbol));
     });
     return labels;
   }
@@ -10330,8 +10338,19 @@
       lines: [...houses.lines, ...angles.lines],
       labels: [...houses.labels, ...angles.labels, ...buildWheelPlanetLabels(chart, geometry)],
       aspects: buildWheelAspectParts(chart, geometry),
-      sectLabel: state.lang === "es" ? (chart.isDay ? "DÍA" : "NOCHE") : (chart.isDay ? "DAY" : "NIGHT"),
+      centerLabels: [
+        wheelTextPart("wheel-sign", geometry.cx, geometry.cy - 5, "Tyche"),
+        wheelTextPart("wheel-label", geometry.cx, geometry.cy + 12, state.lang === "es" ? (chart.isDay ? "DÍA" : "NOCHE") : (chart.isDay ? "DAY" : "NIGHT")),
+      ],
     };
+  }
+
+  function renderWheelLinePart(part) {
+    return `<line class="${escapeHtml(part.className)}" x1="${part.x1}" y1="${part.y1}" x2="${part.x2}" y2="${part.y2}"></line>`;
+  }
+
+  function renderWheelTextPart(part) {
+    return `<text class="${escapeHtml(part.className)}" x="${part.x}" y="${part.y}" text-anchor="middle" dominant-baseline="central">${escapeHtml(part.text)}</text>`;
   }
 
   function renderWheelModel(model) {
@@ -10341,11 +10360,10 @@
         <circle cx="${model.cx}" cy="${model.cy}" r="126" fill="none" stroke="currentColor" opacity="0.12"></circle>
         <circle cx="${model.cx}" cy="${model.cy}" r="92" fill="none" stroke="currentColor" opacity="0.14"></circle>
         <circle cx="${model.cx}" cy="${model.cy}" r="42" fill="none" stroke="currentColor" opacity="0.2"></circle>
-        ${model.lines.join("")}
-        ${model.aspects.join("")}
-        ${model.labels.join("")}
-        <text x="${model.cx}" y="${model.cy - 5}" text-anchor="middle" class="wheel-sign">Tyche</text>
-        <text x="${model.cx}" y="${model.cy + 12}" text-anchor="middle" class="wheel-label">${model.sectLabel}</text>
+        ${model.lines.map(renderWheelLinePart).join("")}
+        ${model.aspects.map(renderWheelLinePart).join("")}
+        ${model.labels.map(renderWheelTextPart).join("")}
+        ${model.centerLabels.map(renderWheelTextPart).join("")}
       </svg>
     `;
   }
