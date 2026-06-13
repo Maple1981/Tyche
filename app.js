@@ -10090,9 +10090,13 @@
     });
   }
 
+  function handleTabClick(event) {
+    activateTab(event.currentTarget);
+  }
+
   function bindTabs() {
     $$(".tab").forEach((button) => {
-      button.addEventListener("click", () => activateTab(button));
+      button.addEventListener("click", handleTabClick);
     });
   }
 
@@ -10227,6 +10231,10 @@
     queuePlaceSearch();
   }
 
+  function handleBirthPlaceFocusEvent(event) {
+    handleBirthPlaceFocus(event.currentTarget);
+  }
+
   function handleBirthPlaceInput() {
     clearHistoricalSelection();
     setSelectedCityState(null);
@@ -10277,11 +10285,17 @@
     BIRTH_PLACE_KEY_HANDLERS[event.key]?.(event);
   }
 
+  function completeBirthPlaceBlur() {
+    updatePlaceFields();
+    hidePlaceSuggestions();
+  }
+
+  function scheduleBirthPlaceBlurCompletion() {
+    window.setTimeout(completeBirthPlaceBlur, 120);
+  }
+
   function handleBirthPlaceBlur() {
-    window.setTimeout(() => {
-      updatePlaceFields();
-      hidePlaceSuggestions();
-    }, 120);
+    scheduleBirthPlaceBlurCompletion();
   }
 
   function clearBirthPlaceFieldValues(birthPlace) {
@@ -10311,6 +10325,10 @@
     ports.focus();
   }
 
+  function handleClearBirthPlaceClick() {
+    clearBirthPlaceFields($("#birthPlace"));
+  }
+
   function handlePlaceSuggestionClick(event) {
     const button = event.target.closest("[data-place-index]");
     if (button) selectPlaceSuggestion(Number(button.dataset.placeIndex));
@@ -10326,11 +10344,11 @@
 
   function bindBirthPlaceEvents() {
     const birthPlace = $("#birthPlace");
-    birthPlace.addEventListener("focus", () => handleBirthPlaceFocus(birthPlace));
+    birthPlace.addEventListener("focus", handleBirthPlaceFocusEvent);
     birthPlace.addEventListener("input", handleBirthPlaceInput);
     birthPlace.addEventListener("keydown", handleBirthPlaceKeydown);
     birthPlace.addEventListener("blur", handleBirthPlaceBlur);
-    $("#clearPlace").addEventListener("click", () => clearBirthPlaceFields(birthPlace));
+    $("#clearPlace").addEventListener("click", handleClearBirthPlaceClick);
     $("#placeSuggestions").addEventListener("mousedown", handlePlaceSuggestionMousedown);
     $("#placeSuggestions").addEventListener("click", handlePlaceSuggestionClick);
     document.addEventListener("pointerdown", handleDocumentPlacePointerdown);
