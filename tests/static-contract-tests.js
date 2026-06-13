@@ -38,8 +38,8 @@ assert("index loads Astronomy Engine before app.js", index.indexOf("assets/vendo
 assert("index propagates cache-buster to versioned assets", index.includes("styles.css${suffix}") && index.includes("astronomy.browser.min.js${suffix}") && index.includes("app.js${suffix}"));
 assert("TycheTest schema version exists", app.includes("const TYCHE_TEST_SCHEMA_VERSION = 2"));
 assert("TycheTest build hash exists", app.includes("const TYCHE_BUILD_HASH"));
-const buildHashBlock = sectionBetween(app, "function currentLocationSearch()", "const TYCHE_BUILD_HASH");
-assert("Build hash resolution separates script runtime and query sources", ["currentLocationSearch", "currentQueryParams", "scriptBuildHashParam", "runtimeBuildHashOverride", "queryBuildHashParam", "resolveBuildHash"].every((name) => app.includes(`function ${name}`)) && buildHashBlock.includes("scriptBuildHashParam()") && buildHashBlock.includes("runtimeBuildHashOverride()") && buildHashBlock.includes("queryBuildHashParam()") && app.includes("const TYCHE_BUILD_HASH = resolveBuildHash();"));
+const buildHashBlock = sectionBetween(app, "function browserBuildHashEnvironment()", "const TYCHE_BUILD_HASH");
+assert("Build hash resolution separates browser environment script runtime and query sources", ["browserBuildHashEnvironment", "currentLocationSearch", "currentQueryParams", "scriptBuildHashParam", "runtimeBuildHashOverride", "queryBuildHashParam", "resolveBuildHash"].every((name) => app.includes(`function ${name}`)) && buildHashBlock.includes("currentScriptSrc: document.currentScript?.src") && buildHashBlock.includes("scriptBuildHashParam(env)") && buildHashBlock.includes("runtimeBuildHashOverride(env)") && buildHashBlock.includes("queryBuildHashParam(env.locationSearch)") && app.includes("const TYCHE_BUILD_HASH = resolveBuildHash();"));
 assert("TycheTest exposes schemaVersion", app.includes("schemaVersion: TYCHE_TEST_SCHEMA_VERSION"));
 assert("TycheTest exposes buildHash", app.includes("buildHash: TYCHE_BUILD_HASH"));
 assert("TycheTest exposes alternate sect renderer", app.includes("renderAlternateSectLots"));

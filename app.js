@@ -9,32 +9,42 @@
   const PLACE_RESULT_LIMIT = 8;
   const TYCHE_TEST_SCHEMA_VERSION = 2;
 
-  function currentLocationSearch() {
-    return window.location.search;
+  function browserBuildHashEnvironment() {
+    return {
+      locationSearch: window.location.search,
+      locationHref: window.location.href,
+      currentScriptSrc: document.currentScript?.src || "",
+      runtimeOverride: window.TYCHE_BUILD_HASH || "",
+    };
+  }
+
+  function currentLocationSearch(env = browserBuildHashEnvironment()) {
+    return env.locationSearch;
   }
 
   function currentQueryParams(search = currentLocationSearch()) {
     return new URLSearchParams(search);
   }
 
-  function scriptBuildHashParam() {
-    const scriptSrc = document.currentScript?.src;
-    return scriptSrc ? new URL(scriptSrc, window.location.href).searchParams.get("v") : "";
+  function scriptBuildHashParam(env = browserBuildHashEnvironment()) {
+    return env.currentScriptSrc
+      ? new URL(env.currentScriptSrc, env.locationHref).searchParams.get("v")
+      : "";
   }
 
-  function runtimeBuildHashOverride() {
-    return window.TYCHE_BUILD_HASH || "";
+  function runtimeBuildHashOverride(env = browserBuildHashEnvironment()) {
+    return env.runtimeOverride;
   }
 
-  function queryBuildHashParam() {
-    return currentQueryParams().get("v") || "";
+  function queryBuildHashParam(search = currentLocationSearch()) {
+    return currentQueryParams(search).get("v") || "";
   }
 
-  function resolveBuildHash() {
+  function resolveBuildHash(env = browserBuildHashEnvironment()) {
     try {
-      return scriptBuildHashParam() || runtimeBuildHashOverride() || queryBuildHashParam() || "dev";
+      return scriptBuildHashParam(env) || runtimeBuildHashOverride(env) || queryBuildHashParam(env.locationSearch) || "dev";
     } catch {
-      return runtimeBuildHashOverride() || "dev";
+      return runtimeBuildHashOverride(env) || "dev";
     }
   }
 
