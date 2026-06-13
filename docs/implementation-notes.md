@@ -158,7 +158,7 @@ Lot pressure audit fields should carry structured pressure parts rather than pre
 
 The chart frame should carry the wheel model, not a pre-rendered SVG string. Keep `renderWheel(chart)` as a compatibility wrapper when tests need direct SVG output, but frame rendering should call `renderWheelModel(model.wheel)`.
 
-Technical panel rendering should keep notes and metric sections in dedicated helpers. The panel renderer should compose the model, not duplicate section wrappers for astronomy and judgment details.
+Technical panel rendering should keep notes and metric sections in dedicated helpers. The panel model should carry section objects with title, metrics, and optional boundary-warning data; the renderer should compose those sections rather than passing pre-rendered `extraHtml` through metric helpers or duplicating wrappers for astronomy and judgment details.
 
 Chart render completion should keep final text cleanup, viewport scrolling, and rendered-event dispatch in named helpers. Preserve their order, but avoid hiding all post-render side effects in one mixed block.
 

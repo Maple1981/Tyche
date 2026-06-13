@@ -6588,11 +6588,18 @@
     return {
       title: t("technicalTitle"),
       notes: [t("technicalLimitsCompact"), t("technicalMcIcNote")],
-      astronomyTitle: t("technicalAstronomyTitle"),
-      astronomyMetrics: buildTechnicalAstronomyMetrics(chart),
-      judgmentTitle: t("technicalJudgmentTitle"),
-      judgmentMetrics: buildTechnicalJudgmentMetrics(chart),
-      boundary: boundaryWarnings(chart),
+      sections: [
+        {
+          title: t("technicalAstronomyTitle"),
+          metrics: buildTechnicalAstronomyMetrics(chart),
+          boundaryWarnings: [],
+        },
+        {
+          title: t("technicalJudgmentTitle"),
+          metrics: buildTechnicalJudgmentMetrics(chart),
+          boundaryWarnings: boundaryWarnings(chart),
+        },
+      ],
     };
   }
 
@@ -6604,13 +6611,17 @@
     `;
   }
 
-  function renderTechnicalMetricSection(title, metrics, extraHtml = "") {
+  function renderTechnicalSectionExtras(section) {
+    return section.boundaryWarnings?.length ? renderBoundaryAudit(section.boundaryWarnings) : "";
+  }
+
+  function renderTechnicalMetricSection(section) {
     return `
       <section class="technical-section">
-        <h4>${escapeHtml(title)}</h4>
+        <h4>${escapeHtml(section.title)}</h4>
         <div class="technical-grid">
-          ${renderMetricItems(metrics)}
-          ${extraHtml}
+          ${renderMetricItems(section.metrics)}
+          ${renderTechnicalSectionExtras(section)}
         </div>
       </section>
     `;
@@ -6621,8 +6632,7 @@
       <details>
         <summary><h3>${escapeHtml(model.title)}</h3></summary>
         ${renderTechnicalNotes(model.notes)}
-        ${renderTechnicalMetricSection(model.astronomyTitle, model.astronomyMetrics)}
-        ${renderTechnicalMetricSection(model.judgmentTitle, model.judgmentMetrics, renderBoundaryAudit(model.boundary))}
+        ${model.sections.map(renderTechnicalMetricSection).join("")}
       </details>
     `;
   }
