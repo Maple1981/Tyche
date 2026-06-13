@@ -3534,10 +3534,14 @@
     document.body.classList.toggle(className, force);
   }
 
-  function t(key, params = {}) {
-    const table = I18N[state.lang] || I18N.es;
+  function i18nText(key, lang = state.lang, params = {}) {
+    const table = I18N[lang] || I18N.es;
     const fallback = I18N.es[key] || key;
     return (table[key] || fallback).replace(/\{(\w+)\}/g, (_, name) => params[name] ?? "");
+  }
+
+  function t(key, params = {}) {
+    return i18nText(key, state.lang, params);
   }
 
   function activeLocale() {
@@ -10417,38 +10421,80 @@
     ports.applyModel(ports.buildModel());
   }
 
-  function updateShellControlLabels() {
-    setElementAttribute(".toolbar", "aria-label", state.lang === "es" ? "Preferencias" : "Preferences");
-    setElementAttribute("#chartWheel", "aria-label", state.lang === "es" ? "Rueda de carta natal" : "Natal chart wheel");
-    setElementAttribute(".tabs", "aria-label", state.lang === "es" ? "Detalles de la carta" : "Chart details");
+  function shellControlLabels(lang = state.lang) {
+    return {
+      toolbarAria: lang === "es" ? "Preferencias" : "Preferences",
+      chartWheelAria: lang === "es" ? "Rueda de carta natal" : "Natal chart wheel",
+      tabsAria: lang === "es" ? "Detalles de la carta" : "Chart details",
+    };
   }
 
-  function updatePreferenceControlLabels() {
-    writeElementText("#languageToggle span", state.lang.toUpperCase());
-    setElementAttribute("#languageToggle", "aria-label", state.lang === "es" ? "Cambiar idioma" : "Change language");
-    writeElementTitle("#languageToggle", state.lang === "es" ? "Cambiar idioma" : "Change language");
-    setElementAttribute("#themeToggle", "aria-label", state.lang === "es" ? "Cambiar tema" : "Change theme");
-    writeElementTitle("#themeToggle", state.lang === "es" ? "Cambiar tema" : "Change theme");
+  function preferenceControlLabels(lang = state.lang) {
+    const languageLabel = lang === "es" ? "Cambiar idioma" : "Change language";
+    const themeLabel = lang === "es" ? "Cambiar tema" : "Change theme";
+    return {
+      languageText: lang.toUpperCase(),
+      languageLabel,
+      themeLabel,
+    };
   }
 
-  function updatePeopleControlLabels() {
-    setElementAttribute("#peopleToggle", "aria-label", t("peopleButton"));
-    writeElementTitle("#peopleToggle", t("peopleButton"));
-    setElementAttribute("#peopleClose", "aria-label", t("close"));
-    writeElementTitle("#peopleClose", t("close"));
+  function peopleControlLabels(lang = state.lang) {
+    return {
+      peopleButton: i18nText("peopleButton", lang),
+      close: i18nText("close", lang),
+    };
   }
 
-  function updatePlaceControlLabels() {
-    writeElementPlaceholder("#birthPlace", state.lang === "es" ? "Madrid, España" : "Madrid, Spain");
-    setElementAttribute("#clearPlace", "aria-label", t("clearPlace"));
-    writeElementTitle("#clearPlace", t("clearPlace"));
+  function placeControlLabels(lang = state.lang) {
+    const clearPlace = i18nText("clearPlace", lang);
+    return {
+      birthPlacePlaceholder: lang === "es" ? "Madrid, España" : "Madrid, Spain",
+      clearPlace,
+    };
   }
 
-  function updateLocalizedControlLabels() {
-    updateShellControlLabels();
-    updatePreferenceControlLabels();
-    updatePeopleControlLabels();
-    updatePlaceControlLabels();
+  function buildLocalizedControlLabelsModel(lang = state.lang) {
+    return {
+      shell: shellControlLabels(lang),
+      preference: preferenceControlLabels(lang),
+      people: peopleControlLabels(lang),
+      place: placeControlLabels(lang),
+    };
+  }
+
+  function updateShellControlLabels(model) {
+    setElementAttribute(".toolbar", "aria-label", model.toolbarAria);
+    setElementAttribute("#chartWheel", "aria-label", model.chartWheelAria);
+    setElementAttribute(".tabs", "aria-label", model.tabsAria);
+  }
+
+  function updatePreferenceControlLabels(model) {
+    writeElementText("#languageToggle span", model.languageText);
+    setElementAttribute("#languageToggle", "aria-label", model.languageLabel);
+    writeElementTitle("#languageToggle", model.languageLabel);
+    setElementAttribute("#themeToggle", "aria-label", model.themeLabel);
+    writeElementTitle("#themeToggle", model.themeLabel);
+  }
+
+  function updatePeopleControlLabels(model) {
+    setElementAttribute("#peopleToggle", "aria-label", model.peopleButton);
+    writeElementTitle("#peopleToggle", model.peopleButton);
+    setElementAttribute("#peopleClose", "aria-label", model.close);
+    writeElementTitle("#peopleClose", model.close);
+  }
+
+  function updatePlaceControlLabels(model) {
+    writeElementPlaceholder("#birthPlace", model.birthPlacePlaceholder);
+    setElementAttribute("#clearPlace", "aria-label", model.clearPlace);
+    writeElementTitle("#clearPlace", model.clearPlace);
+  }
+
+  function updateLocalizedControlLabels(model = buildLocalizedControlLabelsModel()) {
+    updateShellControlLabels(model.shell);
+    updatePreferenceControlLabels(model.preference);
+    updatePeopleControlLabels(model.people);
+    updatePlaceControlLabels(model.place);
   }
 
   function applyI18n() {
