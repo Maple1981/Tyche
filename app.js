@@ -9810,10 +9810,28 @@
     return renderTextNote(escapeHtml(text));
   }
 
+  function textInlinePart(text) {
+    return { text };
+  }
+
+  function glossaryInlinePart(text, glossary) {
+    return { text, glossary };
+  }
+
+  function renderInlineParts(parts = []) {
+    return parts.map((part) => (
+      part.glossary ? glossaryTerm(part.text, part.glossary) : escapeHtml(part.text)
+    )).join("");
+  }
+
+  function renderInlinePartsNote(parts = []) {
+    return parts.length ? renderTextNote(renderInlineParts(parts)) : "";
+  }
+
   function renderTableModelHtml(model) {
     if (model.emptyText) return renderEscapedTextNote(model.emptyText);
     const tableHtml = makeTable(model.headers, model.rows);
-    return model.noteHtml ? `${tableHtml}${renderTextNote(model.noteHtml)}` : tableHtml;
+    return `${tableHtml}${renderInlinePartsNote(model.noteParts)}`;
   }
 
   function buildPlanetTableModel(chart) {
@@ -9906,22 +9924,67 @@
     ]);
   }
 
-  function lotFormulaNote() {
-    return state.lang === "es"
-      ? `Sistema de fórmulas: ${glossaryTerm(t("fortune"), "lotFortune")} y ${glossaryTerm(t("spirit"), "lotSpirit")} se invierten por ${glossaryTerm(t("sect"), "sect")}; ${glossaryTerm("Eros", "lotEros")} y ${glossaryTerm(t("necessity"), "lotNecessity")} usan la tradición basada en ${glossaryTerm(t("fortune"), "lotFortune")} y ${glossaryTerm(t("spirit"), "lotSpirit")}; ${glossaryTerm(t("courage"), "lotCourage")}, ${glossaryTerm(t("victory"), "lotVictory")} y ${glossaryTerm("Némesis", "lotNemesis")} usan fórmulas planetarias herméticas.`
-      : `Formula system: ${glossaryTerm(t("fortune"), "lotFortune")} and ${glossaryTerm(t("spirit"), "lotSpirit")} reverse by ${glossaryTerm(t("sect"), "sect")}; ${glossaryTerm("Eros", "lotEros")} and ${glossaryTerm(t("necessity"), "lotNecessity")} use the ${glossaryTerm(t("fortune"), "lotFortune")}/${glossaryTerm(t("spirit"), "lotSpirit")}-based tradition; ${glossaryTerm(t("courage"), "lotCourage")}, ${glossaryTerm(t("victory"), "lotVictory")}, and ${glossaryTerm("Nemesis", "lotNemesis")} use hermetic planetary formulas.`;
+  function lotFormulaNoteParts() {
+    if (state.lang === "es") {
+      return [
+        textInlinePart("Sistema de fórmulas: "),
+        glossaryInlinePart(t("fortune"), "lotFortune"),
+        textInlinePart(" y "),
+        glossaryInlinePart(t("spirit"), "lotSpirit"),
+        textInlinePart(" se invierten por "),
+        glossaryInlinePart(t("sect"), "sect"),
+        textInlinePart("; "),
+        glossaryInlinePart("Eros", "lotEros"),
+        textInlinePart(" y "),
+        glossaryInlinePart(t("necessity"), "lotNecessity"),
+        textInlinePart(" usan la tradición basada en "),
+        glossaryInlinePart(t("fortune"), "lotFortune"),
+        textInlinePart(" y "),
+        glossaryInlinePart(t("spirit"), "lotSpirit"),
+        textInlinePart("; "),
+        glossaryInlinePart(t("courage"), "lotCourage"),
+        textInlinePart(", "),
+        glossaryInlinePart(t("victory"), "lotVictory"),
+        textInlinePart(" y "),
+        glossaryInlinePart("Némesis", "lotNemesis"),
+        textInlinePart(" usan fórmulas planetarias herméticas."),
+      ];
+    }
+    return [
+      textInlinePart("Formula system: "),
+      glossaryInlinePart(t("fortune"), "lotFortune"),
+      textInlinePart(" and "),
+      glossaryInlinePart(t("spirit"), "lotSpirit"),
+      textInlinePart(" reverse by "),
+      glossaryInlinePart(t("sect"), "sect"),
+      textInlinePart("; "),
+      glossaryInlinePart("Eros", "lotEros"),
+      textInlinePart(" and "),
+      glossaryInlinePart(t("necessity"), "lotNecessity"),
+      textInlinePart(" use the "),
+      glossaryInlinePart(t("fortune"), "lotFortune"),
+      textInlinePart("/"),
+      glossaryInlinePart(t("spirit"), "lotSpirit"),
+      textInlinePart("-based tradition; "),
+      glossaryInlinePart(t("courage"), "lotCourage"),
+      textInlinePart(", "),
+      glossaryInlinePart(t("victory"), "lotVictory"),
+      textInlinePart(", and "),
+      glossaryInlinePart("Nemesis", "lotNemesis"),
+      textInlinePart(" use hermetic planetary formulas."),
+    ];
   }
 
   function buildLotTableModel(chart) {
     const lots = visibleLots(chart);
     if (!lots.length) {
-      return { emptyText: t("noLots"), headers: [], rows: [], noteHtml: "" };
+      return { emptyText: t("noLots"), headers: [], rows: [], noteParts: [] };
     }
     return {
       emptyText: "",
       headers: lotTableHeaders(),
       rows: lotTableRows(lots, chart),
-      noteHtml: lotFormulaNote(),
+      noteParts: lotFormulaNoteParts(),
     };
   }
 
