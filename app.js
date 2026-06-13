@@ -3724,6 +3724,18 @@
     window.requestAnimationFrame(callback);
   }
 
+  function dispatchWindowEvent(name, detail = {}) {
+    window.dispatchEvent(new CustomEvent(name, { detail }));
+  }
+
+  function scheduleTimer(callback, delay) {
+    return window.setTimeout(callback, delay);
+  }
+
+  function clearTimer(timer) {
+    window.clearTimeout(timer);
+  }
+
   function glossaryPopoverPorts() {
     return {
       buildModel: buildGlossaryPopoverModel,
@@ -4128,15 +4140,15 @@
   }
 
   function clearPlaceSearchTimer() {
-    window.clearTimeout(state.placeSearchTimer);
+    clearTimer(state.placeSearchTimer);
   }
 
   function setPlaceSearchTimer(timer) {
     state.placeSearchTimer = timer;
   }
 
-  function schedulePlaceSearch(callback) {
-    setPlaceSearchTimer(window.setTimeout(callback, PLACE_SEARCH_DELAY));
+  function schedulePlaceSearch(callback, scheduler = scheduleTimer) {
+    setPlaceSearchTimer(scheduler(callback, PLACE_SEARCH_DELAY));
   }
 
   function createPlaceSearchController() {
@@ -6146,8 +6158,8 @@
     $("#results").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  function dispatchChartRenderedEvent(chart) {
-    window.dispatchEvent(new CustomEvent("tyche:chart-rendered", { detail: { chart } }));
+  function dispatchChartRenderedEvent(chart, dispatch = dispatchWindowEvent) {
+    dispatch("tyche:chart-rendered", { chart });
   }
 
   function chartRenderCompletionPorts() {
@@ -10474,8 +10486,8 @@
     hidePlaceSuggestions();
   }
 
-  function scheduleBirthPlaceBlurCompletion() {
-    window.setTimeout(completeBirthPlaceBlur, 120);
+  function scheduleBirthPlaceBlurCompletion(scheduler = scheduleTimer) {
+    scheduler(completeBirthPlaceBlur, 120);
   }
 
   function handleBirthPlaceBlur() {
@@ -10551,10 +10563,8 @@
     writeElementText("#formStatus", message);
   }
 
-  function dispatchChartErrorEvent(message) {
-    window.dispatchEvent(new CustomEvent("tyche:chart-error", {
-      detail: { message },
-    }));
+  function dispatchChartErrorEvent(message, dispatch = dispatchWindowEvent) {
+    dispatch("tyche:chart-error", { message });
   }
 
   function chartSubmitPorts() {

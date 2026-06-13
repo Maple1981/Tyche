@@ -144,6 +144,8 @@ Chart submit handling should coordinate calculation and error reporting through 
 
 Application startup should be a composition root. `init()` should receive startup ports for list population, theme/i18n application, binding, regression API installation, and readiness marking, while preserving the explicit startup order. Startup ports should point at named adapters for browser globals such as readiness flags.
 
+Browser-only effects that are shared across flows should live behind tiny adapters. Window events, custom-event construction, timers, and timer clearing should stay in named helpers so chart rendering, form submission, blur handling, and place search do not each create their own browser-side effect code.
+
 Table renderers should build table models first and share generic empty-note/table-note HTML helpers. Individual domain renderers should decide rows and explanatory notes, not repeat paragraph wrappers, fallback table markup, or final panel HTML assignment.
 
 Metric panels should share the same heading-and-grid renderer once a panel has a `{ title, titleGlossary, metrics }` model. Domain panels may append notes or audits after that shared metric block.
