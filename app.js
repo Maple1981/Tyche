@@ -9558,6 +9558,10 @@
     return model.noteHtml ? `${tableHtml}${renderTextNote(model.noteHtml)}` : tableHtml;
   }
 
+  function writePanelHtml(selector, html) {
+    $(selector).innerHTML = html;
+  }
+
   function buildPlanetTableModel(chart) {
     const headers = planetTableHeaders();
     const traditionalKeys = chart.planetKeys.filter((key) => VISIBLE_KEYS.includes(key));
@@ -9579,9 +9583,10 @@
 
   function renderPlanetTable(chart) {
     const model = buildPlanetTableModel(chart);
-    $("#tab-planets").innerHTML = model.sections.length === 1 && !model.sections[0].title
+    const html = model.sections.length === 1 && !model.sections[0].title
       ? makeTable(model.sections[0].headers, model.sections[0].rows)
       : model.sections.map(renderTableSection).join("");
+    writePanelHtml("#tab-planets", html);
   }
 
   function houseTableHeaders() {
@@ -9622,7 +9627,7 @@
 
   function renderHouseTable(chart) {
     const model = buildHouseTableModel(chart);
-    $("#tab-houses").innerHTML = makeTable(model.headers, model.rows);
+    writePanelHtml("#tab-houses", makeTable(model.headers, model.rows));
   }
 
   function lotTableHeaders() {
@@ -9667,7 +9672,7 @@
   }
 
   function renderLotTable(chart) {
-    $("#tab-lots").innerHTML = renderTableModelHtml(buildLotTableModel(chart));
+    writePanelHtml("#tab-lots", renderTableModelHtml(buildLotTableModel(chart)));
   }
 
   function aspectTableHeaders() {
@@ -9745,7 +9750,7 @@
   }
 
   function renderAspectTable(chart) {
-    $("#tab-aspects").innerHTML = renderTableModelHtml(buildAspectTableModel(chart));
+    writePanelHtml("#tab-aspects", renderTableModelHtml(buildAspectTableModel(chart)));
   }
 
   function polar(cx, cy, r, lon, asc) {
