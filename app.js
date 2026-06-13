@@ -10208,10 +10208,22 @@
     moveActivePlace(-1);
   }
 
-  function handleBirthPlaceEnter(event) {
-    if (!state.placeSuggestions.length) return;
+  function activePlaceSelectionIndex(activeIndex = state.activePlaceIndex) {
+    return activeIndex >= 0 ? activeIndex : 0;
+  }
+
+  function birthPlaceEnterPorts() {
+    return {
+      hasSuggestions: () => Boolean(state.placeSuggestions.length),
+      selectionIndex: () => activePlaceSelectionIndex(),
+      selectSuggestion: selectPlaceSuggestion,
+    };
+  }
+
+  function handleBirthPlaceEnter(event, ports = birthPlaceEnterPorts()) {
+    if (!ports.hasSuggestions()) return;
     event.preventDefault();
-    selectPlaceSuggestion(state.activePlaceIndex >= 0 ? state.activePlaceIndex : 0);
+    ports.selectSuggestion(ports.selectionIndex());
   }
 
   function handleBirthPlaceEscape() {
