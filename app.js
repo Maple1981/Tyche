@@ -4027,42 +4027,62 @@
     }).slice(0, limit);
   }
 
-  async function fetchPlaceSuggestions(query) {
+  async function fetchJson(url, options = {}) {
+    const response = await fetch(url, options);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  }
+
+  function placeSearchPorts() {
+    return {
+      createController: () => new AbortController(),
+      requestJson: fetchJson,
+      renderSuggestions: renderPlaceSuggestions,
+      localSuggestions: localCitySuggestions,
+      buildUrl: buildGeocodingUrl,
+      parseRemote: remoteCitySuggestionsFromResponse,
+      mergeSuggestions: mergePlaceSuggestions,
+      loadingText: () => t("placeSearchLoading"),
+      emptyText: () => t("placeSearchEmpty"),
+      errorText: () => t("placeSearchError"),
+      shortText: () => t("placeSearchShort"),
+    };
+  }
+
+  async function fetchPlaceSuggestions(query, ports = placeSearchPorts()) {
     state.placeSearchController?.abort();
-    const controller = new AbortController();
+    const controller = ports.createController();
     state.placeSearchController = controller;
-    renderPlaceSuggestions([], t("placeSearchLoading"));
-    const url = buildGeocodingUrl(query);
+    ports.renderSuggestions([], ports.loadingText());
+    const url = ports.buildUrl(query);
 
     try {
-      const response = await fetch(url, { signal: controller.signal });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const data = await response.json();
-      const remote = remoteCitySuggestionsFromResponse(data);
-      const local = localCitySuggestions(query, 3);
-      const combined = mergePlaceSuggestions(remote, local);
-      renderPlaceSuggestions(combined, combined.length ? "" : t("placeSearchEmpty"));
+      const data = await ports.requestJson(url, { signal: controller.signal });
+      const remote = ports.parseRemote(data);
+      const local = ports.localSuggestions(query, 3);
+      const combined = ports.mergeSuggestions(remote, local);
+      ports.renderSuggestions(combined, combined.length ? "" : ports.emptyText());
     } catch (error) {
       if (error.name === "AbortError") return;
-      const local = localCitySuggestions(query);
-      renderPlaceSuggestions(local, local.length ? t("placeSearchError") : t("placeSearchEmpty"));
+      const local = ports.localSuggestions(query);
+      ports.renderSuggestions(local, local.length ? ports.errorText() : ports.emptyText());
     } finally {
       if (state.placeSearchController === controller) state.placeSearchController = null;
     }
   }
 
-  function queuePlaceSearch() {
+  function queuePlaceSearch(searchSuggestions = fetchPlaceSuggestions, ports = placeSearchPorts()) {
     const query = $("#birthPlace").value.trim();
     updateClearPlaceButton();
     window.clearTimeout(state.placeSearchTimer);
     state.placeSearchController?.abort();
 
     if (query.length < 2) {
-      renderPlaceSuggestions([], query ? t("placeSearchShort") : "");
+      ports.renderSuggestions([], query ? ports.shortText() : "");
       return;
     }
 
-    state.placeSearchTimer = window.setTimeout(() => fetchPlaceSuggestions(query), PLACE_SEARCH_DELAY);
+    state.placeSearchTimer = window.setTimeout(() => searchSuggestions(query, ports), PLACE_SEARCH_DELAY);
   }
 
   function updateActivePlace() {
