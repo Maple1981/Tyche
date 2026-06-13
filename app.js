@@ -4661,15 +4661,28 @@
     $("#manualOffset").value = model.manualOffset;
   }
 
-  function loadHistoricalPerson(id) {
-    const person = HISTORICAL_PEOPLE.find((item) => item.id === id);
+  function historicalPersonLoadPorts() {
+    return {
+      findPerson: findHistoricalPerson,
+      applySelectionState: applyHistoricalSelectionState,
+      buildFieldModel: buildHistoricalPersonFieldModel,
+      applyFields: applyHistoricalPersonFields,
+      updateClearButton: updateClearPlaceButton,
+      hideSuggestions: hidePlaceSuggestions,
+      closeModal: closePeopleModal,
+      calculateChart: calculateCurrentChart,
+    };
+  }
+
+  function loadHistoricalPerson(id, ports = historicalPersonLoadPorts()) {
+    const person = ports.findPerson(id);
     if (!person) return;
-    applyHistoricalSelectionState(person);
-    applyHistoricalPersonFields(buildHistoricalPersonFieldModel(person));
-    updateClearPlaceButton();
-    hidePlaceSuggestions();
-    closePeopleModal();
-    calculateCurrentChart();
+    ports.applySelectionState(person);
+    ports.applyFields(ports.buildFieldModel(person));
+    ports.updateClearButton();
+    ports.hideSuggestions();
+    ports.closeModal();
+    ports.calculateChart();
   }
 
   function formatDateLabel(value) {

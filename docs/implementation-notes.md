@@ -130,7 +130,7 @@ Search/autocomplete surfaces should keep URL construction, response parsing, res
 
 Birthplace selection should also keep field modeling separate from DOM mutation. Build the place/coordinate/time-zone field model and calculate automatic UTC-offset updates through helper functions before applying the result to form controls. Field-to-city refresh should read field state, resolve the city, compare the active key, and apply or clear through ports. Suggestion selection should read the selected suggestion, clear historical context, apply the city, hide suggestions, and blur through ports. Clearing the birthplace should separate field-value clearing from historical-selection reset, selected-city reset, suggestion hiding, and focus. Keep selected-city and active-city-key mutation in one helper so manual input, suggestion selection, localized refresh, and historical examples stay consistent.
 
-Historical-person selection should keep selected-person metadata in a small helper layer. Clearing a manual edit and loading an archived figure should both pass through the same metadata applier instead of writing audit, time-confidence, and zone-source fields independently.
+Historical-person selection should keep selected-person metadata in a small helper layer. Clearing a manual edit and loading an archived figure should both pass through the same metadata applier instead of writing audit, time-confidence, and zone-source fields independently. Loading an archived figure should be a use case with ports for lookup, selected state, field model/application, place UI cleanup, modal closing, and chart calculation.
 
 Historical data popovers should carry row/link data in their model, not pre-rendered row HTML. Render anchor tags only in the popover renderer.
 
