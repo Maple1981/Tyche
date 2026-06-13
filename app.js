@@ -9706,15 +9706,29 @@
     });
   }
 
-  function refreshLocalizedPlaceState() {
-    const city = findCity($("#birthPlace").value);
+  function localizedPlaceStatePorts() {
+    return {
+      readPlaceValue: () => $("#birthPlace").value,
+      findCity,
+      writeSelectedCity: (city) => {
+        state.selectedCity = city;
+        state.activeCityKey = cityKey(city);
+      },
+      formatCity,
+      writePlaceValue: (value) => { $("#birthPlace").value = value; },
+      updateClearButton: updateClearPlaceButton,
+      hideSuggestions: hidePlaceSuggestions,
+    };
+  }
+
+  function refreshLocalizedPlaceState(ports = localizedPlaceStatePorts()) {
+    const city = ports.findCity(ports.readPlaceValue());
     if (city) {
-      state.selectedCity = city;
-      state.activeCityKey = cityKey(city);
-      $("#birthPlace").value = formatCity(city);
+      ports.writeSelectedCity(city);
+      ports.writePlaceValue(ports.formatCity(city));
     }
-    updateClearPlaceButton();
-    hidePlaceSuggestions();
+    ports.updateClearButton();
+    ports.hideSuggestions();
   }
 
   function localizedLastChartPorts() {
