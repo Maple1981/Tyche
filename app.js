@@ -3478,6 +3478,10 @@
     node.setAttribute(name, value);
   }
 
+  function removeNodeAttribute(node, name) {
+    node.removeAttribute(name);
+  }
+
   function writeNodeTitle(node, title) {
     node.title = title;
   }
@@ -3492,6 +3496,30 @@
 
   function setNodeDisabled(node, disabled) {
     node.disabled = disabled;
+  }
+
+  function addNodeClass(node, className) {
+    node.classList.add(className);
+  }
+
+  function toggleNodeClass(node, className, force) {
+    node.classList.toggle(className, force);
+  }
+
+  function focusNode(node) {
+    node?.focus();
+  }
+
+  function blurNode(node) {
+    node.blur();
+  }
+
+  function selectNodeText(node) {
+    node.select();
+  }
+
+  function scrollNodeIntoView(node, options) {
+    node.scrollIntoView(options);
   }
 
   function writeElementText(selector, text) {
@@ -3512,6 +3540,10 @@
 
   function setElementAttribute(selector, name, value) {
     setNodeAttribute($(selector), name, value);
+  }
+
+  function removeElementAttribute(selector, name) {
+    removeNodeAttribute($(selector), name);
   }
 
   function writeElementTitle(selector, title) {
@@ -3755,7 +3787,7 @@
   }
 
   function applyGlossaryTriggerModel(node, model) {
-    node.classList.add("glossary-trigger");
+    addNodeClass(node, "glossary-trigger");
     setNodeAttribute(node, "aria-haspopup", "dialog");
     setNodeAttribute(node, "aria-label", model.ariaLabel);
     if (!model.role) return;
@@ -3814,7 +3846,7 @@
   }
 
   function restoreGlossaryReturnFocus(restoreFocus) {
-    if (restoreFocus && state.glossaryReturnFocus) state.glossaryReturnFocus.focus();
+    if (restoreFocus && state.glossaryReturnFocus) focusNode(state.glossaryReturnFocus);
   }
 
   function clearGlossaryReturnFocus() {
@@ -3890,14 +3922,14 @@
     const popover = ports.readPopover();
     if (!popover || popover.hidden) return;
     setNodeHidden(popover, true);
-    popover.removeAttribute("style");
+    removeNodeAttribute(popover, "style");
     ports.restoreReturnFocus(restoreFocus);
     ports.clearReturnFocus();
   }
 
   function positionFloatingPopover(popover, trigger) {
     if (!popover || popover.hidden || !trigger) return;
-    popover.removeAttribute("style");
+    removeNodeAttribute(popover, "style");
     if (window.matchMedia("(max-width: 680px)").matches) return;
     const margin = 14;
     const triggerBox = trigger.getBoundingClientRect();
@@ -4160,7 +4192,7 @@
   }
 
   function clearBirthPlaceActiveDescendant() {
-    $("#birthPlace").removeAttribute("aria-activedescendant");
+    removeElementAttribute("#birthPlace", "aria-activedescendant");
   }
 
   function setActivePlaceIndex(index) {
@@ -4384,11 +4416,11 @@
   }
 
   function scrollPlaceSuggestionIntoView(button) {
-    button.scrollIntoView({ block: "nearest" });
+    scrollNodeIntoView(button, { block: "nearest" });
   }
 
   function applyActivePlaceButtonState(button, active) {
-    button.classList.toggle("is-active", active);
+    toggleNodeClass(button, "is-active", active);
     setNodeAttribute(button, "aria-selected", String(active));
     if (!active) return;
     setBirthPlaceActiveDescendant(button.id);
@@ -4511,11 +4543,11 @@
   }
 
   function blurBirthPlaceField() {
-    $("#birthPlace").blur();
+    blurNode($("#birthPlace"));
   }
 
   function focusBirthPlaceField() {
-    $("#birthPlace").focus();
+    focusNode($("#birthPlace"));
   }
 
   function applyCityToFields(city, force = true) {
@@ -4694,7 +4726,7 @@
   }
 
   function restorePersonDataReturnFocus(restoreFocus) {
-    if (restoreFocus && state.personDataReturnFocus) state.personDataReturnFocus.focus();
+    if (restoreFocus && state.personDataReturnFocus) focusNode(state.personDataReturnFocus);
   }
 
   function clearPersonDataReturnFocus() {
@@ -4730,7 +4762,7 @@
     const popover = ports.readPopover();
     if (!popover || popover.hidden) return;
     setNodeHidden(popover, true);
-    popover.removeAttribute("style");
+    removeNodeAttribute(popover, "style");
     ports.restoreReturnFocus(restoreFocus);
     ports.clearReturnFocus();
   }
@@ -4895,7 +4927,7 @@
   }
 
   function restorePeopleModalReturnFocus() {
-    state.modalReturnFocus?.focus?.();
+    focusNode(state.modalReturnFocus);
   }
 
   function clearPeopleModalReturnFocus() {
@@ -4923,7 +4955,7 @@
   }
 
   function focusPeopleCloseButton() {
-    $("#peopleClose").focus();
+    focusNode($("#peopleClose"));
   }
 
   function peopleModalPorts() {
@@ -5008,7 +5040,7 @@
 
   function setCalculationTriggerBusy(trigger, busy) {
     if (!trigger) return;
-    trigger.classList.toggle("is-loading", busy);
+    toggleNodeClass(trigger, "is-loading", busy);
     setNodeDisabled(trigger, busy);
     setNodeAttribute(trigger, "aria-busy", String(busy));
   }
@@ -6396,7 +6428,7 @@
   }
 
   function scrollChartResultsIntoView() {
-    $("#results").scrollIntoView({ behavior: "smooth", block: "start" });
+    scrollNodeIntoView($("#results"), { behavior: "smooth", block: "start" });
   }
 
   function dispatchChartRenderedEvent(chart, dispatch = dispatchWindowEvent) {
@@ -10667,7 +10699,7 @@
   }
 
   function applyTabButtonState(tab, active) {
-    tab.classList.toggle("is-active", active);
+    toggleNodeClass(tab, "is-active", active);
     setNodeAttribute(tab, "aria-selected", String(active));
   }
 
@@ -10849,7 +10881,7 @@
 
   function handleBirthPlaceFocus(birthPlace) {
     if (state.selectedCity && normalizeText(birthPlace.value) === normalizeText(formatCity(state.selectedCity))) {
-      birthPlace.select();
+      selectNodeText(birthPlace);
     }
     queuePlaceSearch();
   }
