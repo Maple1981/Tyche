@@ -3773,6 +3773,22 @@
     window.requestAnimationFrame(callback);
   }
 
+  function bindNodeEvent(node, type, handler, options) {
+    node.addEventListener(type, handler, options);
+  }
+
+  function bindElementEvent(selector, type, handler, options) {
+    bindNodeEvent($(selector), type, handler, options);
+  }
+
+  function bindDocumentEvent(type, handler, options) {
+    bindNodeEvent(document, type, handler, options);
+  }
+
+  function bindWindowEvent(type, handler, options) {
+    bindNodeEvent(window, type, handler, options);
+  }
+
   function dispatchWindowEvent(name, detail = {}) {
     window.dispatchEvent(new CustomEvent(name, { detail }));
   }
@@ -10428,7 +10444,7 @@
 
   function bindTabs() {
     $$(".tab").forEach((button) => {
-      button.addEventListener("click", handleTabClick);
+      bindNodeEvent(button, "click", handleTabClick);
     });
   }
 
@@ -10495,8 +10511,8 @@
   }
 
   function bindPreferenceEvents() {
-    $("#languageToggle").addEventListener("click", handleLanguageToggle);
-    $("#themeToggle").addEventListener("click", handleThemeToggle);
+    bindElementEvent("#languageToggle", "click", handleLanguageToggle);
+    bindElementEvent("#themeToggle", "click", handleThemeToggle);
   }
 
   function handlePeopleModalBackdropClick(event) {
@@ -10516,10 +10532,10 @@
   }
 
   function bindPeopleModalEvents() {
-    $("#peopleToggle").addEventListener("click", openPeopleModal);
-    $("#peopleClose").addEventListener("click", closePeopleModal);
-    $("#peopleModal").addEventListener("click", handlePeopleModalBackdropClick);
-    $("#peopleGrid").addEventListener("click", handlePeopleGridClick);
+    bindElementEvent("#peopleToggle", "click", openPeopleModal);
+    bindElementEvent("#peopleClose", "click", closePeopleModal);
+    bindElementEvent("#peopleModal", "click", handlePeopleModalBackdropClick);
+    bindElementEvent("#peopleGrid", "click", handlePeopleGridClick);
   }
 
   function handleDocumentPopoverClick(event) {
@@ -10568,12 +10584,12 @@
   }
 
   function bindFloatingPopoverEvents() {
-    document.addEventListener("click", handleDocumentPopoverClick);
-    document.addEventListener("keydown", handleDocumentPopoverKeydown);
-    $("#glossaryClose").addEventListener("click", handleGlossaryCloseClick);
-    $("#personDataClose").addEventListener("click", handlePersonDataCloseClick);
-    window.addEventListener("resize", repositionFloatingPopovers);
-    window.addEventListener("scroll", repositionFloatingPopovers, true);
+    bindDocumentEvent("click", handleDocumentPopoverClick);
+    bindDocumentEvent("keydown", handleDocumentPopoverKeydown);
+    bindElementEvent("#glossaryClose", "click", handleGlossaryCloseClick);
+    bindElementEvent("#personDataClose", "click", handlePersonDataCloseClick);
+    bindWindowEvent("resize", repositionFloatingPopovers);
+    bindWindowEvent("scroll", repositionFloatingPopovers, true);
   }
 
   function handleBirthPlaceFocus(birthPlace) {
@@ -10700,14 +10716,14 @@
 
   function bindBirthPlaceEvents() {
     const birthPlace = $("#birthPlace");
-    birthPlace.addEventListener("focus", handleBirthPlaceFocusEvent);
-    birthPlace.addEventListener("input", handleBirthPlaceInput);
-    birthPlace.addEventListener("keydown", handleBirthPlaceKeydown);
-    birthPlace.addEventListener("blur", handleBirthPlaceBlur);
-    $("#clearPlace").addEventListener("click", handleClearBirthPlaceClick);
-    $("#placeSuggestions").addEventListener("mousedown", handlePlaceSuggestionMousedown);
-    $("#placeSuggestions").addEventListener("click", handlePlaceSuggestionClick);
-    document.addEventListener("pointerdown", handleDocumentPlacePointerdown);
+    bindNodeEvent(birthPlace, "focus", handleBirthPlaceFocusEvent);
+    bindNodeEvent(birthPlace, "input", handleBirthPlaceInput);
+    bindNodeEvent(birthPlace, "keydown", handleBirthPlaceKeydown);
+    bindNodeEvent(birthPlace, "blur", handleBirthPlaceBlur);
+    bindElementEvent("#clearPlace", "click", handleClearBirthPlaceClick);
+    bindElementEvent("#placeSuggestions", "mousedown", handlePlaceSuggestionMousedown);
+    bindElementEvent("#placeSuggestions", "click", handlePlaceSuggestionClick);
+    bindDocumentEvent("pointerdown", handleDocumentPlacePointerdown);
   }
 
   function handleDateTimeFieldChange() {
@@ -10758,21 +10774,21 @@
   }
 
   function bindBirthDataFieldEvents() {
-    $("#birthDate").addEventListener("change", handleDateTimeFieldChange);
-    $("#birthTime").addEventListener("change", handleDateTimeFieldChange);
-    $("#gender").addEventListener("change", clearHistoricalSelection);
+    bindElementEvent("#birthDate", "change", handleDateTimeFieldChange);
+    bindElementEvent("#birthTime", "change", handleDateTimeFieldChange);
+    bindElementEvent("#gender", "change", clearHistoricalSelection);
   }
 
   function bindOptionWarningEvents() {
     OPTION_WARNING_FIELD_IDS.forEach((id) => {
-      $(`#${id}`).addEventListener("change", handleOptionWarningFieldChange);
+      bindElementEvent(`#${id}`, "change", handleOptionWarningFieldChange);
     });
   }
 
   function bindFormEvents() {
     bindBirthDataFieldEvents();
     bindOptionWarningEvents();
-    $("#chart-form").addEventListener("submit", submitChartForm);
+    bindElementEvent("#chart-form", "submit", submitChartForm);
   }
 
   function bindEvents() {
