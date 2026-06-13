@@ -10469,13 +10469,26 @@
     ports.applyModel(buildOptionWarningsModel(ports.readFields(), ports.warningTexts()));
   }
 
+  function activeTabKey(button) {
+    return button.dataset.tab;
+  }
+
+  function applyTabButtonState(tab, active) {
+    tab.classList.toggle("is-active", active);
+    setNodeAttribute(tab, "aria-selected", String(active));
+  }
+
+  function applyTabPanelState(panel, tabKey) {
+    setNodeHidden(panel, panel.id !== `tab-${tabKey}`);
+  }
+
   function activateTab(button) {
+    const tabKey = activeTabKey(button);
     $$(".tab").forEach((tab) => {
-      tab.classList.toggle("is-active", tab === button);
-      tab.setAttribute("aria-selected", String(tab === button));
+      applyTabButtonState(tab, tab === button);
     });
     $$(".tab-panel").forEach((panel) => {
-      setNodeHidden(panel, panel.id !== `tab-${button.dataset.tab}`);
+      applyTabPanelState(panel, tabKey);
     });
   }
 
