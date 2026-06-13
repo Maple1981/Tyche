@@ -11016,9 +11016,18 @@
     closePersonData({ restoreFocus: true });
   }
 
-  function repositionFloatingPopovers() {
-    positionGlossary(state.glossaryReturnFocus);
-    positionPersonData(state.personDataReturnFocus);
+  function floatingPopoverRepositionPorts() {
+    return {
+      readGlossaryTrigger: () => state.glossaryReturnFocus,
+      readPersonDataTrigger: () => state.personDataReturnFocus,
+      positionGlossary,
+      positionPersonData,
+    };
+  }
+
+  function repositionFloatingPopovers(ports = floatingPopoverRepositionPorts()) {
+    ports.positionGlossary(ports.readGlossaryTrigger());
+    ports.positionPersonData(ports.readPersonDataTrigger());
   }
 
   function bindFloatingPopoverEvents() {
