@@ -3513,6 +3513,18 @@
     writeNodePlaceholder($(selector), placeholder);
   }
 
+  function addBodyClass(className) {
+    document.body.classList.add(className);
+  }
+
+  function removeBodyClass(className) {
+    document.body.classList.remove(className);
+  }
+
+  function toggleBodyClass(className, force) {
+    document.body.classList.toggle(className, force);
+  }
+
   function t(key, params = {}) {
     const table = I18N[state.lang] || I18N.es;
     const fallback = I18N.es[key] || key;
@@ -4882,11 +4894,11 @@
   }
 
   function addModalOpenBodyClass() {
-    document.body.classList.add("modal-open");
+    addBodyClass("modal-open");
   }
 
   function removeModalOpenBodyClass() {
-    document.body.classList.remove("modal-open");
+    removeBodyClass("modal-open");
   }
 
   function focusPeopleCloseButton() {
@@ -10374,7 +10386,7 @@
   }
 
   function applyThemeModel(model) {
-    document.body.classList.toggle("night", model.isNight);
+    toggleBodyClass("night", model.isNight);
     writeElementText("#themeToggle span", model.toggleIcon);
   }
 
