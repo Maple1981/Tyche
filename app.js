@@ -10597,9 +10597,17 @@
     if (button) loadHistoricalPerson(button.dataset.personId);
   }
 
+  function handlePeopleToggleClick() {
+    openPeopleModal();
+  }
+
+  function handlePeopleCloseClick() {
+    closePeopleModal();
+  }
+
   function bindPeopleModalEvents() {
-    bindElementEvent("#peopleToggle", "click", openPeopleModal);
-    bindElementEvent("#peopleClose", "click", closePeopleModal);
+    bindElementEvent("#peopleToggle", "click", handlePeopleToggleClick);
+    bindElementEvent("#peopleClose", "click", handlePeopleCloseClick);
     bindElementEvent("#peopleModal", "click", handlePeopleModalBackdropClick);
     bindElementEvent("#peopleGrid", "click", handlePeopleGridClick);
   }
