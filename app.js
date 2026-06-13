@@ -4200,13 +4200,23 @@
     updateOffsetForCity(city);
   }
 
-  function selectPlaceSuggestion(index) {
-    const city = state.placeSuggestions[index];
+  function placeSuggestionSelectionPorts() {
+    return {
+      suggestionAt: (index) => state.placeSuggestions[index],
+      clearHistorical: clearHistoricalSelection,
+      applyCity: applyCityToFields,
+      hideSuggestions: hidePlaceSuggestions,
+      blurPlace: () => $("#birthPlace").blur(),
+    };
+  }
+
+  function selectPlaceSuggestion(index, ports = placeSuggestionSelectionPorts()) {
+    const city = ports.suggestionAt(index);
     if (!city) return;
-    clearHistoricalSelection();
-    applyCityToFields(city, true);
-    hidePlaceSuggestions();
-    $("#birthPlace").blur();
+    ports.clearHistorical();
+    ports.applyCity(city, true);
+    ports.hideSuggestions();
+    ports.blurPlace();
   }
 
   function emptySelectedPersonMetadata() {
