@@ -10764,13 +10764,23 @@
     setNodeHidden(panel, panel.id !== `tab-${tabKey}`);
   }
 
-  function activateTab(button) {
-    const tabKey = activeTabKey(button);
-    $$(".tab").forEach((tab) => {
-      applyTabButtonState(tab, tab === button);
+  function tabActivationPorts() {
+    return {
+      readTabs: () => $$(".tab"),
+      readPanels: () => $$(".tab-panel"),
+      activeKey: activeTabKey,
+      applyTab: applyTabButtonState,
+      applyPanel: applyTabPanelState,
+    };
+  }
+
+  function activateTab(button, ports = tabActivationPorts()) {
+    const tabKey = ports.activeKey(button);
+    ports.readTabs().forEach((tab) => {
+      ports.applyTab(tab, tab === button);
     });
-    $$(".tab-panel").forEach((panel) => {
-      applyTabPanelState(panel, tabKey);
+    ports.readPanels().forEach((panel) => {
+      ports.applyPanel(panel, tabKey);
     });
   }
 
