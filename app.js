@@ -9295,14 +9295,30 @@
     `;
   }
 
-  function renderInterpretation(chart) {
-    const interpretation = interpretChart(chart);
-    $("#interpretationPanel").innerHTML = [
+  function buildInterpretationHtml(interpretation, chart) {
+    return [
       renderInterpretationHeading(),
       renderInterpretationGrid(interpretation),
       renderInterpretationEvidence(interpretation, chart),
       renderInterpretationTimingNote(),
     ].join("");
+  }
+
+  function applyInterpretationHtml(html) {
+    $("#interpretationPanel").innerHTML = html;
+  }
+
+  function interpretationRenderPorts() {
+    return {
+      interpret: interpretChart,
+      buildHtml: buildInterpretationHtml,
+      writeHtml: applyInterpretationHtml,
+    };
+  }
+
+  function renderInterpretation(chart, ports = interpretationRenderPorts()) {
+    const interpretation = ports.interpret(chart);
+    ports.writeHtml(ports.buildHtml(interpretation, chart));
   }
 
   function planetTableHeaders() {

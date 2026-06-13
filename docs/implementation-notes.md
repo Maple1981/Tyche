@@ -86,6 +86,8 @@ For chart rendering, keep frame setup, panel rendering, and completion side effe
 
 The chart frame itself should use a small model for title, metadata, and wheel HTML before touching DOM nodes. This keeps shell rendering consistent with panel rendering.
 
+Interpretation rendering should keep the reading use case, HTML composition, and DOM write behind explicit render ports. `renderInterpretation()` should coordinate those dependencies rather than calling interpretation logic and writing `innerHTML` in the same block.
+
 Where a renderer needs calculated or audited data, prefer a small view model builder before HTML generation. For example, the main lots audit should build each lot row and its fields first, then render that model. Boundary audits should translate neutral warning codes into labeled fields before the renderer writes definition-list markup. Score breakdowns should likewise group and label score data before rendering HTML. Historical example cards should prepare natal-source, audit-status, localized label, and group data before the card renderer writes markup. This keeps testimony extraction and provenance handling separate from HTML details.
 
 Main lot audit rows should group position, lord administration, and benefic/malefic testimony fields in dedicated helpers before composing the final row model.
