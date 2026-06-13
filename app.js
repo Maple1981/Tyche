@@ -4067,12 +4067,16 @@
   }
 
   function setPlaceExpanded(expanded) {
-    $("#birthPlace").setAttribute("aria-expanded", String(expanded));
+    setElementAttribute("#birthPlace", "aria-expanded", String(expanded));
     setElementHidden("#placeSuggestions", !expanded);
     if (!expanded) {
-      $("#birthPlace").removeAttribute("aria-activedescendant");
+      clearBirthPlaceActiveDescendant();
       resetActivePlaceIndex();
     }
+  }
+
+  function clearBirthPlaceActiveDescendant() {
+    $("#birthPlace").removeAttribute("aria-activedescendant");
   }
 
   function setActivePlaceIndex(index) {
@@ -4127,18 +4131,32 @@
     return `${model.message ? `<p class="place-message">${escapeHtml(model.message)}</p>` : ""}${model.rows.map(renderPlaceSuggestionRow).join("")}`;
   }
 
-  function renderPlaceSuggestions(items, message = "") {
-    setPlaceSuggestionsState(items);
-    $("#birthPlace").removeAttribute("aria-activedescendant");
-    const model = buildPlaceSuggestionModel(items, message);
+  function placeSuggestionModelIsEmpty(model) {
+    return !model.rows.length && !model.message;
+  }
 
-    if (!model.rows.length && !model.message) {
+  function applyPlaceSuggestionPanelModel(model) {
+    if (placeSuggestionModelIsEmpty(model)) {
       hidePlaceSuggestions();
       return;
     }
-
     writePanelHtml("#placeSuggestions", renderPlaceSuggestionPanel(model));
     setPlaceExpanded(true);
+  }
+
+  function placeSuggestionRenderPorts() {
+    return {
+      writeState: setPlaceSuggestionsState,
+      clearActiveDescendant: clearBirthPlaceActiveDescendant,
+      buildModel: buildPlaceSuggestionModel,
+      applyModel: applyPlaceSuggestionPanelModel,
+    };
+  }
+
+  function renderPlaceSuggestions(items, message = "", ports = placeSuggestionRenderPorts()) {
+    ports.writeState(items);
+    ports.clearActiveDescendant();
+    ports.applyModel(ports.buildModel(items, message));
   }
 
   function buildGeocodingUrl(query) {
