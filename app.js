@@ -5852,10 +5852,18 @@
     window.dispatchEvent(new CustomEvent("tyche:chart-rendered", { detail: { chart } }));
   }
 
-  function finishChartRender(chart) {
-    finalizeRenderedChartText();
-    scrollChartResultsIntoView();
-    dispatchChartRenderedEvent(chart);
+  function chartRenderCompletionPorts() {
+    return {
+      finalizeText: finalizeRenderedChartText,
+      scrollResults: scrollChartResultsIntoView,
+      dispatchRendered: dispatchChartRenderedEvent,
+    };
+  }
+
+  function finishChartRender(chart, ports = chartRenderCompletionPorts()) {
+    ports.finalizeText();
+    ports.scrollResults();
+    ports.dispatchRendered(chart);
   }
 
   function renderChartContent(chart) {
@@ -5864,9 +5872,16 @@
     renderChartPanels(chart);
   }
 
-  function renderChart(chart) {
-    renderChartContent(chart);
-    finishChartRender(chart);
+  function chartRenderPorts() {
+    return {
+      renderContent: renderChartContent,
+      finish: finishChartRender,
+    };
+  }
+
+  function renderChart(chart, ports = chartRenderPorts()) {
+    ports.renderContent(chart);
+    ports.finish(chart);
   }
 
   function prepareChartCalculationUi() {
