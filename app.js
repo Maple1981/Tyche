@@ -9786,17 +9786,31 @@
     applyCityToFields(city, cityChanged);
   }
 
-  function buildOptionWarningsModel() {
-    const techniqueMode = $("#techniqueMode").value;
-    const includeModern = $("#includeModern").checked;
-    const strictWithModern = techniqueMode === "strict" && includeModern;
+  function readOptionWarningFields() {
     return {
-      calendarHidden: $("#calendar").value !== "julian",
-      zodiacHidden: $("#zodiac").value !== "sidereal",
+      calendar: $("#calendar").value,
+      zodiac: $("#zodiac").value,
+      techniqueMode: $("#techniqueMode").value,
+      includeModern: $("#includeModern").checked,
+    };
+  }
+
+  function optionWarningTexts() {
+    return {
+      mixed: t("mixedInlineWarning"),
+      modernStrict: t("modernStrictInlineWarning"),
+    };
+  }
+
+  function buildOptionWarningsModel(fields = readOptionWarningFields(), texts = optionWarningTexts()) {
+    const strictWithModern = fields.techniqueMode === "strict" && fields.includeModern;
+    return {
+      calendarHidden: fields.calendar !== "julian",
+      zodiacHidden: fields.zodiac !== "sidereal",
       technique: {
-        text: strictWithModern ? t("modernStrictInlineWarning") : t("mixedInlineWarning"),
+        text: strictWithModern ? texts.modernStrict : texts.mixed,
         test: strictWithModern ? "modern-strict-warning" : "modern-mixed-warning",
-        hidden: techniqueMode !== "mixed" && !includeModern,
+        hidden: fields.techniqueMode !== "mixed" && !fields.includeModern,
       },
     };
   }
@@ -9814,8 +9828,16 @@
     }
   }
 
-  function updateOptionWarnings() {
-    applyOptionWarningsModel(buildOptionWarningsModel());
+  function optionWarningPorts() {
+    return {
+      readFields: readOptionWarningFields,
+      warningTexts: optionWarningTexts,
+      applyModel: applyOptionWarningsModel,
+    };
+  }
+
+  function updateOptionWarnings(ports = optionWarningPorts()) {
+    ports.applyModel(buildOptionWarningsModel(ports.readFields(), ports.warningTexts()));
   }
 
   function activateTab(button) {
@@ -10055,6 +10077,10 @@
 
   const OPTION_WARNING_FIELD_IDS = ["calendar", "zodiac", "techniqueMode", "includeModern"];
 
+  function handleOptionWarningFieldChange() {
+    updateOptionWarnings();
+  }
+
   function bindBirthDataFieldEvents() {
     $("#birthDate").addEventListener("change", handleDateTimeFieldChange);
     $("#birthTime").addEventListener("change", handleDateTimeFieldChange);
@@ -10063,7 +10089,7 @@
 
   function bindOptionWarningEvents() {
     OPTION_WARNING_FIELD_IDS.forEach((id) => {
-      $(`#${id}`).addEventListener("change", updateOptionWarnings);
+      $(`#${id}`).addEventListener("change", handleOptionWarningFieldChange);
     });
   }
 
