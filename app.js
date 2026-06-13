@@ -10250,13 +10250,17 @@
     state.theme = theme;
   }
 
+  function savePreferenceValue(key, value) {
+    localStorage.setItem(key, value);
+  }
+
   function preferencePorts() {
     return {
       readLanguage: readLanguageState,
       writeLanguage: setLanguageState,
       readTheme: readThemeState,
       writeTheme: setThemeState,
-      save: (key, value) => localStorage.setItem(key, value),
+      save: savePreferenceValue,
       applyLanguage: applyI18n,
       applyTheme,
     };
@@ -10699,6 +10703,10 @@
     console.info("Tyche regression test API enabled.");
   }
 
+  function markTycheReady() {
+    window.__TYCHE_READY__ = true;
+  }
+
   function appStartupPorts() {
     return {
       populateLists,
@@ -10707,7 +10715,7 @@
       bindTabs,
       bindEvents,
       installTestApi,
-      markReady: () => { window.__TYCHE_READY__ = true; },
+      markReady: markTycheReady,
     };
   }
 
