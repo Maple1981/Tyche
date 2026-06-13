@@ -9826,15 +9826,26 @@
     $("#timezoneList").innerHTML = TIME_ZONES.map((zone) => `<option value="${escapeHtml(zone)}"></option>`).join("");
   }
 
-  function updatePlaceFields() {
-    const city = findCity($("#birthPlace").value);
+  function placeFieldUpdatePorts() {
+    return {
+      readPlaceValue: () => $("#birthPlace").value,
+      findCity,
+      readActiveCityKey: () => state.activeCityKey,
+      cityKey,
+      applyCity: applyCityToFields,
+      clearSelectedCity: () => setSelectedCityState(null),
+    };
+  }
+
+  function updatePlaceFields(ports = placeFieldUpdatePorts()) {
+    const city = ports.findCity(ports.readPlaceValue());
     if (!city) {
-      setSelectedCityState(null);
+      ports.clearSelectedCity();
       return;
     }
-    const nextCityKey = cityKey(city);
-    const cityChanged = state.activeCityKey !== nextCityKey;
-    applyCityToFields(city, cityChanged);
+    const nextCityKey = ports.cityKey(city);
+    const cityChanged = ports.readActiveCityKey() !== nextCityKey;
+    ports.applyCity(city, cityChanged);
   }
 
   function readOptionWarningFields() {
