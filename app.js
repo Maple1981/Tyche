@@ -4002,8 +4002,12 @@
     }
   }
 
+  function setActivePlaceIndex(index) {
+    state.activePlaceIndex = index;
+  }
+
   function resetActivePlaceIndex() {
-    state.activePlaceIndex = -1;
+    setActivePlaceIndex(-1);
   }
 
   function setPlaceSuggestionsState(items) {
@@ -4111,8 +4115,12 @@
     window.clearTimeout(state.placeSearchTimer);
   }
 
+  function setPlaceSearchTimer(timer) {
+    state.placeSearchTimer = timer;
+  }
+
   function schedulePlaceSearch(callback) {
-    state.placeSearchTimer = window.setTimeout(callback, PLACE_SEARCH_DELAY);
+    setPlaceSearchTimer(window.setTimeout(callback, PLACE_SEARCH_DELAY));
   }
 
   function placeSearchPorts() {
@@ -4193,7 +4201,7 @@
     return {
       suggestionCount: () => state.placeSuggestions.length,
       readActiveIndex: () => state.activePlaceIndex,
-      writeActiveIndex: (index) => { state.activePlaceIndex = index; },
+      writeActiveIndex: setActivePlaceIndex,
       updateActive: updateActivePlace,
     };
   }
@@ -10108,12 +10116,20 @@
     return theme === "night" ? "day" : "night";
   }
 
+  function setLanguageState(lang) {
+    state.lang = lang;
+  }
+
+  function setThemeState(theme) {
+    state.theme = theme;
+  }
+
   function preferencePorts() {
     return {
       readLanguage: () => state.lang,
-      writeLanguage: (lang) => { state.lang = lang; },
+      writeLanguage: setLanguageState,
       readTheme: () => state.theme,
-      writeTheme: (theme) => { state.theme = theme; },
+      writeTheme: setThemeState,
       save: (key, value) => localStorage.setItem(key, value),
       applyLanguage: applyI18n,
       applyTheme,
