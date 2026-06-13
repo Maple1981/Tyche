@@ -3736,14 +3736,18 @@
     if (!entry) return null;
     return {
       title: entry.title,
-      bodyHtml: entry.body.join(""),
+      bodyParts: [...entry.body],
     };
+  }
+
+  function renderGlossaryBody(parts) {
+    return parts.join("");
   }
 
   function renderGlossaryPopover(model) {
     const popover = $("#glossaryPopover");
     writeElementText("#glossaryTitle", model.title);
-    writePanelHtml("#glossaryBody", model.bodyHtml);
+    writePanelHtml("#glossaryBody", renderGlossaryBody(model.bodyParts));
     capitalizeStructuredText($("#glossaryBody"));
     setNodeHidden(popover, false);
     return popover;
