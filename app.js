@@ -9988,6 +9988,25 @@
     return `${tableHtml}${renderInlinePartsNote(model.noteParts)}`;
   }
 
+  function renderSectionedTableModelHtml(model) {
+    if (!model.sections) return renderTableModelHtml(model);
+    if (model.sections.length === 1 && !model.sections[0].title) {
+      return makeTable(model.sections[0].headers, model.sections[0].rows);
+    }
+    return model.sections.map(renderTableSection).join("");
+  }
+
+  function tablePanelRenderPorts() {
+    return {
+      renderModel: renderSectionedTableModelHtml,
+      writeHtml: writePanelHtml,
+    };
+  }
+
+  function renderTablePanel(selector, model, ports = tablePanelRenderPorts()) {
+    ports.writeHtml(selector, ports.renderModel(model));
+  }
+
   function buildPlanetTableModel(chart) {
     const headers = planetTableHeaders();
     const traditionalKeys = chart.planetKeys.filter((key) => VISIBLE_KEYS.includes(key));
@@ -10009,10 +10028,7 @@
 
   function renderPlanetTable(chart) {
     const model = buildPlanetTableModel(chart);
-    const html = model.sections.length === 1 && !model.sections[0].title
-      ? makeTable(model.sections[0].headers, model.sections[0].rows)
-      : model.sections.map(renderTableSection).join("");
-    writePanelHtml("#tab-planets", html);
+    renderTablePanel("#tab-planets", model);
   }
 
   function houseTableHeaders() {
@@ -10053,7 +10069,7 @@
 
   function renderHouseTable(chart) {
     const model = buildHouseTableModel(chart);
-    writePanelHtml("#tab-houses", makeTable(model.headers, model.rows));
+    renderTablePanel("#tab-houses", model);
   }
 
   function lotTableHeaders() {
@@ -10143,7 +10159,7 @@
   }
 
   function renderLotTable(chart) {
-    writePanelHtml("#tab-lots", renderTableModelHtml(buildLotTableModel(chart)));
+    renderTablePanel("#tab-lots", buildLotTableModel(chart));
   }
 
   function aspectTableHeaders() {
@@ -10221,7 +10237,7 @@
   }
 
   function renderAspectTable(chart) {
-    writePanelHtml("#tab-aspects", renderTableModelHtml(buildAspectTableModel(chart)));
+    renderTablePanel("#tab-aspects", buildAspectTableModel(chart));
   }
 
   function polar(cx, cy, r, lon, asc) {
