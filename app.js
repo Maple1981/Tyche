@@ -11078,15 +11078,27 @@
     ports.queueSearch();
   }
 
-  function handleBirthPlaceArrowDown(event) {
-    event.preventDefault();
-    if ($("#placeSuggestions").hidden) queuePlaceSearch();
-    moveActivePlace(1);
+  function readPlaceSuggestionsHidden() {
+    return readElementHidden("#placeSuggestions");
   }
 
-  function handleBirthPlaceArrowUp(event) {
+  function birthPlaceArrowPorts() {
+    return {
+      readSuggestionsHidden: readPlaceSuggestionsHidden,
+      queueSearch: queuePlaceSearch,
+      moveActivePlace,
+    };
+  }
+
+  function handleBirthPlaceArrowDown(event, ports = birthPlaceArrowPorts()) {
     event.preventDefault();
-    moveActivePlace(-1);
+    if (ports.readSuggestionsHidden()) ports.queueSearch();
+    ports.moveActivePlace(1);
+  }
+
+  function handleBirthPlaceArrowUp(event, ports = birthPlaceArrowPorts()) {
+    event.preventDefault();
+    ports.moveActivePlace(-1);
   }
 
   function activePlaceSelectionIndex(activeIndex = state.activePlaceIndex) {
@@ -11111,8 +11123,14 @@
     ports.selectSuggestion(ports.selectionIndex());
   }
 
-  function handleBirthPlaceEscape() {
-    hidePlaceSuggestions();
+  function birthPlaceEscapePorts() {
+    return {
+      hideSuggestions: hidePlaceSuggestions,
+    };
+  }
+
+  function handleBirthPlaceEscape(_event, ports = birthPlaceEscapePorts()) {
+    ports.hideSuggestions();
   }
 
   const BIRTH_PLACE_KEY_HANDLERS = Object.freeze({
