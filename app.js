@@ -3432,6 +3432,14 @@
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
+  function writeElementText(selector, text) {
+    $(selector).textContent = text;
+  }
+
+  function writePanelHtml(selector, html) {
+    $(selector).innerHTML = html;
+  }
+
   function t(key, params = {}) {
     const table = I18N[state.lang] || I18N.es;
     const fallback = I18N.es[key] || key;
@@ -5985,9 +5993,9 @@
   function renderChartFrame(chart) {
     const model = buildChartFrameModel(chart);
     $("#results").hidden = false;
-    $("#chartTitle").textContent = model.title;
-    $("#chartMeta").textContent = model.meta;
-    $("#chartWheel").innerHTML = renderWheelModel(model.wheel);
+    writeElementText("#chartTitle", model.title);
+    writeElementText("#chartMeta", model.meta);
+    writePanelHtml("#chartWheel", renderWheelModel(model.wheel));
   }
 
   const CHART_PANEL_RENDERERS = Object.freeze([
@@ -6138,7 +6146,7 @@
       ${model.notes.map((note) => `<p class="text-note">${escapeHtml(note)}</p>`).join("")}
       ${renderAlternateSectLotsModel(model.alternateLots)}
     `;
-    $("#coreSummary").innerHTML = html;
+    writePanelHtml("#coreSummary", html);
   }
 
   function buildAnglesPanelModel(chart) {
@@ -6156,7 +6164,7 @@
 
   function renderAnglesPanel(chart) {
     const model = buildAnglesPanelModel(chart);
-    $("#anglesPanel").innerHTML = renderMetricPanel(model);
+    writePanelHtml("#anglesPanel", renderMetricPanel(model));
   }
 
   function buildAscLordModel(chart) {
@@ -6191,13 +6199,13 @@
 
   function renderAscLord(chart) {
     const model = buildAscLordModel(chart);
-    $("#ascLordPanel").innerHTML = `
+    writePanelHtml("#ascLordPanel", `
       <h3>${glossaryTerm(model.title, model.titleGlossary)}</h3>
       <p class="text-note">${escapeHtml(model.note)}</p>
       <div class="condition-list">
         ${model.conditionGroups.map((item) => renderConditionGroup(item, chart)).join("")}
       </div>
-    `;
+    `);
   }
 
   function moonStatusText(chart) {
@@ -6232,7 +6240,7 @@
 
   function renderMoon(chart) {
     const model = buildMoonPanelModel(chart);
-    $("#moonPanel").innerHTML = renderMetricPanel(model);
+    writePanelHtml("#moonPanel", renderMetricPanel(model));
   }
 
   function ephemerisEngineLabel(chart) {
@@ -6316,14 +6324,14 @@
 
   function renderTechnicalPanel(chart) {
     const model = buildTechnicalPanelModel(chart);
-    $("#technicalPanel").innerHTML = `
+    writePanelHtml("#technicalPanel", `
       <details>
         <summary><h3>${escapeHtml(model.title)}</h3></summary>
         ${renderTechnicalNotes(model.notes)}
         ${renderTechnicalMetricSection(model.astronomyTitle, model.astronomyMetrics)}
         ${renderTechnicalMetricSection(model.judgmentTitle, model.judgmentMetrics, renderBoundaryAudit(model.boundary))}
       </details>
-    `;
+    `);
   }
 
   function planetLabel(key) {
@@ -9491,7 +9499,7 @@
   }
 
   function applyInterpretationHtml(html) {
-    $("#interpretationPanel").innerHTML = html;
+    writePanelHtml("#interpretationPanel", html);
   }
 
   function interpretationRenderPorts() {
@@ -9556,10 +9564,6 @@
     if (model.emptyText) return renderEscapedTextNote(model.emptyText);
     const tableHtml = makeTable(model.headers, model.rows);
     return model.noteHtml ? `${tableHtml}${renderTextNote(model.noteHtml)}` : tableHtml;
-  }
-
-  function writePanelHtml(selector, html) {
-    $(selector).innerHTML = html;
   }
 
   function buildPlanetTableModel(chart) {

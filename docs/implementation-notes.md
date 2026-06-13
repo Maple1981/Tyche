@@ -84,7 +84,7 @@ Topic scoring should keep score-row setup, score mutation, accumulator creation,
 
 For chart rendering, keep frame setup, panel rendering, and completion side effects separate: the shell prepares title/meta/wheel, the panel renderer owns panel order, and the completion step handles capitalization, scrolling, and chart-rendered events through injectable ports. The chart panel order should live as renderer data so it can be tested or overridden without editing the panel loop. Persisting the last rendered chart should happen through a writer helper in the render-content step.
 
-The chart frame itself should use a small model for title, metadata, and wheel HTML before touching DOM nodes. This keeps shell rendering consistent with panel rendering.
+The chart frame itself should use a small model for title, metadata, and wheel HTML before touching DOM nodes. This keeps shell rendering consistent with panel rendering. Final text and HTML writes should go through the shared DOM writer helpers.
 
 Interpretation rendering should keep the reading use case, HTML composition, and DOM write behind explicit render ports. `renderInterpretation()` should coordinate those dependencies rather than calling interpretation logic and writing `innerHTML` in the same block.
 
@@ -102,7 +102,7 @@ Large panel renderers should be decomposed into subrenderers for their stable re
 
 Within the interpretation renderer, summary badges, focus lists, and each evidence subsection should remain separate subrenderers rather than inline HTML inside the parent section.
 
-Top chart panels should also prefer view models where labels and values are prepared before rendering. The core summary, angle panel, Ascendant lord panel, Moon panel, and technical notes panel should stay as small model builders plus focused renderers rather than large mixed UI functions. Technical notes should keep astronomy metrics and judgment/settings metrics in separate helper builders.
+Top chart panels should also prefer view models where labels and values are prepared before rendering. The core summary, angle panel, Ascendant lord panel, Moon panel, and technical notes panel should stay as small model builders plus focused renderers rather than large mixed UI functions. Technical notes should keep astronomy metrics and judgment/settings metrics in separate helper builders. Final panel assignment should use the shared HTML writer, not ad hoc `innerHTML` calls.
 
 Table panels should keep row construction separate from final DOM assignment. Use dedicated table models, plus header/row builders for planet, house, lot, and aspect tables, so calculation changes and markup changes remain independent. When a table can split into sections, such as traditional and modern planets, build a section model before rendering.
 
