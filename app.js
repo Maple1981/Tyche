@@ -3484,6 +3484,10 @@
     node.hidden = hidden;
   }
 
+  function readNodeHidden(node) {
+    return Boolean(node?.hidden);
+  }
+
   function writeNodeValue(node, value) {
     node.value = value;
   }
@@ -3546,6 +3550,10 @@
 
   function setElementHidden(selector, hidden) {
     setNodeHidden($(selector), hidden);
+  }
+
+  function readElementHidden(selector) {
+    return readNodeHidden($(selector));
   }
 
   function writeFieldValue(selector, value) {
@@ -3897,6 +3905,10 @@
 
   function bindWindowEvent(type, handler, options) {
     bindNodeEvent(window, type, handler, options);
+  }
+
+  function eventTargetClosest(event, selector) {
+    return event.target.closest(selector);
   }
 
   function dispatchWindowEvent(name, detail = {}) {
@@ -10839,8 +10851,19 @@
     bindElementEvent("#themeToggle", "click", handleThemeToggle);
   }
 
-  function handlePeopleModalBackdropClick(event) {
-    if (event.target === $("#peopleModal")) closePeopleModal();
+  function isPeopleModalBackdropEvent(event, readModal = () => $("#peopleModal")) {
+    return event.target === readModal();
+  }
+
+  function peopleModalBackdropPorts() {
+    return {
+      isBackdrop: isPeopleModalBackdropEvent,
+      closeModal: closePeopleModal,
+    };
+  }
+
+  function handlePeopleModalBackdropClick(event, ports = peopleModalBackdropPorts()) {
+    if (ports.isBackdrop(event)) ports.closeModal();
   }
 
   function handlePeopleGridClick(event) {
@@ -10870,36 +10893,76 @@
     bindElementEvent("#peopleGrid", "click", handlePeopleGridClick);
   }
 
-  function handleDocumentPopoverClick(event) {
-    const trigger = event.target.closest("[data-glossary]");
-    if (trigger) {
-      event.preventDefault();
-      event.stopPropagation();
-      openGlossary(trigger.dataset.glossary, trigger);
-      return;
+  function documentPopoverClickAction(event, closest = eventTargetClosest) {
+    const glossaryTrigger = closest(event, "[data-glossary]");
+    if (glossaryTrigger) {
+      return { type: "openGlossary", key: glossaryTrigger.dataset.glossary, trigger: glossaryTrigger };
     }
-    if (!event.target.closest("#glossaryPopover")) closeGlossary();
-    if (!event.target.closest("#personDataPopover") && !event.target.closest("[data-person-source-id]")) closePersonData();
+    return {
+      type: "closePopovers",
+      closeGlossary: !closest(event, "#glossaryPopover"),
+      closePersonData: !closest(event, "#personDataPopover") && !closest(event, "[data-person-source-id]"),
+    };
   }
 
-  function handleDocumentPopoverKeydown(event) {
-    const trigger = event.target.closest("[data-glossary]");
-    if (trigger && (event.key === "Enter" || event.key === " ")) {
-      event.preventDefault();
-      openGlossary(trigger.dataset.glossary, trigger);
-      return;
+  function popoverKeyActivatesGlossary(event, trigger) {
+    return Boolean(trigger && (event.key === "Enter" || event.key === " "));
+  }
+
+  function documentPopoverKeyAction(event, ports) {
+    const glossaryTrigger = ports.closest(event, "[data-glossary]");
+    if (popoverKeyActivatesGlossary(event, glossaryTrigger)) {
+      return { type: "openGlossary", key: glossaryTrigger.dataset.glossary, trigger: glossaryTrigger };
     }
     if (event.key === "Escape") {
-      if (!$("#glossaryPopover").hidden) {
-        closeGlossary({ restoreFocus: true });
-        return;
-      }
-      if (!$("#personDataPopover").hidden) {
-        closePersonData({ restoreFocus: true });
-        return;
-      }
-      if (!$("#peopleModal").hidden) closePeopleModal();
+      if (ports.isGlossaryOpen()) return { type: "closeGlossary" };
+      if (ports.isPersonDataOpen()) return { type: "closePersonData" };
+      if (ports.isPeopleModalOpen()) return { type: "closePeopleModal" };
     }
+    return { type: "none" };
+  }
+
+  function documentPopoverPorts() {
+    return {
+      closest: eventTargetClosest,
+      isGlossaryOpen: () => !readElementHidden("#glossaryPopover"),
+      isPersonDataOpen: () => !readElementHidden("#personDataPopover"),
+      isPeopleModalOpen: () => !readElementHidden("#peopleModal"),
+      openGlossary,
+      closeGlossary,
+      closePersonData,
+      closePeopleModal,
+    };
+  }
+
+  function applyDocumentPopoverClickAction(event, action, ports) {
+    if (action.type === "openGlossary") {
+      event.preventDefault();
+      event.stopPropagation();
+      ports.openGlossary(action.key, action.trigger);
+      return;
+    }
+    if (action.closeGlossary) ports.closeGlossary();
+    if (action.closePersonData) ports.closePersonData();
+  }
+
+  function applyDocumentPopoverKeyAction(event, action, ports) {
+    if (action.type === "openGlossary") {
+      event.preventDefault();
+      ports.openGlossary(action.key, action.trigger);
+      return;
+    }
+    if (action.type === "closeGlossary") ports.closeGlossary({ restoreFocus: true });
+    if (action.type === "closePersonData") ports.closePersonData({ restoreFocus: true });
+    if (action.type === "closePeopleModal") ports.closePeopleModal();
+  }
+
+  function handleDocumentPopoverClick(event, ports = documentPopoverPorts()) {
+    applyDocumentPopoverClickAction(event, documentPopoverClickAction(event, ports.closest), ports);
+  }
+
+  function handleDocumentPopoverKeydown(event, ports = documentPopoverPorts()) {
+    applyDocumentPopoverKeyAction(event, documentPopoverKeyAction(event, ports), ports);
   }
 
   function handleGlossaryCloseClick() {
