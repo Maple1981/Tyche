@@ -4291,15 +4291,38 @@
     ports.scheduleSearch(() => searchSuggestions(query, ports));
   }
 
-  function updateActivePlace() {
-    $$(".place-suggestion").forEach((button, index) => {
-      const active = index === state.activePlaceIndex;
-      button.classList.toggle("is-active", active);
-      button.setAttribute("aria-selected", String(active));
-      if (active) {
-        $("#birthPlace").setAttribute("aria-activedescendant", button.id);
-        button.scrollIntoView({ block: "nearest" });
-      }
+  function placeSuggestionButtons() {
+    return $$(".place-suggestion");
+  }
+
+  function setBirthPlaceActiveDescendant(id) {
+    setElementAttribute("#birthPlace", "aria-activedescendant", id);
+  }
+
+  function scrollPlaceSuggestionIntoView(button) {
+    button.scrollIntoView({ block: "nearest" });
+  }
+
+  function applyActivePlaceButtonState(button, active) {
+    button.classList.toggle("is-active", active);
+    setNodeAttribute(button, "aria-selected", String(active));
+    if (!active) return;
+    setBirthPlaceActiveDescendant(button.id);
+    scrollPlaceSuggestionIntoView(button);
+  }
+
+  function activePlaceRenderPorts() {
+    return {
+      buttons: placeSuggestionButtons,
+      readActiveIndex: readActivePlaceIndex,
+      applyButtonState: applyActivePlaceButtonState,
+    };
+  }
+
+  function updateActivePlace(ports = activePlaceRenderPorts()) {
+    const activeIndex = ports.readActiveIndex();
+    ports.buttons().forEach((button, index) => {
+      ports.applyButtonState(button, index === activeIndex);
     });
   }
 
