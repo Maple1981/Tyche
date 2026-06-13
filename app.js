@@ -4366,7 +4366,7 @@
 
   function historicalInterpretiveReferences(person) {
     const structured = Array.isArray(person.interpretiveReferences) ? person.interpretiveReferences : [];
-    const legacy = localizedValue(person.brennanReference);
+    const fallbackInterpretiveLabel = localizedValue(person.brennanReference);
     return [
       ...structured.map((reference) => ({
         label: localizedValue(reference.label),
@@ -4375,8 +4375,8 @@
         technique: reference.technique || "",
         url: reference.url || "",
       })),
-      ...(legacy ? [{
-        label: legacy,
+      ...(fallbackInterpretiveLabel ? [{
+        label: fallbackInterpretiveLabel,
         type: "secondary-reference",
         role: "interpretive-example",
         technique: "",
