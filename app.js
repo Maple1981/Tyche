@@ -3825,9 +3825,11 @@
     window.requestAnimationFrame(callback);
   }
 
-  function nextAnimationFrame(requestFrame = requestAnimationFrameAdapter) {
+  function nextBrowserPaint(requestFrame = requestAnimationFrameAdapter, schedule = scheduleTimer) {
     return new Promise((resolve) => {
-      requestFrame(resolve);
+      requestFrame(() => {
+        schedule(resolve, 0);
+      });
     });
   }
 
@@ -5014,7 +5016,7 @@
       showProgress: showCalculationProgress,
       hideProgress: hideCalculationProgress,
       setTriggerBusy: setCalculationTriggerBusy,
-      nextFrame: nextAnimationFrame,
+      nextPaint: nextBrowserPaint,
     };
   }
 
@@ -5025,7 +5027,7 @@
     ports.setTriggerBusy(options.trigger, true);
     try {
       options.prepare?.();
-      await ports.nextFrame();
+      await ports.nextPaint();
       task();
     } catch (error) {
       if (options.onError) options.onError(error);
