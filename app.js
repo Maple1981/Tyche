@@ -11243,9 +11243,16 @@
     bindDocumentEvent("pointerdown", handleDocumentPlacePointerdown);
   }
 
-  function handleDateTimeFieldChange() {
-    clearHistoricalSelection();
-    updatePlaceFields();
+  function dateTimeFieldChangePorts() {
+    return {
+      clearHistorical: clearHistoricalSelection,
+      updatePlaceFields,
+    };
+  }
+
+  function handleDateTimeFieldChange(_event, ports = dateTimeFieldChangePorts()) {
+    ports.clearHistorical();
+    ports.updatePlaceFields();
   }
 
   function chartErrorMessage(error) {
@@ -11293,8 +11300,14 @@
 
   const OPTION_WARNING_FIELD_IDS = ["calendar", "zodiac", "techniqueMode", "includeModern"];
 
-  function handleOptionWarningFieldChange() {
-    updateOptionWarnings();
+  function optionWarningFieldChangePorts() {
+    return {
+      updateWarnings: updateOptionWarnings,
+    };
+  }
+
+  function handleOptionWarningFieldChange(_event, ports = optionWarningFieldChangePorts()) {
+    ports.updateWarnings();
   }
 
   function bindBirthDataFieldEvents() {
