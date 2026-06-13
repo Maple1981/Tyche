@@ -10418,13 +10418,38 @@
     return renderWheelModel(buildWheelModel(chart));
   }
 
-  function translateStaticNodes() {
-    $$("[data-i18n]").forEach((node) => {
-      writeNodeText(node, t(node.dataset.i18n));
-    });
-    $$("[data-i18n-html]").forEach((node) => {
-      writeNodeHtml(node, t(node.dataset.i18nHtml));
-    });
+  function staticI18nNodeModel(node, mode, translate = t) {
+    return {
+      node,
+      mode,
+      value: translate(mode === "html" ? node.dataset.i18nHtml : node.dataset.i18n),
+    };
+  }
+
+  function applyStaticI18nNodeModel(model) {
+    if (model.mode === "html") {
+      writeNodeHtml(model.node, model.value);
+      return;
+    }
+    writeNodeText(model.node, model.value);
+  }
+
+  function translateStaticNodeGroup(nodes, mode, ports) {
+    nodes.forEach((node) => ports.applyModel(ports.buildModel(node, mode)));
+  }
+
+  function staticI18nPorts() {
+    return {
+      textNodes: () => $$("[data-i18n]"),
+      htmlNodes: () => $$("[data-i18n-html]"),
+      buildModel: staticI18nNodeModel,
+      applyModel: applyStaticI18nNodeModel,
+    };
+  }
+
+  function translateStaticNodes(ports = staticI18nPorts()) {
+    translateStaticNodeGroup(ports.textNodes(), "text", ports);
+    translateStaticNodeGroup(ports.htmlNodes(), "html", ports);
   }
 
   function localizedPlaceStatePorts() {
