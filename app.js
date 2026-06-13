@@ -3949,8 +3949,17 @@
     $("#placeSuggestions").hidden = !expanded;
     if (!expanded) {
       $("#birthPlace").removeAttribute("aria-activedescendant");
-      state.activePlaceIndex = -1;
+      resetActivePlaceIndex();
     }
+  }
+
+  function resetActivePlaceIndex() {
+    state.activePlaceIndex = -1;
+  }
+
+  function setPlaceSuggestionsState(items) {
+    state.placeSuggestions = items;
+    resetActivePlaceIndex();
   }
 
   function updateClearPlaceButton() {
@@ -3959,7 +3968,7 @@
 
   function hidePlaceSuggestions() {
     $("#placeSuggestions").innerHTML = "";
-    state.placeSuggestions = [];
+    setPlaceSuggestionsState([]);
     setPlaceExpanded(false);
   }
 
@@ -3994,8 +4003,7 @@
 
   function renderPlaceSuggestions(items, message = "") {
     const panel = $("#placeSuggestions");
-    state.placeSuggestions = items;
-    state.activePlaceIndex = -1;
+    setPlaceSuggestionsState(items);
     $("#birthPlace").removeAttribute("aria-activedescendant");
     const model = buildPlaceSuggestionModel(items, message);
 
