@@ -3481,6 +3481,10 @@
     node.placeholder = placeholder;
   }
 
+  function writeNodeTabIndex(node, tabIndex) {
+    node.tabIndex = tabIndex;
+  }
+
   function writeElementText(selector, text) {
     writeNodeText($(selector), text);
   }
@@ -3713,22 +3717,49 @@
     }[key] || "lots";
   }
 
+  function glossaryTriggerNeedsRole(node) {
+    return node.tagName !== "BUTTON" && node.tagName !== "A";
+  }
+
+  function buildGlossaryTriggerModel(node, key) {
+    return {
+      ariaLabel: t("glossaryOpen", { term: node.textContent.trim() || key }),
+      role: glossaryTriggerNeedsRole(node) ? "button" : "",
+      tabIndex: glossaryTriggerNeedsRole(node) ? 0 : null,
+    };
+  }
+
+  function applyGlossaryTriggerModel(node, model) {
+    node.classList.add("glossary-trigger");
+    setNodeAttribute(node, "aria-haspopup", "dialog");
+    setNodeAttribute(node, "aria-label", model.ariaLabel);
+    if (!model.role) return;
+    setNodeAttribute(node, "role", model.role);
+    writeNodeTabIndex(node, model.tabIndex);
+  }
+
+  function decorateGlossaryTriggerNode(node) {
+    const key = node.dataset.glossary;
+    if (!glossaryEntry(key)) return;
+    applyGlossaryTriggerModel(node, buildGlossaryTriggerModel(node, key));
+  }
+
+  function updatePopoverCloseLabels() {
+    const glossaryClose = $("#glossaryClose");
+    const personDataClose = $("#personDataClose");
+    if (glossaryClose) {
+      setNodeAttribute(glossaryClose, "aria-label", t("close"));
+      writeNodeTitle(glossaryClose, t("close"));
+    }
+    if (personDataClose) {
+      setNodeAttribute(personDataClose, "aria-label", t("close"));
+      writeNodeTitle(personDataClose, t("close"));
+    }
+  }
+
   function decorateGlossaryTriggers(root = document) {
-    $$("[data-glossary]", root).forEach((node) => {
-      const key = node.dataset.glossary;
-      if (!glossaryEntry(key)) return;
-      node.classList.add("glossary-trigger");
-      node.setAttribute("aria-haspopup", "dialog");
-      node.setAttribute("aria-label", t("glossaryOpen", { term: node.textContent.trim() || key }));
-      if (node.tagName !== "BUTTON" && node.tagName !== "A") {
-        node.setAttribute("role", "button");
-        node.tabIndex = 0;
-      }
-    });
-    $("#glossaryClose")?.setAttribute("aria-label", t("close"));
-    if ($("#glossaryClose")) $("#glossaryClose").title = t("close");
-    $("#personDataClose")?.setAttribute("aria-label", t("close"));
-    if ($("#personDataClose")) $("#personDataClose").title = t("close");
+    $$("[data-glossary]", root).forEach(decorateGlossaryTriggerNode);
+    updatePopoverCloseLabels();
   }
 
   function buildGlossaryPopoverModel(key) {
