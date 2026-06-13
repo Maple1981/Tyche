@@ -3432,12 +3432,20 @@
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
+  function writeNodeText(node, text) {
+    node.textContent = text;
+  }
+
+  function writeNodeHtml(node, html) {
+    node.innerHTML = html;
+  }
+
   function writeElementText(selector, text) {
-    $(selector).textContent = text;
+    writeNodeText($(selector), text);
   }
 
   function writePanelHtml(selector, html) {
-    $(selector).innerHTML = html;
+    writeNodeHtml($(selector), html);
   }
 
   function t(key, params = {}) {
@@ -6063,13 +6071,13 @@
   }
 
   function prepareChartCalculationUi() {
-    $("#formStatus").textContent = "";
+    writeElementText("#formStatus", "");
     updatePlaceFields();
     hidePlaceSuggestions();
   }
 
   function renderChartCalculationWarning(warningText) {
-    $("#formStatus").textContent = warningText;
+    writeElementText("#formStatus", warningText);
   }
 
   function currentChartCalculationPorts() {
@@ -9872,10 +9880,10 @@
 
   function translateStaticNodes() {
     $$("[data-i18n]").forEach((node) => {
-      node.textContent = t(node.dataset.i18n);
+      writeNodeText(node, t(node.dataset.i18n));
     });
     $$("[data-i18n-html]").forEach((node) => {
-      node.innerHTML = t(node.dataset.i18nHtml);
+      writeNodeHtml(node, t(node.dataset.i18nHtml));
     });
   }
 
@@ -9944,7 +9952,7 @@
   }
 
   function updatePreferenceControlLabels() {
-    $("#languageToggle span").textContent = state.lang.toUpperCase();
+    writeElementText("#languageToggle span", state.lang.toUpperCase());
     $("#languageToggle").setAttribute("aria-label", state.lang === "es" ? "Cambiar idioma" : "Change language");
     $("#languageToggle").title = state.lang === "es" ? "Cambiar idioma" : "Change language";
     $("#themeToggle").setAttribute("aria-label", state.lang === "es" ? "Cambiar tema" : "Change theme");
@@ -9981,11 +9989,11 @@
 
   function applyTheme() {
     document.body.classList.toggle("night", state.theme === "night");
-    $("#themeToggle span").textContent = state.theme === "night" ? "☉" : "☾";
+    writeElementText("#themeToggle span", state.theme === "night" ? "☉" : "☾");
   }
 
   function populateLists() {
-    $("#timezoneList").innerHTML = TIME_ZONES.map((zone) => `<option value="${escapeHtml(zone)}"></option>`).join("");
+    writePanelHtml("#timezoneList", TIME_ZONES.map((zone) => `<option value="${escapeHtml(zone)}"></option>`).join(""));
   }
 
   function placeFieldUpdatePorts() {
@@ -10046,7 +10054,7 @@
     if (calendarWarning) calendarWarning.hidden = model.calendarHidden;
     if (zodiacWarning) zodiacWarning.hidden = model.zodiacHidden;
     if (techniqueWarning) {
-      techniqueWarning.textContent = model.technique.text;
+      writeNodeText(techniqueWarning, model.technique.text);
       techniqueWarning.dataset.test = model.technique.test;
       techniqueWarning.hidden = model.technique.hidden;
     }
@@ -10330,7 +10338,7 @@
   }
 
   function renderChartError(message) {
-    $("#formStatus").textContent = message;
+    writeElementText("#formStatus", message);
   }
 
   function dispatchChartErrorEvent(message) {
