@@ -6291,9 +6291,12 @@
     };
   }
 
+  function renderAnglesPanelModel(model) {
+    return renderMetricPanel(model);
+  }
+
   function renderAnglesPanel(chart) {
-    const model = buildAnglesPanelModel(chart);
-    writePanelHtml("#anglesPanel", renderMetricPanel(model));
+    writePanelHtml("#anglesPanel", renderAnglesPanelModel(buildAnglesPanelModel(chart)));
   }
 
   function buildAscLordModel(chart) {
@@ -6370,9 +6373,12 @@
     };
   }
 
+  function renderMoonPanelModel(model) {
+    return renderMetricPanel(model);
+  }
+
   function renderMoon(chart) {
-    const model = buildMoonPanelModel(chart);
-    writePanelHtml("#moonPanel", renderMetricPanel(model));
+    writePanelHtml("#moonPanel", renderMoonPanelModel(buildMoonPanelModel(chart)));
   }
 
   function ephemerisEngineLabel(chart) {
