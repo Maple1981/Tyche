@@ -577,13 +577,24 @@ th .glossary-trigger,
 }
 
 .calculation-progress {
+  position: fixed;
+  right: auto;
+  bottom: 18px;
+  left: 50%;
+  z-index: 120;
   display: grid;
-  flex: 1 1 220px;
-  min-width: 190px;
+  width: min(420px, calc(100vw - 28px));
   gap: 7px;
+  padding: 12px 14px;
+  border: 1px solid rgba(35, 82, 124, 0.24);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
   color: var(--blue-deep);
   font-size: 0.86rem;
   font-weight: 700;
+  pointer-events: none;
+  transform: translateX(-50%);
 }
 
 .calculation-progress[hidden] {
