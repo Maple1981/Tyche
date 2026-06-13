@@ -3673,8 +3673,8 @@
 
   function renderGlossaryPopover(model) {
     const popover = $("#glossaryPopover");
-    $("#glossaryTitle").textContent = model.title;
-    $("#glossaryBody").innerHTML = model.bodyHtml;
+    writeElementText("#glossaryTitle", model.title);
+    writePanelHtml("#glossaryBody", model.bodyHtml);
     capitalizeStructuredText($("#glossaryBody"));
     popover.hidden = false;
     return popover;
@@ -4000,7 +4000,7 @@
   }
 
   function hidePlaceSuggestions() {
-    $("#placeSuggestions").innerHTML = "";
+    writePanelHtml("#placeSuggestions", "");
     setPlaceSuggestionsState([]);
     setPlaceExpanded(false);
   }
@@ -4035,7 +4035,6 @@
   }
 
   function renderPlaceSuggestions(items, message = "") {
-    const panel = $("#placeSuggestions");
     setPlaceSuggestionsState(items);
     $("#birthPlace").removeAttribute("aria-activedescendant");
     const model = buildPlaceSuggestionModel(items, message);
@@ -4045,7 +4044,7 @@
       return;
     }
 
-    panel.innerHTML = renderPlaceSuggestionPanel(model);
+    writePanelHtml("#placeSuggestions", renderPlaceSuggestionPanel(model));
     setPlaceExpanded(true);
   }
 
@@ -4405,8 +4404,8 @@
 
   function renderPersonDataPopover(model) {
     const popover = $("#personDataPopover");
-    $("#personDataTitle").textContent = model.title;
-    $("#personDataBody").innerHTML = renderHistoricalQualityDetails(model.details);
+    writeElementText("#personDataTitle", model.title);
+    writePanelHtml("#personDataBody", renderHistoricalQualityDetails(model.details));
     capitalizeStructuredText($("#personDataBody"));
     popover.hidden = false;
     return popover;
@@ -4605,7 +4604,7 @@
 
   function renderHistoricalPeople() {
     const model = buildHistoricalPeopleModel();
-    $("#peopleGrid").innerHTML = model.groups.map(renderHistoricalPeopleGroup).join("");
+    writePanelHtml("#peopleGrid", model.groups.map(renderHistoricalPeopleGroup).join(""));
     capitalizeStructuredText($("#peopleGrid"));
   }
 
