@@ -3444,6 +3444,10 @@
     node.hidden = hidden;
   }
 
+  function writeNodeValue(node, value) {
+    node.value = value;
+  }
+
   function writeElementText(selector, text) {
     writeNodeText($(selector), text);
   }
@@ -3454,6 +3458,10 @@
 
   function setElementHidden(selector, hidden) {
     setNodeHidden($(selector), hidden);
+  }
+
+  function writeFieldValue(selector, value) {
+    writeNodeValue($(selector), value);
   }
 
   function t(key, params = {}) {
@@ -4252,7 +4260,7 @@
 
   function updateOffsetForCity(city) {
     const offset = cityOffsetFromDateTime(city, currentDateTimeFields());
-    if (offset) $("#manualOffset").value = offset;
+    if (offset) writeFieldValue("#manualOffset", offset);
   }
 
   function currentPlaceFieldState() {
@@ -4273,10 +4281,10 @@
   }
 
   function applyCityFieldModel(model) {
-    $("#birthPlace").value = model.birthPlace;
-    if (model.latitude !== null) $("#latitude").value = model.latitude;
-    if (model.longitude !== null) $("#longitude").value = model.longitude;
-    if (model.timeZone !== null) $("#timeZone").value = model.timeZone;
+    writeFieldValue("#birthPlace", model.birthPlace);
+    if (model.latitude !== null) writeFieldValue("#latitude", model.latitude);
+    if (model.longitude !== null) writeFieldValue("#longitude", model.longitude);
+    if (model.timeZone !== null) writeFieldValue("#timeZone", model.timeZone);
   }
 
   function setSelectedCityState(city) {
@@ -4740,15 +4748,15 @@
   }
 
   function applyHistoricalPersonFields(model) {
-    $("#birthDate").value = model.date;
-    $("#birthTime").value = model.time;
-    $("#gender").value = model.gender;
-    $("#calendar").value = model.calendar;
-    $("#birthPlace").value = model.place;
-    $("#latitude").value = model.latitude;
-    $("#longitude").value = model.longitude;
-    $("#timeZone").value = model.timeZone;
-    $("#manualOffset").value = model.manualOffset;
+    writeFieldValue("#birthDate", model.date);
+    writeFieldValue("#birthTime", model.time);
+    writeFieldValue("#gender", model.gender);
+    writeFieldValue("#calendar", model.calendar);
+    writeFieldValue("#birthPlace", model.place);
+    writeFieldValue("#latitude", model.latitude);
+    writeFieldValue("#longitude", model.longitude);
+    writeFieldValue("#timeZone", model.timeZone);
+    writeFieldValue("#manualOffset", model.manualOffset);
   }
 
   function historicalPersonLoadPorts() {
@@ -9961,7 +9969,7 @@
       findCity,
       writeSelectedCity: setSelectedCityState,
       formatCity,
-      writePlaceValue: (value) => { $("#birthPlace").value = value; },
+      writePlaceValue: (value) => writeFieldValue("#birthPlace", value),
       updateClearButton: updateClearPlaceButton,
       hideSuggestions: hidePlaceSuggestions,
     };
@@ -10367,10 +10375,10 @@
   }
 
   function clearBirthPlaceFieldValues(birthPlace) {
-    birthPlace.value = "";
-    $("#latitude").value = "";
-    $("#longitude").value = "";
-    $("#timeZone").value = "";
+    writeNodeValue(birthPlace, "");
+    writeFieldValue("#latitude", "");
+    writeFieldValue("#longitude", "");
+    writeFieldValue("#timeZone", "");
   }
 
   function birthPlaceClearPorts(birthPlace) {
