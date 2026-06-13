@@ -4520,9 +4520,8 @@
     }
   }
 
-  function updateOffsetForCity(city) {
-    const offset = cityOffsetFromDateTime(city, currentDateTimeFields());
-    if (offset) writeFieldValue("#manualOffset", offset);
+  function writeManualOffset(value) {
+    writeFieldValue("#manualOffset", value);
   }
 
   function currentPlaceFieldState() {
@@ -4582,11 +4581,25 @@
     focusNode($("#birthPlace"));
   }
 
-  function applyCityToFields(city, force = true) {
-    setSelectedCityState(city);
-    applyCityFieldModel(buildCityFieldModel(city, currentPlaceFieldState(), force));
-    updateClearPlaceButton();
-    updateOffsetForCity(city);
+  function cityFieldApplicationPorts() {
+    return {
+      setSelectedCity: setSelectedCityState,
+      readFieldState: currentPlaceFieldState,
+      buildFieldModel: buildCityFieldModel,
+      applyFieldModel: applyCityFieldModel,
+      updateClearButton: updateClearPlaceButton,
+      readDateTime: currentDateTimeFields,
+      offsetForCity: cityOffsetFromDateTime,
+      writeOffset: writeManualOffset,
+    };
+  }
+
+  function applyCityToFields(city, force = true, ports = cityFieldApplicationPorts()) {
+    ports.setSelectedCity(city);
+    ports.applyFieldModel(ports.buildFieldModel(city, ports.readFieldState(), force));
+    ports.updateClearButton();
+    const offset = ports.offsetForCity(city, ports.readDateTime());
+    if (offset) ports.writeOffset(offset);
   }
 
   function placeSuggestionSelectionPorts() {
