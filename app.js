@@ -9717,12 +9717,21 @@
     hidePlaceSuggestions();
   }
 
-  function refreshLocalizedLastChart() {
-    if (state.lastChart?.input?.city) state.lastChart.input.place = formatCity(state.lastChart.input.city);
-    if (state.lastChart) {
-      renderChartContent(state.lastChart);
-      finalizeRenderedChartText();
-    }
+  function localizedLastChartPorts() {
+    return {
+      readChart: () => state.lastChart,
+      formatCity,
+      renderContent: renderChartContent,
+      finalizeText: finalizeRenderedChartText,
+    };
+  }
+
+  function refreshLocalizedLastChart(ports = localizedLastChartPorts()) {
+    const chart = ports.readChart();
+    if (!chart) return;
+    if (chart.input?.city) chart.input.place = ports.formatCity(chart.input.city);
+    ports.renderContent(chart);
+    ports.finalizeText();
   }
 
   function refreshLocalizedDynamicContent() {
