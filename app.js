@@ -5990,17 +5990,21 @@
     $("#chartWheel").innerHTML = renderWheelModel(model.wheel);
   }
 
-  function renderChartPanels(chart) {
-    renderCoreSummary(chart);
-    renderAnglesPanel(chart);
-    renderAscLord(chart);
-    renderMoon(chart);
-    renderInterpretation(chart);
-    renderPlanetTable(chart);
-    renderHouseTable(chart);
-    renderLotTable(chart);
-    renderAspectTable(chart);
-    renderTechnicalPanel(chart);
+  const CHART_PANEL_RENDERERS = Object.freeze([
+    renderCoreSummary,
+    renderAnglesPanel,
+    renderAscLord,
+    renderMoon,
+    renderInterpretation,
+    renderPlanetTable,
+    renderHouseTable,
+    renderLotTable,
+    renderAspectTable,
+    renderTechnicalPanel,
+  ]);
+
+  function renderChartPanels(chart, panelRenderers = CHART_PANEL_RENDERERS) {
+    panelRenderers.forEach((renderPanel) => renderPanel(chart));
   }
 
   function finalizeRenderedChartText() {
