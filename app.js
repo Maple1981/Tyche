@@ -5047,17 +5047,21 @@
     return result;
   }
 
-  function tropicalPositions(jd, includeModern) {
+  function setEphemerisEngine(engine) {
+    state.ephemerisEngine = engine;
+  }
+
+  function tropicalPositions(jd, includeModern, writeEngine = setEphemerisEngine) {
     try {
       const astronomy = astronomyTropicalPositions(jd, includeModern);
       if (astronomy) {
-        state.ephemerisEngine = "astronomy";
+        writeEngine("astronomy");
         return astronomy;
       }
     } catch (error) {
       // Fall through to the compact fallback below.
     }
-    state.ephemerisEngine = "fallback";
+    writeEngine("fallback");
     return approximateTropicalPositions(jd, includeModern);
   }
 

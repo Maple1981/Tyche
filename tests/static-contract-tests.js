@@ -112,6 +112,8 @@ assert("Date time conversion separates validation timezone and fallback paths", 
 const computeChartBlock = sectionBetween(app, "function computeChart(input)", "function renderChartFrame(chart)");
 const chartDomainHelpers = ["calculateChartPositions", "enrichChartPositions", "calculateChartLots", "sectContext"];
 assert("Chart computation delegates positions lots and sect context", chartDomainHelpers.every((name) => app.includes(`function ${name}`)) && chartDomainHelpers.every((name) => computeChartBlock.includes(`${name}(`)) && !computeChartBlock.includes("tropicalPositions(time.jd + 1"));
+const tropicalPositionsBlock = sectionBetween(app, "function setEphemerisEngine(engine)", "function ayanamsa(jd)");
+assert("Ephemeris engine state is written through an injected setter", app.includes("function setEphemerisEngine(engine)") && tropicalPositionsBlock.includes("function tropicalPositions(jd, includeModern, writeEngine = setEphemerisEngine)") && tropicalPositionsBlock.includes('writeEngine("astronomy")') && tropicalPositionsBlock.includes('writeEngine("fallback")') && (app.match(/state\.ephemerisEngine =/g) || []).length === 1);
 assert("Chart computation validates input through a helper", app.includes("function validateChartInput(input)") && computeChartBlock.includes("validateChartInput(input)") && !computeChartBlock.includes("missingCoords"));
 assert("Chart computation does not write form status", !computeChartBlock.includes("formStatus") && sectionBetween(app, "function renderCurrentChartCalculation(model", "function runCurrentChartCalculation").includes("ports.renderWarningText(model.warningText)"));
 const alternateSectLotsBlock = sectionBetween(app, "function buildAlternateSectLotsModel(chart)", "function lotName(key)");

@@ -174,6 +174,8 @@ The browser engine uses vendored Astronomy Engine 2.1.19 for Sun, Moon, and plan
 
 `app.js` keeps the older compact formulas as a fallback in case the local vendor file fails to load. Normal production calculations should use Astronomy Engine.
 
+The ephemeris-engine label should be set through a small writer helper rather than direct state mutation inside calculation branches. This keeps fallback reporting testable and avoids scattering calculation-engine state writes.
+
 Risk areas:
 
 - Ancient dates and calendar conversions are not fully supported.
