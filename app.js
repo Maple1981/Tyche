@@ -4155,9 +4155,13 @@
     if (model.timeZone !== null) $("#timeZone").value = model.timeZone;
   }
 
+  function setSelectedCityState(city) {
+    state.selectedCity = city || null;
+    state.activeCityKey = city ? cityKey(city) : "";
+  }
+
   function applyCityToFields(city, force = true) {
-    state.selectedCity = city;
-    state.activeCityKey = cityKey(city);
+    setSelectedCityState(city);
     applyCityFieldModel(buildCityFieldModel(city, currentPlaceFieldState(), force));
     updateClearPlaceButton();
     updateOffsetForCity(city);
@@ -4505,9 +4509,8 @@
   }
 
   function applyHistoricalSelectionState(person) {
-    state.selectedCity = person.place;
+    setSelectedCityState(person.place);
     applySelectedPersonMetadata(selectedPersonMetadataFromPerson(person));
-    state.activeCityKey = cityKey(person.place);
   }
 
   function buildHistoricalPersonFieldModel(person) {
@@ -9710,10 +9713,7 @@
     return {
       readPlaceValue: () => $("#birthPlace").value,
       findCity,
-      writeSelectedCity: (city) => {
-        state.selectedCity = city;
-        state.activeCityKey = cityKey(city);
-      },
+      writeSelectedCity: setSelectedCityState,
       formatCity,
       writePlaceValue: (value) => { $("#birthPlace").value = value; },
       updateClearButton: updateClearPlaceButton,
@@ -9821,8 +9821,7 @@
   function updatePlaceFields() {
     const city = findCity($("#birthPlace").value);
     if (!city) {
-      state.selectedCity = null;
-      state.activeCityKey = "";
+      setSelectedCityState(null);
       return;
     }
     const nextCityKey = cityKey(city);
@@ -10033,8 +10032,7 @@
 
   function handleBirthPlaceInput() {
     clearHistoricalSelection();
-    state.selectedCity = null;
-    state.activeCityKey = "";
+    setSelectedCityState(null);
     queuePlaceSearch();
   }
 
@@ -10079,8 +10077,7 @@
 
   function clearBirthPlaceFields(birthPlace) {
     clearHistoricalSelection();
-    state.selectedCity = null;
-    state.activeCityKey = "";
+    setSelectedCityState(null);
     birthPlace.value = "";
     $("#latitude").value = "";
     $("#longitude").value = "";

@@ -126,7 +126,7 @@ Glossary text lookup should use a static matcher table and a small lookup functi
 
 Search/autocomplete surfaces should keep URL construction, response parsing, result merging, row-model preparation, and DOM writes separate. Birthplace suggestions should build row models with localized labels and metadata, then render those rows through dedicated suggestion renderers. The birthplace search use case should receive its transport, abort controller, fallback lookup, translation labels, merge strategy, and renderer through a small ports object so external geocoding remains an adapter, not core UI logic.
 
-Birthplace selection should also keep field modeling separate from DOM mutation. Build the place/coordinate/time-zone field model and calculate automatic UTC-offset updates through helper functions before applying the result to form controls.
+Birthplace selection should also keep field modeling separate from DOM mutation. Build the place/coordinate/time-zone field model and calculate automatic UTC-offset updates through helper functions before applying the result to form controls. Keep selected-city and active-city-key mutation in one helper so manual input, suggestion selection, localized refresh, and historical examples stay consistent.
 
 Historical-person selection should keep selected-person metadata in a small helper layer. Clearing a manual edit and loading an archived figure should both pass through the same metadata applier instead of writing audit, time-confidence, and zone-source fields independently.
 
