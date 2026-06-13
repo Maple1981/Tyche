@@ -10060,18 +10060,27 @@
     }));
   }
 
-  function handleChartSubmitError(error) {
-    const message = chartErrorMessage(error);
-    renderChartError(message);
-    dispatchChartErrorEvent(message);
+  function chartSubmitPorts() {
+    return {
+      calculate: calculateCurrentChart,
+      errorMessage: chartErrorMessage,
+      renderError: renderChartError,
+      dispatchError: dispatchChartErrorEvent,
+    };
   }
 
-  function submitChartForm(event) {
+  function handleChartSubmitError(error, ports = chartSubmitPorts()) {
+    const message = ports.errorMessage(error);
+    ports.renderError(message);
+    ports.dispatchError(message);
+  }
+
+  function submitChartForm(event, ports = chartSubmitPorts()) {
     event.preventDefault();
     try {
-      calculateCurrentChart();
+      ports.calculate();
     } catch (error) {
-      handleChartSubmitError(error);
+      handleChartSubmitError(error, ports);
     }
   }
 
