@@ -3716,14 +3716,22 @@
     state.glossaryReturnFocus = null;
   }
 
+  function readGlossaryPopover() {
+    return $("#glossaryPopover");
+  }
+
+  function requestAnimationFrameAdapter(callback) {
+    window.requestAnimationFrame(callback);
+  }
+
   function glossaryPopoverPorts() {
     return {
       buildModel: buildGlossaryPopoverModel,
       renderPopover: renderGlossaryPopover,
       setReturnFocus: setGlossaryReturnFocus,
-      requestFrame: (callback) => window.requestAnimationFrame(callback),
+      requestFrame: requestAnimationFrameAdapter,
       position: positionGlossary,
-      readPopover: () => $("#glossaryPopover"),
+      readPopover: readGlossaryPopover,
       restoreReturnFocus: restoreGlossaryReturnFocus,
       clearReturnFocus: clearGlossaryReturnFocus,
     };
@@ -4225,10 +4233,18 @@
     return (currentIndex + delta + count) % count;
   }
 
+  function placeSuggestionCount() {
+    return state.placeSuggestions.length;
+  }
+
+  function readActivePlaceIndex() {
+    return state.activePlaceIndex;
+  }
+
   function activePlaceNavigationPorts() {
     return {
-      suggestionCount: () => state.placeSuggestions.length,
-      readActiveIndex: () => state.activePlaceIndex,
+      suggestionCount: placeSuggestionCount,
+      readActiveIndex: readActivePlaceIndex,
       writeActiveIndex: setActivePlaceIndex,
       updateActive: updateActivePlace,
     };
@@ -4503,14 +4519,18 @@
     state.personDataReturnFocus = null;
   }
 
+  function readPersonDataPopover() {
+    return $("#personDataPopover");
+  }
+
   function personDataPopoverPorts() {
     return {
       buildModel: buildPersonDataPopoverModel,
       renderPopover: renderPersonDataPopover,
       setReturnFocus: setPersonDataReturnFocus,
-      requestFrame: (callback) => window.requestAnimationFrame(callback),
+      requestFrame: requestAnimationFrameAdapter,
       position: positionPersonData,
-      readPopover: () => $("#personDataPopover"),
+      readPopover: readPersonDataPopover,
       restoreReturnFocus: restorePersonDataReturnFocus,
       clearReturnFocus: clearPersonDataReturnFocus,
     };
@@ -6146,6 +6166,10 @@
 
   function setLastChart(chart) {
     state.lastChart = chart;
+  }
+
+  function readLastChart() {
+    return state.lastChart;
   }
 
   function renderChartContent(chart, writeLastChart = setLastChart) {
@@ -10015,7 +10039,7 @@
 
   function localizedLastChartPorts() {
     return {
-      readChart: () => state.lastChart,
+      readChart: readLastChart,
       formatCity,
       renderContent: renderChartContent,
       finalizeText: finalizeRenderedChartText,
@@ -10204,6 +10228,14 @@
     return theme === "night" ? "day" : "night";
   }
 
+  function readLanguageState() {
+    return state.lang;
+  }
+
+  function readThemeState() {
+    return state.theme;
+  }
+
   function setLanguageState(lang) {
     state.lang = lang;
   }
@@ -10214,9 +10246,9 @@
 
   function preferencePorts() {
     return {
-      readLanguage: () => state.lang,
+      readLanguage: readLanguageState,
       writeLanguage: setLanguageState,
-      readTheme: () => state.theme,
+      readTheme: readThemeState,
       writeTheme: setThemeState,
       save: (key, value) => localStorage.setItem(key, value),
       applyLanguage: applyI18n,
