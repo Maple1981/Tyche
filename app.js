@@ -10866,16 +10866,36 @@
     if (ports.isBackdrop(event)) ports.closeModal();
   }
 
-  function handlePeopleGridClick(event) {
-    const dataTrigger = event.target.closest("[data-person-source-id]");
+  function peopleGridClickAction(event, closest = eventTargetClosest) {
+    const dataTrigger = closest(event, "[data-person-source-id]");
     if (dataTrigger) {
+      return { type: "openPersonData", personId: dataTrigger.dataset.personSourceId, trigger: dataTrigger };
+    }
+    const button = closest(event, "[data-person-id]");
+    if (button) return { type: "loadHistoricalPerson", personId: button.dataset.personId, trigger: button };
+    return { type: "none" };
+  }
+
+  function peopleGridClickPorts() {
+    return {
+      closest: eventTargetClosest,
+      openPersonData,
+      loadPerson: loadHistoricalPerson,
+    };
+  }
+
+  function applyPeopleGridClickAction(event, action, ports) {
+    if (action.type === "openPersonData") {
       event.preventDefault();
       event.stopPropagation();
-      openPersonData(dataTrigger.dataset.personSourceId, dataTrigger);
+      ports.openPersonData(action.personId, action.trigger);
       return;
     }
-    const button = event.target.closest("[data-person-id]");
-    if (button) void loadHistoricalPerson(button.dataset.personId, button);
+    if (action.type === "loadHistoricalPerson") void ports.loadPerson(action.personId, action.trigger);
+  }
+
+  function handlePeopleGridClick(event, ports = peopleGridClickPorts()) {
+    applyPeopleGridClickAction(event, peopleGridClickAction(event, ports.closest), ports);
   }
 
   function handlePeopleToggleClick() {
