@@ -10094,16 +10094,31 @@
     }, 120);
   }
 
-  function clearBirthPlaceFields(birthPlace) {
-    clearHistoricalSelection();
-    setSelectedCityState(null);
+  function clearBirthPlaceFieldValues(birthPlace) {
     birthPlace.value = "";
     $("#latitude").value = "";
     $("#longitude").value = "";
     $("#timeZone").value = "";
-    updateClearPlaceButton();
-    hidePlaceSuggestions();
-    birthPlace.focus();
+  }
+
+  function birthPlaceClearPorts(birthPlace) {
+    return {
+      clearHistorical: clearHistoricalSelection,
+      clearSelectedCity: () => setSelectedCityState(null),
+      clearFields: () => clearBirthPlaceFieldValues(birthPlace),
+      updateClearButton: updateClearPlaceButton,
+      hideSuggestions: hidePlaceSuggestions,
+      focus: () => birthPlace.focus(),
+    };
+  }
+
+  function clearBirthPlaceFields(birthPlace, ports = birthPlaceClearPorts(birthPlace)) {
+    ports.clearHistorical();
+    ports.clearSelectedCity();
+    ports.clearFields();
+    ports.updateClearButton();
+    ports.hideSuggestions();
+    ports.focus();
   }
 
   function handlePlaceSuggestionClick(event) {
