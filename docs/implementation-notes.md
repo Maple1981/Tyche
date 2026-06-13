@@ -142,7 +142,7 @@ Form event binding should group listeners by intent. Birth-data changes, option-
 
 Chart submit handling should coordinate calculation and error reporting through ports. Keep message extraction, warning render, and error event dispatch injectable so the submit handler is not tied to one DOM surface or test harness.
 
-Application startup should be a composition root. `init()` should receive startup ports for list population, theme/i18n application, binding, regression API installation, and readiness marking, while preserving the explicit startup order. Startup ports should point at named adapters for browser globals such as readiness flags.
+Application startup should be a composition root. `init()` should receive startup ports for list population, theme/i18n application, binding, regression API installation, and readiness marking, while preserving the explicit startup order. Startup ports should point at named adapters for browser globals such as readiness flags. Build-hash resolution and regression-mode detection should read script/query/browser state through named helpers so publication audits and test API installation stay injectable.
 
 Browser-only effects that are shared across flows should live behind tiny adapters. Window events, custom-event construction, timers, and timer clearing should stay in named helpers so chart rendering, form submission, blur handling, and place search do not each create their own browser-side effect code.
 

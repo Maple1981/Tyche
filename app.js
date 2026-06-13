@@ -8,16 +8,37 @@
   const PLACE_SEARCH_DELAY = 260;
   const PLACE_RESULT_LIMIT = 8;
   const TYCHE_TEST_SCHEMA_VERSION = 2;
-  const TYCHE_BUILD_HASH = (() => {
+
+  function currentLocationSearch() {
+    return window.location.search;
+  }
+
+  function currentQueryParams(search = currentLocationSearch()) {
+    return new URLSearchParams(search);
+  }
+
+  function scriptBuildHashParam() {
+    const scriptSrc = document.currentScript?.src;
+    return scriptSrc ? new URL(scriptSrc, window.location.href).searchParams.get("v") : "";
+  }
+
+  function runtimeBuildHashOverride() {
+    return window.TYCHE_BUILD_HASH || "";
+  }
+
+  function queryBuildHashParam() {
+    return currentQueryParams().get("v") || "";
+  }
+
+  function resolveBuildHash() {
     try {
-      const scriptVersion = document.currentScript?.src
-        ? new URL(document.currentScript.src, window.location.href).searchParams.get("v")
-        : "";
-      return scriptVersion || window.TYCHE_BUILD_HASH || new URLSearchParams(window.location.search).get("v") || "dev";
+      return scriptBuildHashParam() || runtimeBuildHashOverride() || queryBuildHashParam() || "dev";
     } catch {
-      return window.TYCHE_BUILD_HASH || "dev";
+      return runtimeBuildHashOverride() || "dev";
     }
-  })();
+  }
+
+  const TYCHE_BUILD_HASH = resolveBuildHash();
   const TIME_CONFIDENCE_VALUES = Object.freeze([
     "exact",
     "rounded-to-minute",
@@ -10740,11 +10761,35 @@
     });
   }
 
-  function installTestApi() {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("test") !== "regression") return;
-    window.TycheTest = buildRegressionTestApi(defaultRegressionInput());
+  function isRegressionTestMode(params = currentQueryParams()) {
+    return params.get("test") === "regression";
+  }
+
+  function buildDefaultRegressionTestApi() {
+    return buildRegressionTestApi(defaultRegressionInput());
+  }
+
+  function writeRegressionTestApi(api) {
+    window.TycheTest = api;
+  }
+
+  function logRegressionTestApiEnabled() {
     console.info("Tyche regression test API enabled.");
+  }
+
+  function regressionTestApiPorts() {
+    return {
+      isRegressionMode: isRegressionTestMode,
+      buildApi: buildDefaultRegressionTestApi,
+      writeApi: writeRegressionTestApi,
+      logEnabled: logRegressionTestApiEnabled,
+    };
+  }
+
+  function installTestApi(ports = regressionTestApiPorts()) {
+    if (!ports.isRegressionMode()) return;
+    ports.writeApi(ports.buildApi());
+    ports.logEnabled();
   }
 
   function markTycheReady() {
