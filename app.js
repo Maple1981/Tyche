@@ -4292,6 +4292,34 @@
     state.activeCityKey = city ? cityKey(city) : "";
   }
 
+  function clearSelectedCityState() {
+    setSelectedCityState(null);
+  }
+
+  function readBirthPlaceValue() {
+    return $("#birthPlace").value;
+  }
+
+  function writeBirthPlaceValue(value) {
+    writeFieldValue("#birthPlace", value);
+  }
+
+  function readActiveCityKey() {
+    return state.activeCityKey;
+  }
+
+  function placeSuggestionAt(index) {
+    return state.placeSuggestions[index];
+  }
+
+  function blurBirthPlaceField() {
+    $("#birthPlace").blur();
+  }
+
+  function focusBirthPlaceField() {
+    $("#birthPlace").focus();
+  }
+
   function applyCityToFields(city, force = true) {
     setSelectedCityState(city);
     applyCityFieldModel(buildCityFieldModel(city, currentPlaceFieldState(), force));
@@ -4301,11 +4329,11 @@
 
   function placeSuggestionSelectionPorts() {
     return {
-      suggestionAt: (index) => state.placeSuggestions[index],
+      suggestionAt: placeSuggestionAt,
       clearHistorical: clearHistoricalSelection,
       applyCity: applyCityToFields,
       hideSuggestions: hidePlaceSuggestions,
-      blurPlace: () => $("#birthPlace").blur(),
+      blurPlace: blurBirthPlaceField,
     };
   }
 
@@ -9965,11 +9993,11 @@
 
   function localizedPlaceStatePorts() {
     return {
-      readPlaceValue: () => $("#birthPlace").value,
+      readPlaceValue: readBirthPlaceValue,
       findCity,
       writeSelectedCity: setSelectedCityState,
       formatCity,
-      writePlaceValue: (value) => writeFieldValue("#birthPlace", value),
+      writePlaceValue: writeBirthPlaceValue,
       updateClearButton: updateClearPlaceButton,
       hideSuggestions: hidePlaceSuggestions,
     };
@@ -10074,12 +10102,12 @@
 
   function placeFieldUpdatePorts() {
     return {
-      readPlaceValue: () => $("#birthPlace").value,
+      readPlaceValue: readBirthPlaceValue,
       findCity,
-      readActiveCityKey: () => state.activeCityKey,
+      readActiveCityKey,
       cityKey,
       applyCity: applyCityToFields,
-      clearSelectedCity: () => setSelectedCityState(null),
+      clearSelectedCity: clearSelectedCityState,
     };
   }
 
@@ -10332,9 +10360,13 @@
     return activeIndex >= 0 ? activeIndex : 0;
   }
 
+  function hasPlaceSuggestions() {
+    return Boolean(state.placeSuggestions.length);
+  }
+
   function birthPlaceEnterPorts() {
     return {
-      hasSuggestions: () => Boolean(state.placeSuggestions.length),
+      hasSuggestions: hasPlaceSuggestions,
       selectionIndex: () => activePlaceSelectionIndex(),
       selectSuggestion: selectPlaceSuggestion,
     };
@@ -10384,11 +10416,11 @@
   function birthPlaceClearPorts(birthPlace) {
     return {
       clearHistorical: clearHistoricalSelection,
-      clearSelectedCity: () => setSelectedCityState(null),
+      clearSelectedCity: clearSelectedCityState,
       clearFields: () => clearBirthPlaceFieldValues(birthPlace),
       updateClearButton: updateClearPlaceButton,
       hideSuggestions: hidePlaceSuggestions,
-      focus: () => birthPlace.focus(),
+      focus: focusBirthPlaceField,
     };
   }
 
